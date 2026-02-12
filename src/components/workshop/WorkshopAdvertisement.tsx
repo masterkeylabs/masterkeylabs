@@ -89,7 +89,7 @@ export default function WorkshopAdvertisement() {
                             </div>
 
                             <div className="mt-8 text-center">
-                                <p className="text-[12px] font-black text-[var(--cyan-accent)]">📅 Dates: Feb 20 - Feb 24, 2026</p>
+                                <p className="text-[12px] font-black text-[var(--cyan-accent)]">📅 Dates: will be anounced soon!</p>
                                 <p className="text-[12px] font-bold text-silver/60 mt-2">Only 50 Seats Available</p>
                             </div>
                         </motion.div>
