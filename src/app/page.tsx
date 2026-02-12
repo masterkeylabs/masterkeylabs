@@ -6,6 +6,7 @@ import Hero from "@/components/layout/Hero";
 import AuditSuite from "@/components/audit/AuditSuite";
 import EcosystemHub from "@/components/layout/EcosystemHub";
 import IndustrySolutions from "@/components/layout/IndustrySolutions";
+import WorkshopAdvertisement from "@/components/workshop/WorkshopAdvertisement";
 import UserDashboard from "@/components/audit/UserDashboard";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -19,6 +20,7 @@ export default function Home() {
       {!isRegistered ? (
         <>
           <Hero />
+          <WorkshopAdvertisement />
           <div className="relative py-20">
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             <AuditSuite />

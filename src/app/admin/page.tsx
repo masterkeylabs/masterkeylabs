@@ -2,16 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Users, FileText, Download, Shield, Eye, Lock, Activity, Terminal, Send, Calendar, BarChart2 } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Download, Shield, Eye, Lock, Activity, Terminal, Send, Calendar, BarChart2, Trash2 } from "lucide-react";
 
 export default function AdminDashboard() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [view, setView] = useState<"LEADS" | "AUDITS" | "CAREERS" | "BOOKINGS">("LEADS");
+    const [view, setView] = useState<"LEADS" | "AUDITS" | "CAREERS" | "BOOKINGS" | "WORKSHOPS">("LEADS");
     const [applications, setApplications] = useState<any[]>([]);
     const [bookings, setBookings] = useState<any[]>([]);
     const [audits, setAudits] = useState<any[]>([]);
+    const [workshops, setWorkshops] = useState<any[]>([]);
+    const [workshopStatuses, setWorkshopStatuses] = useState<Record<string, string>>({})
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,6 +23,7 @@ export default function AdminDashboard() {
             fetchApplications();
             fetchBookings();
             fetchAudits();
+            fetchWorkshops();
         } else {
             setError("Access Cryptographically Denied");
         }
@@ -54,6 +57,55 @@ export default function AdminDashboard() {
         } catch (err) {
             console.error("Failed to fetch audits");
         }
+    };
+
+    const fetchWorkshops = async () => {
+        try {
+            const res = await fetch("/api/workshop");
+            const data = await res.json();
+            setWorkshops(data);
+        } catch (err) {
+            console.error("Failed to fetch workshop registrations");
+        }
+    };
+
+    const deleteWorkshopRegistration = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this registration?")) return;
+        try {
+            const res = await fetch(`/api/workshop?id=${id}`, { method: "DELETE" });
+            if (res.ok) {
+                setWorkshops(workshops.filter(w => w.id !== id));
+            }
+        } catch (err) {
+            console.error("Failed to delete workshop registration");
+        }
+    };
+
+    const updateWorkshopStatus = (id: string, status: string) => {
+        setWorkshopStatuses(prev => ({ ...prev, [id]: status }));
+    };
+
+    const exportWorkshopData = () => {
+        const csvContent = [
+            ["Full Name", "Email", "Contact Number", "Stream", "Registered Date", "Status"],
+            ...workshops.map(w => [
+                w.fullName,
+                w.email,
+                w.contactNumber,
+                w.stream,
+                w.createdAt ? new Date(w.createdAt).toLocaleDateString() : "—",
+                workshopStatuses[w.id] || "Pending"
+            ])
+        ]
+            .map(row => row.map(cell => `"${cell}"`).join(","))
+            .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Workshop_Registrations_${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
     };
 
     if (!isLoggedIn) {
@@ -135,6 +187,12 @@ export default function AdminDashboard() {
                             className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${view === "BOOKINGS" ? "bg-[var(--orange-signal)] text-black shadow-orange" : "bg-white/5 text-silver/40 hover:text-white"}`}
                         >
                             Bookings ({bookings.length})
+                        </button>
+                        <button
+                            onClick={() => setView("WORKSHOPS")}
+                            className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${view === "WORKSHOPS" ? "bg-white text-black shadow-chrome" : "bg-white/5 text-silver/40 hover:text-white"}`}
+                        >
+                            Workshops ({workshops.length})
                         </button>
                     </div>
                 </div>
@@ -337,7 +395,7 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                         </motion.div>
-                    ) : (
+                    ) : view === "BOOKINGS" ? (
                         <motion.div
                             key="bookings"
                             initial={{ opacity: 0, y: 20 }}
@@ -408,7 +466,95 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                         </motion.div>
-                    )}
+                    ) : view === "WORKSHOPS" ? (
+                        <motion.div
+                            key="workshops"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                        >
+                            <div className="mb-8 flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-2xl font-black uppercase tracking-tighter text-white mb-2">Workshop Registrations</h2>
+                                    <p className="text-[10px] font-bold text-silver/40 uppercase tracking-[0.3em]">5-Day AI Revolution Workshop • {workshops.length} Registrations</p>
+                                </div>
+                                {workshops.length > 0 && (
+                                    <button
+                                        onClick={exportWorkshopData}
+                                        className="bg-[var(--cyan-accent)]/10 hover:bg-[var(--cyan-accent)]/20 border border-[var(--cyan-accent)]/20 px-4 py-3 rounded-lg text-[var(--cyan-accent)] text-[8px] font-black uppercase tracking-widest inline-flex items-center gap-2 transition-all"
+                                    >
+                                        <Download className="w-3 h-3" />
+                                        Export CSV
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="overflow-x-auto rounded-2xl border border-white/5 bg-white/[0.02]">
+                                <table className="w-full">
+                                    <thead className="text-[8px] font-black uppercase tracking-[0.3em] text-silver/40 bg-black/40">
+                                        <tr>
+                                            <th className="px-8 py-6">Full Name</th>
+                                            <th className="px-8 py-6">Email Address</th>
+                                            <th className="px-8 py-6">Contact Number</th>
+                                            <th className="px-8 py-6">Stream</th>
+                                            <th className="px-8 py-6">Status</th>
+                                            <th className="px-8 py-6">Registered</th>
+                                            <th className="px-8 py-6">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-[10px] font-bold text-silver leading-none">
+                                        {workshops.length > 0 ? workshops.map((workshop, i) => (
+                                            <tr key={i} className="border-t border-white/5 hover:bg-white/[0.02] transition-colors group">
+                                                <td className="px-8 py-8 text-white font-black">{workshop.fullName}</td>
+                                                <td className="px-8 py-8 group-hover:text-[var(--cyan-accent)] transition-colors">{workshop.email}</td>
+                                                <td className="px-8 py-8">{workshop.contactNumber}</td>
+                                                <td className="px-8 py-8">
+                                                    <span className="px-3 py-1.5 rounded-full bg-[var(--cyan-accent)]/10 border border-[var(--cyan-accent)]/20 text-[var(--cyan-accent)] text-[8px] font-bold uppercase tracking-widest">
+                                                        {workshop.stream}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-8">
+                                                    <select
+                                                        value={workshopStatuses[workshop.id] || "pending"}
+                                                        onChange={(e) => updateWorkshopStatus(workshop.id, e.target.value)}
+                                                        className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest focus:outline-none focus:border-[var(--cyan-accent)] transition-all text-white cursor-pointer"
+                                                    >
+                                                        <option value="pending">Pending</option>
+                                                        <option value="confirmed">Confirmed</option>
+                                                        <option value="attended">Attended</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    </select>
+                                                </td>
+                                                <td className="px-8 py-8 text-[8px] text-silver/60">
+                                                    {workshop.createdAt ? new Date(workshop.createdAt).toLocaleDateString() : "—"}
+                                                </td>
+                                                <td className="px-8 py-8 flex items-center gap-2">
+                                                    <a
+                                                        href={`mailto:${workshop.email}?subject=Masterkey Labs - AI Workshop Confirmation&body=Hello ${workshop.fullName},%0D%0A%0D%0AThank you for registering for the 5-Day AI Revolution Workshop!%0D%0A%0D%0ASelected Stream: ${workshop.stream}%0D%0A%0D%0AWorkshop Dates: Feb 20 - Feb 24, 2026%0D%0A%0D%0AWe look forward to seeing you soon!%0D%0A%0D%0ABest Regards,%0D%0AMasterkey Labs`}
+                                                        className="bg-[var(--cyan-accent)]/10 hover:bg-[var(--cyan-accent)]/20 border border-[var(--cyan-accent)]/20 p-2 rounded-lg text-[var(--cyan-accent)] transition-all"
+                                                        title="Send Email"
+                                                    >
+                                                        <Send className="w-3 h-3" />
+                                                    </a>
+                                                    <button
+                                                        onClick={() => deleteWorkshopRegistration(workshop.id)}
+                                                        className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 p-2 rounded-lg text-red-500 transition-all"
+                                                        title="Delete Registration"
+                                                    >
+                                                        <Trash2 className="w-3 h-3" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        )) : (
+                                            <tr>
+                                                <td colSpan={7} className="px-8 py-20 text-center text-silver/20 uppercase tracking-[0.5em] font-black">No Workshop Registrations Yet</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </motion.div>
+                    ) : null}
                 </AnimatePresence>
             </div>
         </div>
