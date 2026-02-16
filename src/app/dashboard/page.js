@@ -13,6 +13,8 @@ import DiagnosticLog from '@/components/DiagnosticLog';
 import ReportModal from '@/components/ReportModal';
 import { supabase } from '@/lib/supabaseClient';
 
+export const dynamic = 'force-dynamic';
+
 function DashboardContent() {
     const searchParams = useSearchParams();
     const businessId = searchParams.get('id');

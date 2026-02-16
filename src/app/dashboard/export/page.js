@@ -5,6 +5,8 @@ import FeatureLayout from '@/components/FeatureLayout';
 import { calculateExportOpportunity, EXPORT_CATEGORIES, formatINR, formatINRFull } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 
+export const dynamic = 'force-dynamic';
+
 function ExportPageContent() {
     const searchParams = useSearchParams();
     const businessId = searchParams.get('id');

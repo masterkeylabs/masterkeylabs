@@ -5,6 +5,8 @@ import FeatureLayout from '@/components/FeatureLayout';
 import { calculateVisibility, VISIBILITY_SIGNALS, formatINR } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 
+export const dynamic = 'force-dynamic';
+
 const STATUS_COLORS = {
     DOMINANT: { bg: 'bg-neon-green/10', border: 'border-neon-green/30', text: 'text-neon-green', fill: '#39ff14' },
     VISIBLE: { bg: 'bg-primary/10', border: 'border-primary/30', text: 'text-primary', fill: '#00e5ff' },
