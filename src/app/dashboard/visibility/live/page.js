@@ -1,8 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import WebsiteAnalyzer from '@/components/WebsiteAnalyzer';
+
+export const dynamic = 'force-dynamic';
 
 function LiveVisibilityPageContent() {
     const searchParams = useSearchParams();
@@ -20,7 +23,6 @@ function LiveVisibilityPageContent() {
         </FeatureLayout>
     );
 }
-
 
 export default function LiveVisibilityPage() {
     return (
