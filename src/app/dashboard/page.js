@@ -217,10 +217,19 @@ function DashboardContent() {
     );
 }
 
-export default function DashboardPage() {
+function DashboardPageContent() {
     return (
         <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-background-dark text-white">Loading dashboard...</div>}>
             <DashboardContent />
+        </Suspense>
+    );
+}
+
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-primary">Loading...</div></div>}>
+            <DashboardPageContent />
         </Suspense>
     );
 }

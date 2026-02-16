@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateNightLoss, formatINR, formatINRFull } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function NightLossPage() {
+function NightLossPageContent() {
     const searchParams = useSearchParams();
     const businessId = searchParams.get('id');
 
@@ -225,5 +225,14 @@ export default function NightLossPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+
+export default function NightLossPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-primary">Loading...</div></div>}>
+            <NightLossPageContent />
+        </Suspense>
     );
 }

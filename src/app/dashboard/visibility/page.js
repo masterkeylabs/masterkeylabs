@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateVisibility, VISIBILITY_SIGNALS, formatINR } from '@/lib/calculations';
@@ -13,7 +13,7 @@ const STATUS_COLORS = {
     INVISIBLE: { bg: 'bg-alert-red/10', border: 'border-alert-red/30', text: 'text-alert-red', fill: '#ff3131' },
 };
 
-export default function VisibilityPage() {
+function VisibilityPageContent() {
     const searchParams = useSearchParams();
     const businessId = searchParams.get('id');
 
@@ -192,5 +192,14 @@ export default function VisibilityPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+
+export default function VisibilityPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-primary">Loading...</div></div>}>
+            <VisibilityPageContent />
+        </Suspense>
     );
 }

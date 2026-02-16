@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateLossAudit, formatINR, formatINRFull } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function LossAuditPage() {
+function LossAuditPageContent() {
     const searchParams = useSearchParams();
     const businessId = searchParams.get('id');
 
@@ -223,5 +223,14 @@ export default function LossAuditPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+
+export default function LossAuditPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-primary">Loading...</div></div>}>
+            <LossAuditPageContent />
+        </Suspense>
     );
 }

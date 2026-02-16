@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import WebsiteAnalyzer from '@/components/WebsiteAnalyzer';
 
-export default function LiveVisibilityPage() {
+function LiveVisibilityPageContent() {
     const searchParams = useSearchParams();
     const businessId = searchParams.get('id');
 
@@ -18,5 +18,14 @@ export default function LiveVisibilityPage() {
                 <WebsiteAnalyzer />
             </div>
         </FeatureLayout>
+    );
+}
+
+
+export default function LiveVisibilityPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-primary">Loading...</div></div>}>
+            <LiveVisibilityPageContent />
+        </Suspense>
     );
 }
