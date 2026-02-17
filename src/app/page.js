@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { calculateAIThreat } from '@/lib/calculations';
+import bcrypt from 'bcryptjs';
 
 export default function Home() {
     const router = useRouter();
@@ -14,6 +15,7 @@ export default function Home() {
     const [animPhase, setAnimPhase] = useState(0); // 0=idle, 1=scanning, 2=done
     const [loginData, setLoginData] = useState({
         businessName: '', ownerName: '', email: '', phone: '', businessType: '',
+        password: '', confirmPassword: ''
     });
     const [loggedInBusinessId, setLoggedInBusinessId] = useState(null);
     const [loginError, setLoginError] = useState(null);
@@ -82,6 +84,7 @@ export default function Home() {
     const [authMode, setAuthMode] = useState('signup'); // 'signup' or 'login'
     const [otpStep, setOtpStep] = useState(1); // 1 = enter identifier, 2 = verify otp
     const [identifier, setIdentifier] = useState(''); // email/phone for login
+    const [password, setPassword] = useState('');
     const [otpCode, setOtpCode] = useState('');
     const [sendingOtp, setSendingOtp] = useState(false);
 
@@ -90,6 +93,13 @@ export default function Home() {
         e.preventDefault();
         setLoginError(null);
         setExistingBusinessId(null);
+        setSendingOtp(true);
+
+        if (loginData.password !== loginData.confirmPassword) {
+            setLoginError("Passwords do not match.");
+            setSendingOtp(false);
+            return;
+        }
 
         try {
             // 1. Check if email or phone already exists
@@ -104,10 +114,14 @@ export default function Home() {
             if (existing) {
                 setLoginError("This email or mobile number is already registered.");
                 setExistingBusinessId(existing.id);
+                setSendingOtp(false);
                 return;
             }
 
-            // 2. If not, proceed with registration
+            // 2. Hash password
+            const hashedPassword = await bcrypt.hash(loginData.password, 10);
+
+            // 3. If not, proceed with registration
             const { data: business, error: insertError } = await supabase.from('businesses').insert({
                 entity_name: formData.entityName || loginData.businessName || 'Unknown Business',
                 location: formData.location,
@@ -118,9 +132,13 @@ export default function Home() {
                 owner_name: loginData.ownerName,
                 email: loginData.email,
                 phone: loginData.phone,
+                password_hash: hashedPassword,
             }).select().single();
 
-            if (insertError) throw insertError;
+            if (insertError) {
+                console.error('Supabase Insert Error:', insertError);
+                throw new Error(insertError.message || insertError.details || "Database insert failed.");
+            }
 
             if (business) {
                 localStorage.setItem('masterkey_business_id', business.id);
@@ -146,30 +164,32 @@ export default function Home() {
         } catch (err) {
             console.error('Signup Error:', err);
             setLoginError(err.message || "An unexpected error occurred. Please try again.");
+        } finally {
+            setSendingOtp(false);
         }
     };
 
     const [sentTo, setSentTo] = useState(''); // Masked destination
 
 
-    // ─── Login Flow ───
-    const handleLoginStart = async (e) => {
+    // ─── Login Flow (Password Based) ───
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoginError(null);
         setSendingOtp(true);
 
         try {
-            const res = await fetch('/api/auth/otp/send', {
+            const res = await fetch('/api/auth/user/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ identifier }),
+                body: JSON.stringify({ identifier, password }),
             });
 
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
 
-            setSentTo(data.sentTo);
-            setOtpStep(2);
+            localStorage.setItem('masterkey_business_id', data.businessId);
+            router.push(`/dashboard?id=${data.businessId}`);
         } catch (err) {
             setLoginError(err.message);
         } finally {
@@ -306,37 +326,37 @@ export default function Home() {
             </div>
 
             {/* ═══ HEADER ═══ */}
-            <header className="relative z-50 pt-2 pb-2">
+            <header className="relative z-50 pt-4 pb-2">
                 {/* Hamburger menu — top right */}
-                <button onClick={() => setSidebarOpen(true)} className="absolute top-6 right-6 md:right-12 p-2.5 hover:bg-white/5 rounded-xl transition-colors group z-50">
-                    <span className="material-symbols-outlined text-primary text-2xl group-hover:rotate-180 transition-transform duration-500">menu</span>
+                <button onClick={() => setSidebarOpen(true)} className="absolute top-4 right-4 md:top-6 md:right-12 p-2 md:p-2.5 hover:bg-white/5 rounded-xl transition-colors group z-50">
+                    <span className="material-symbols-outlined text-primary text-xl md:text-2xl group-hover:rotate-180 transition-transform duration-500">menu</span>
                 </button>
 
                 {/* Centered Logo — Balanced Visibility */}
                 <div className="flex flex-col items-center text-center px-6">
-                    <Link href="/" className="relative h-16 md:h-20 flex items-center justify-center overflow-hidden w-full max-w-2xl bg-white/[0.01] rounded-2xl hover:bg-white/[0.03] transition-colors">
+                    <Link href="/" className="relative h-12 md:h-20 flex items-center justify-center overflow-hidden w-full max-w-2xl bg-white/[0.01] rounded-2xl hover:bg-white/[0.03] transition-colors">
                         <img
                             src="/logo.png"
                             alt="MasterKey Labs"
-                            className="relative h-[25rem] md:h-[30rem] w-auto object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.25)] scale-[1.05]"
+                            className="relative h-[15rem] sm:h-[20rem] md:h-[30rem] w-auto object-contain drop-shadow-[0_0_20px_rgba(0,229,255,0.25)] scale-[1.05]"
                         />
                     </Link>
 
 
-                    <p className="text-slate-300 italic text-sm md:text-base mt-2 relative z-10 font-medium">
+                    <p className="text-slate-300 italic text-[11px] md:text-base mt-2 relative z-10 font-medium">
                         &quot;AI tumhara business nahi lega. AI use karne wala insaan lega.&quot;
                     </p>
 
                     {/* Status badge + Taglines below logo — no borders */}
-                    <div className="mt-2 flex flex-col items-center gap-2 max-w-2xl">
-                        <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-primary text-[10px] font-bold tracking-[0.25em] uppercase animate-pulse">
+                    <div className="mt-4 flex flex-col items-center gap-2 max-w-2xl">
+                        <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-primary text-[8px] md:text-[10px] font-bold tracking-[0.25em] uppercase animate-pulse">
                             ⚡ Status: Active Threat
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight text-white tracking-tight">
+                        <h1 className="text-2xl sm:text-4xl md:text-6xl font-extrabold leading-tight text-white tracking-tight">
                             Aapka Competitor Abhi <br className="hidden md:block" />
                             <span className="text-primary drop-shadow-[0_0_15px_rgba(0,229,255,0.3)]">AI Use Kar Raha Hai</span>.
                         </h1>
-                        <p className="text-slate-400 text-base md:text-lg font-light max-w-xl mt-4">
+                        <p className="text-slate-400 text-sm md:text-lg font-light max-w-xl mt-4">
                             Har din jo aap wait karte ho — Wo din aapke business ki <br className="hidden md:block" />
                             <span className="text-white font-medium italic underline decoration-primary/30 underline-offset-4">Expiry Date</span> ke kareeb jata hai.
                         </p>
@@ -348,7 +368,7 @@ export default function Home() {
             {
                 showLogin && (
                     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-                        <div className="glass rounded-2xl p-8 max-w-md w-full border border-primary/20 relative animate-[fadeIn_0.3s_ease-out]">
+                        <div className="glass rounded-2xl p-6 md:p-8 max-w-md w-full border border-primary/20 relative animate-[fadeIn_0.3s_ease-out]">
                             <button onClick={() => { setShowLogin(false); setOtpStep(1); setLoginError(null); }} className="absolute top-4 right-4 text-white/40 hover:text-white">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
@@ -421,37 +441,48 @@ export default function Home() {
                                         <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">Phone</label>
                                         <input className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-sm placeholder:text-slate-700" placeholder="+91 XXXXX XXXXX" type="tel" name="phone" value={loginData.phone} onChange={handleLoginChange} required />
                                     </div>
+                                    <div className="glass p-3 rounded-lg border-white/10">
+                                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">Password</label>
+                                        <input className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-sm placeholder:text-slate-700" placeholder="••••••••" type="password" name="password" value={loginData.password} onChange={handleLoginChange} required />
+                                    </div>
+                                    <div className="glass p-3 rounded-lg border-white/10">
+                                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">Confirm Password</label>
+                                        <input className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-sm placeholder:text-slate-700" placeholder="••••••••" type="password" name="confirmPassword" value={loginData.confirmPassword} onChange={handleLoginChange} required />
+                                    </div>
                                     <button type="submit" disabled={sendingOtp} className="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-3 px-6 rounded-xl uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all active:scale-95 mt-4 disabled:opacity-50">
                                         <span className="material-symbols-outlined text-lg">rocket_launch</span>
                                         Create Account
                                     </button>
                                 </form>
                             ) : (
-                                <form onSubmit={otpStep === 1 ? handleLoginStart : handleLoginVerify} className="space-y-4">
-                                    {otpStep === 1 ? (
-                                        <div className="glass p-4 rounded-xl border-white/10">
-                                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Email / Mobile No.</label>
-                                            <input
-                                                className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-base placeholder:text-slate-700"
-                                                placeholder="email@example.com / 10 digit mobile no."
-                                                value={identifier}
-                                                onChange={(e) => setIdentifier(e.target.value)}
-                                                required
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="glass p-4 rounded-xl border-white/10">
-                                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">6-Digit OTP</label>
-                                            <input
-                                                className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-3xl font-black tracking-[0.5em] text-center placeholder:text-slate-800"
-                                                placeholder="000000"
-                                                maxLength={6}
-                                                value={otpCode}
-                                                onChange={(e) => setOtpCode(e.target.value)}
-                                                required
-                                            />
-                                        </div>
-                                    )}
+                                <form onSubmit={handleLogin} className="space-y-4">
+                                    <div className="glass p-4 rounded-xl border-white/10">
+                                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Email / Mobile No.</label>
+                                        <input
+                                            className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-base placeholder:text-slate-700"
+                                            placeholder="email@example.com / 10 digit mobile no."
+                                            value={identifier}
+                                            onChange={(e) => setIdentifier(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="glass p-4 rounded-xl border-white/10">
+                                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Password</label>
+                                        <input
+                                            className="w-full bg-transparent border-0 p-0 text-white focus:ring-0 focus:outline-none text-base placeholder:text-slate-700"
+                                            placeholder="Your secure password"
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="flex justify-end">
+                                        <Link href="/user/forgot-password" size="sm" className="px-1 py-1 rounded-lg text-primary/60 hover:text-primary transition-all text-[10px] font-black uppercase tracking-widest">
+                                            Forgot Password?
+                                        </Link>
+                                    </div>
 
                                     <button
                                         type="submit"
@@ -459,26 +490,14 @@ export default function Home() {
                                         className="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-4 px-6 rounded-xl uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
                                     >
                                         {sendingOtp ? (
-                                            <span className="material-symbols-outlined animate-spin">progress_activity</span>
+                                            <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
                                         ) : (
                                             <>
-                                                <span className="material-symbols-outlined text-lg">
-                                                    {otpStep === 1 ? 'send' : 'verified_user'}
-                                                </span>
-                                                {otpStep === 1 ? 'Send Verification OTP' : 'Verify & Enter Dashboard'}
+                                                <span className="material-symbols-outlined text-lg">login</span>
+                                                Login to Dashboard
                                             </>
                                         )}
                                     </button>
-
-                                    {otpStep === 2 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setOtpStep(1)}
-                                            className="w-full text-center text-[10px] text-white/40 uppercase font-black tracking-[0.2em] hover:text-white transition-colors"
-                                        >
-                                            Change Identifier
-                                        </button>
-                                    )}
                                 </form>
                             )}
                         </div>
@@ -494,7 +513,7 @@ export default function Home() {
                         {/* ═══ DIAGNOSTIC CORE DIALOG ═══ */}
                         <div className="relative w-full lg:w-3/5 order-1">
                             <div className="absolute -inset-10 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
-                            <div className="glass relative rounded-[2.5rem] p-10 md:p-12 border-primary/20 flex flex-col items-center justify-center min-h-[520px] text-center overflow-hidden shadow-[0_0_60px_rgba(0,229,255,0.08)]">
+                            <div className="glass relative rounded-[1.5rem] md:rounded-[2.5rem] p-6 sm:p-10 md:p-12 border-primary/20 flex flex-col items-center justify-center min-h-[400px] md:min-h-[520px] text-center overflow-hidden shadow-[0_0_60px_rgba(0,229,255,0.08)]">
                                 <div className="scanline"></div>
 
                                 {/* ── PHASE 0: IDLE — Awaiting ── */}
@@ -609,11 +628,11 @@ export default function Home() {
 
                                             {/* Score */}
                                             <div className="text-center mb-6">
-                                                <div className={`text-7xl md:text-8xl font-black ${threatColor} leading-none`}>
+                                                <div className={`text-5xl sm:text-7xl md:text-8xl font-black ${threatColor} leading-none`}>
                                                     {displayScore}
-                                                    <span className="text-2xl text-white/20">/100</span>
+                                                    <span className="text-xl md:text-2xl text-white/20">/100</span>
                                                 </div>
-                                                <p className="text-white/40 text-xs uppercase tracking-widest mt-2">AI Threat Score</p>
+                                                <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-widest mt-2">AI Threat Score</p>
                                             </div>
 
                                             {/* Stats Grid */}

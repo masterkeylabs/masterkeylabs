@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS businesses (
   owner_name TEXT,
   email TEXT,
   phone TEXT,
+  password_hash TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -28,8 +29,25 @@ CREATE TABLE IF NOT EXISTS admin_users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS admin_otp_verifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT NOT NULL,
+  code TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS otp_verifications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  identifier TEXT NOT NULL,
+  code TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- (Other tables like loss_audit_results etc. are already created by you, 
 -- but you should ensure businesses has the admin columns)
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS password_hash TEXT;
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS owner_name TEXT;
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS email TEXT;
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS phone TEXT;
@@ -44,7 +62,7 @@ ON CONFLICT (email) DO NOTHING;
 DO $$
 DECLARE
   tbl_name TEXT;
-  tables_to_add TEXT[] := ARRAY['businesses', 'ai_threat_results', 'loss_audit_results', 'export_results', 'night_loss_results', 'visibility_results', 'admin_users'];
+  tables_to_add TEXT[] := ARRAY['businesses', 'ai_threat_results', 'loss_audit_results', 'export_results', 'night_loss_results', 'visibility_results', 'admin_users', 'admin_otp_verifications', 'otp_verifications'];
 BEGIN
   FOREACH tbl_name IN ARRAY tables_to_add LOOP
     IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = tbl_name) THEN

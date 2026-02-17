@@ -18,7 +18,7 @@ export default function CapitalDetector({ cards = [] }) {
     const displayCards = cards.length > 0 ? cards : DEFAULT_CARDS;
 
     return (
-        <div className="grid grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
             {displayCards.map((card, index) => {
                 const style = COLOR_MAP[card.color] || COLOR_MAP.red;
                 return (

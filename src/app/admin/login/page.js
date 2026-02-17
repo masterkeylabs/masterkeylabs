@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import bcrypt from 'bcryptjs';
 import Link from 'next/link';
 
 export default function AdminLogin() {
@@ -17,12 +18,11 @@ export default function AdminLogin() {
         setError(null);
 
         try {
-            const { data: admin, error: authError } = await supabase
+            const { data: admins, error: authError } = await supabase
                 .from('admin_users')
                 .select('*')
                 .eq('email', email)
-                .eq('password_hash', password)
-                .single();
+                .limit(1);
 
             if (authError) {
                 console.error('Supabase Auth Error:', authError);
@@ -33,7 +33,25 @@ export default function AdminLogin() {
                 throw new Error(`System Error: ${authError.message}`);
             }
 
+            const admin = admins?.[0];
+
             if (!admin) {
+                throw new Error('Invalid specialized credentials.');
+            }
+
+            // Check if password is hashed (bcrypt) or plain text (legacy)
+            const isHashedPassword = admin.password_hash.startsWith('$2a$') || admin.password_hash.startsWith('$2b$');
+
+            let passwordValid = false;
+            if (isHashedPassword) {
+                // Use bcrypt to compare
+                passwordValid = await bcrypt.compare(password, admin.password_hash);
+            } else {
+                // Legacy plain text comparison
+                passwordValid = password === admin.password_hash;
+            }
+
+            if (!passwordValid) {
                 throw new Error('Invalid specialized credentials.');
             }
 
@@ -106,6 +124,14 @@ export default function AdminLogin() {
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm font-mono"
                                 placeholder="••••••••••••"
                             />
+                            <div className="mt-2 text-right">
+                                <Link
+                                    href="/admin/forgot-password"
+                                    className="text-xs text-primary/60 hover:text-primary transition-colors"
+                                >
+                                    Forgot Password?
+                                </Link>
+                            </div>
                         </div>
 
                         <button

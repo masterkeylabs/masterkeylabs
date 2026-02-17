@@ -26,6 +26,7 @@ function DashboardContent() {
     const [nightResult, setNightResult] = useState(null);
     const [visibilityResult, setVisibilityResult] = useState(null);
     const [reportModalOpen, setReportModalOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Fetch business profile
     const fetchBusiness = useCallback(async () => {
@@ -152,10 +153,18 @@ function DashboardContent() {
 
     return (
         <>
-            <div className="flex h-full min-h-screen">
-                <Sidebar onReportClick={() => setReportModalOpen(true)} />
-                <main className="flex-1 ml-64 p-8">
-                    <DashboardHeader companyName={business?.entity_name || 'Your Business'} />
+            <div className="flex h-full min-h-screen bg-background-dark overflow-x-hidden">
+                <Sidebar
+                    isOpen={sidebarOpen}
+                    onClose={() => setSidebarOpen(false)}
+                    onReportClick={() => setReportModalOpen(true)}
+                />
+
+                <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8 relative z-10 transition-all duration-300">
+                    <DashboardHeader
+                        companyName={business?.entity_name || 'Your Business'}
+                        onMenuClick={() => setSidebarOpen(true)}
+                    />
 
                     {/* Grid Row 1: Diagnostic Cards — Now at Top */}
                     <div className="mb-8">

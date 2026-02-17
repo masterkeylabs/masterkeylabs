@@ -34,27 +34,27 @@ export default function ExtinctionTimer({ targetDate }) {
                 <p className="text-white/50 max-w-sm">Time until projected market irrelevance if no survival action is taken. This is non-negotiable data.</p>
             </div>
 
-            <div className="flex-1 flex justify-center">
-                <div className="flex gap-3 md:gap-4 items-start">
+            <div className="flex-1 flex justify-center w-full">
+                <div className="flex gap-2 md:gap-4 items-start">
                     <div className="flex flex-col items-center">
-                        <div className="bg-white/5 border border-white/10 rounded-lg min-w-[5.5rem] md:min-w-[7rem] h-20 md:h-24 px-4 flex items-center justify-center text-3xl md:text-5xl font-mono font-bold text-alert-orange tracking-tighter shadow-inner">
+                        <div className="bg-white/5 border border-white/10 rounded-lg min-w-[4rem] sm:min-w-[5.5rem] md:min-w-[7rem] h-16 sm:h-20 md:h-24 px-2 sm:px-4 flex items-center justify-center text-2xl sm:text-3xl md:text-5xl font-mono font-bold text-alert-orange tracking-tighter shadow-inner">
                             {timeLeft.days}
                         </div>
-                        <span className="text-[10px] uppercase font-bold text-white/40 mt-2 tracking-widest">Days</span>
+                        <span className="text-[8px] md:text-[10px] uppercase font-bold text-white/40 mt-2 tracking-widest">Days</span>
                     </div>
-                    <div className="text-3xl md:text-5xl font-mono font-bold pt-4 text-alert-orange/50">:</div>
+                    <div className="text-2xl sm:text-3xl md:text-5xl font-mono font-bold pt-3 sm:pt-4 text-alert-orange/50">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="bg-white/5 border border-white/10 rounded-lg w-20 h-20 md:w-24 md:h-24 flex items-center justify-center text-3xl md:text-5xl font-mono font-bold text-alert-orange tracking-tighter shadow-inner">
+                        <div className="bg-white/5 border border-white/10 rounded-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center text-2xl sm:text-3xl md:text-5xl font-mono font-bold text-alert-orange tracking-tighter shadow-inner">
                             {timeLeft.hours.toString().padStart(2, '0')}
                         </div>
-                        <span className="text-[10px] uppercase font-bold text-white/40 mt-2 tracking-widest">Hours</span>
+                        <span className="text-[8px] md:text-[10px] uppercase font-bold text-white/40 mt-2 tracking-widest">Hours</span>
                     </div>
-                    <div className="text-3xl md:text-5xl font-mono font-bold pt-4 text-alert-orange/50">:</div>
+                    <div className="text-2xl sm:text-3xl md:text-5xl font-mono font-bold pt-3 sm:pt-4 text-alert-orange/50">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="bg-white/5 border border-white/10 rounded-lg w-20 h-20 md:w-24 md:h-24 flex items-center justify-center text-3xl md:text-5xl font-mono font-bold text-alert-orange tracking-tighter shadow-inner">
+                        <div className="bg-white/5 border border-white/10 rounded-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center text-2xl sm:text-3xl md:text-5xl font-mono font-bold text-alert-orange tracking-tighter shadow-inner">
                             {timeLeft.minutes.toString().padStart(2, '0')}
                         </div>
-                        <span className="text-[10px] uppercase font-bold text-white/40 mt-2 tracking-widest">Mins</span>
+                        <span className="text-[8px] md:text-[10px] uppercase font-bold text-white/40 mt-2 tracking-widest">Mins</span>
                     </div>
                 </div>
             </div>

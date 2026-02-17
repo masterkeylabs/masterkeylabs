@@ -39,14 +39,14 @@ export default function DiagnosticLog() {
     }, [logs]);
 
     return (
-        <div className="bg-glass rounded-2xl p-8 border border-white/5 opacity-90 h-full flex flex-col relative overflow-hidden group">
-            <div className="absolute top-0 right-0 px-4 py-1.5 bg-white/5 border-l border-b border-white/10 rounded-bl-lg text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">
+        <div className="bg-glass rounded-2xl p-6 md:p-8 border border-white/5 opacity-90 h-full flex flex-col relative overflow-hidden group">
+            <div className="absolute top-0 right-0 px-3 md:px-4 py-1 md:py-1.5 bg-white/5 border-l border-b border-white/10 rounded-bl-lg text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-[0.3em]">
                 System Log v2.0
             </div>
 
-            <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-4 bg-cyan-400/40 rounded-full" />
-                <h4 className="text-xs font-black uppercase tracking-[0.3em] text-white/30">Diagnostic Stream</h4>
+            <div className="flex items-center gap-3 mb-4 md:mb-6">
+                <div className="w-1 h-3 md:h-4 bg-cyan-400/40 rounded-full" />
+                <h4 className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white/30">Diagnostic Stream</h4>
             </div>
 
             <div

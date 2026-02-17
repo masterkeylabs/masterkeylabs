@@ -80,17 +80,17 @@ export default function ReportModal({ isOpen, onClose, data }) {
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
-            <div className="glass rounded-[2rem] p-8 max-w-lg w-full border border-primary/20 relative shadow-[0_0_50px_rgba(0,229,255,0.1)]">
-                <button onClick={onClose} className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
+            <div className="glass rounded-2xl md:rounded-[2rem] p-6 md:p-8 max-w-lg w-full border border-primary/20 relative shadow-[0_0_50px_rgba(0,229,255,0.1)]">
+                <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/40 hover:text-white transition-colors">
                     <span className="material-symbols-outlined">close</span>
                 </button>
 
                 <div className="text-center mb-6">
-                    <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-4 border border-primary/20">
-                        <span className="material-symbols-outlined text-4xl">picture_as_pdf</span>
+                    <div className="size-12 md:size-16 bg-primary/10 rounded-xl md:rounded-2xl flex items-center justify-center text-primary mx-auto mb-4 border border-primary/20">
+                        <span className="material-symbols-outlined text-3xl md:text-4xl">picture_as_pdf</span>
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Export Diagnostic Report</h3>
-                    <p className="text-slate-400 text-sm">Verify your email address before exporting.</p>
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 tracking-tight">Export Diagnostic Report</h3>
+                    <p className="text-slate-400 text-[12px] md:text-sm">Verify your email address before exporting.</p>
                 </div>
 
                 {/* Contact Verification Section */}

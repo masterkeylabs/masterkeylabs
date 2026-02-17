@@ -33,9 +33,9 @@ export default function HealthMeter({
     const largeArc = displayScore > 50 ? 1 : 0;
 
     return (
-        <div className="col-span-8 bg-carbon border border-white/10 rounded-xl p-8 relative overflow-hidden">
+        <div className="bg-carbon border border-white/10 rounded-xl p-6 md:p-8 relative overflow-hidden h-full">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full"></div>
-            <div className="flex justify-between items-start relative z-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start relative z-10 gap-4">
                 <div>
                     <h3 className="text-lg font-bold mb-1">Business Health Meter</h3>
                     <p className={`${zoneColor} font-bold text-sm flex items-center gap-1`}>
