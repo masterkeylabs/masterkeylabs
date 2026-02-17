@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [email, setEmail] = useState('');
@@ -220,8 +221,8 @@ export default function ResetPassword() {
                                         <div className="flex justify-between text-xs mb-1">
                                             <span className="text-white/40">Password Strength</span>
                                             <span className={`font-bold ${passwordStrength === 'weak' ? 'text-red-400' :
-                                                    passwordStrength === 'medium' ? 'text-yellow-400' :
-                                                        'text-green-400'
+                                                passwordStrength === 'medium' ? 'text-yellow-400' :
+                                                    'text-green-400'
                                                 }`}>
                                                 {passwordStrength.toUpperCase()}
                                             </span>
@@ -275,5 +276,20 @@ export default function ResetPassword() {
                 </p>
             </div>
         </div>
+    );
+}
+
+export default function ResetPassword() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#020617] text-white flex flex-col items-center justify-center p-6 font-sans">
+                <div className="flex flex-col items-center gap-4 animate-pulse">
+                    <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                    <p className="text-primary font-black uppercase tracking-[.2em] text-xs">Initializing Security Grid...</p>
+                </div>
+            </div>
+        }>
+            <ResetPasswordForm />
+        </Suspense>
     );
 }
