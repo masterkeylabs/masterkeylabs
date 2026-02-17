@@ -46,8 +46,10 @@ export async function POST(req) {
 
         if (isEmail && process.env.RESEND_API_KEY && business.email) {
             const resend = new Resend(process.env.RESEND_API_KEY);
+            const fromEmail = process.env.RESEND_FROM_EMAIL || 'MasterKey Labs <onboarding@resend.dev>';
+
             await resend.emails.send({
-                from: 'MasterKey Labs <onboarding@resend.dev>',
+                from: fromEmail,
                 to: [business.email],
                 subject: `Password Reset Code: ${otpCode}`,
                 html: `<div style="text-align:center; padding:20px;"><h2>Reset Password</h2><p>Your OTP is: <b>${otpCode}</b></p></div>`,

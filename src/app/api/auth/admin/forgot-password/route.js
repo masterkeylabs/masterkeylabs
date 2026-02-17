@@ -77,8 +77,10 @@ export async function POST(req) {
 
         if (process.env.RESEND_API_KEY) {
             const resend = new Resend(process.env.RESEND_API_KEY);
-            const { error } = await resend.emails.send({
-                from: 'MasterKey Labs <onboarding@resend.dev>',
+            const fromEmail = process.env.RESEND_FROM_EMAIL || 'MasterKey Labs <onboarding@resend.dev>';
+
+            const { error: sendError } = await resend.emails.send({
+                from: fromEmail,
                 to: [email],
                 subject: `Password Reset Code: ${otpCode}`,
                 html: `
@@ -107,7 +109,7 @@ export async function POST(req) {
                 `,
             });
 
-            if (!error) {
+            if (!sendError) {
                 const [user, domain] = email.split('@');
                 sentTo = `${user[0]}***${user[user.length - 1]}@${domain}`;
             }
