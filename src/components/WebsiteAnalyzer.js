@@ -121,7 +121,7 @@ export default function WebsiteAnalyzer() {
                         className="space-y-8"
                     >
                         {/* Summary Card */}
-                        <div className="bg-white/5 backdrop-blur-sm p-8 border border-white/10 rounded-2xl flex flex-col md:flex-row gap-8 items-center">
+                        <div className="bg-white/5 backdrop-blur-sm p-6 md:p-8 border border-white/10 rounded-2xl flex flex-col md:flex-row gap-8 items-center">
                             <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
                                 <svg className="w-full h-full -rotate-90">
                                     <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="8" className="text-white/5" fill="none" />
@@ -172,7 +172,7 @@ export default function WebsiteAnalyzer() {
                         </div>
 
                         {/* Category Grid */}
-                        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                             {categories.map((cat) => (
                                 <div key={cat.id} className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-col items-center text-center gap-3 hover:border-primary/30 transition-colors">
                                     <div className="p-3 bg-white/5 rounded-full text-primary">

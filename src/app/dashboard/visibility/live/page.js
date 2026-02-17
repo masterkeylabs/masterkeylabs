@@ -17,7 +17,7 @@ function LiveVisibilityPageContent() {
             subtitle="AI-Powered Technical, SEO & Conversion Efficiency Scan"
             backHref={businessId ? `/dashboard/visibility?id=${businessId}` : '/dashboard/visibility'}
         >
-            <div className="bg-carbon border border-white/10 rounded-2xl p-8 lg:p-12">
+            <div className="bg-carbon border border-white/10 rounded-2xl p-6 md:p-8 lg:p-12">
                 <WebsiteAnalyzer />
             </div>
         </FeatureLayout>

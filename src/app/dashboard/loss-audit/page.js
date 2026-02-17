@@ -102,7 +102,7 @@ function LossAuditPageContent() {
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Input Form */}
-                <div className="bg-carbon border border-white/10 rounded-xl p-8">
+                <div className="bg-carbon border border-white/10 rounded-xl p-6 md:p-8">
                     <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                         <span className="material-symbols-outlined text-alert-red">trending_down</span>
                         Enter Your Monthly Costs
@@ -174,10 +174,10 @@ function LossAuditPageContent() {
                     {results ? (
                         <>
                             {/* Headline */}
-                            <div className="bg-black border-2 border-alert-red/30 rounded-xl p-8 glow-red text-center">
+                            <div className="bg-black border-2 border-alert-red/30 rounded-xl p-6 md:p-8 glow-red text-center">
                                 <p className="text-white/50 text-sm uppercase tracking-widest mb-2">You Are Burning</p>
                                 <p className="text-5xl font-black text-alert-red tracking-tight">
-                                    {formatINRFull(results.totalBurn ?? results.total_burn)}<span className="text-xl text-white/30">/month</span>
+                                    {formatINRFull(results.totalBurn ?? results.total_burn)}<span className="text-lg md:text-xl text-white/30">/month</span>
                                 </p>
                                 <p className="text-white/40 mt-2">That is <span className="text-white font-bold">{formatINR((results.annualBurn ?? results.annual_burn))}</span> every year</p>
                             </div>
@@ -205,7 +205,7 @@ function LossAuditPageContent() {
                             </div>
 
                             {/* Recoverable + 5-year */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="bg-neon-green/10 border border-neon-green/30 rounded-xl p-6 text-center">
                                     <p className="text-[10px] uppercase tracking-widest text-neon-green font-bold mb-2">Recoverable Savings</p>
                                     <p className="text-2xl font-black text-neon-green">{formatINRFull(results.savingTarget ?? results.saving_target)}<span className="text-sm text-neon-green/60">/mo</span></p>

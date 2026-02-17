@@ -125,7 +125,7 @@ function ExportPageContent() {
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Input Form */}
-                <div className="bg-carbon border border-white/10 rounded-xl p-8">
+                <div className="bg-carbon border border-white/10 rounded-xl p-6 md:p-8">
                     <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                         <span className="material-symbols-outlined text-neon-green">public</span>
                         Product Details
@@ -153,7 +153,7 @@ function ExportPageContent() {
                                 ))}
                             </select>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Local Price / Unit (₹)</label>
                                 <input
@@ -209,7 +209,7 @@ function ExportPageContent() {
                     {results ? (
                         <>
                             {/* Revenue Comparison */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
                                     <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Local Revenue</p>
                                     <p className="text-2xl font-black text-white">{formatINR(results.localRevenue ?? results.local_revenue)}<span className="text-sm text-white/30">/mo</span></p>
@@ -239,9 +239,9 @@ function ExportPageContent() {
                             </div>
 
                             {/* Additional Income */}
-                            <div className="bg-premium-gold/10 border border-premium-gold/30 rounded-xl p-8 text-center glow-gold">
+                            <div className="bg-premium-gold/10 border border-premium-gold/30 rounded-xl p-6 md:p-8 text-center glow-gold">
                                 <p className="text-[10px] uppercase tracking-widest text-premium-gold font-bold mb-2">Additional Monthly Income</p>
-                                <p className="text-4xl font-black text-premium-gold">{formatINRFull(results.additionalIncome ?? results.additional_income)}</p>
+                                <p className="text-3xl md:text-4xl font-black text-premium-gold">{formatINRFull(results.additionalIncome ?? results.additional_income)}</p>
                                 <p className="text-white/40 mt-2 text-sm">
                                     Annual: <span className="text-white font-bold">{formatINR(results.annualAdditional ?? results.annual_additional)}</span>
                                 </p>

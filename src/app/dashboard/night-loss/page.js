@@ -108,7 +108,7 @@ function NightLossPageContent() {
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Input Form */}
-                <div className="bg-carbon border border-white/10 rounded-xl p-8">
+                <div className="bg-carbon border border-white/10 rounded-xl p-6 md:p-8">
                     <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
                         <span className="material-symbols-outlined text-alert-orange">nightlight</span>
                         Your Business Hours
@@ -126,7 +126,7 @@ function NightLossPageContent() {
                         </div>
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Business Closing Time</label>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 {CLOSING_TIMES.map(t => (
                                     <button key={t.value} type="button"
                                         className={`py-3 rounded-lg text-center transition-all border ${form.closingTime === t.value
@@ -180,10 +180,10 @@ function NightLossPageContent() {
                 <div className="space-y-6">
                     {results ? (
                         <>
-                            <div className="bg-black border-2 border-alert-orange/30 rounded-xl p-8 text-center">
+                            <div className="bg-black border-2 border-alert-orange/30 rounded-xl p-6 md:p-8 text-center">
                                 <p className="text-white/50 text-sm uppercase tracking-widest mb-2">You Are Losing Every Night</p>
-                                <p className="text-5xl font-black text-alert-orange tracking-tight">
-                                    {formatINRFull(results.monthlyLoss ?? results.monthly_loss)}<span className="text-xl text-white/30">/month</span>
+                                <p className="text-4xl md:text-5xl font-black text-alert-orange tracking-tight">
+                                    {formatINRFull(results.monthlyLoss ?? results.monthly_loss)}<span className="text-lg md:text-xl text-white/30">/month</span>
                                 </p>
                                 <p className="text-white/40 mt-2">Annual Loss: <span className="text-white font-bold">{formatINR(results.annualLoss ?? results.annual_loss)}</span></p>
                             </div>
@@ -227,6 +227,7 @@ function NightLossPageContent() {
                 </div>
             </div>
         </FeatureLayout>
+    );
     );
 }
 

@@ -55,8 +55,9 @@ function VisibilityPageContent() {
                 business_id: businessId,
                 city,
                 signals: answers,
-                percent: calc.percent,
+                score: calc.score,
                 status: calc.status,
+                status_hindi: calc.statusHindi,
                 missed_customers: calc.missedCustomers,
                 gaps: calc.gaps,
             });
@@ -68,12 +69,9 @@ function VisibilityPageContent() {
         setAnswers(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const statusStyle = results ? STATUS_COLORS[results.status] || STATUS_COLORS.INVISIBLE : null;
-    const percent = results?.percent ?? 0;
-
-    // SVG gauge calculations
-    const radius = 80;
-    const circumference = Math.PI * radius;
+    const statusStyle = results ? STATUS_COLORS[results.status] : {};
+    const percent = results ? results.score : 0;
+    const circumference = 251.327; // (80 * Math.PI) for a semi-circle of radius 80
     const dashOffset = circumference - (percent / 100) * circumference;
 
     return (
@@ -84,7 +82,7 @@ function VisibilityPageContent() {
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Checklist */}
-                <div className="bg-carbon border border-white/10 rounded-xl p-8">
+                <div className="bg-carbon border border-white/10 rounded-xl p-6 md:p-8">
                     <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
                         <span className="material-symbols-outlined text-primary">checklist</span>
                         10-Signal Audit
@@ -138,7 +136,7 @@ function VisibilityPageContent() {
                     {results ? (
                         <>
                             {/* Score Gauge */}
-                            <div className={`${statusStyle.bg} border ${statusStyle.border} rounded-xl p-8 text-center`}>
+                            <div className={`${statusStyle.bg} border ${statusStyle.border} rounded-xl p-6 md:p-8 text-center`}>
                                 <div className="relative w-48 h-28 mx-auto mb-4">
                                     <svg viewBox="0 0 200 110" className="w-full">
                                         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="12" strokeLinecap="round" />
