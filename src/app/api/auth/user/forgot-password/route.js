@@ -40,30 +40,52 @@ export async function POST(req) {
 
         if (otpError) throw otpError;
 
-        // 4. Send OTP (Simulated/Resend)
+        // 4. Send OTP (Strict Delivery via Resend)
         let sentTo = null;
         const isEmail = identifier.includes('@');
 
         if (isEmail && process.env.RESEND_API_KEY && business.email) {
+            console.log(`📡 Attempting Resend for: ${business.email}`);
             const resend = new Resend(process.env.RESEND_API_KEY);
             const fromEmail = process.env.RESEND_FROM_EMAIL || 'MasterKey Labs <onboarding@resend.dev>';
 
-            await resend.emails.send({
+            const { data, error: sendError } = await resend.emails.send({
                 from: fromEmail,
                 to: [business.email],
                 subject: `Password Reset Code: ${otpCode}`,
-                html: `<div style="text-align:center; padding:20px;"><h2>Reset Password</h2><p>Your OTP is: <b>${otpCode}</b></p></div>`,
+                html: `
+                    <div style="font-family: sans-serif; color: #333; text-align: center; padding: 40px; background: #020617;">
+                        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,229,255,0.2); border-radius: 20px; padding: 40px; max-width: 500px; margin: 0 auto;">
+                            <h2 style="color: #00e5ff;">MasterKey Labs</h2>
+                            <p style="color: #fff; font-size: 16px;">Use the code below to reset your password:</p>
+                            <div style="font-size: 32px; font-weight: bold; letter-spacing: 10px; color: #00e5ff; margin: 20px 0; padding: 20px; border: 1px solid rgba(0,229,255,0.3); border-radius: 12px;">
+                                ${otpCode}
+                            </div>
+                            <p style="font-size: 12px; color: #777;">This code will expire in 10 minutes.</p>
+                        </div>
+                    </div>
+                `,
             });
-            const [user, domain] = business.email.split('@');
-            sentTo = `${user[0]}***${user[user.length - 1]}@${domain}`;
+
+            if (sendError) {
+                console.error('❌ Resend API Error:', sendError);
+            } else {
+                console.log('✅ Resend success:', data);
+                const [user, domain] = business.email.split('@');
+                sentTo = `${user[0]}***${user[user.length - 1]}@${domain}`;
+            }
         }
 
-        // Console log for development
-        console.log(`🔑 USER PASSWORD RESET OTP: ${otpCode} FOR: ${identifier}`);
+        // Console log for development / debugging
+        console.log('\n' + '='.repeat(40));
+        console.log(`🔑 USER OTP: ${otpCode}`);
+        console.log(`📧 For: ${identifier}`);
+        if (isEmail && !sentTo) console.log('⚠️  EMAIL FAILED OR RESEND NOT CONFIGURED');
+        console.log('='.repeat(40) + '\n');
 
         return NextResponse.json({
             success: true,
-            message: 'OTP sent successfully',
+            message: sentTo ? 'OTP sent successfully' : 'OTP generated (Email delivery failed status)',
             sentTo: sentTo || (isEmail ? 'your email' : 'your mobile')
         });
 

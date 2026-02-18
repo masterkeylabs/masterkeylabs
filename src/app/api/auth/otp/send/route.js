@@ -111,7 +111,7 @@ export async function POST(req) {
                 const resend = new Resend(process.env.RESEND_API_KEY);
                 const fromEmail = process.env.RESEND_FROM_EMAIL || 'MasterKey Labs <onboarding@resend.dev>';
 
-                const { error: sendError } = await resend.emails.send({
+                const { data, error: sendError } = await resend.emails.send({
                     from: fromEmail,
                     to: [business.email],
                     subject: `Your Login OTP: ${otpCode}`,
@@ -127,7 +127,10 @@ export async function POST(req) {
                     `,
                 });
 
-                if (!sendError) {
+                if (sendError) {
+                    console.error('❌ Login OTP Resend API Error:', sendError);
+                } else {
+                    console.log('✅ Login OTP Resend Success:', data);
                     const [user, domain] = business.email.split('@');
                     sentTo = `${user[0]}***${user[user.length - 1]}@${domain}`;
                 }
