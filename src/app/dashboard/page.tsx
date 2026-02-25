@@ -1,0 +1,67 @@
+import { DashboardSidebar } from '@/components/tx/DashboardSidebar';
+import { HealthMeter } from '@/components/tx/HealthMeter';
+import { AssetCard } from '@/components/tx/AssetCard';
+import ExtinctionTimer from '@/components/ExtinctionTimer';
+import { translations } from '@/lib/translations';
+
+export default function DashboardLayoutV2() {
+    const businessName = "Masterkey User"; // Standard fallback
+    const t = translations['en'];
+
+    return (
+        <div className="flex min-h-screen bg-[#050505] text-white font-sans overflow-hidden">
+            {/* Required Sidebar with 3 links and online status */}
+            <DashboardSidebar />
+
+            <main className="flex-1 flex flex-col p-6 md:p-12 h-screen overflow-y-auto w-full relative z-10 selection:bg-ios-blue/30 selection:text-ios-blue">
+
+                {/* Deep space radial glow */}
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-500/5 blur-[150px] rounded-full opacity-60 pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+
+                {/* Main Content Area Header */}
+                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 pb-6 border-b border-white/5 relative z-20 mt-4">
+                    <div>
+                        <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-white mb-2">
+                            Welcome back, <span className="text-gray-400">{businessName}</span>
+                        </h1>
+                        <p className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mt-3">Diagnostic Command Center</p>
+                    </div>
+
+                    {/* Pulsing Orange 'Immediate Action Required' */}
+                    <div className="flex items-center gap-3 bg-orange-950/40 px-5 py-3 rounded-xl border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.1)] shrink-0 self-start md:self-auto">
+                        <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)]"></span>
+                        </span>
+                        <span className="text-orange-500 text-[10px] font-black uppercase tracking-[0.15em] shrink-0">
+                            Immediate Action Required
+                        </span>
+                    </div>
+                </header>
+
+                {/* 12-Column Grid Area */}
+                <section className="grid grid-cols-1 xl:grid-cols-12 gap-8 w-full max-w-[1400px] mx-auto relative z-20">
+
+                    {/* Row 1 / Spanning 8 columns */}
+                    <div className="xl:col-span-8 animate-fade-in opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+                        <HealthMeter months={18} />
+                    </div>
+
+                    {/* Row 1 / Spanning 4 columns */}
+                    <div className="xl:col-span-4 animate-fade-in opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                        <AssetCard subsidy="12,50,000" />
+                    </div>
+
+                    {/* Row 2 / Spanning all 12 columns / Psychological Closer */}
+                    <div className="xl:col-span-12 animate-fade-in opacity-0 mt-8" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+                        <ExtinctionTimer targetDate={undefined} t={t} />
+                    </div>
+
+                </section>
+
+            </main>
+
+            {/* FloatingFAB will be provided by old component tree if needed, or removed. */}
+        </div>
+    );
+}

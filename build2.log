@@ -1,0 +1,33 @@
+
+> masterkeylabsv2.0@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 10.5s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/12) ...
+  Generating static pages using 15 workers (3/12) 
+  Generating static pages using 15 workers (6/12) 
+  Generating static pages using 15 workers (9/12) 
+✓ Generating static pages using 15 workers (12/12) in 2.3s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin/dashboard
+├ ○ /admin/login
+├ ○ /dashboard
+├ ○ /dashboard/export
+├ ○ /dashboard/loss-audit
+├ ○ /dashboard/night-loss
+├ ○ /dashboard/v2
+└ ○ /dashboard/visibility
+
+
+○  (Static)  prerendered as static content
+
