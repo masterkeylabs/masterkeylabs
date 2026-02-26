@@ -7,7 +7,9 @@ import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { translations } from '@/lib/translations';
 
-export default function ExportPage() {
+import { Suspense } from 'react';
+
+function ExportContent() {
     const { business, loading } = useAuth();
     const businessId = business?.id;
 
@@ -245,5 +247,13 @@ export default function ExportPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+export default function ExportPage() {
+    return (
+        <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+            <ExportContent />
+        </Suspense>
     );
 }

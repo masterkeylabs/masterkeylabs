@@ -45,6 +45,7 @@ export default function RescueArchitecture({ businessId }) {
             viewport={{ once: true, margin: "0px 0px -50px 0px" }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="w-full relative flex flex-col items-center z-20 mb-8"
+            id="schedule-review"
         >
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#020617]/90 backdrop-blur-2xl p-1 shadow-[0_0_120px_rgba(0,122,255,0.15)] w-full">
                 {/* Visual Flair */}

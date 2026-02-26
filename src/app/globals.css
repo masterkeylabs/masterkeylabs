@@ -74,6 +74,18 @@ body {
   outline: none;
 }
 
+/* Override browser autofill white background */
+.ios-input:-webkit-autofill,
+.ios-input:-webkit-autofill:hover,
+.ios-input:-webkit-autofill:focus,
+.ios-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(20, 20, 30, 0.98) inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* === Refined Glass Effect === */
 .glass {
   background: rgba(255, 255, 255, 0.04);
@@ -166,6 +178,19 @@ body {
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE / Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome / Safari */
 }
 
 /* Clean up old cyberpunk stuff */

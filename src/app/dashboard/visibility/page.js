@@ -15,9 +15,12 @@ const STATUS_COLORS = {
     INVISIBLE: { bg: 'bg-alert-red/10', border: 'border-alert-red/30', text: 'text-alert-red', fill: '#ff3131' },
 };
 
-export default function VisibilityPage() {
-    const { business, loading } = useAuth();
-    const businessId = business?.id;
+import { Suspense } from 'react';
+
+function VisibilityContent() {
+    const { business } = useAuth();
+    const searchParams = useSearchParams();
+    const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [lang, setLang] = useState('en');
     const t = translations[lang];
@@ -40,7 +43,10 @@ export default function VisibilityPage() {
                 .limit(1)
                 .single();
             if (data) {
-                setAnswers(data.signals || {});
+                // Merge saved signals with the full default set to keep all keys present
+                const defaultAnswers = Object.fromEntries(VISIBILITY_SIGNALS.map(s => [s.id, false]));
+                const savedSignals = data.signals || {};
+                setAnswers({ ...defaultAnswers, ...savedSignals });
                 setCity(data.city || '');
                 setResults(data);
             }
@@ -54,7 +60,7 @@ export default function VisibilityPage() {
 
         if (businessId) {
             setSaving(true);
-            await supabase.from('visibility_results').insert({
+            const payload = {
                 business_id: businessId,
                 city,
                 signals: answers,
@@ -62,7 +68,22 @@ export default function VisibilityPage() {
                 status: calc.status,
                 missed_customers: calc.missedCustomers,
                 gaps: calc.gaps,
-            });
+            };
+
+            const { data: existing } = await supabase
+                .from('visibility_results')
+                .select('id')
+                .eq('business_id', businessId)
+                .maybeSingle();
+
+            if (existing) {
+                await supabase
+                    .from('visibility_results')
+                    .update(payload)
+                    .eq('id', existing.id);
+            } else {
+                await supabase.from('visibility_results').insert(payload);
+            }
             setSaving(false);
         }
     };
@@ -97,13 +118,57 @@ export default function VisibilityPage() {
 
                     <div>
                         <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Your City</label>
-                        <input
-                            type="text"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all mb-5"
-                            placeholder="e.g. Indore, Mumbai"
+                        <select
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all mb-5 appearance-none cursor-pointer"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
-                        />
+                        >
+                            <option value="" className="bg-[#050505]">— Select your city —</option>
+                            <optgroup label="Metro Cities" className="bg-[#050505]">
+                                <option value="Mumbai" className="bg-[#050505]">Mumbai</option>
+                                <option value="Delhi" className="bg-[#050505]">Delhi</option>
+                                <option value="Bengaluru" className="bg-[#050505]">Bengaluru</option>
+                                <option value="Hyderabad" className="bg-[#050505]">Hyderabad</option>
+                                <option value="Chennai" className="bg-[#050505]">Chennai</option>
+                                <option value="Kolkata" className="bg-[#050505]">Kolkata</option>
+                                <option value="Pune" className="bg-[#050505]">Pune</option>
+                                <option value="Ahmedabad" className="bg-[#050505]">Ahmedabad</option>
+                            </optgroup>
+                            <optgroup label="Tier 2 Cities" className="bg-[#050505]">
+                                <option value="Indore" className="bg-[#050505]">Indore</option>
+                                <option value="Jaipur" className="bg-[#050505]">Jaipur</option>
+                                <option value="Lucknow" className="bg-[#050505]">Lucknow</option>
+                                <option value="Surat" className="bg-[#050505]">Surat</option>
+                                <option value="Nagpur" className="bg-[#050505]">Nagpur</option>
+                                <option value="Bhopal" className="bg-[#050505]">Bhopal</option>
+                                <option value="Chandigarh" className="bg-[#050505]">Chandigarh</option>
+                                <option value="Kochi" className="bg-[#050505]">Kochi</option>
+                                <option value="Coimbatore" className="bg-[#050505]">Coimbatore</option>
+                                <option value="Vadodara" className="bg-[#050505]">Vadodara</option>
+                                <option value="Rajkot" className="bg-[#050505]">Rajkot</option>
+                                <option value="Ludhiana" className="bg-[#050505]">Ludhiana</option>
+                                <option value="Agra" className="bg-[#050505]">Agra</option>
+                                <option value="Nashik" className="bg-[#050505]">Nashik</option>
+                                <option value="Varanasi" className="bg-[#050505]">Varanasi</option>
+                                <option value="Patna" className="bg-[#050505]">Patna</option>
+                                <option value="Ranchi" className="bg-[#050505]">Ranchi</option>
+                                <option value="Guwahati" className="bg-[#050505]">Guwahati</option>
+                                <option value="Visakhapatnam" className="bg-[#050505]">Visakhapatnam</option>
+                                <option value="Mysuru" className="bg-[#050505]">Mysuru</option>
+                                <option value="Jabalpur" className="bg-[#050505]">Jabalpur</option>
+                                <option value="Jodhpur" className="bg-[#050505]">Jodhpur</option>
+                                <option value="Raipur" className="bg-[#050505]">Raipur</option>
+                                <option value="Gwalior" className="bg-[#050505]">Gwalior</option>
+                                <option value="Amritsar" className="bg-[#050505]">Amritsar</option>
+                                <option value="Dehradun" className="bg-[#050505]">Dehradun</option>
+                                <option value="Bhubaneswar" className="bg-[#050505]">Bhubaneswar</option>
+                                <option value="Thiruvananthapuram" className="bg-[#050505]">Thiruvananthapuram</option>
+                                <option value="Noida" className="bg-[#050505]">Noida</option>
+                                <option value="Gurgaon" className="bg-[#050505]">Gurgaon</option>
+                                <option value="Faridabad" className="bg-[#050505]">Faridabad</option>
+                                <option value="Ghaziabad" className="bg-[#050505]">Ghaziabad</option>
+                            </optgroup>
+                        </select>
                     </div>
 
                     <div className="space-y-2 mb-6">
@@ -115,10 +180,14 @@ export default function VisibilityPage() {
                                 onClick={() => toggleSignal(signal.id)}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${answers[signal.id]
-                                        ? 'border-primary bg-primary'
-                                        : 'border-white/30'}`}>
-                                        {answers[signal.id] && <span className="material-symbols-outlined text-background-dark text-sm">check</span>}
+                                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${answers[signal.id]
+                                        ? 'border-cyan-500 bg-cyan-500'
+                                        : 'border-white/30 bg-transparent'}`}>
+                                        {answers[signal.id] && (
+                                            <svg viewBox="0 0 12 12" className="w-3 h-3" fill="none">
+                                                <path d="M2 6l3 3 5-5" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
                                     </div>
                                     <span className={`text-sm ${answers[signal.id] ? 'text-white' : 'text-white/60'}`}>{signal.label}</span>
                                 </div>
@@ -130,7 +199,7 @@ export default function VisibilityPage() {
                     <button
                         onClick={handleScan}
                         disabled={saving}
-                        className="w-full bg-primary hover:bg-cyan-400 text-background-dark font-bold py-4 rounded-lg uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                        className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-4 rounded-lg uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.3)]"
                     >
                         <span className="material-symbols-outlined">radar</span>
                         {saving ? 'Saving...' : 'Run Visibility Scan'}
@@ -198,5 +267,13 @@ export default function VisibilityPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+export default function VisibilityPage() {
+    return (
+        <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+            <VisibilityContent />
+        </Suspense>
     );
 }

@@ -7,9 +7,12 @@ import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { translations } from '@/lib/translations';
 
-export default function NightLossPage() {
-    const { business, loading } = useAuth();
-    const businessId = business?.id;
+import { Suspense } from 'react';
+
+function NightLossContent() {
+    const { business } = useAuth();
+    const searchParams = useSearchParams();
+    const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [lang, setLang] = useState('en');
     const t = translations[lang];
@@ -57,7 +60,7 @@ export default function NightLossPage() {
 
         if (businessId) {
             setSaving(true);
-            await supabase.from('night_loss_results').insert({
+            const payload = {
                 business_id: businessId,
                 daily_inquiries: form.dailyInquiries,
                 closing_time: form.closingTime,
@@ -69,7 +72,22 @@ export default function NightLossPage() {
                 potential_revenue: calc.potentialRevenue,
                 monthly_loss: calc.monthlyLoss,
                 annual_loss: calc.annualLoss,
-            });
+            };
+
+            const { data: existing } = await supabase
+                .from('night_loss_results')
+                .select('id')
+                .eq('business_id', businessId)
+                .maybeSingle();
+
+            if (existing) {
+                await supabase
+                    .from('night_loss_results')
+                    .update(payload)
+                    .eq('id', existing.id);
+            } else {
+                await supabase.from('night_loss_results').insert(payload);
+            }
             setSaving(false);
         }
     };
@@ -161,7 +179,7 @@ export default function NightLossPage() {
                         </div>
                         <button
                             type="submit" disabled={saving}
-                            className="w-full bg-alert-orange hover:bg-orange-500 text-white font-bold py-4 rounded-lg uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                            className="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-4 rounded-lg uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
                         >
                             <span className="material-symbols-outlined">calculate</span>
                             {saving ? 'Saving...' : 'Calculate Night Loss'}
@@ -220,5 +238,13 @@ export default function NightLossPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+export default function NightLossPage() {
+    return (
+        <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+            <NightLossContent />
+        </Suspense>
     );
 }

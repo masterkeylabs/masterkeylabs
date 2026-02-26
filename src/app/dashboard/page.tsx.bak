@@ -2,6 +2,8 @@ import React from 'react';
 import { DashboardSidebar } from '@/components/tx/DashboardSidebar';
 import { HealthMeter } from '@/components/tx/HealthMeter';
 import { AssetCard } from '@/components/tx/AssetCard';
+import { ExtinctionTimer } from '@/components/tx/ExtinctionTimer';
+import { AIConsultantFAB } from '@/components/tx/AIConsultantFAB';
 
 export default function DashboardLayoutV2() {
     const businessName = "Masterkey User"; // Standard fallback
@@ -50,8 +52,17 @@ export default function DashboardLayoutV2() {
                         <AssetCard subsidy="12,50,000" />
                     </div>
 
+                    {/* Row 2 / Spanning all 12 columns / Psychological Closer */}
+                    <div className="xl:col-span-12 animate-fade-in opacity-0 mt-8" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+                        <ExtinctionTimer />
+                    </div>
+
                 </section>
+
             </main>
+
+            {/* Slide-in Bot Assistant positioned fixed at bottom right */}
+            <AIConsultantFAB />
         </div>
     );
 }

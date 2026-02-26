@@ -7,6 +7,7 @@ import TransformationRoadmap from '@/components/TransformationRoadmap';
 import HealthMeter from '@/components/HealthMeter';
 import FloatingFAB from '@/components/FloatingFAB';
 import RescueArchitecture from '@/components/RescueArchitecture';
+import BusinessProfile from '@/components/BusinessProfile';
 import { translations } from '@/lib/translations';
 
 export default function DashboardGrid({ business, computedData }) {
@@ -52,6 +53,9 @@ export default function DashboardGrid({ business, computedData }) {
 
                     {/* Grid Layout */}
                     <div className="space-y-8">
+
+                        {/* New Business Profile Block */}
+                        <BusinessProfile business={business} />
 
                         {/* Highlighting the 4 deterministic calculations using the DiagnosticGrid */}
                         <section className="animate-fade-in opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>

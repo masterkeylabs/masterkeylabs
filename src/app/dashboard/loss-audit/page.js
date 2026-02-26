@@ -7,9 +7,12 @@ import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { translations } from '@/lib/translations';
 
-export default function LossAuditPage() {
-    const { business, loading } = useAuth();
-    const businessId = business?.id;
+import { Suspense } from 'react';
+
+function LossAuditContent() {
+    const { business } = useAuth();
+    const searchParams = useSearchParams();
+    const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [lang, setLang] = useState('en');
     const t = translations[lang];
@@ -19,6 +22,9 @@ export default function LossAuditPage() {
         marketingBudget: '',
         opsOverheads: '',
         industry: 'manufacturing',
+        manualHours: 20,
+        hasCRM: false,
+        hasERP: false,
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -40,6 +46,9 @@ export default function LossAuditPage() {
                     marketingBudget: data.marketing_budget || '',
                     opsOverheads: data.ops_overheads || '',
                     industry: data.industry || 'manufacturing',
+                    manualHours: data.manual_hours || 20,
+                    hasCRM: data.has_crm || false,
+                    hasERP: data.has_erp || false,
                 });
                 setResults(data);
             }
@@ -50,28 +59,40 @@ export default function LossAuditPage() {
     const handleCalculate = async (e) => {
         e.preventDefault();
         const staff = parseInt(form.staffSalary) || 0;
-        const marketing = parseInt(form.marketingBudget) || 0;
         const ops = parseInt(form.opsOverheads) || 0;
+        const marketing = parseInt(form.marketingBudget) || 0;
 
-        const calc = calculateLossAudit(staff, marketing, ops, form.industry);
+        const calc = calculateLossAudit(staff, ops, marketing, {
+            manualHoursPerWeek: form.manualHours,
+            hasCRM: form.hasCRM,
+            hasERP: form.hasERP
+        });
         setResults(calc);
 
         if (businessId) {
             setSaving(true);
-            await supabase.from('loss_audit_results').insert({
+
+            // Only save columns that are guaranteed to exist in the table.
+            // Run audit_tables_migration.sql in Supabase to unlock full persistence.
+            const minPayload = {
                 business_id: businessId,
                 staff_salary: staff,
                 marketing_budget: marketing,
                 ops_overheads: ops,
-                industry: form.industry,
-                staff_waste: calc.staffWaste,
-                marketing_waste: calc.marketingWaste,
-                ops_waste: calc.opsWaste,
-                total_burn: calc.totalBurn,
-                annual_burn: calc.annualBurn,
-                saving_target: calc.savingTarget,
-                five_year_cost: calc.fiveYearCost,
-            });
+            };
+
+            const { data: existing } = await supabase
+                .from('loss_audit_results')
+                .select('id')
+                .eq('business_id', businessId)
+                .maybeSingle();
+
+            if (existing) {
+                await supabase.from('loss_audit_results').update(minPayload).eq('id', existing.id);
+            } else {
+                await supabase.from('loss_audit_results').insert(minPayload);
+            }
+
             setSaving(false);
         }
     };
@@ -92,64 +113,101 @@ export default function LossAuditPage() {
                         <span className="material-symbols-outlined text-alert-red">trending_down</span>
                         Enter Your Monthly Costs
                     </h3>
-                    <form onSubmit={handleCalculate} className="space-y-5">
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Staff Salary (Monthly Total)</label>
-                            <input
-                                type="number"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all"
-                                placeholder="₹ 3,00,000"
-                                min="5000" max="5000000"
-                                value={form.staffSalary}
-                                onChange={(e) => setForm({ ...form, staffSalary: e.target.value })}
-                                required
-                            />
+                    <form onSubmit={handleCalculate} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Staff Salary (Monthly)</label>
+                                <input
+                                    type="number"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
+                                    placeholder="₹ 3,00,000"
+                                    value={form.staffSalary}
+                                    onChange={(e) => setForm({ ...form, staffSalary: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Marketing Budget</label>
+                                <input
+                                    type="number"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
+                                    placeholder="₹ 50,000"
+                                    value={form.marketingBudget}
+                                    onChange={(e) => setForm({ ...form, marketingBudget: e.target.value })}
+                                    required
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Marketing Budget (Monthly)</label>
-                            <input
-                                type="number"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all"
-                                placeholder="₹ 50,000"
-                                min="1000" max="2000000"
-                                value={form.marketingBudget}
-                                onChange={(e) => setForm({ ...form, marketingBudget: e.target.value })}
-                                required
-                            />
-                        </div>
+
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Operations & Overheads</label>
                             <input
                                 type="number"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all"
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
                                 placeholder="₹ 2,00,000"
-                                min="1000" max="5000000"
                                 value={form.opsOverheads}
                                 onChange={(e) => setForm({ ...form, opsOverheads: e.target.value })}
                                 required
                             />
                         </div>
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Industry</label>
-                            <select
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 appearance-none cursor-pointer"
-                                value={form.industry}
-                                onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                            >
-                                <option value="manufacturing" className="bg-background-dark">Manufacturing</option>
-                                <option value="retail" className="bg-background-dark">Retail</option>
-                                <option value="services" className="bg-background-dark">Services</option>
-                                <option value="fb" className="bg-background-dark">Food & Beverage</option>
-                                <option value="realestate" className="bg-background-dark">Real Estate</option>
-                            </select>
+
+                        <div className="pt-4 border-t border-white/5">
+                            <label className="text-[10px] text-ios-blue uppercase tracking-widest block mb-4 font-bold">Advanced Diagnostic Metrics</label>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <label className="text-[11px] text-white/80 font-medium">Weekly Manual Work Hours (per employee)</label>
+                                        <span className="text-ios-blue font-bold font-mono">{form.manualHours || 20}h</span>
+                                    </div>
+                                    <input
+                                        type="range" min="0" max="60"
+                                        className="w-full accent-ios-blue h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                                        value={form.manualHours || 20}
+                                        onChange={(e) => setForm({ ...form, manualHours: parseInt(e.target.value) })}
+                                    />
+                                    <p className="text-[9px] text-white/30 mt-1 italic">Hours spent on spreadsheets, manual data entry, and repetitive follow-ups.</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setForm({ ...form, hasCRM: !form.hasCRM })}
+                                        className={`flex items-center justify-between p-4 rounded-xl border transition-all ${form.hasCRM ? 'bg-ios-blue/10 border-ios-blue/50' : 'bg-white/5 border-white/10 opacity-60'}`}
+                                    >
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-bold text-white uppercase tracking-tight">CRM Ready</p>
+                                            <p className="text-[9px] text-white/40">Using Sales Hub</p>
+                                        </div>
+                                        <span className={`material-symbols-outlined text-sm ${form.hasCRM ? 'text-ios-blue' : 'text-white/20'}`}>
+                                            {form.hasCRM ? 'check_circle' : 'radio_button_unchecked'}
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setForm({ ...form, hasERP: !form.hasERP })}
+                                        className={`flex items-center justify-between p-4 rounded-xl border transition-all ${form.hasERP ? 'bg-ios-blue/10 border-ios-blue/50' : 'bg-white/5 border-white/10 opacity-60'}`}
+                                    >
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-bold text-white uppercase tracking-tight">ERP/Inventory</p>
+                                            <p className="text-[9px] text-white/40">Automated Ops</p>
+                                        </div>
+                                        <span className={`material-symbols-outlined text-sm ${form.hasERP ? 'text-ios-blue' : 'text-white/20'}`}>
+                                            {form.hasERP ? 'check_circle' : 'radio_button_unchecked'}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+
                         <button
                             type="submit"
                             disabled={saving}
-                            className="w-full bg-alert-red hover:bg-red-500 text-white font-bold py-4 rounded-lg uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                            className="w-full bg-ios-blue hover:bg-ios-blue/80 text-white font-bold py-5 rounded-2xl uppercase tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,132,255,0.2)] mt-8"
                         >
-                            <span className="material-symbols-outlined">calculate</span>
-                            {saving ? 'Saving...' : 'Calculate Monthly Burn'}
+                            <span className="material-symbols-outlined">analytics</span>
+                            {saving ? 'Synchronizing...' : 'Calibrate Loss Audit'}
                         </button>
                     </form>
                 </div>
@@ -210,5 +268,13 @@ export default function LossAuditPage() {
                 </div>
             </div>
         </FeatureLayout>
+    );
+}
+
+export default function LossAuditPage() {
+    return (
+        <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+            <LossAuditContent />
+        </Suspense>
     );
 }

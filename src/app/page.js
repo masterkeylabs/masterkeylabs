@@ -21,10 +21,22 @@ export default function Home() {
             <header className="relative z-50 pt-8 pb-4">
                 {/* Navigation — top right language toggle */}
                 <div className="absolute top-4 right-6 md:right-12 flex items-center gap-4 z-50">
-                    <div className="flex bg-white/5 rounded-full p-1 border border-white/10 backdrop-blur-md">
-                        <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>EN</button>
-                        <button onClick={() => setLang('hinglish')} className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>HINGLISH</button>
-                        <button onClick={() => setLang('hi')} className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>हिंदी</button>
+                    <div className="flex bg-white/5 rounded-full p-1 border border-white/10 backdrop-blur-md items-center shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+                        {/* Language Toggles */}
+                        <div className="flex bg-white/5 rounded-full p-0.5 mr-2">
+                            <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>EN</button>
+                            <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HI</button>
+                        </div>
+
+                        <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
+
+                        <Link href="/login" className="px-3 py-1.5 text-[10px] font-black text-white/60 hover:text-white transition-all uppercase tracking-widest">
+                            {lang === 'hi' ? 'लॉगिन' : 'LOGIN'}
+                        </Link>
+
+                        <Link href="/signup" className="ml-1 px-4 py-1.5 text-[10px] font-black bg-white/10 hover:bg-white/20 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-inner">
+                            {lang === 'hi' ? 'साइन अप' : 'SIGN UP'}
+                        </Link>
                     </div>
                 </div>
 

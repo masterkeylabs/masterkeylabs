@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { calculateLossAudit, calculateNightLoss, calculateAIThreat } from '@/lib/calculations';
+import { calculateLossAudit, calculateNightLoss, calculateAIThreat, calculateVisibility } from '@/lib/calculations';
+import Link from 'next/link';
 
 export default function IntakeWizard({ t }) {
     const router = useRouter();
@@ -20,6 +21,7 @@ export default function IntakeWizard({ t }) {
         marketingSpend: 10000,
         opsSpend: 50000,
         contactAfter6: 'ignored',
+        businessName: '',
         contactName: '',
         whatsapp: '',
         email: ''
@@ -44,20 +46,39 @@ export default function IntakeWizard({ t }) {
         // Calculations
         const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
         const staffCost = empCount * 25000;
-        const loss = calculateLossAudit(staffCost, Number(formData.marketingSpend), Number(formData.opsSpend), formData.vertical);
+        const lossData = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
+            manualHoursPerWeek: 35,
+            hasCRM: false,
+            hasERP: false
+        });
 
         const cvrMap = { 'ignored': 'none', 'manual': '1-4hrs', 'ai': 'instant' };
         const night = calculateNightLoss(15, '6pm', 5000, cvrMap[formData.contactAfter6] || 'none');
 
-        const threat = calculateAIThreat({
-            industry: formData.vertical,
-            businessAge: 5,
-            employees: formData.employees,
-            salesChannels: ['walkin'],
-            usesSoftware: formData.contactAfter6 === 'ai',
-        });
+        const threat = calculateAIThreat(
+            formData.vertical,
+            formData.contactAfter6 === 'ai'
+        );
 
-        setResults({ loss, night, threat });
+        setResults({
+            loss: {
+                staffWaste: lossData.staffWaste,
+                marketingWaste: lossData.marketingWaste,
+                opsWaste: lossData.opsWaste,
+                totalBurn: lossData.totalBurn,
+                annualBurn: lossData.annualBurn,
+                savingTarget: lossData.savingTarget
+            },
+            night: {
+                lostRevenue: night
+            },
+            threat: {
+                score: threat,
+                yearsLeft: Math.round((100 - threat) / 10),
+                threatLevel: threat > 80 ? 'CRITICAL' : threat > 50 ? 'HIGH' : 'MODERATE',
+                timelineDesc: 'Accelerated disruption'
+            }
+        });
 
         await new Promise(r => setTimeout(r, 2500));
         setStep(5); // Lead Gate
@@ -90,6 +111,26 @@ export default function IntakeWizard({ t }) {
         setSubmitting(true);
 
         try {
+            // ── Duplicate phone & email check ─────────────────────────────
+            const tenDigit = formData.whatsapp.replace(/\D/g, '').slice(-10);
+
+            const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
+                supabase.from('businesses').select('id').ilike('phone', `%${tenDigit}%`).limit(1),
+                supabase.from('businesses').select('id').ilike('email', formData.email.trim()).limit(1),
+            ]);
+
+            if (phoneDupe && phoneDupe.length > 0) {
+                setErrorMsg('📵 This mobile number is already registered. Please log in or contact support.');
+                setSubmitting(false);
+                return;
+            }
+            if (emailDupe && emailDupe.length > 0) {
+                setErrorMsg('📧 This email is already registered. Please log in or use a different email.');
+                setSubmitting(false);
+                return;
+            }
+            // ──────────────────────────────────────────────────────────────
+
             const tempPassword = 'Mk' + Date.now() + '!';
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: formData.email,
@@ -109,8 +150,8 @@ export default function IntakeWizard({ t }) {
 
             // Base insert data
             let insertData = {
-                entity_name: formData.contactName + " Business",
-                classification: formData.vertical,
+                entity_name: formData.businessName || (formData.contactName + " Business"),
+                classification: formData.vertical + "::" + formData.revenueBracket,
                 scalability: formData.employees,
                 owner_name: formData.contactName,
                 email: formData.email,
@@ -141,15 +182,49 @@ export default function IntakeWizard({ t }) {
             if (error) throw error;
 
             if (newBiz && results) {
-                await supabase.from('loss_audit_results').insert({
+                // ── Log to user_signups table ──────────────────────────────
+                await supabase.from('user_signups').insert({
                     business_id: newBiz.id,
-                    staff_waste_monthly: results.loss.staffWaste,
-                    marketing_waste_monthly: results.loss.marketingWaste,
-                    ops_waste_monthly: results.loss.opsWaste,
-                    total_burn: results.loss.totalBurn,
-                    annual_burn: results.loss.annualBurn,
-                    saving_target: results.loss.savingTarget
+                    full_name: formData.contactName,
+                    email: formData.email,
+                    phone: formData.whatsapp,
+                    business_name: formData.businessName || (formData.contactName + ' Business'),
+                    industry: formData.vertical,
+                    revenue_bracket: formData.revenueBracket,
+                    employees: formData.employees,
+                    signed_up_at: new Date().toISOString(),
+                }).then(({ error: signupErr }) => {
+                    if (signupErr) console.warn('[IntakeWizard] user_signups insert skipped:', signupErr.message);
                 });
+                // ──────────────────────────────────────────────────────────
+
+                const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
+                const staffCost = empCount * 25000;
+
+                // 1. Save Loss Audit Results (minimal safe columns only)
+                const lossInsert = await supabase.from('loss_audit_results').insert({
+                    business_id: newBiz.id,
+                    staff_salary: staffCost,
+                    marketing_budget: Number(formData.marketingSpend),
+                    ops_overheads: Number(formData.opsSpend),
+                });
+                if (lossInsert.error) {
+                    console.error('[IntakeWizard] loss_audit_results insert error:', lossInsert.error.message);
+                }
+
+                // 2. Save Visibility Results (Added)
+                const visResult = calculateVisibility([], formData.location || '');
+                await supabase.from('visibility_results').insert({
+                    business_id: newBiz.id,
+                    city: formData.location || '',
+                    signals: [],
+                    percent: visResult.percent,
+                    status: visResult.status,
+                    missed_customers: visResult.missedCustomers,
+                    gaps: visResult.gaps
+                });
+
+                // 3. Save AI Threat Results
                 await supabase.from('ai_threat_results').insert({
                     business_id: newBiz.id,
                     score: results.threat.score,
@@ -157,7 +232,19 @@ export default function IntakeWizard({ t }) {
                     threat_level: results.threat.threatLevel,
                     timeline_desc: results.threat.timelineDesc,
                     industry: formData.vertical,
-                    modifiers: { businessAge: 5, usesSoftware: formData.contactAfter6 === 'ai', salesChannels: ['walkin'] }
+                    is_omnichannel: formData.contactAfter6 === 'ai'
+                });
+
+                // 3. Save Night Loss Results
+                await supabase.from('night_loss_results').insert({
+                    business_id: newBiz.id,
+                    daily_inquiries: 15, // Baseline from wizard
+                    closing_time: '6pm',
+                    profit_per_sale: 25000,
+                    response_time: formData.contactAfter6,
+                    monthly_days: 26,
+                    monthly_loss: results.night.lostRevenue.monthlyLoss,
+                    annual_loss: results.night.lostRevenue.monthlyLoss * 12
                 });
             }
 
@@ -346,13 +433,14 @@ export default function IntakeWizard({ t }) {
                             </motion.div>
                         )}
                         {step === 5 && (
-                            <motion.div key="w5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4 flex flex-col justify-center absolute inset-0 bg-background-dark/95 backdrop-blur-md p-8 md:p-10 z-50">
+                            <motion.div key="w5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4 flex flex-col justify-start overflow-y-auto scrollbar-hide absolute inset-0 bg-background-dark/95 backdrop-blur-md px-8 py-6 md:px-10 md:py-8 z-50">
                                 <div className="p-4 bg-ios-orange/10 border border-ios-orange/20 rounded-xl mb-2 text-center">
                                     <p className="text-[11px] text-ios-orange font-bold uppercase tracking-wider mb-1">CRITICAL LEAKS DETECTED</p>
                                     <p className="text-xs text-white/80 leading-relaxed font-medium">Your comprehensive Extinction Report and Savings Target are ready. Enter your details to decrypt the dashboard.</p>
                                 </div>
                                 {errorMsg && <p className="text-xs text-ios-orange text-center mb-2">{errorMsg}</p>}
                                 <form onSubmit={submitLead} className="space-y-3">
+                                    <input className="ios-input w-full" placeholder="Business Name" name="businessName" value={formData.businessName || ''} onChange={handleChange} required />
                                     <input className="ios-input w-full" placeholder="Full Name" name="contactName" value={formData.contactName} onChange={handleChange} required />
                                     <input className="ios-input w-full" placeholder="WhatsApp Number" type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} required />
                                     <input className="ios-input w-full" placeholder="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required />
@@ -360,6 +448,11 @@ export default function IntakeWizard({ t }) {
                                         {submitting ? <span className="material-symbols-outlined animate-spin">sync</span> : <span className="material-symbols-outlined">enhanced_encryption</span>}
                                         DECRYPT DASHBOARD
                                     </button>
+                                    <div className="text-center mt-6">
+                                        <Link href="/login" className="text-[10px] text-white/30 hover:text-white transition-colors uppercase tracking-[0.15em] font-bold underline underline-offset-4">
+                                            Already have an account? Log In
+                                        </Link>
+                                    </div>
                                 </form>
                             </motion.div>
                         )}

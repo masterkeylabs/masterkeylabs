@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function DashboardHeader({ companyName = "Nexus Corp.", lang, setLang, t, setSidebarOpen }) {
     return (
         <header className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 md:mb-12 pb-6 md:pb-8 border-b border-white/5 gap-4 md:gap-0">
@@ -24,6 +26,14 @@ export default function DashboardHeader({ companyName = "Nexus Corp.", lang, set
                     <button onClick={() => setLang('hinglish')} className={`px-3 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>HINGLISH</button>
                     <button onClick={() => setLang('hi')} className={`px-3 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>हिन्दी</button>
                 </div>
+
+                <Link
+                    href="/"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/40 hover:text-white hover:bg-white/5 hover:border-white/20 transition-all text-[11px] font-bold uppercase tracking-widest"
+                >
+                    <span className="material-symbols-outlined text-[14px]">home</span>
+                    Home
+                </Link>
 
                 <div className="system-card px-4 py-2 border border-white/5 flex items-center gap-2 bg-white/[0.01]">
                     <span className="material-symbols-outlined text-[14px] text-white/20">schedule</span>
