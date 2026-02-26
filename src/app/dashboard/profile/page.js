@@ -127,71 +127,44 @@ function ProfileEditContent() {
 
             if (bizError) throw bizError;
 
-            // Check if marketingSpend or opsSpend changed, update loss_audit_results
-            const { data: currentAudit } = await supabase
-                .from('loss_audit_results')
-                .select('*')
-                .eq('business_id', businessId)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
+            // ── Update loss_audit_results (non-blocking) ───────────────────
+            try {
+                const { data: currentAudit } = await supabase
+                    .from('loss_audit_results')
+                    .select('*')
+                    .eq('business_id', businessId)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
 
-            const newMarketingSpend = parseInt(formData.marketingSpend, 10) || 0;
-            const newOpsSpend = parseInt(formData.opsSpend, 10) || 0;
+                const newMarketingSpend = parseInt(formData.marketingSpend, 10) || 0;
+                const newOpsSpend = parseInt(formData.opsSpend, 10) || 0;
 
-            if (currentAudit) {
-                if (currentAudit.marketing_budget !== newMarketingSpend || currentAudit.ops_overheads !== newOpsSpend) {
-                    // Determine new waste & burn based on new inputs (Simplified update logic for the metrics)
-                    // If they change ops/marketing spend, it directly affects their total burn.
-                    // Re-calculate basic waste here to keep records accurate without re-running full calculateLossAudit logic
+                if (currentAudit) {
+                    if (currentAudit.marketing_budget !== newMarketingSpend || currentAudit.ops_overheads !== newOpsSpend) {
+                        const newMarketingWaste = newMarketingSpend * 0.40;
+                        const newOpsWaste = newOpsSpend * 0.15;
+                        const newTotalBurn = (currentAudit.staff_waste || 0) + newMarketingWaste + newOpsWaste;
 
-                    const newMarketingWaste = newMarketingSpend * 0.40;
-                    const newOpsWaste = newOpsSpend * 0.15;
-                    const newTotalBurn = currentAudit.staff_waste + newMarketingWaste + newOpsWaste;
-
-                    const { error: auditError } = await supabase
-                        .from('loss_audit_results')
-                        .update({
-                            marketing_budget: newMarketingSpend,
-                            ops_overheads: newOpsSpend,
-                            marketing_waste: newMarketingWaste,
-                            ops_waste: newOpsWaste,
-                            total_burn: newTotalBurn,
-                            annual_burn: newTotalBurn * 12,
-                            five_year_cost: newTotalBurn * 12 * 5
-                        })
-                        .eq('id', currentAudit.id);
-
-                    if (auditError) {
-                        console.error("Error updating loss_audit_results:", auditError);
-                        throw auditError;
+                        await supabase
+                            .from('loss_audit_results')
+                            .update({
+                                marketing_budget: newMarketingSpend,
+                                ops_overheads: newOpsSpend,
+                                marketing_waste: newMarketingWaste,
+                                ops_waste: newOpsWaste,
+                                total_burn: newTotalBurn,
+                                annual_burn: newTotalBurn * 12,
+                                five_year_cost: newTotalBurn * 12 * 5
+                            })
+                            .eq('id', currentAudit.id);
                     }
                 }
-            } else {
-                // If there's no pre-existing loss audit row matching the business ID, we create one now
-                const newMarketingWaste = newMarketingSpend * 0.40;
-                const newOpsWaste = newOpsSpend * 0.15;
-                const newTotalBurn = newMarketingWaste + newOpsWaste;
-
-                const { error: insertError } = await supabase
-                    .from('loss_audit_results')
-                    .insert([{
-                        business_id: businessId,
-                        marketing_budget: newMarketingSpend,
-                        ops_overheads: newOpsSpend,
-                        marketing_waste: newMarketingWaste,
-                        ops_waste: newOpsWaste,
-                        staff_waste: 0,
-                        total_burn: newTotalBurn,
-                        annual_burn: newTotalBurn * 12,
-                        five_year_cost: newTotalBurn * 12 * 5
-                    }]);
-
-                if (insertError) {
-                    console.error("Error inserting initial loss_audit_results:", insertError);
-                    throw insertError;
-                }
+                // If no audit row exists, skip insert — it will be created when user runs the audit
+            } catch (auditErr) {
+                console.warn('loss_audit_results update skipped (non-fatal):', auditErr.message);
             }
+            // ──────────────────────────────────────────────────────────────
 
             setMessage({ type: 'success', text: 'Profile updated successfully!' });
 
