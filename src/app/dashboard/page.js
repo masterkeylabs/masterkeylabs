@@ -28,17 +28,22 @@ export default async function DashboardPage(props) {
     const business = bizRes.data || { entity_name: 'Your Business', id: businessId };
 
     // 1. Loss Audit Result → show Recoverable Savings
-    // Try saving_target first (exists after migration), else compute from raw columns
+    // Try saving_target first (the exact saved result), else compute from raw columns
     let lossAuditScore = 0;
     if (lossRes.data) {
-        if (lossRes.data.saving_target) {
+        if (lossRes.data.saving_target !== undefined && lossRes.data.saving_target !== null) {
             lossAuditScore = lossRes.data.saving_target;
         } else {
-            // Compute from raw stored columns (works even without migration SQL)
+            // Compute from raw stored columns (fallback if not yet recalibrated)
             const staff = lossRes.data.staff_salary || 0;
             const ops = lossRes.data.ops_overheads || 0;
             const marketing = lossRes.data.marketing_budget || 0;
-            const calc = calculateLossAudit(staff, ops, marketing);
+            // Use stored options if available for fallback consistency
+            const calc = calculateLossAudit(staff, ops, marketing, {
+                manualHoursPerWeek: lossRes.data.manual_hours || 20,
+                hasCRM: lossRes.data.has_crm || false,
+                hasERP: lossRes.data.has_erp || false
+            });
             lossAuditScore = calc.savingTarget;
         }
     }

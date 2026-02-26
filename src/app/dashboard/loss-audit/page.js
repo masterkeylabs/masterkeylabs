@@ -39,18 +39,35 @@ function LossAuditContent() {
                 .eq('business_id', businessId)
                 .order('created_at', { ascending: false })
                 .limit(1)
-                .single();
+                .maybeSingle();
+
             if (data) {
+                const staff = data.staff_salary || 0;
+                const marketing = data.marketing_budget || 0;
+                const ops = data.ops_overheads || 0;
+
                 setForm({
-                    staffSalary: data.staff_salary || '',
-                    marketingBudget: data.marketing_budget || '',
-                    opsOverheads: data.ops_overheads || '',
+                    staffSalary: staff || '',
+                    marketingBudget: marketing || '',
+                    opsOverheads: ops || '',
                     industry: data.industry || 'manufacturing',
                     manualHours: data.manual_hours || 20,
                     hasCRM: data.has_crm || false,
                     hasERP: data.has_erp || false,
                 });
-                setResults(data);
+
+                // If results are stored in the DB, use them. 
+                // Otherwise (or if they are 0), recalculate locally for immediate UI feedback.
+                if (data.total_burn > 0) {
+                    setResults(data);
+                } else if (staff || marketing || ops) {
+                    const calc = calculateLossAudit(staff, ops, marketing, {
+                        manualHoursPerWeek: data.manual_hours || 20,
+                        hasCRM: data.has_crm || false,
+                        hasERP: data.has_erp || false
+                    });
+                    setResults(calc);
+                }
             }
         };
         load();
@@ -72,13 +89,23 @@ function LossAuditContent() {
         if (businessId) {
             setSaving(true);
 
-            // Only save columns that are guaranteed to exist in the table.
-            // Run audit_tables_migration.sql in Supabase to unlock full persistence.
-            const minPayload = {
+            // Save full payload to match public.loss_audit_results schema
+            const fullPayload = {
                 business_id: businessId,
                 staff_salary: staff,
                 marketing_budget: marketing,
                 ops_overheads: ops,
+                industry: form.industry,
+                manual_hours: form.manualHours,
+                has_crm: form.hasCRM,
+                has_erp: form.hasERP,
+                staff_waste: calc.staffWaste,
+                marketing_waste: calc.marketingWaste,
+                ops_waste: calc.opsWaste,
+                total_burn: calc.totalBurn,
+                annual_burn: calc.annualBurn,
+                saving_target: calc.savingTarget,
+                five_year_cost: calc.fiveYearCost
             };
 
             const { data: existing } = await supabase
@@ -88,9 +115,9 @@ function LossAuditContent() {
                 .maybeSingle();
 
             if (existing) {
-                await supabase.from('loss_audit_results').update(minPayload).eq('id', existing.id);
+                await supabase.from('loss_audit_results').update(fullPayload).eq('id', existing.id);
             } else {
-                await supabase.from('loss_audit_results').insert(minPayload);
+                await supabase.from('loss_audit_results').insert(fullPayload);
             }
 
             setSaving(false);
