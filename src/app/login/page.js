@@ -69,6 +69,21 @@ export default function LoginPage() {
             // Twilio verified. Store phone in localStorage for session continuity.
             localStorage.setItem('masterkey_user_phone', formattedPhone);
 
+            // ── Look up business by phone and store ID ───────────────────
+            const last10 = cleaned.slice(-10);
+            const { data: businessData } = await supabase
+                .from('businesses')
+                .select('id')
+                .ilike('phone', `%${last10}%`)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (businessData) {
+                localStorage.setItem('masterkey_business_id', businessData.id);
+            }
+            // ─────────────────────────────────────────────────────────────
+
             setSuccess(true);
         } catch (err) {
             setError(err.message);
