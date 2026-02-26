@@ -47,7 +47,7 @@ export default function IntakeWizard({ t }) {
         const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
         const staffCost = empCount * 25000;
         const lossData = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
-            manualHoursPerWeek: 35,
+            manualHoursPerWeek: 20,
             hasCRM: false,
             hasERP: false
         });
@@ -163,26 +163,34 @@ export default function IntakeWizard({ t }) {
             let newBiz;
             let error;
 
-            // Check for existing business by phone (match last 10 digits)
+            // 1. Prioritize existing session ID from localStorage
+            const storedId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
+
+            // 2. Fallback: look up by phone (match last 10 digits)
             const cleanPhone = formData.whatsapp.replace(/\D/g, '');
             const last10 = cleanPhone.slice(-10);
 
-            const { data: existingBiz } = await supabase
-                .from('businesses')
-                .select('id')
-                .ilike('phone', `%${last10}%`)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
+            let targetId = storedId;
 
-            if (existingBiz) {
+            if (!targetId) {
+                const { data: existingBiz } = await supabase
+                    .from('businesses')
+                    .select('id')
+                    .ilike('phone', `%${last10}%`)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+                if (existingBiz) targetId = existingBiz.id;
+            }
+
+            if (targetId) {
                 // Update existing record
                 const resUpdate = await supabase.from('businesses')
                     .update({
                         ...insertData,
                         user_id: currentUser?.id || null
                     })
-                    .eq('id', existingBiz.id)
+                    .eq('id', targetId)
                     .select()
                     .single();
                 newBiz = resUpdate.data;
@@ -227,19 +235,35 @@ export default function IntakeWizard({ t }) {
                 const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
                 const staffCost = empCount * 25000;
 
-                // Recalculate full results to save to DB (Dashboard expects these columns)
+                // ── Audit Data Merging ─────────────────────────────────────
+                // Fetch existing audit data to preserve "Rich" results (manual hours, etc.)
+                const { data: existingLoss } = await supabase
+                    .from('loss_audit_results')
+                    .select('*')
+                    .eq('business_id', newBiz.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                const manualHours = existingLoss?.manual_hours ?? 20;
+                const hasCRM = existingLoss?.has_crm ?? false;
+                const hasERP = existingLoss?.has_erp ?? false;
+
+                // Recalculate results using preserved advanced metrics
                 const fullCalc = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
-                    manualHoursPerWeek: 20,
-                    hasCRM: false,
-                    hasERP: false
+                    manualHoursPerWeek: manualHours,
+                    hasCRM: hasCRM,
+                    hasERP: hasERP
                 });
 
-                // 1. Save Loss Audit Results (Full payload)
                 const lossPayload = {
                     business_id: newBiz.id,
                     staff_salary: staffCost,
                     marketing_budget: Number(formData.marketingSpend),
                     ops_overheads: Number(formData.opsSpend),
+                    manual_hours: manualHours,
+                    has_crm: hasCRM,
+                    has_erp: hasERP,
                     staff_waste: fullCalc.staffWaste,
                     marketing_waste: fullCalc.marketingWaste,
                     ops_waste: fullCalc.opsWaste,
@@ -249,19 +273,12 @@ export default function IntakeWizard({ t }) {
                     five_year_cost: fullCalc.fiveYearCost
                 };
 
-                const { data: existingLoss } = await supabase
-                    .from('loss_audit_results')
-                    .select('id')
-                    .eq('business_id', newBiz.id)
-                    .order('created_at', { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
-
                 if (existingLoss) {
                     await supabase.from('loss_audit_results').update(lossPayload).eq('id', existingLoss.id);
                 } else {
                     await supabase.from('loss_audit_results').insert(lossPayload);
                 }
+                // ──────────────────────────────────────────────────────────
 
                 // 2. Save Visibility Results (Added)
                 const visResult = calculateVisibility([], formData.location || '');
