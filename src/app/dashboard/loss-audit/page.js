@@ -112,6 +112,8 @@ function LossAuditContent() {
                 .from('loss_audit_results')
                 .select('id')
                 .eq('business_id', businessId)
+                .order('created_at', { ascending: false })
+                .limit(1)
                 .maybeSingle();
 
             if (existing) {

@@ -159,25 +159,51 @@ export default function IntakeWizard({ t }) {
                 digital_footprint: formData.contactAfter6,
             };
 
+            // ── Business Upsert Logic ──────────────────────────────────
             let newBiz;
             let error;
 
-            // Try inserting with user_id first
-            const resWithUserId = await supabase.from('businesses').insert({
-                ...insertData,
-                user_id: currentUser?.id || null
-            }).select().single();
+            // Check for existing business by phone (match last 10 digits)
+            const cleanPhone = formData.whatsapp.replace(/\D/g, '');
+            const last10 = cleanPhone.slice(-10);
 
-            if (resWithUserId.error && resWithUserId.error.message.includes("Could not find the 'user_id' column")) {
-                // Fallback: If the user hasn't run the SQL script to add user_id, insert without it
-                console.warn("Missing 'user_id' column in 'businesses' table. Falling back to legacy insert. Please run supabase_setup_user_id.sql soon.");
-                const resLegacy = await supabase.from('businesses').insert(insertData).select().single();
-                newBiz = resLegacy.data;
-                error = resLegacy.error;
+            const { data: existingBiz } = await supabase
+                .from('businesses')
+                .select('id')
+                .ilike('phone', `%${last10}%`)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (existingBiz) {
+                // Update existing record
+                const resUpdate = await supabase.from('businesses')
+                    .update({
+                        ...insertData,
+                        user_id: currentUser?.id || null
+                    })
+                    .eq('id', existingBiz.id)
+                    .select()
+                    .single();
+                newBiz = resUpdate.data;
+                error = resUpdate.error;
             } else {
-                newBiz = resWithUserId.data;
-                error = resWithUserId.error;
+                // Insert new record
+                const resWithUserId = await supabase.from('businesses').insert({
+                    ...insertData,
+                    user_id: currentUser?.id || null
+                }).select().single();
+
+                if (resWithUserId.error && resWithUserId.error.message.includes("Could not find the 'user_id' column")) {
+                    const resLegacy = await supabase.from('businesses').insert(insertData).select().single();
+                    newBiz = resLegacy.data;
+                    error = resLegacy.error;
+                } else {
+                    newBiz = resWithUserId.data;
+                    error = resWithUserId.error;
+                }
             }
+            // ─────────────────────────────────────────────────────────────
 
             if (error) throw error;
 
@@ -201,15 +227,40 @@ export default function IntakeWizard({ t }) {
                 const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
                 const staffCost = empCount * 25000;
 
-                // 1. Save Loss Audit Results (minimal safe columns only)
-                const lossInsert = await supabase.from('loss_audit_results').insert({
+                // Recalculate full results to save to DB (Dashboard expects these columns)
+                const fullCalc = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
+                    manualHoursPerWeek: 20,
+                    hasCRM: false,
+                    hasERP: false
+                });
+
+                // 1. Save Loss Audit Results (Full payload)
+                const lossPayload = {
                     business_id: newBiz.id,
                     staff_salary: staffCost,
                     marketing_budget: Number(formData.marketingSpend),
                     ops_overheads: Number(formData.opsSpend),
-                });
-                if (lossInsert.error) {
-                    console.error('[IntakeWizard] loss_audit_results insert error:', lossInsert.error.message);
+                    staff_waste: fullCalc.staffWaste,
+                    marketing_waste: fullCalc.marketingWaste,
+                    ops_waste: fullCalc.opsWaste,
+                    total_burn: fullCalc.totalBurn,
+                    annual_burn: fullCalc.annualBurn,
+                    saving_target: fullCalc.savingTarget,
+                    five_year_cost: fullCalc.fiveYearCost
+                };
+
+                const { data: existingLoss } = await supabase
+                    .from('loss_audit_results')
+                    .select('id')
+                    .eq('business_id', newBiz.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                if (existingLoss) {
+                    await supabase.from('loss_audit_results').update(lossPayload).eq('id', existingLoss.id);
+                } else {
+                    await supabase.from('loss_audit_results').insert(lossPayload);
                 }
 
                 // 2. Save Visibility Results (Added)
