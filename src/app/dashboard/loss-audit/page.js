@@ -56,17 +56,11 @@ function LossAuditContent() {
                     hasERP: data.has_erp || false,
                 });
 
-                // If results are stored in the DB, use them. 
-                // Otherwise (or if they are 0), recalculate locally for immediate UI feedback.
+                // If results are stored in the DB and are non-zero, use them.
+                // We no longer fallback to immediate local calculation on load
+                // to respect the user's wish for a "clean" starting state.
                 if (data.total_burn > 0) {
                     setResults(data);
-                } else if (staff || marketing || ops) {
-                    const calc = calculateLossAudit(staff, ops, marketing, {
-                        manualHoursPerWeek: data.manual_hours || 20,
-                        hasCRM: data.has_crm || false,
-                        hasERP: data.has_erp || false
-                    });
-                    setResults(calc);
                 }
             }
         };
@@ -75,6 +69,7 @@ function LossAuditContent() {
 
     const handleCalculate = async (e) => {
         e.preventDefault();
+        setErrorMsg(null);
         const staff = parseInt(form.staffSalary) || 0;
         const ops = parseInt(form.opsOverheads) || 0;
         const marketing = parseInt(form.marketingBudget) || 0;
@@ -108,21 +103,30 @@ function LossAuditContent() {
                 five_year_cost: calc.fiveYearCost
             };
 
-            const { data: existing } = await supabase
-                .from('loss_audit_results')
-                .select('id')
-                .eq('business_id', businessId)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
+            try {
+                const { data: existing } = await supabase
+                    .from('loss_audit_results')
+                    .select('id')
+                    .eq('business_id', businessId)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
 
-            if (existing) {
-                await supabase.from('loss_audit_results').update(fullPayload).eq('id', existing.id);
-            } else {
-                await supabase.from('loss_audit_results').insert(fullPayload);
+                let res;
+                if (existing) {
+                    res = await supabase.from('loss_audit_results').update(fullPayload).eq('id', existing.id);
+                } else {
+                    res = await supabase.from('loss_audit_results').insert(fullPayload);
+                }
+
+                if (res.error) throw res.error;
+                console.log('[LossAudit] Results saved successfully');
+            } catch (err) {
+                console.error('[LossAudit] Save error:', err.message);
+                setErrorMsg('Failed to persist results. Please try again.');
+            } finally {
+                setSaving(false);
             }
-
-            setSaving(false);
         }
     };
 
