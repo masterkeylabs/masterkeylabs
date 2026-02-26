@@ -232,8 +232,88 @@ export default function IntakeWizard({ t }) {
                 });
                 // ──────────────────────────────────────────────────────────
 
-                // NOTE: Automatic audit results insertion removed to ensure dashboard starts at zero.
-                // The user must now perform each audit manually from the dashboard to see results.
+                const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
+                const staffCost = empCount * 25000;
+
+                // ── Audit Data Merging ─────────────────────────────────────
+                // Fetch existing audit data to preserve "Rich" results (manual hours, etc.)
+                const { data: existingLoss } = await supabase
+                    .from('loss_audit_results')
+                    .select('*')
+                    .eq('business_id', newBiz.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                const manualHours = existingLoss?.manual_hours ?? 20;
+                const hasCRM = existingLoss?.has_crm ?? false;
+                const hasERP = existingLoss?.has_erp ?? false;
+
+                // Recalculate results using preserved advanced metrics
+                const fullCalc = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
+                    manualHoursPerWeek: manualHours,
+                    hasCRM: hasCRM,
+                    hasERP: hasERP
+                });
+
+                const lossPayload = {
+                    business_id: newBiz.id,
+                    staff_salary: staffCost,
+                    marketing_budget: Number(formData.marketingSpend),
+                    ops_overheads: Number(formData.opsSpend),
+                    manual_hours: manualHours,
+                    has_crm: hasCRM,
+                    has_erp: hasERP,
+                    staff_waste: fullCalc.staffWaste,
+                    marketing_waste: fullCalc.marketingWaste,
+                    ops_waste: fullCalc.opsWaste,
+                    total_burn: fullCalc.totalBurn,
+                    annual_burn: fullCalc.annualBurn,
+                    saving_target: fullCalc.savingTarget,
+                    five_year_cost: fullCalc.fiveYearCost
+                };
+
+                if (existingLoss) {
+                    await supabase.from('loss_audit_results').update(lossPayload).eq('id', existingLoss.id);
+                } else {
+                    await supabase.from('loss_audit_results').insert(lossPayload);
+                }
+                // ──────────────────────────────────────────────────────────
+
+                // 2. Save Visibility Results (Added)
+                const visResult = calculateVisibility([], formData.location || '');
+                await supabase.from('visibility_results').insert({
+                    business_id: newBiz.id,
+                    city: formData.location || '',
+                    signals: [],
+                    percent: visResult.percent,
+                    status: visResult.status,
+                    missed_customers: visResult.missedCustomers,
+                    gaps: visResult.gaps
+                });
+
+                // 3. Save AI Threat Results
+                await supabase.from('ai_threat_results').insert({
+                    business_id: newBiz.id,
+                    score: results.threat.score,
+                    years_left: results.threat.yearsLeft,
+                    threat_level: results.threat.threatLevel,
+                    timeline_desc: results.threat.timelineDesc,
+                    industry: formData.vertical,
+                    is_omnichannel: formData.contactAfter6 === 'ai'
+                });
+
+                // 3. Save Night Loss Results
+                await supabase.from('night_loss_results').insert({
+                    business_id: newBiz.id,
+                    daily_inquiries: 15, // Baseline from wizard
+                    closing_time: '6pm',
+                    profit_per_sale: 25000,
+                    response_time: formData.contactAfter6,
+                    monthly_days: 26,
+                    monthly_loss: results.night.lostRevenue.monthlyLoss,
+                    annual_loss: results.night.lostRevenue.monthlyLoss * 12
+                });
             }
 
             localStorage.setItem('masterkey_business_id', newBiz.id);
