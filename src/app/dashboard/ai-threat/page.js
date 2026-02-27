@@ -80,20 +80,8 @@ function AIThreatContent() {
                 is_omnichannel: form.isOmnichannel,
             };
 
-            const { data: existing } = await supabase
-                .from('ai_threat_results')
-                .select('id')
-                .eq('business_id', businessId)
-                .maybeSingle();
-
-            if (existing) {
-                await supabase
-                    .from('ai_threat_results')
-                    .update(payload)
-                    .eq('id', existing.id);
-            } else {
-                await supabase.from('ai_threat_results').insert(payload);
-            }
+            await supabase.from('ai_threat_results').insert(payload);
+            setSaving(false);
             setSaving(false);
         }
     };

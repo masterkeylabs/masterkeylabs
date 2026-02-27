@@ -70,20 +70,8 @@ function VisibilityContent() {
                 gaps: calc.gaps,
             };
 
-            const { data: existing } = await supabase
-                .from('visibility_results')
-                .select('id')
-                .eq('business_id', businessId)
-                .maybeSingle();
-
-            if (existing) {
-                await supabase
-                    .from('visibility_results')
-                    .update(payload)
-                    .eq('id', existing.id);
-            } else {
-                await supabase.from('visibility_results').insert(payload);
-            }
+            await supabase.from('visibility_results').insert(payload);
+            setSaving(false);
             setSaving(false);
         }
     };

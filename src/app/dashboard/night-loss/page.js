@@ -74,20 +74,8 @@ function NightLossContent() {
                 annual_loss: calc.annualLoss,
             };
 
-            const { data: existing } = await supabase
-                .from('night_loss_results')
-                .select('id')
-                .eq('business_id', businessId)
-                .maybeSingle();
-
-            if (existing) {
-                await supabase
-                    .from('night_loss_results')
-                    .update(payload)
-                    .eq('id', existing.id);
-            } else {
-                await supabase.from('night_loss_results').insert(payload);
-            }
+            await supabase.from('night_loss_results').insert(payload);
+            setSaving(false);
             setSaving(false);
         }
     };

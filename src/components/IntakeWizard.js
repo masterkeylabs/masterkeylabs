@@ -180,28 +180,19 @@ export default function IntakeWizard({ t }) {
                 const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
                 const staffCost = empCount * 25000;
 
-                // ── Audit Data Merging ─────────────────────────────────────
-                // Fetch existing audit data to preserve "Rich" results (manual hours, etc.)
-                const { data: existingLoss } = await supabase
-                    .from('loss_audit_results')
-                    .select('*')
-                    .eq('business_id', newBiz.id)
-                    .order('created_at', { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
+                // ── Audit Data Insertion ──────────────────────────────────
+                // Always insert a new record for results to ensure 'created_at desc' ordering works perfectly
+                const manualHours = 20; // Default for wizard
+                const hasCRM = false;
+                const hasERP = false;
 
-                const manualHours = existingLoss?.manual_hours ?? 20;
-                const hasCRM = existingLoss?.has_crm ?? false;
-                const hasERP = existingLoss?.has_erp ?? false;
-
-                // Recalculate results using preserved advanced metrics
                 const fullCalc = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
                     manualHoursPerWeek: manualHours,
                     hasCRM: hasCRM,
                     hasERP: hasERP
                 });
 
-                const lossPayload = {
+                await supabase.from('loss_audit_results').insert({
                     business_id: newBiz.id,
                     staff_salary: staffCost,
                     marketing_budget: Number(formData.marketingSpend),
@@ -216,13 +207,7 @@ export default function IntakeWizard({ t }) {
                     annual_burn: fullCalc.annualBurn,
                     saving_target: fullCalc.savingTarget,
                     five_year_cost: fullCalc.fiveYearCost
-                };
-
-                if (existingLoss) {
-                    await supabase.from('loss_audit_results').update(lossPayload).eq('id', existingLoss.id);
-                } else {
-                    await supabase.from('loss_audit_results').insert(lossPayload);
-                }
+                });
                 // ──────────────────────────────────────────────────────────
 
                 // 2. Save Visibility Results (Added)

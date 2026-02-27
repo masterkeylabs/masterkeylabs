@@ -108,19 +108,8 @@ function LossAuditContent() {
                 five_year_cost: calc.fiveYearCost
             };
 
-            const { data: existing } = await supabase
-                .from('loss_audit_results')
-                .select('id')
-                .eq('business_id', businessId)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (existing) {
-                await supabase.from('loss_audit_results').update(fullPayload).eq('id', existing.id);
-            } else {
-                await supabase.from('loss_audit_results').insert(fullPayload);
-            }
+            await supabase.from('loss_audit_results').insert(fullPayload);
+            setSaving(false);
 
             setSaving(false);
         }
