@@ -111,42 +111,9 @@ export default function IntakeWizard({ t }) {
         setSubmitting(true);
 
         try {
-            // ── Duplicate phone & email check ─────────────────────────────
-            const tenDigit = formData.whatsapp.replace(/\D/g, '').slice(-10);
-
-            const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
-                supabase.from('businesses').select('id').ilike('phone', `%${tenDigit}%`).limit(1),
-                supabase.from('businesses').select('id').ilike('email', formData.email.trim()).limit(1),
-            ]);
-
-            if (phoneDupe && phoneDupe.length > 0) {
-                setErrorMsg('📵 This mobile number is already registered. Please log in or contact support.');
-                setSubmitting(false);
-                return;
-            }
-            if (emailDupe && emailDupe.length > 0) {
-                setErrorMsg('📧 This email is already registered. Please log in or use a different email.');
-                setSubmitting(false);
-                return;
-            }
-            // ──────────────────────────────────────────────────────────────
-
-            const tempPassword = 'Mk' + Date.now() + '!';
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email: formData.email,
-                password: tempPassword,
-                options: { data: { owner_name: formData.contactName, phone: formData.whatsapp } }
-            });
-
-            let currentUser = authData?.user;
-
-            if (authError && authError.message.includes('already registered')) {
-                // If already registered, still try to proceed by finding the existing business
-                const { data: existingUser } = await supabase.from('businesses').select('id').eq('email', formData.email).maybeSingle();
-                if (existingUser) {
-                    // Update current logic: we just need to bypass the failure and link the session
-                }
-            }
+            // ── Business Upsert Logic ──────────────────────────────────
+            const cleanPhone = formData.whatsapp.replace(/\D/g, '');
+            const last10 = cleanPhone.slice(-10);
 
             // Base insert data
             let insertData = {
@@ -159,57 +126,35 @@ export default function IntakeWizard({ t }) {
                 digital_footprint: formData.contactAfter6,
             };
 
-            // ── Business Upsert Logic ──────────────────────────────────
             let newBiz;
             let error;
 
-            // 1. Prioritize existing session ID from localStorage
-            const storedId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
+            // 1. Check for existing business by phone OR email
+            const { data: existingBiz } = await supabase
+                .from('businesses')
+                .select('id')
+                .or(`phone.ilike.%${last10}%,email.ilike.${formData.email.trim()}`)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
 
-            // 2. Fallback: look up by phone (match last 10 digits)
-            const cleanPhone = formData.whatsapp.replace(/\D/g, '');
-            const last10 = cleanPhone.slice(-10);
-
-            let targetId = storedId;
-
-            if (!targetId) {
-                const { data: existingBiz } = await supabase
-                    .from('businesses')
-                    .select('id')
-                    .ilike('phone', `%${last10}%`)
-                    .order('created_at', { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
-                if (existingBiz) targetId = existingBiz.id;
-            }
-
-            if (targetId) {
+            if (existingBiz) {
                 // Update existing record
                 const resUpdate = await supabase.from('businesses')
-                    .update({
-                        ...insertData,
-                        user_id: currentUser?.id || null
-                    })
-                    .eq('id', targetId)
+                    .update(insertData)
+                    .eq('id', existingBiz.id)
                     .select()
                     .single();
                 newBiz = resUpdate.data;
                 error = resUpdate.error;
             } else {
                 // Insert new record
-                const resWithUserId = await supabase.from('businesses').insert({
-                    ...insertData,
-                    user_id: currentUser?.id || null
-                }).select().single();
-
-                if (resWithUserId.error && resWithUserId.error.message.includes("Could not find the 'user_id' column")) {
-                    const resLegacy = await supabase.from('businesses').insert(insertData).select().single();
-                    newBiz = resLegacy.data;
-                    error = resLegacy.error;
-                } else {
-                    newBiz = resWithUserId.data;
-                    error = resWithUserId.error;
-                }
+                const resInsert = await supabase.from('businesses')
+                    .insert(insertData)
+                    .select()
+                    .single();
+                newBiz = resInsert.data;
+                error = resInsert.error;
             }
             // ─────────────────────────────────────────────────────────────
 

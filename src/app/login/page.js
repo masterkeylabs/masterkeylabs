@@ -15,105 +15,48 @@ export default function LoginPage() {
     const [success, setSuccess] = useState(false);
     const router = useRouter();
 
-    const handleSendOtp = async (e) => {
+    const [identifier, setIdentifier] = useState('');
+
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        let cleaned = phone.replace(/\D/g, '');
-        let formattedPhone;
-        if (cleaned.length === 10) {
-            formattedPhone = `+91${cleaned}`;
-        } else if (cleaned.startsWith('91') && cleaned.length === 12) {
-            formattedPhone = `+${cleaned}`;
-        } else {
-            formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
-        }
-
         try {
-            const response = await fetch('/api/auth/otp/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: formattedPhone }),
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error);
-            setIsOtpSent(true);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+            const cleanId = identifier.trim();
+            const cleanPhone = cleanId.replace(/\D/g, '');
+            const last10 = cleanPhone.length >= 10 ? cleanPhone.slice(-10) : null;
 
-    const handleVerifyOtp = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
+            // Search by email OR phone
+            let query = supabase.from('businesses').select('id, owner_name, phone');
 
-        let cleaned = phone.replace(/\D/g, '');
-        let formattedPhone = cleaned.length === 10 ? `+91${cleaned}` : (phone.startsWith('+') ? phone : `+${phone}`);
-
-        try {
-            const response = await fetch('/api/auth/otp/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    phone: formattedPhone,
-                    code: otp
-                }),
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error);
-
-            // Twilio verified. Store phone in localStorage for session continuity.
-            localStorage.setItem('masterkey_user_phone', formattedPhone);
-
-            // ── Look up business by phone and store ID ───────────────────
-            const last10 = cleaned.slice(-10);
-            const { data: businessData } = await supabase
-                .from('businesses')
-                .select('id')
-                .ilike('phone', `%${last10}%`)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (businessData) {
-                localStorage.setItem('masterkey_business_id', businessData.id);
+            if (last10 && cleanId.match(/^\d+$/)) {
+                query = query.ilike('phone', `%${last10}%`);
+            } else {
+                query = query.ilike('email', cleanId);
             }
-            // ─────────────────────────────────────────────────────────────
 
-            setSuccess(true);
+            const { data, error: searchError } = await query.maybeSingle();
+
+            if (searchError) throw searchError;
+
+            if (!data) {
+                throw new Error('📵 Access Denied. No matching operator profile found.');
+            }
+
+            // Store session identifiers
+            localStorage.setItem('masterkey_business_id', data.id);
+            localStorage.setItem('masterkey_user_name', data.owner_name);
+            localStorage.setItem('masterkey_user_phone', data.phone);
+
+            // Immediate redirect to dashboard
+            router.push(`/dashboard?id=${data.id}`);
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
-
-    if (success) {
-        return (
-            <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="glass p-10 rounded-[2.5rem] border-white/5 shadow-2xl text-center max-w-[450px] z-10"
-                >
-                    <div className="w-20 h-20 bg-ios-blue/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-ios-blue/20">
-                        <span className="material-symbols-outlined text-ios-blue text-4xl">vpn_key</span>
-                    </div>
-                    <h2 className="text-3xl font-bold tracking-tight mb-4">Access Granted</h2>
-                    <p className="text-white/50 mb-8 leading-relaxed">
-                        Security clearance established. Re-initializing your MasterKey workspace...
-                    </p>
-                    <Link href="/dashboard" className="ios-button-primary w-full py-4 block">
-                        ENTER COMMAND CENTER
-                    </Link>
-                </motion.div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -128,83 +71,73 @@ export default function LoginPage() {
             >
                 <div className="flex flex-col items-center mb-10">
                     <Link href="/">
-                        <Image src="/logo-stacked.png" alt="MasterKey Logo" width={100} height={100} className="h-20 w-auto object-contain" />
+                        <Image src="/logo-stacked.png" alt="MasterKey Logo" width={100} height={100} className="h-20 w-auto object-contain cursor-pointer transition-transform hover:scale-105" />
                     </Link>
                     <h1 className="text-2xl font-bold mt-6 tracking-tight text-center">System Access</h1>
                     <p className="text-white/40 text-sm mt-2">Enter credentials for secure decryption</p>
                 </div>
 
-                <div className="glass p-8 rounded-[2rem] border-white/5 shadow-2xl relative">
-                    <AnimatePresence mode="wait">
-                        {!isOtpSent ? (
-                            <motion.form
-                                key="request-otp"
-                                initial={{ opacity: 0, x: -20 }}
+                <div className="glass p-8 rounded-[2rem] border-white/5 shadow-2xl relative overflow-hidden">
+                    <div className="scanline"></div>
+
+                    <form onSubmit={handleLogin} className="space-y-6">
+                        <div className="text-center mb-4">
+                            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
+                                <span className="material-symbols-outlined text-white/40 text-3xl">vpn_key</span>
+                            </div>
+                            <p className="text-white/60 text-sm">Verify your Terminal ID</p>
+                        </div>
+
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
-                                onSubmit={handleSendOtp}
-                                className="space-y-5"
+                                className="bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] p-3 rounded-xl flex items-center gap-2"
                             >
-                                {error && <div className="p-3 bg-ios-orange/10 border border-ios-orange/20 rounded-xl text-[11px] text-ios-orange text-center">{error}</div>}
-
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black ml-1">Terminal ID (Phone)</label>
-                                    <input
-                                        type="tel"
-                                        required
-                                        autoComplete="off"
-                                        className="ios-input w-full"
-                                        placeholder="Enter your mobile number"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                    />
-                                </div>
-
-                                <button disabled={loading} type="submit" className="ios-button-primary w-full py-4 flex items-center justify-center gap-2">
-                                    {loading ? <span className="material-symbols-outlined animate-spin text-sm">sync</span> : 'SEND ACCESS CODE'}
-                                </button>
-                            </motion.form>
-                        ) : (
-                            <motion.form
-                                key="verify-otp"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                onSubmit={handleVerifyOtp}
-                                className="space-y-5"
-                            >
-                                {error && <div className="p-3 bg-ios-orange/10 border border-ios-orange/20 rounded-xl text-[11px] text-ios-orange text-center">{error}</div>}
-
-                                <div className="space-y-1.5 text-center mb-4">
-                                    <p className="text-[11px] text-white/40 uppercase tracking-widest">Sent to {phone}</p>
-                                    <button type="button" onClick={() => setIsOtpSent(false)} className="text-[10px] text-ios-blue hover:underline uppercase font-bold">Change ID</button>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black ml-1">Access Token</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        maxLength={6}
-                                        className="ios-input w-full text-center tracking-[0.5em] text-lg font-bold"
-                                        placeholder="••••••"
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                    />
-                                </div>
-
-                                <button disabled={loading} type="submit" className="ios-button-primary w-full py-4 flex items-center justify-center gap-2">
-                                    {loading ? <span className="material-symbols-outlined animate-spin text-sm">sync</span> : 'DECRYPT & ENTER'}
-                                </button>
-                            </motion.form>
+                                <span className="material-symbols-outlined text-sm">error</span>
+                                {error}
+                            </motion.div>
                         )}
-                    </AnimatePresence>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black ml-1">Email or Mobile Number</label>
+                            <input
+                                type="text"
+                                required
+                                className="ios-input w-full"
+                                placeholder="operator@protocol.com"
+                                value={identifier}
+                                onChange={(e) => setIdentifier(e.target.value)}
+                            />
+                        </div>
+
+                        <button
+                            disabled={loading}
+                            type="submit"
+                            className="w-full py-4 ios-button-primary flex items-center justify-center gap-2 group relative overflow-hidden"
+                        >
+                            {loading ? (
+                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                            ) : (
+                                <>
+                                    <span>DECRYPT & ENTER</span>
+                                    <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">login</span>
+                                </>
+                            )}
+                        </button>
+                    </form>
 
                     <div className="mt-8 pt-6 border-t border-white/5 text-center">
                         <Link href="/signup" className="text-[11px] text-white/20 uppercase tracking-widest font-bold hover:text-white transition-colors">
                             Need authorization? <span className="text-ios-blue underline underline-offset-4 ml-1">REGISTER TERMINAL</span>
                         </Link>
                     </div>
+                </div>
+                <div className="mt-12 text-center">
+                    <Link href="/" className="text-white/20 text-xs hover:text-white transition-colors flex items-center justify-center gap-1">
+                        <span className="material-symbols-outlined text-sm">arrow_back</span>
+                        RETURN TO SURFACE
+                    </Link>
                 </div>
             </motion.div>
         </div>
