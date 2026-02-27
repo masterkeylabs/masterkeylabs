@@ -15,16 +15,17 @@ export default function IntakeWizard({ t }) {
     const [scanIdx, setScanIdx] = useState(0);
 
     const [formData, setFormData] = useState({
-        vertical: 'local_business',
+        vertical: 'retail',
         revenueBracket: '5-20L',
         employees: '1-10',
-        marketingSpend: 10000,
-        opsSpend: 50000,
-        contactAfter6: 'ignored',
+        marketingSpend: '50000',
+        opsSpend: '100000',
+        location: '',
+        contactAfter6: 'manual',
         businessName: '',
         contactName: '',
         whatsapp: '',
-        email: ''
+        email: '',
     });
 
     const [results, setResults] = useState(null);
@@ -196,7 +197,7 @@ export default function IntakeWizard({ t }) {
                     industry: formData.vertical
                 });
 
-                await supabase.from('loss_audit_results').upsert({
+                const { error: e1 } = await supabase.from('loss_audit_results').upsert({
                     business_id: newBiz.id,
                     staff_salary: staffCost,
                     marketing_budget: Number(formData.marketingSpend),
@@ -214,10 +215,11 @@ export default function IntakeWizard({ t }) {
                     five_year_cost: fullCalc.fiveYearCost,
                     created_at: now
                 }, { onConflict: 'business_id' });
+                if (e1) throw new Error(`Loss Audit Sync Failed: ${e1.message}`);
 
                 // 2. Save Visibility Results
                 const visResult = calculateVisibility([], formData.location || '');
-                await supabase.from('visibility_results').upsert({
+                const { error: e2 } = await supabase.from('visibility_results').upsert({
                     business_id: newBiz.id,
                     city: formData.location || '',
                     signals: [],
@@ -227,9 +229,10 @@ export default function IntakeWizard({ t }) {
                     gaps: visResult.gaps,
                     created_at: now
                 }, { onConflict: 'business_id' });
+                if (e2) throw new Error(`Visibility Sync Failed: ${e2.message}`);
 
                 // 3. Save AI Threat Results
-                await supabase.from('ai_threat_results').upsert({
+                const { error: e3 } = await supabase.from('ai_threat_results').upsert({
                     business_id: newBiz.id,
                     score: results.threat.score,
                     years_left: results.threat.yearsLeft,
@@ -239,9 +242,10 @@ export default function IntakeWizard({ t }) {
                     is_omnichannel: formData.contactAfter6 === 'ai',
                     created_at: now
                 }, { onConflict: 'business_id' });
+                if (e3) throw new Error(`AI Threat Sync Failed: ${e3.message}`);
 
                 // 4. Save Night Loss Results
-                await supabase.from('night_loss_results').upsert({
+                const { error: e4 } = await supabase.from('night_loss_results').upsert({
                     business_id: newBiz.id,
                     daily_inquiries: 15,
                     closing_time: '6pm',
@@ -252,6 +256,7 @@ export default function IntakeWizard({ t }) {
                     annual_loss: results.night.lostRevenue.monthlyLoss * 12,
                     created_at: now
                 }, { onConflict: 'business_id' });
+                if (e4) throw new Error(`Night Loss Sync Failed: ${e4.message}`);
             }
 
             localStorage.setItem('masterkey_business_id', newBiz.id);

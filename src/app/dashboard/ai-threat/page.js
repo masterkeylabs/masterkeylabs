@@ -81,7 +81,11 @@ function AIThreatContent() {
                 created_at: new Date().toISOString()
             };
 
-            await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
+            const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
+            if (saveErr) {
+                console.error('Save Error:', saveErr);
+                alert(`Sync Failed: ${saveErr.message}`);
+            }
             setSaving(false);
             setSaving(false);
         }

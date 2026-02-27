@@ -109,7 +109,11 @@ function LossAuditContent() {
                 created_at: new Date().toISOString()
             };
 
-            await supabase.from('loss_audit_results').upsert(fullPayload, { onConflict: 'business_id' });
+            const { error: saveErr } = await supabase.from('loss_audit_results').upsert(fullPayload, { onConflict: 'business_id' });
+            if (saveErr) {
+                console.error('Save Error:', saveErr);
+                alert(`Sync Failed: ${saveErr.message}`);
+            }
             setSaving(false);
 
             setSaving(false);
