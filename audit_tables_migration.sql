@@ -33,6 +33,10 @@ ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS five_year_cost NU
 ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS staff_waste NUMERIC DEFAULT 0;
 ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS marketing_waste NUMERIC DEFAULT 0;
 ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS ops_waste NUMERIC DEFAULT 0;
+ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS has_crm BOOLEAN DEFAULT false;
+ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS has_erp BOOLEAN DEFAULT false;
+ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS industry TEXT;
+ALTER TABLE public.loss_audit_results ADD COLUMN IF NOT EXISTS manual_hours INT DEFAULT 20;
 
 -- 3. Create ai_threat_results (safe)
 CREATE TABLE IF NOT EXISTS public.ai_threat_results (

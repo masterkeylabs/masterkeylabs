@@ -91,12 +91,6 @@ function AIThreatContent() {
         }
     };
 
-    {
-        BUSINESS_VERTICALS.map(ind => (
-            <option key={ind.value} value={ind.value} className="bg-background-dark">{ind.label}</option>
-        ))
-    }
-
     return (
         <FeatureLayout
             title="Extinction Horizon"
@@ -119,7 +113,7 @@ function AIThreatContent() {
                                 value={form.industry}
                                 onChange={(e) => setForm({ ...form, industry: e.target.value })}
                             >
-                                {INDUSTRIES.map(ind => (
+                                {BUSINESS_VERTICALS.map(ind => (
                                     <option key={ind.value} value={ind.value} className="bg-background-dark">{ind.label}</option>
                                 ))}
                             </select>
