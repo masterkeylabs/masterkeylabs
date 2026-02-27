@@ -72,9 +72,10 @@ function NightLossContent() {
                 potential_revenue: calc.potentialRevenue,
                 monthly_loss: calc.monthlyLoss,
                 annual_loss: calc.annualLoss,
+                created_at: new Date().toISOString()
             };
 
-            await supabase.from('night_loss_results').insert(payload);
+            await supabase.from('night_loss_results').upsert(payload, { onConflict: 'business_id' });
             setSaving(false);
             setSaving(false);
         }

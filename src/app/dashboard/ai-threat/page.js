@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
-import { calculateAIThreat } from '@/lib/calculations';
+import { calculateAIThreat, BUSINESS_VERTICALS } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { translations } from '@/lib/translations';
@@ -78,26 +78,20 @@ function AIThreatContent() {
                 timeline_desc: calcResults.timelineDesc,
                 industry: form.industry,
                 is_omnichannel: form.isOmnichannel,
+                created_at: new Date().toISOString()
             };
 
-            await supabase.from('ai_threat_results').insert(payload);
+            await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
             setSaving(false);
             setSaving(false);
         }
     };
 
-    const INDUSTRIES = [
-        { value: 'retail', label: 'Retail' },
-        { value: 'healthcare', label: 'Healthcare' },
-        { value: 'finance', label: 'Finance' },
-        { value: 'manufacturing', label: 'Manufacturing' },
-        { value: 'logistics', label: 'Logistics' },
-        { value: 'education', label: 'Education' },
-        { value: 'real_estate', label: 'Real Estate' },
-        { value: 'it_services', label: 'IT Services' },
-        { value: 'e-commerce', label: 'E-commerce' },
-        { value: 'hospitality', label: 'Hospitality' },
-    ];
+    {
+        BUSINESS_VERTICALS.map(ind => (
+            <option key={ind.value} value={ind.value} className="bg-background-dark">{ind.label}</option>
+        ))
+    }
 
     return (
         <FeatureLayout

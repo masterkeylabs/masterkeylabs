@@ -13,6 +13,19 @@ export function formatINRFull(amount) {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount || 0);
 }
 
+export const BUSINESS_VERTICALS = [
+    { value: 'retail', label: 'Retail / Shop', risk: 82 },
+    { value: 'fb', label: 'Food & Beverage', risk: 75 },
+    { value: 'services', label: 'Professional Services', risk: 72 },
+    { value: 'b2b', label: 'B2B / Wholesale', risk: 65 },
+    { value: 'ecommerce', label: 'E-commerce', risk: 92 },
+    { value: 'manufacturing', label: 'Manufacturing', risk: 78 },
+    { value: 'logistics', label: 'Logistics / Transport', risk: 85 },
+    { value: 'healthcare', label: 'Healthcare / Medical', risk: 60 },
+    { value: 'real_estate', label: 'Real Estate', risk: 68 },
+    { value: 'it_services', label: 'IT & Software', risk: 95 },
+];
+
 /**
  * Calculates financial bleed based on staff inefficiencies, operational drag, and marketing waste.
  * @param {number} staff - Monthly staff costs in INR.
@@ -21,11 +34,16 @@ export function formatINRFull(amount) {
  * @returns {number} Exact INR value representing monthly loss.
  */
 export function calculateLossAudit(staff, ops, marketing, options = {}) {
-    const { manualHoursPerWeek = 20, hasCRM = false, hasERP = false } = options;
+    const { manualHoursPerWeek = 20, hasCRM = false, hasERP = false, industry = '' } = options;
 
     let staffWasteFactor = 0.12;
     let opsDragFactor = 0.15;
     let marketingBleedFactor = 0.30;
+
+    // Industry specific adjustments
+    if (industry === 'ecommerce') marketingBleedFactor += 0.10;
+    if (industry === 'manufacturing') opsDragFactor += 0.05;
+    if (industry === 'retail') staffWasteFactor += 0.03;
 
     if (manualHoursPerWeek > 30) staffWasteFactor += 0.10;
     else if (manualHoursPerWeek > 15) staffWasteFactor += 0.05;

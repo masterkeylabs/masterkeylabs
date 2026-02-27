@@ -68,9 +68,10 @@ function VisibilityContent() {
                 status: calc.status,
                 missed_customers: calc.missedCustomers,
                 gaps: calc.gaps,
+                created_at: new Date().toISOString()
             };
 
-            await supabase.from('visibility_results').insert(payload);
+            await supabase.from('visibility_results').upsert(payload, { onConflict: 'business_id' });
             setSaving(false);
             setSaving(false);
         }

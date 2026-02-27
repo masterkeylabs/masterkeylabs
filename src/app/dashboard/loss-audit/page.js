@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
-import { calculateLossAudit, formatINR, formatINRFull } from '@/lib/calculations';
+import { calculateLossAudit, formatINR, formatINRFull, BUSINESS_VERTICALS } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { translations } from '@/lib/translations';
@@ -105,10 +105,11 @@ function LossAuditContent() {
                 total_burn: calc.totalBurn,
                 annual_burn: calc.annualBurn,
                 saving_target: calc.savingTarget,
-                five_year_cost: calc.fiveYearCost
+                five_year_cost: calc.fiveYearCost,
+                created_at: new Date().toISOString()
             };
 
-            await supabase.from('loss_audit_results').insert(fullPayload);
+            await supabase.from('loss_audit_results').upsert(fullPayload, { onConflict: 'business_id' });
             setSaving(false);
 
             setSaving(false);
@@ -132,6 +133,19 @@ function LossAuditContent() {
                         Enter Your Monthly Costs
                     </h3>
                     <form onSubmit={handleCalculate} className="space-y-6">
+                        <div>
+                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Industry Sector</label>
+                            <select
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-sans"
+                                value={form.industry}
+                                onChange={(e) => setForm({ ...form, industry: e.target.value })}
+                            >
+                                {BUSINESS_VERTICALS.map(ind => (
+                                    <option key={ind.value} value={ind.value} className="bg-[#050505]">{ind.label}</option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Staff Salary (Monthly)</label>

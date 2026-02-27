@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { calculateLossAudit, calculateNightLoss, calculateAIThreat, calculateVisibility } from '@/lib/calculations';
+import { calculateLossAudit, calculateNightLoss, calculateAIThreat, calculateVisibility, BUSINESS_VERTICALS } from '@/lib/calculations';
 import Link from 'next/link';
 
 export default function IntakeWizard({ t }) {
@@ -186,13 +186,17 @@ export default function IntakeWizard({ t }) {
                 const hasCRM = false;
                 const hasERP = false;
 
+                const now = new Date().toISOString();
+
+                // 1. Save Loss Audit Results
                 const fullCalc = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
                     manualHoursPerWeek: manualHours,
                     hasCRM: hasCRM,
-                    hasERP: hasERP
+                    hasERP: hasERP,
+                    industry: formData.vertical
                 });
 
-                await supabase.from('loss_audit_results').insert({
+                await supabase.from('loss_audit_results').upsert({
                     business_id: newBiz.id,
                     staff_salary: staffCost,
                     marketing_budget: Number(formData.marketingSpend),
@@ -200,50 +204,54 @@ export default function IntakeWizard({ t }) {
                     manual_hours: manualHours,
                     has_crm: hasCRM,
                     has_erp: hasERP,
+                    industry: formData.vertical,
                     staff_waste: fullCalc.staffWaste,
                     marketing_waste: fullCalc.marketingWaste,
                     ops_waste: fullCalc.opsWaste,
                     total_burn: fullCalc.totalBurn,
                     annual_burn: fullCalc.annualBurn,
                     saving_target: fullCalc.savingTarget,
-                    five_year_cost: fullCalc.fiveYearCost
-                });
-                // ──────────────────────────────────────────────────────────
+                    five_year_cost: fullCalc.fiveYearCost,
+                    created_at: now
+                }, { onConflict: 'business_id' });
 
-                // 2. Save Visibility Results (Added)
+                // 2. Save Visibility Results
                 const visResult = calculateVisibility([], formData.location || '');
-                await supabase.from('visibility_results').insert({
+                await supabase.from('visibility_results').upsert({
                     business_id: newBiz.id,
                     city: formData.location || '',
                     signals: [],
                     percent: visResult.percent,
                     status: visResult.status,
                     missed_customers: visResult.missedCustomers,
-                    gaps: visResult.gaps
-                });
+                    gaps: visResult.gaps,
+                    created_at: now
+                }, { onConflict: 'business_id' });
 
                 // 3. Save AI Threat Results
-                await supabase.from('ai_threat_results').insert({
+                await supabase.from('ai_threat_results').upsert({
                     business_id: newBiz.id,
                     score: results.threat.score,
                     years_left: results.threat.yearsLeft,
                     threat_level: results.threat.threatLevel,
                     timeline_desc: results.threat.timelineDesc,
                     industry: formData.vertical,
-                    is_omnichannel: formData.contactAfter6 === 'ai'
-                });
+                    is_omnichannel: formData.contactAfter6 === 'ai',
+                    created_at: now
+                }, { onConflict: 'business_id' });
 
-                // 3. Save Night Loss Results
-                await supabase.from('night_loss_results').insert({
+                // 4. Save Night Loss Results
+                await supabase.from('night_loss_results').upsert({
                     business_id: newBiz.id,
-                    daily_inquiries: 15, // Baseline from wizard
+                    daily_inquiries: 15,
                     closing_time: '6pm',
                     profit_per_sale: 25000,
                     response_time: formData.contactAfter6,
                     monthly_days: 26,
                     monthly_loss: results.night.lostRevenue.monthlyLoss,
-                    annual_loss: results.night.lostRevenue.monthlyLoss * 12
-                });
+                    annual_loss: results.night.lostRevenue.monthlyLoss * 12,
+                    created_at: now
+                }, { onConflict: 'business_id' });
             }
 
             localStorage.setItem('masterkey_business_id', newBiz.id);
@@ -349,11 +357,9 @@ export default function IntakeWizard({ t }) {
                                     <div className="space-y-1">
                                         <label className="text-[10px] text-white/30 uppercase tracking-widest font-bold ml-1">Business Vertical</label>
                                         <select className="ios-input w-full" name="vertical" value={formData.vertical} onChange={handleChange}>
-                                            <option value="retail" className="bg-[#020617]">Retail</option>
-                                            <option value="fb" className="bg-[#020617]">Food & Beverage (F&B)</option>
-                                            <option value="services" className="bg-[#020617]">Service</option>
-                                            <option value="b2b" className="bg-[#020617]">B2B Goods</option>
-                                            <option value="ecommerce" className="bg-[#020617]">E-commerce</option>
+                                            {BUSINESS_VERTICALS.map(v => (
+                                                <option key={v.value} value={v.value} className="bg-[#020617]">{v.label}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="space-y-1">
