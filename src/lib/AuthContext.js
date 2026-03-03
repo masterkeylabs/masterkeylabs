@@ -14,12 +14,17 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         // Check active sessions and sets the user
         const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                await fetchBusinessProfile(session.user.id);
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                setUser(session?.user ?? null);
+                if (session?.user) {
+                    await fetchBusinessProfile(session.user.id);
+                }
+            } catch (error) {
+                console.error('Error getting session:', error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         getSession();

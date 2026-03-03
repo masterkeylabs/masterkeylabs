@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/AuthContext';
 
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
-    const { user, loading: authLoading } = useAuth();
+    const { user, business, loading: authLoading } = useAuth();
     const [localId, setLocalId] = useState(null);
     const [isCheckingLocal, setIsCheckingLocal] = useState(true);
 
@@ -21,7 +21,15 @@ export default function Home() {
 
     const loading = authLoading || isCheckingLocal;
     const hasSession = user || localId;
-    const dashboardHref = user ? '/dashboard' : `/dashboard?id=${localId}`;
+
+    // Improved redirection logic:
+    // 1. If we have a business profile for an authenticated user, use it.
+    // 2. Otherwise if it's a guest session with a local ID, use that.
+    // 3. If authenticated but profile-less, go to dashboard (will hit fallback).
+    // 4. Default to signup if no session at all.
+    const rawId = business?.id || localId;
+    const effectiveId = (rawId && rawId !== 'null') ? rawId : null;
+    const dashboardHref = effectiveId ? `/dashboard?id=${effectiveId}` : (user ? '/dashboard' : '/signup');
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">

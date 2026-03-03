@@ -60,7 +60,7 @@ export default function DashboardGrid({ business, computedData }) {
                         </section>
 
                         {/* Automatically Generated Comprehensive Audit Report */}
-                        <ComprehensiveReportModal businessName={business?.entity_name} />
+                        <ComprehensiveReportModal businessName={business?.entity_name} computedData={computedData} t={t} />
 
 
 

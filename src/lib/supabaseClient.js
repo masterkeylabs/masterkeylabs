@@ -8,5 +8,11 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true
+    },
+    global: {
+        fetch: (...args) => {
+            // Force bypass of Next.js aggressive client-side fetch caching
+            return fetch(args[0], { ...args[1], cache: 'no-store' });
+        }
     }
 })

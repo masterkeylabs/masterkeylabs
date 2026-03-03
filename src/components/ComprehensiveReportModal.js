@@ -4,10 +4,9 @@ import React, { useRef, useState } from 'react';
 import { useDiagnosticStore } from '@/store/diagnosticStore';
 import { formatIndian } from '@/utils/formatIndian';
 
-export default function ComprehensiveReportInline({ businessName }) {
+export default function ComprehensiveReportInline({ businessName, computedData }) {
     const reportRef = useRef();
-    const [emailTarget, setEmailTarget] = useState('');
-    const [isEmailing, setIsEmailing] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
     const showNotify = (message, type = 'success') => {
@@ -62,63 +61,38 @@ export default function ComprehensiveReportInline({ businessName }) {
         return btoa(binary);
     };
 
-    const handleEmailExport = async () => {
-        if (!emailTarget.trim() || !emailTarget.includes('@')) {
-            showNotify('Please enter a valid email address.', 'error');
+    const handleGenerateReport = async () => {
+        // Enforce all modules completion check
+        const { opsWaste, nightLossRevenue, missedCustomers, extinctionHorizon } = useDiagnosticStore.getState();
+
+        // Assuming if these values are missing/0, the audit hasn't been completed. 
+        // extinctionHorizon defaults to 0 if not calculated in some setups, or a specific string.
+        if (!opsWaste || !nightLossRevenue || !missedCustomers || !extinctionHorizon) {
+            showNotify('Please complete all 4 audit modules (Operational Waste, Night Loss, Visibility, AI Threat) before generating the final report.', 'error');
             return;
         }
 
-        setIsEmailing(true);
+        setIsGenerating(true);
         try {
-            // Generate the PDF completely in the background (returns pure base64)
+            // 1. Generate the PDF
             const pdfBase64 = await generatePdfBase64();
 
-            // Send base64 payload to the rewritten tracking endpoint
-            const res = await fetch('/api/export-report', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: emailTarget.trim(),
-                    pdfBase64: pdfBase64,
-                    businessName: businessName || 'Masterkey'
-                })
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || 'Failed to dispatch email');
+            // 2. Trigger Download
+            if (typeof window !== 'undefined') {
+                const link = document.createElement('a');
+                link.href = `data:application/pdf;base64,${pdfBase64}`;
+                link.download = `${businessName || 'Masterkey'}_Audit_Report.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
 
-            showNotify(`Email sent successfully! Report dispatched to ${emailTarget}`);
-            setEmailTarget(''); // Reset input
+            showNotify(`Report successfully generated and downloaded.`);
         } catch (error) {
-            console.error('Email export failed:', error);
-            showNotify(error.message || 'Failed to dispatch email', 'error');
+            console.error('Report generation failed:', error);
+            showNotify(error.message || 'Failed to generate report', 'error');
         } finally {
-            setIsEmailing(false);
-        }
-    };
-
-    const handleDownload = async () => {
-        if (typeof window === 'undefined') return;
-
-        try {
-            // Because generatePdfBase64 returns a pure base64 string without data: prefix
-            const pdfBase64 = await generatePdfBase64();
-
-            // Create a downloadable link explicitly
-            const link = document.createElement('a');
-            link.href = `data:application/pdf;base64,${pdfBase64}`;
-            link.download = `${businessName || 'Masterkey'}_Audit_Report.pdf`;
-
-            // Trigger browser download and cleanup
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Failed to generate PDF:', error);
-            showNotify('Failed to generate PDF document.', 'error');
+            setIsGenerating(false);
         }
     };
 
@@ -137,215 +111,286 @@ export default function ComprehensiveReportInline({ businessName }) {
     const annualVisibilityLoss = missedCustomers * 1500 * 12; // Assuming 1500 INR/customer value
     const recoverablePotential = totalAnnualBleed * 0.5;
 
+    // Extract raw granular data for detailed section
+    const lossAuditData = computedData?.lossAudit || {};
+    const nightLossData = computedData?.nightLoss || {};
+    const visibilityData = computedData?.missedCustomers || {};
+    const aiThreatData = computedData?.aiThreat || {};
+
     const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ₹${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
     const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`; // Using a placeholder number for the example, please update if needed
 
     return (
         <section className="animate-fade-in opacity-0 w-full mt-4" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-            <div className="relative w-full bg-[#0a0a0d] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            {/* The Dashboard Generator Card */}
+            <div className="relative w-full bg-[#0a0a0d] border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-ios-cyan via-ios-blue to-ios-purple opacity-50 z-20"></div>
 
-                {/* Header with Actions */}
-                <div className="flex justify-between items-center p-6 border-b border-white/10 bg-white/[0.02] z-10">
-                    <div className="flex items-center gap-3">
-                        <img src="/logo.png" alt="MasterKey Labs" className="h-16 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
-                    </div>
-                    <div className="flex items-center gap-4">
-                        {/* New Email Input & Trigger */}
-                        <div className="flex items-center bg-white/5 border border-white/10 rounded-lg overflow-hidden h-[42px]">
-                            <input
-                                type="email"
-                                placeholder="Enter email address"
-                                value={emailTarget}
-                                onChange={(e) => setEmailTarget(e.target.value)}
-                                className="bg-transparent text-white px-4 py-2 text-sm outline-none placeholder:text-white/30 w-48"
-                                disabled={isEmailing}
-                            />
-                            <button
-                                onClick={handleEmailExport}
-                                disabled={isEmailing}
-                                className={`flex items-center gap-2 px-4 h-full border-l border-white/10 transition-colors ${isEmailing ? 'bg-ios-cyan/20 text-ios-cyan cursor-wait' : 'bg-ios-cyan text-black hover:bg-ios-cyan/80'
-                                    }`}
-                            >
-                                {isEmailing ? (
-                                    <>
-                                        <span className="material-symbols-outlined text-sm animate-spin">sync</span>
-                                        <span className="text-xs font-bold uppercase tracking-wider">Sending...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <span className="material-symbols-outlined text-sm">send</span>
-                                        <span className="text-xs font-bold uppercase tracking-wider">Email PDF</span>
-                                    </>
-                                )}
-                            </button>
+                <div className="p-8 md:p-10 flex flex-col lg:flex-row justify-between items-center gap-8 relative z-10">
+                    <div className="flex flex-col gap-2 text-center lg:text-left">
+                        <div className="flex items-center gap-2 justify-center lg:justify-start">
+                            <span className="material-symbols-outlined text-ios-cyan text-sm">verified_user</span>
+                            <span className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.2em]">Diagnostic Terminal</span>
                         </div>
+                        <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase">Audit Report Generator</h3>
+                        <p className="text-sm text-white/40 max-w-lg leading-relaxed">Compile all critical leakages and transformation roadmaps into a singular, board-ready audit document.</p>
+                    </div>
 
-                        {/* Existing Download Action */}
+                    <div className="flex items-center justify-center w-full md:w-auto">
                         <button
-                            onClick={handleDownload}
-                            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-colors"
+                            onClick={handleGenerateReport}
+                            disabled={isGenerating}
+                            className={`flex items-center gap-3 px-12 h-[60px] rounded-2xl transition-all active:scale-95 shadow-2xl ${isGenerating
+                                ? 'bg-ios-cyan/20 text-ios-cyan cursor-wait'
+                                : 'bg-ios-cyan text-black hover:bg-ios-cyan/90 font-black'
+                                }`}
                         >
-                            <span className="material-symbols-outlined text-sm">download</span>
-                            <span className="text-xs font-bold uppercase tracking-wider">Download PDF</span>
+                            {isGenerating ? (
+                                <>
+                                    <span className="material-symbols-outlined text-base animate-spin">sync</span>
+                                    <span className="text-[10px] uppercase tracking-[0.2em]">Processing Payload...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="material-symbols-outlined text-lg">rocket_launch</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Generate & Download Report</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
+            </div>
 
-                {/* Scrollable Report Content */}
-                <div className="flex-1 overflow-y-auto p-8 md:p-12 space-y-16" ref={reportRef}>
+            {/* Hidden Off-Screen Layer for PDF Generation (Target width: 1200px) */}
+            <div style={{ position: 'absolute', left: '-10000px', top: '0', pointerEvents: 'none' }}>
+                <div
+                    ref={reportRef}
+                    className="w-[1200px] bg-[#0a0a0d] p-16 space-y-20 flex flex-col items-center"
+                    style={{ background: '#0a0a0d', color: 'white' }}
+                >
+                    {/* High-Fidelity PDF Header */}
+                    <div className="w-full flex justify-between items-end border-b border-white/10 pb-12 mb-12">
+                        <img src="/logo.png" alt="MasterKey Labs" className="h-20 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
+                        <div className="text-right">
+                            <h4 className="text-ios-cyan font-black tracking-widest uppercase text-xs mb-1">Diagnostic Audit Payload</h4>
+                            <p className="text-3xl font-black text-white tracking-tighter uppercase">{businessName || 'Masterkey OS'}</p>
+                            <p className="text-white/40 text-sm mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
+                        </div>
+                    </div>
 
                     {/* Section 1: Executive Summary */}
-                    <div className="text-center space-y-6">
-                        <div className="inline-block px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full mb-4">
-                            <span className="text-[10px] font-black tracking-[0.2em] text-red-500 uppercase">CRITICAL SYSTEM DIAGNOSIS</span>
+                    <div className="text-center space-y-8 w-full">
+                        <div className="inline-block px-6 py-2 bg-red-500/10 border border-red-500/20 rounded-full mb-4">
+                            <span className="text-xs font-black tracking-[0.3em] text-red-500 uppercase">CRITICAL SYSTEM DISRUPTION DETECTED</span>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase">
-                            Total Annual Bleed
+                        <h1 className="text-7xl font-black text-white tracking-tighter uppercase leading-none">
+                            Total Annual<br />Capital Bleed
                         </h1>
-                        <p className="text-10xl md:text-8xl font-black text-amber-500 drop-shadow-[0_0_20px_rgba(245,158,11,0.3)] tracking-tighter">
+                        <p className="text-[160px] font-black text-amber-500 drop-shadow-[0_0_40px_rgba(245,158,11,0.4)] tracking-tighter leading-none py-10">
                             {formatIndian(totalAnnualBleed)}
                         </p>
 
-                        <div className="mt-8 p-6 bg-green-500/5 border border-green-500/20 rounded-2xl max-w-2xl mx-auto">
-                            <p className="text-sm font-bold text-green-500/50 uppercase tracking-widest mb-2">RECOVERABLE POTENTIAL</p>
-                            <p className="text-3xl font-black text-green-400">{formatIndian(recoverablePotential)} / year</p>
-                            <p className="mt-3 text-sm text-green-400/80 italic">We can save 50% of your current losses by automating critical workflows.</p>
+                        <div className="mt-12 p-8 bg-green-500/5 border border-green-500/20 rounded-3xl max-w-3xl mx-auto shadow-2xl">
+                            <p className="text-xs font-black text-green-500/50 uppercase tracking-[0.3em] mb-3">RECOVERABLE POTENTIAL</p>
+                            <p className="text-5xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)} / year</p>
+                            <p className="mt-4 text-lg text-green-400/80 italic font-medium">We can reclaim 50% of this burn by deploying autonomous operational protocols.</p>
                         </div>
                     </div>
 
                     {/* Section 2: The 4 Leakages */}
-                    <div>
-                        <div className="flex items-center gap-3 mb-8">
-                            <span className="w-1.5 h-6 bg-ios-cyan rounded-full"></span>
-                            <h3 className="text-2xl font-bold text-white uppercase tracking-wider">Diagnostic Telemetry</h3>
+                    <div className="w-full">
+                        <div className="flex items-center gap-4 mb-10">
+                            <span className="w-2.5 h-10 bg-ios-cyan rounded-full shadow-[0_0_15px_rgba(0,210,255,0.5)]"></span>
+                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">Diagnostic Telemetry</h3>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                            <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl">
-                                <h4 className="text-xs font-black text-white/40 uppercase tracking-widest mb-4">Operational Friction</h4>
-                                <p className="text-3xl font-bold text-white mb-2">{formatIndian(annualOpsWaste)}</p>
-                                <p className="text-sm text-white/50 leading-relaxed">
-                                    Redundant manual data entry and software fragmentation are vaporizing <span className="text-amber-500 font-bold">{formatIndian(annualOpsWaste)}</span> annually. This includes {formatIndian(staffWaste * 12)} in sheer payroll inefficiency.
+                        <div className="grid grid-cols-2 gap-10">
+                            <div className="p-10 bg-white/[0.03] border border-white/10 rounded-3xl shadow-xl">
+                                <h4 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6">Operational Friction</h4>
+                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualOpsWaste)}</p>
+                                <p className="text-lg text-white/50 leading-relaxed font-medium">
+                                    Manual fragmentation is vaporizing <span className="text-amber-500 font-black">{formatIndian(annualOpsWaste)}</span>. Includes {formatIndian(staffWaste * 12)} in payroll inefficiency.
                                 </p>
                             </div>
 
-                            <div className="p-6 bg-white/[0.02] border border-purple-500/10 rounded-2xl">
-                                <h4 className="text-xs font-black text-purple-400/60 uppercase tracking-widest mb-4">After-Hours Bleed</h4>
-                                <p className="text-3xl font-bold text-white mb-2">{formatIndian(annualNightLoss)}</p>
-                                <p className="text-sm text-white/50 leading-relaxed">
-                                    While operations sleep, you hemorrhage <span className="text-purple-400 font-bold">{formatIndian(annualNightLoss)}</span> annually due to the absence of autonomous, 24/7 AI response protocols for inbound leads.
+                            <div className="p-10 bg-white/[0.03] border border-purple-500/20 rounded-3xl shadow-xl">
+                                <h4 className="text-sm font-black text-purple-400/60 uppercase tracking-[0.2em] mb-6">After-Hours Bleed</h4>
+                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualNightLoss)}</p>
+                                <p className="text-lg text-white/50 leading-relaxed font-medium">
+                                    While systems sleep, you hemorrhage <span className="text-purple-400 font-black">{formatIndian(annualNightLoss)}</span> annually due to lack of 24/7 AI lead response.
                                 </p>
                             </div>
 
-                            <div className="p-6 bg-white/[0.02] border border-ios-cyan/10 rounded-2xl">
-                                <h4 className="text-xs font-black text-ios-cyan/60 uppercase tracking-widest mb-4">Digital Invisibility</h4>
-                                <p className="text-3xl font-bold text-white mb-2">{formatIndian(annualVisibilityLoss)}</p>
-                                <p className="text-sm text-white/50 leading-relaxed">
-                                    An estimated <span className="text-ios-cyan font-bold">{formatIndian(annualVisibilityLoss)}</span> (<span className="text-white font-bold">{missedCustomers}</span> missed prospects) within your geo-fenced radius is currently being captured by optimized competitors.
+                            <div className="p-10 bg-white/[0.03] border border-ios-cyan/20 rounded-3xl shadow-xl">
+                                <h4 className="text-sm font-black text-ios-cyan/60 uppercase tracking-[0.2em] mb-6">Digital Invisibility</h4>
+                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualVisibilityLoss)}</p>
+                                <p className="text-lg text-white/50 leading-relaxed font-medium">
+                                    An estimated <span className="text-ios-cyan font-black">{formatIndian(annualVisibilityLoss)}</span> (<span className="text-white font-black">{missedCustomers}</span> missed customers) is captured by local competitors.
                                 </p>
                             </div>
 
-                            <div className="p-6 bg-white/[0.02] border border-red-500/10 rounded-2xl">
-                                <h4 className="text-xs font-black text-red-500/60 uppercase tracking-widest mb-4">AI Extinction Threat</h4>
-                                <p className="text-3xl font-bold text-white mb-2">{extinctionHorizon} MO</p>
-                                <p className="text-sm text-white/50 leading-relaxed">
-                                    Market irrelevance horizon: <span className="text-red-400 font-bold">{extinctionHorizon} months</span> remaining before fully AI-native competitors render your legacy operational models obsolete.
+                            <div className="p-10 bg-white/[0.03] border border-red-500/20 rounded-3xl shadow-xl">
+                                <h4 className="text-sm font-black text-red-500/60 uppercase tracking-[0.2em] mb-6">AI Irrelevance Horizon</h4>
+                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{extinctionHorizon} MO</p>
+                                <p className="text-lg text-white/50 leading-relaxed font-medium">
+                                    Window of survival: <span className="text-red-400 font-black">{extinctionHorizon} months</span> remaining before AI-native firms render your model obsolete.
                                 </p>
                             </div>
-
                         </div>
                     </div>
 
                     {/* Section 3: Coordination Drag (Conditional) */}
                     {totalAnnualBleed > 1000000 && (
-                        <div className="p-8 bg-amber-500/5 border border-amber-500/20 rounded-3xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 blur-[80px] rounded-full pointer-events-none"></div>
-                            <div className="flex items-start gap-4 relative z-10">
-                                <span className="material-symbols-outlined text-amber-500 text-4xl mt-1">warning</span>
-                                <div>
-                                    <h4 className="text-lg font-black text-amber-500 uppercase tracking-widest mb-2">Coordination Drag Applied</h4>
-                                    <p className="text-white/70 leading-relaxed">
-                                        Fixing inefficiencies at this scale becomes increasingly expensive. Every day of delay compounds your losses. Immediate intervention is required to stabilize operations.
-                                    </p>
-                                </div>
+                        <div className="w-full p-12 bg-amber-500/5 border border-amber-500/20 rounded-3xl relative overflow-hidden flex items-start gap-8 shadow-inner">
+                            <div className="absolute top-0 right-0 w-[400px] h-full bg-amber-500/5 blur-[100px] rounded-full"></div>
+                            <span className="material-symbols-outlined text-amber-500 text-6xl mt-1">warning</span>
+                            <div className="relative z-10">
+                                <h4 className="text-2xl font-black text-amber-500 uppercase tracking-widest mb-4">Coordination Drag Applied</h4>
+                                <p className="text-xl text-white/70 leading-relaxed font-medium">
+                                    Fixing inefficiencies at this scale is technically complex. Every day of delay compounds the capital dump. Immediate architectural intervention is mandatory.
+                                </p>
                             </div>
                         </div>
                     )}
 
                     {/* Section 4: The Survival Protocol */}
-                    <div>
-                        <div className="flex items-center gap-3 mb-8">
-                            <span className="w-1.5 h-6 bg-green-500 rounded-full"></span>
-                            <h3 className="text-2xl font-bold text-white uppercase tracking-wider">The Survival Protocol</h3>
+                    <div className="w-full pb-20">
+                        <div className="flex items-center gap-4 mb-12">
+                            <span className="w-2.5 h-10 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"></span>
+                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">The Survival Protocol</h3>
                         </div>
-                        <div className="relative">
-                            <div className="absolute left-[15px] top-[24px] bottom-[24px] w-0.5 bg-white/10 z-0"></div>
-                            <div className="space-y-8 relative z-10">
-
-                                <div className="flex gap-6">
-                                    <div className="w-8 h-8 rounded-full bg-[#0a0a0d] border-2 border-green-500 flex items-center justify-center flex-shrink-0">
-                                        <span className="text-green-500 font-bold text-xs">01</span>
+                        <div className="relative pl-12">
+                            <div className="absolute left-[24px] top-[40px] bottom-[40px] w-1 bg-white/10"></div>
+                            <div className="space-y-16">
+                                <div className="flex gap-10">
+                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-green-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                                        <span className="text-black font-black text-lg">01</span>
                                     </div>
-                                    <div>
-                                        <h4 className="text-lg font-bold text-white mb-1">Ecosystem Unification</h4>
-                                        <p className="text-sm text-white/40">Consolidate fragmented, legacy tools into a singular, high-availability architecture.</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-6">
-                                    <div className="w-8 h-8 rounded-full bg-[#0a0a0d] border-2 border-ios-cyan flex items-center justify-center flex-shrink-0">
-                                        <span className="text-ios-cyan font-bold text-xs">02</span>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-lg font-bold text-white mb-1">Autonomous Systems</h4>
-                                        <p className="text-sm text-white/40">Deploy intelligent routing and programmatic workflows to instantly eliminate manual cognitive load.</p>
+                                    <div className="pt-1">
+                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Ecosystem Unification</h4>
+                                        <p className="text-lg text-white/40 leading-relaxed font-medium">Consolidate fragmented tools into a singular, high-availability architecture.</p>
                                     </div>
                                 </div>
-
-                                <div className="flex gap-6">
-                                    <div className="w-8 h-8 rounded-full bg-[#0a0a0d] border-2 border-purple-500 flex items-center justify-center flex-shrink-0">
-                                        <span className="text-purple-500 font-bold text-xs">03</span>
+                                <div className="flex gap-10">
+                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-ios-cyan flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
+                                        <span className="text-black font-black text-lg">02</span>
                                     </div>
-                                    <div>
-                                        <h4 className="text-lg font-bold text-white mb-1">Performance & Visibility Scaling</h4>
-                                        <p className="text-sm text-white/40">Dominate local search metrics and capture 24/7 inbound lead traffic.</p>
+                                    <div className="pt-1">
+                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Autonomous Orchestration</h4>
+                                        <p className="text-lg text-white/40 leading-relaxed font-medium">Deploy programmatic workflows and intelligent routing to eliminate manual cognitive load.</p>
                                     </div>
                                 </div>
-
+                                <div className="flex gap-10">
+                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-purple-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                                        <span className="text-black font-black text-lg">03</span>
+                                    </div>
+                                    <div className="pt-1">
+                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Scale & Dominance</h4>
+                                        <p className="text-lg text-white/40 leading-relaxed font-medium">Dominate local metrics and capture 24/7 inbound traffic across all digital touchpoints.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* TASK 3: The Ultimate CTA */}
-                    <div className="mt-16 pt-16 border-t border-white/10 text-center space-y-8 pb-12">
-                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter">
-                            Stop the Capital Bleed.<br />
-                            <span className="text-ios-cyan">Claim Your Unfair Advantage.</span>
-                        </h2>
+                    {/* Section 5: Detailed Audit Telemetry */}
+                    {computedData && (
+                        <div className="w-full pb-10">
+                            <div className="flex items-center gap-4 mb-10 w-full border-b border-white/10 pb-6">
+                                <span className="w-2.5 h-10 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)]"></span>
+                                <h3 className="text-3xl font-black text-white uppercase tracking-widest">Raw System Diagnostics</h3>
+                            </div>
 
-                        <div className="flex flex-col md:flex-row items-center justify-center gap-6 max-w-3xl mx-auto mt-10">
-                            {/* Primary CTA */}
-                            <a
-                                href="https://calendly.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full md:w-auto px-8 py-5 bg-white text-black text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-gray-200 transition-all hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-                            >
-                                Build Survival Protocol <span className="opacity-50 ml-2">(Book Architect)</span>
-                            </a>
+                            <div className="grid grid-cols-2 gap-8">
+                                {/* Module 1 Breakdown */}
+                                <div className="p-8 bg-[#111115] border border-white/10 rounded-2xl">
+                                    <h4 className="text-xs font-black text-white/50 uppercase tracking-widest mb-6">Mod 01: Operational Waste</h4>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Staff/Payroll Waste</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(staffWaste)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Marketing Bleed</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(marketingWaste)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Raw Ops Overheads</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(lossAuditData.ops_overheads || 0)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2">
+                                            <span className="text-sm font-medium text-amber-500/80">Coordination Drag Applied</span>
+                                            <span className="text-lg font-bold text-amber-400 tracking-tight">{lossAuditData.coordination_drag || 0}x</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            {/* Secondary CTA (WhatsApp) */}
-                            <a
-                                href={waLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full md:w-auto px-8 py-5 bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/30 text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-[#25D366]/20 transition-all flex items-center justify-center gap-3"
-                            >
-                                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.711.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z" /></svg>
-                                Speak to an Expert Now
-                            </a>
+                                {/* Module 2 Breakdown */}
+                                <div className="p-8 bg-[#111115] border border-purple-500/20 rounded-2xl">
+                                    <h4 className="text-xs font-black text-purple-400/50 uppercase tracking-widest mb-6">Mod 02: Night Loss</h4>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Missed Weekly Inquiries</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{nightLossData.inquiries || 0}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Avg Txn / LTV Velocity</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(nightLossData.avg_transaction_value || 0)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Est. Conversion Rate</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{nightLossData.conversion_rate || 0}%</span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2">
+                                            <span className="text-sm font-medium text-purple-400/80">Monthly Revenue Hemorrhage</span>
+                                            <span className="text-lg font-bold text-purple-400 tracking-tight">{formatIndian(nightLossRevenue)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Module 3 Breakdown */}
+                                <div className="p-8 bg-[#111115] border border-ios-cyan/20 rounded-2xl">
+                                    <h4 className="text-xs font-black text-ios-cyan/50 uppercase tracking-widest mb-6">Mod 03: Digital Invisibility</h4>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Lost Local Searches</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{visibilityData.missed_searches ? visibilityData.missed_searches.toLocaleString('en-IN') : 0} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">High-Intent Missed Customers</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{missedCustomers} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2">
+                                            <span className="text-sm font-medium text-ios-cyan/80">Calculated Invisibility Score</span>
+                                            <span className="text-lg font-bold text-ios-cyan tracking-tight">{100 - (visibilityData.percent || 0)}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Module 4 Breakdown */}
+                                <div className="p-8 bg-[#111115] border border-red-500/20 rounded-2xl">
+                                    <h4 className="text-xs font-black text-red-500/50 uppercase tracking-widest mb-6">Mod 04: AI Threat Horizon</h4>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Threat Assessment Threshold</span>
+                                            <span className="text-lg font-bold text-white tracking-tight uppercase">{aiThreatData.threat_level || 'UNKNOWN'}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Survival Complexity Score</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.score || 0}%</span>
+                                        </div>
+                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                            <span className="text-sm font-medium text-white/60">Calculated Time to Live</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.final_horizon || (aiThreatData.years_left ? Math.round(aiThreatData.years_left * 12) : 0)} <span className="text-[10px] text-white/30 tracking-widest">MONTHS</span></span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2">
+                                            <span className="text-sm font-medium text-red-400/80">Extinction Deadline Status</span>
+                                            <span className="text-[11px] font-black tracking-[0.2em] text-red-500 uppercase">{aiThreatData.score > 70 ? 'CRITICAL EVASION REQ.' : 'MONITORING'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 

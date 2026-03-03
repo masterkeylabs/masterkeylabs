@@ -37,13 +37,15 @@ function VisibilityContent() {
     useEffect(() => {
         if (!businessId) return;
         const load = async () => {
+            // 1. Try to load existing Visibility results
             const { data } = await supabase
                 .from('visibility_results')
                 .select('*')
                 .eq('business_id', businessId)
                 .order('created_at', { ascending: false })
                 .limit(1)
-                .single();
+                .maybeSingle();
+
             if (data) {
                 // Merge saved signals with the full default set to keep all keys present
                 const defaultAnswers = Object.fromEntries(VISIBILITY_SIGNALS.map(s => [s.id, false]));
@@ -59,13 +61,24 @@ function VisibilityContent() {
                     data.avg_transaction_value || 0
                 );
                 setResults(calc);
+            } else {
+                // 2. If no Visibility results exist, fetch ops_overheads from 1st module (Operational Waste)
+                const { data: lossData } = await supabase
+                    .from('loss_audit_results')
+                    .select('ops_overheads')
+                    .eq('business_id', businessId)
+                    .maybeSingle();
+
+                if (lossData?.ops_overheads !== undefined && lossData?.ops_overheads !== null) {
+                    setAvgTransactionValue(lossData.ops_overheads.toString());
+                }
             }
         };
         load();
     }, [businessId]);
 
     const handleScan = async () => {
-        const avgValue = parseInt(avgTransactionValue) || 0;
+        const avgValue = parseFloat(avgTransactionValue) || 0;
         const calc = calculateVisibility(answers, city, avgValue);
         setResults(calc);
 
@@ -91,7 +104,8 @@ function VisibilityContent() {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             } else {
-                router.refresh();
+                // On success, jump to next audit
+                router.push(`/dashboard/ai-threat?id=${businessId}`);
             }
             setSaving(false);
         }
@@ -170,11 +184,11 @@ function VisibilityContent() {
                     <div className="mb-5">
                         <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.opsOverheadLabel} (₹)</label>
                         <input
-                            type="number" min="0" step="1000"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all"
+                            type="number" min="0" step="any"
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all font-mono"
                             placeholder={t.visibility.placeholders.revenue}
                             value={avgTransactionValue}
-                            onChange={(e) => setAvgTransactionValue(Math.max(0, parseInt(e.target.value) || 0).toString())}
+                            onChange={(e) => setAvgTransactionValue(e.target.value)}
                         />
                         <p className="text-[9px] text-white/30 mt-1 italic">{t.visibility.lostRevenueSub.replace('{city}', city || '...')}</p>
                     </div>

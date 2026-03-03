@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { translations } from '@/lib/translations';
 
 function ProfileEditContent() {
-    const { business } = useAuth();
+    const { business, user } = useAuth();
     const searchParams = useSearchParams();
     const router = useRouter();
     const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
@@ -21,8 +21,8 @@ function ProfileEditContent() {
 
     const [formData, setFormData] = useState({
         businessName: '',
-        contactName: '',
-        email: '',
+        contactName: user?.user_metadata?.full_name || '',
+        email: user?.email || '',
         whatsapp: '',
         vertical: 'local_business',
         revenueBracket: '5-20L',
@@ -104,66 +104,87 @@ function ProfileEditContent() {
         e.preventDefault();
         setMessage(null);
 
-        if (!businessId) {
-            setMessage({ type: 'error', text: 'No business ID found. Cannot save.' });
+        if (!user) {
+            setMessage({ type: 'error', text: 'You must be logged in to save changes.' });
             return;
         }
 
         setSaving(true);
         try {
-            // Update Business Table
-            const { error: bizError } = await supabase
-                .from('businesses')
-                .update({
-                    entity_name: formData.businessName,
-                    owner_name: formData.contactName,
-                    email: formData.email,
-                    phone: formData.whatsapp,
-                    classification: `${formData.vertical}::${formData.revenueBracket}`,
-                    scalability: formData.employees,
-                    digital_footprint: formData.contactAfter6
-                })
-                .eq('id', businessId);
+            const bizPayload = {
+                entity_name: formData.businessName,
+                owner_name: formData.contactName,
+                email: formData.email,
+                phone: formData.whatsapp,
+                classification: `${formData.vertical}::${formData.revenueBracket}`,
+                scalability: formData.employees,
+                digital_footprint: formData.contactAfter6,
+                user_id: user.id
+            };
 
-            if (bizError) throw bizError;
+            let finalBusinessId = businessId;
+
+            if (businessId) {
+                // Update Business Table
+                const { error: bizError } = await supabase
+                    .from('businesses')
+                    .update(bizPayload)
+                    .eq('id', businessId);
+
+                if (bizError) throw bizError;
+            } else {
+                // Create New Business Entry
+                const { data: newBiz, error: createError } = await supabase
+                    .from('businesses')
+                    .insert([bizPayload])
+                    .select()
+                    .single();
+
+                if (createError) throw createError;
+                if (newBiz) {
+                    finalBusinessId = newBiz.id;
+                    localStorage.setItem('masterkey_business_id', newBiz.id);
+                }
+            }
 
             // ── Update loss_audit_results (non-blocking) ───────────────────
-            try {
-                const { data: currentAudit } = await supabase
-                    .from('loss_audit_results')
-                    .select('*')
-                    .eq('business_id', businessId)
-                    .order('created_at', { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
+            if (finalBusinessId) {
+                try {
+                    const { data: currentAudit } = await supabase
+                        .from('loss_audit_results')
+                        .select('*')
+                        .eq('business_id', finalBusinessId)
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
 
-                const newMarketingSpend = parseInt(formData.marketingSpend, 10) || 0;
-                const newOpsSpend = parseInt(formData.opsSpend, 10) || 0;
+                    const newMarketingSpend = parseInt(formData.marketingSpend, 10) || 0;
+                    const newOpsSpend = parseInt(formData.opsSpend, 10) || 0;
 
-                if (currentAudit) {
-                    if (currentAudit.marketing_budget !== newMarketingSpend || currentAudit.ops_overheads !== newOpsSpend) {
-                        // Use spec rates: marketing waste = 0.26, overhead waste = 0.15
-                        const newMarketingWaste = newMarketingSpend * 0.26;
-                        const newOpsWaste = newOpsSpend * 0.15;
-                        const newTotalBurn = (currentAudit.staff_waste || 0) + newMarketingWaste + newOpsWaste;
+                    if (currentAudit) {
+                        if (currentAudit.marketing_budget !== newMarketingSpend || currentAudit.ops_overheads !== newOpsSpend) {
+                            // Use spec rates: marketing waste = 0.26, overhead waste = 0.15
+                            const newMarketingWaste = newMarketingSpend * 0.26;
+                            const newOpsWaste = newOpsSpend * 0.15;
+                            const newTotalBurn = (currentAudit.staff_waste || 0) + newMarketingWaste + newOpsWaste;
 
-                        await supabase
-                            .from('loss_audit_results')
-                            .update({
-                                marketing_budget: newMarketingSpend,
-                                ops_overheads: newOpsSpend,
-                                marketing_waste: newMarketingWaste,
-                                ops_waste: newOpsWaste,
-                                total_burn: newTotalBurn,
-                                annual_burn: newTotalBurn * 12,
-                                five_year_cost: newTotalBurn * 12 * 5
-                            })
-                            .eq('id', currentAudit.id);
+                            await supabase
+                                .from('loss_audit_results')
+                                .update({
+                                    marketing_budget: newMarketingSpend,
+                                    ops_overheads: newOpsSpend,
+                                    marketing_waste: newMarketingWaste,
+                                    ops_waste: newOpsWaste,
+                                    total_burn: newTotalBurn,
+                                    annual_burn: newTotalBurn * 12,
+                                    five_year_cost: newTotalBurn * 12 * 5
+                                })
+                                .eq('id', currentAudit.id);
+                        }
                     }
+                } catch (auditErr) {
+                    console.warn('loss_audit_results update skipped (non-fatal):', auditErr.message);
                 }
-                // If no audit row exists, skip insert — it will be created when user runs the audit
-            } catch (auditErr) {
-                console.warn('loss_audit_results update skipped (non-fatal):', auditErr.message);
             }
             // ──────────────────────────────────────────────────────────────
 
@@ -171,7 +192,7 @@ function ProfileEditContent() {
 
             // Redirect back to dashboard after short delay
             setTimeout(() => {
-                router.push(businessId ? `/dashboard?id=${businessId}` : '/dashboard');
+                router.push(finalBusinessId ? `/dashboard?id=${finalBusinessId}` : '/dashboard');
             }, 1000);
 
         } catch (err) {

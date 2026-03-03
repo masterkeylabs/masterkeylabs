@@ -40,33 +40,45 @@ function AIThreatContent() {
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
 
-    // Load existing results
+    // Load existing results or pre-populate from 1st module
     useEffect(() => {
         if (!businessId) return;
         const load = async () => {
-            const { data } = await supabase
+            // 1. Try to load existing AI Threat results
+            const { data: aiData } = await supabase
                 .from('ai_threat_results')
                 .select('*')
                 .eq('business_id', businessId)
                 .order('created_at', { ascending: false })
                 .limit(1)
-                .single();
-            if (data) {
+                .maybeSingle();
+
+            if (aiData) {
                 setForm({
-                    industry: data.industry || 'retail',
-                    isOmnichannel: data.is_omnichannel || false,
-                    hasCRM: data.has_crm || false,
-                    hasERP: data.has_erp || false,
-                    employeeCount: data.employee_count || 0,
+                    industry: aiData.industry || 'retail',
+                    isOmnichannel: aiData.is_omnichannel || false,
+                    hasCRM: aiData.has_crm || false,
+                    hasERP: aiData.has_erp || false,
+                    employeeCount: aiData.employee_count || 0,
                 });
-                // Recalculate with new formula
-                const calc = calculateAIThreat(data.industry || 'retail', {
-                    isOmnichannel: data.is_omnichannel || false,
-                    hasCRM: data.has_crm || false,
-                    hasERP: data.has_erp || false,
-                    employeeCount: data.employee_count || 0,
+                const calc = calculateAIThreat(aiData.industry || 'retail', {
+                    isOmnichannel: aiData.is_omnichannel || false,
+                    hasCRM: aiData.has_crm || false,
+                    hasERP: aiData.has_erp || false,
+                    employeeCount: aiData.employee_count || 0,
                 });
                 setResults(calc);
+            } else {
+                // 2. If no AI metrics exist yet, fetch industry from 1st module (Operational Waste)
+                const { data: lossData } = await supabase
+                    .from('loss_audit_results')
+                    .select('industry')
+                    .eq('business_id', businessId)
+                    .maybeSingle();
+
+                if (lossData?.industry) {
+                    setForm(prev => ({ ...prev, industry: lossData.industry }));
+                }
             }
         };
         load();
@@ -106,7 +118,8 @@ function AIThreatContent() {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             } else {
-                router.refresh();
+                // Final step: return to dashboard
+                router.push(`/dashboard?id=${businessId}`);
             }
             setSaving(false);
         }

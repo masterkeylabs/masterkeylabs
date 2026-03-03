@@ -12,7 +12,7 @@ export const useDiagnosticStore = create((set) => ({
     setAuditData: (data) => set((state) => {
         const { lossAudit, nightLoss, missedCustomers, aiThreat } = data;
 
-        const staffWaste = lossAudit?.payroll_waste || 0;
+        const staffWaste = lossAudit?.staff_waste || 0;
         const marketingWaste = lossAudit?.marketing_waste || 0;
         const opsWaste = lossAudit?.saving_target || 0; // Total operational waste
 

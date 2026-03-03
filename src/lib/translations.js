@@ -1621,11 +1621,18 @@ export const translations = {
                 analyzing: "Analyze ho raha hai...",
                 sub: "Landing page par details submit karein proper assessment ke liye."
             },
-            backToDashboard: "Dashboard par wapas jayein"
+            backToDashboard: "Dashboard par wapas jayein",
+        },
+        nav: {
+            dashboard: "Dashboard",
+            login: "Login",
+            signup: "Sign Up",
+            home: "Home"
         },
         header: {
             command: "Command Center",
             sync: "System Sync Active hai",
+            home: "Home"
         },
         lossAudit: {
             title: "Loss Audit",

@@ -47,6 +47,31 @@ export default function DiagnosticGrid({ data, business, t }) {
         }
     };
 
+    const isM1Complete = !!lossAudit?.created_at;
+    const isM2Complete = !!nightLoss?.created_at;
+    const isM3Complete = !!missedCustomers?.created_at;
+
+    const ModuleWrapper = ({ children, unlocked, href, overlayText }) => {
+        if (!unlocked) {
+            return (
+                <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-white/[0.01] p-8 backdrop-blur-sm grayscale opacity-40 cursor-not-allowed group">
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/20 backdrop-blur-[2px]">
+                        <span className="material-symbols-outlined text-white/40 text-4xl mb-2">lock</span>
+                        <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{overlayText || 'Locked'}</p>
+                    </div>
+                    <div className="blur-md pointer-events-none">
+                        {children}
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <Link href={href} className="group cursor-pointer relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 block">
+                {children}
+            </Link>
+        );
+    };
+
     if (!data) return null;
 
     return (
@@ -62,9 +87,9 @@ export default function DiagnosticGrid({ data, business, t }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
                 {/* 1. OPERATIONAL WASTE */}
-                <Link
+                <ModuleWrapper
+                    unlocked={true}
                     href={`/dashboard/loss-audit${business?.id ? `?id=${business.id}` : ''}`}
-                    className="group cursor-pointer relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 block"
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-ios-blue opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
@@ -85,7 +110,7 @@ export default function DiagnosticGrid({ data, business, t }) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
                                 <p className="text-[9px] font-bold text-white/30 uppercase mb-1">{ts.module01.payroll}</p>
-                                <p className="text-lg font-bold text-white">₹{(lossAudit?.payroll_waste || 0).toLocaleString()}</p>
+                                <p className="text-lg font-bold text-white">₹{(lossAudit?.staff_waste || 0).toLocaleString()}</p>
                             </div>
                             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
                                 <p className="text-[9px] font-bold text-white/30 uppercase mb-1">{ts.module01.marketing}</p>
@@ -93,12 +118,13 @@ export default function DiagnosticGrid({ data, business, t }) {
                             </div>
                         </div>
                     </div>
-                </Link>
+                </ModuleWrapper>
 
                 {/* 2. NIGHT LOSS */}
-                <Link
+                <ModuleWrapper
+                    unlocked={isM1Complete}
                     href={`/dashboard/night-loss${business?.id ? `?id=${business.id}` : ''}`}
-                    className="group cursor-pointer relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 block"
+                    overlayText="Complete Operational Audit to Unlock"
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-purple-500 opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
@@ -126,12 +152,13 @@ export default function DiagnosticGrid({ data, business, t }) {
                             </div>
                         </div>
                     </div>
-                </Link>
+                </ModuleWrapper>
 
                 {/* 3. VISIBILITY */}
-                <Link
+                <ModuleWrapper
+                    unlocked={isM2Complete}
                     href={`/dashboard/visibility${business?.id ? `?id=${business.id}` : ''}`}
-                    className="group cursor-pointer relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 block"
+                    overlayText="Complete Night Loss Audit to Unlock"
                 >
                     <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500 opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
@@ -159,43 +186,42 @@ export default function DiagnosticGrid({ data, business, t }) {
                             );
                         })}
                     </div>
-                </Link>
+                </ModuleWrapper>
 
                 {/* 4. EXTINCTION HORIZON */}
-                <Link
+                <ModuleWrapper
+                    unlocked={isM3Complete}
                     href={`/dashboard/ai-threat${business?.id ? `?id=${business.id}` : ''}`}
-                    className="group cursor-pointer relative overflow-hidden rounded-3xl border border-red-500/20 bg-red-500/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:bg-red-500/[0.04] hover:border-red-500/30 block"
+                    overlayText="Complete Visibility Scan to Unlock"
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 blur-[60px] rounded-full"></div>
+                    <div className="absolute top-0 left-0 w-1 h-full bg-red-500 opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
                         <div>
                             <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">{ts.module04.tag}</p>
-                            <h3 className="text-xl font-bold text-white uppercase tracking-tighter">{ts.module04.title}</h3>
+                            <h3 className="text-xl font-bold text-white uppercase tracking-tighter group-hover:text-red-500 transition-colors">{ts.module04.title}</h3>
                         </div>
-                        <div className="flex flex-col items-end">
+                        <div className="text-right flex flex-col items-end">
                             <div className="text-white/20 group-hover:text-red-500 transition-colors mb-2">
                                 <span className="material-symbols-outlined text-[20px]">open_in_new</span>
                             </div>
-                            <div className="text-center px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full">
-                                <p className="text-[8px] font-black text-red-500 uppercase leading-none mt-0.5">LIVE SCANNING</p>
-                            </div>
+                            <p className="text-[10px] font-bold text-white/20 uppercase">SURVIVAL COMPLEXITY</p>
+                            <p className="text-2xl font-black text-white">{aiThreat?.score || 0}%</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-6 text-left">
-                        <div className="flex-1">
-                            <p className="text-[10px] font-bold text-white/20 uppercase mb-1">MARKET RELEVANCE TTL</p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-black text-white">{aiThreat?.score || 30}</span>
-                                <span className="text-sm font-bold text-white/40 uppercase">MONTHS</span>
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 text-left">
+                                <p className="text-[9px] font-bold text-white/30 uppercase mb-1">MARKET RELEVANCE TTL</p>
+                                <p className="text-lg font-bold text-white">{aiThreat?.final_horizon || (aiThreat?.years_left ? Math.round(aiThreat.years_left * 12) : 0)} <span className="text-xs text-white/40 font-medium uppercase">MONTHS</span></p>
+                            </div>
+                            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 text-left">
+                                <p className="text-[9px] font-bold text-white/30 uppercase mb-1">THREAT LEVEL</p>
+                                <p className="text-lg font-bold text-white">{aiThreat?.threat_level || 'UNKNOWN'}</p>
                             </div>
                         </div>
-                        <div className="flex-1">
-                            <p className="text-[10px] font-bold text-white/20 uppercase mb-1">SURVIVAL COMPLEXITY</p>
-                            <p className="text-2xl font-bold text-white tracking-tight">{aiThreat?.risk_pct || aiThreat?.score || 0}% <span className="text-xs text-white/20">THREAT</span></p>
-                        </div>
                     </div>
-                </Link>
+                </ModuleWrapper>
             </div>
         </div>
     );

@@ -61,9 +61,9 @@ function NightLossContent() {
 
     const handleCalculate = async (e) => {
         e.preventDefault();
-        const avgValue = parseInt(form.avgTransactionValue) || 0;
+        const avgValue = parseFloat(form.avgTransactionValue) || 0;
 
-        if (!avgValue) {
+        if (avgValue <= 0) {
             alert('Please enter your average transaction value (₹). This is required to calculate revenue loss.');
             return;
         }
@@ -95,7 +95,8 @@ function NightLossContent() {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             } else {
-                router.refresh();
+                // On success, jump to next audit
+                router.push(`/dashboard/visibility?id=${businessId}`);
             }
             setSaving(false);
         }
@@ -161,11 +162,11 @@ function NightLossContent() {
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.avgTransactionLabel}</label>
                             <input
-                                type="number" min="0" step="1000" max="5000000" required
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all"
+                                type="number" min="0" step="any" max="5000000" required
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
                                 placeholder="₹ 1,500"
                                 value={form.avgTransactionValue}
-                                onChange={(e) => setForm({ ...form, avgTransactionValue: Math.max(0, parseInt(e.target.value) || 0).toString() })}
+                                onChange={(e) => setForm({ ...form, avgTransactionValue: e.target.value })}
                             />
                             <p className="text-[9px] text-alert-orange/60 mt-1 italic">{t.nightLoss.avgTransactionSub}</p>
                         </div>

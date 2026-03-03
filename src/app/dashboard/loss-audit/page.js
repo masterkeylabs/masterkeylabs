@@ -77,15 +77,15 @@ function LossAuditContent() {
 
     const handleCalculate = async (e) => {
         e.preventDefault();
-        const staff = parseInt(form.staffSalary) || 0;
-        const ops = parseInt(form.opsOverheads) || 0;
-        const marketing = parseInt(form.marketingBudget) || 0;
+        const staff = parseFloat(form.staffSalary) || 0;
+        const ops = parseFloat(form.opsOverheads) || 0;
+        const marketing = parseFloat(form.marketingBudget) || 0;
 
         const calc = calculateLossAudit(staff, ops, marketing, {
             manualHoursPerWeek: form.manualHours,
             hasCRM: form.hasCRM,
             hasERP: form.hasERP,
-            annualRevenue: parseInt(form.annualRevenue) || 0
+            annualRevenue: parseFloat(form.annualRevenue) || 0
         });
         setResults(calc);
 
@@ -119,10 +119,9 @@ function LossAuditContent() {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             } else {
-                router.refresh();
+                // On success, jump to next audit
+                router.push(`/dashboard/night-loss?id=${businessId}`);
             }
-            setSaving(false);
-
             setSaving(false);
         }
     };
@@ -158,49 +157,49 @@ function LossAuditContent() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.staffSalaryLabel}</label>
+                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.staffSalaryLabel}</label>
                                 <input
-                                    type="number" min="0" step="1000"
+                                    type="number" min="0" step="any"
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
                                     placeholder="₹ 3,00,000"
                                     value={form.staffSalary}
-                                    onChange={(e) => setForm({ ...form, staffSalary: Math.max(0, parseInt(e.target.value) || 0) || '' })}
+                                    onChange={(e) => setForm({ ...form, staffSalary: e.target.value })}
                                     required
                                 />
                             </div>
                             <div>
-                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.marketingBudgetLabel}</label>
+                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.marketingBudgetLabel}</label>
                                 <input
-                                    type="number" min="0" step="1000"
+                                    type="number" min="0" step="any"
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
                                     placeholder="₹ 50,000"
                                     value={form.marketingBudget}
-                                    onChange={(e) => setForm({ ...form, marketingBudget: Math.max(0, parseInt(e.target.value) || 0) || '' })}
+                                    onChange={(e) => setForm({ ...form, marketingBudget: e.target.value })}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.opsOverheadLabel}</label>
+                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.opsOverheadLabel}</label>
                             <input
-                                type="number" min="0" step="1000"
+                                type="number" min="0" step="any"
                                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
                                 placeholder="₹ 2,00,000"
                                 value={form.opsOverheads}
-                                onChange={(e) => setForm({ ...form, opsOverheads: Math.max(0, parseInt(e.target.value) || 0) || '' })}
+                                onChange={(e) => setForm({ ...form, opsOverheads: e.target.value })}
                                 required
                             />
                         </div>
 
                         <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.revenueLabel}</label>
+                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.revenueLabel}</label>
                             <input
-                                type="number" min="0" step="1000"
+                                type="number" min="0" step="any"
                                 className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
                                 placeholder="₹ 25,00,000"
                                 value={form.annualRevenue}
-                                onChange={(e) => setForm({ ...form, annualRevenue: Math.max(0, parseInt(e.target.value) || 0) || '' })}
+                                onChange={(e) => setForm({ ...form, annualRevenue: e.target.value })}
                             />
                             <p className="text-[9px] text-white/30 mt-1 italic">{t.lossAudit.revenueSub}</p>
                         </div>
