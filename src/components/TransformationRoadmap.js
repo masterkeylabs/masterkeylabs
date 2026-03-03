@@ -1,8 +1,9 @@
 'use client';
 import { motion } from 'framer-motion';
 
-export default function TransformationRoadmap() {
-    const steps = [
+export default function TransformationRoadmap({ t }) {
+    // Fallback steps if t is missing
+    const defaultSteps = [
         {
             title: "Cloud Infrastructure Migration",
             description: "Transition legacy operations to secure, high-availability architecture.",
@@ -22,6 +23,19 @@ export default function TransformationRoadmap() {
             timeframe: "Week 5-6"
         }
     ];
+
+    const roadmapT = t?.dashboard?.roadmap || {
+        title: "Protocol Transformation",
+        subTitle: "Step-By-Step",
+        roi: "Estimated ROI",
+        cure: "Systemic Cure",
+        steps: defaultSteps
+    };
+
+    const steps = roadmapT.steps.map((step, idx) => ({
+        ...step,
+        icon: defaultSteps[idx]?.icon || "bolt" // Keep icons from default
+    }));
 
     return (
         <div className="relative pt-4">
@@ -70,9 +84,9 @@ export default function TransformationRoadmap() {
             >
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-ios-cyan animate-pulse"></span>
-                    <span className="text-[10px] font-bold text-ios-cyan uppercase tracking-widest">Systemic Cure</span>
+                    <span className="text-[10px] font-bold text-ios-cyan uppercase tracking-widest">{roadmapT.cure}</span>
                 </div>
-                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Estimated ROI: 300%+</span>
+                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">{roadmapT.roi}: 300%+</span>
             </motion.div>
         </div>
     );

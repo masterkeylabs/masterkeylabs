@@ -142,7 +142,8 @@ function ProfileEditContent() {
 
                 if (currentAudit) {
                     if (currentAudit.marketing_budget !== newMarketingSpend || currentAudit.ops_overheads !== newOpsSpend) {
-                        const newMarketingWaste = newMarketingSpend * 0.40;
+                        // Use spec rates: marketing waste = 0.26, overhead waste = 0.15
+                        const newMarketingWaste = newMarketingSpend * 0.26;
                         const newOpsWaste = newOpsSpend * 0.15;
                         const newTotalBurn = (currentAudit.staff_waste || 0) + newMarketingWaste + newOpsWaste;
 

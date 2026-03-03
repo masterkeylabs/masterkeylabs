@@ -40,25 +40,17 @@ export default async function DashboardPage(props) {
     // 4. AI Threat Result
     const aiThreatScore = threatRes.data?.score || 0;
 
-    if (lossRes.error || threatRes.error || nightRes.error || visRes.error) {
-        console.error('Dashboard Data Fetch Error:', {
-            loss: lossRes.error,
-            threat: threatRes.error,
-            night: nightRes.error,
-            vis: visRes.error
-        });
+    const fetchErrors = [lossRes.error, threatRes.error, nightRes.error, visRes.error].filter(Boolean);
+    if (fetchErrors.length > 0) {
+        console.warn('Dashboard Data Fetch Warning:', fetchErrors);
     }
 
-    // DEBUG: Log raw data to diagnose zero values
-    console.log('[Dashboard DEBUG] loss_audit_results row:', JSON.stringify(lossRes.data));
-    console.log('[Dashboard DEBUG] ai_threat_results row:', JSON.stringify(threatRes.data));
-
-    // Combine into final payload
+    // Combine into final payload with full data rows
     const auditResults = {
-        lossAudit: lossAuditScore,
-        nightLoss: nightLossScore,
-        missedCustomers: visibilityScore,
-        aiThreat: aiThreatScore
+        lossAudit: lossRes.data || { saving_target: 0 },
+        nightLoss: nightRes.data || { monthly_loss: 0 },
+        missedCustomers: visRes.data || { missed_customers: 0 },
+        aiThreat: threatRes.data || { score: 0 }
     };
 
     return <DashboardGrid business={business} computedData={auditResults} />;

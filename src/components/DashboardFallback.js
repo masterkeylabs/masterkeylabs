@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import Link from 'next/link';
+
 export default function DashboardFallback() {
     const router = useRouter();
 
@@ -23,13 +25,13 @@ export default function DashboardFallback() {
             <p className="text-white/40 mb-8 max-w-sm leading-relaxed">
                 No business session was found. Please complete the intake protocol to activate your diagnostic dashboard.
             </p>
-            <a
+            <Link
                 href="/"
                 className="inline-flex items-center gap-2 bg-ios-blue hover:bg-ios-blue/80 text-white font-bold px-8 py-4 rounded-2xl uppercase tracking-widest text-xs transition-all"
             >
                 <span className="material-symbols-outlined text-sm">rocket_launch</span>
                 Start Business Intake
-            </a>
+            </Link>
         </div>
     );
 }

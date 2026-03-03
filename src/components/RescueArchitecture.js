@@ -3,8 +3,31 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function RescueArchitecture({ businessId }) {
+export default function RescueArchitecture({ businessId, t }) {
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
+
+    const rescueT = t?.dashboard?.rescue || {
+        badge: "Protocol Override Available",
+        title1: "Stop bleeding capital.",
+        title2: "Claim your unfair advantage.",
+        sub: "Your algorithmic diagnostic is complete. Book a secure session with a MasterKey System Architect to decipher your custom growth infrastructure.",
+        founders: "Join 150+ Founders",
+        deploying: "Deploying systems today",
+        booking: {
+            title: "Schedule Architecture Review",
+            slot: "45 Min Slot",
+            times: {
+                today: "Today",
+                tmrw: "Tmrw"
+            },
+            btn: {
+                idle: "Book System Architect",
+                loading: "Securing Slot...",
+                success: "Slot Confirmed",
+                error: "System Error"
+            }
+        }
+    };
 
     const handleBooking = async () => {
         if (!businessId) {
@@ -58,18 +81,18 @@ export default function RescueArchitecture({ businessId }) {
                     <div className="space-y-6">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ios-blue/10 border border-ios-blue/20">
                             <span className="w-2 h-2 rounded-full bg-ios-blue animate-pulse shadow-[0_0_10px_#00E5FF]"></span>
-                            <span className="text-[10px] font-bold text-ios-blue uppercase tracking-widest">Protocol Override Available</span>
+                            <span className="text-[10px] font-bold text-ios-blue uppercase tracking-widest">{rescueT.badge}</span>
                         </div>
 
                         <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1] text-balance">
-                            Stop bleeding capital.<br />
+                            {rescueT.title1}<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-ios-blue to-cyan-300 drop-shadow-[0_0_15px_rgba(0,229,255,0.3)]">
-                                Claim your unfair advantage.
+                                {rescueT.title2}
                             </span>
                         </h2>
 
                         <p className="text-white/50 text-sm md:text-base max-w-md leading-relaxed">
-                            Your algorithmic diagnostic is complete. Book a secure session with a MasterKey System Architect to decipher your custom growth infrastructure.
+                            {rescueT.sub}
                         </p>
 
                         <div className="flex gap-4 pt-4">
@@ -81,8 +104,8 @@ export default function RescueArchitecture({ businessId }) {
                                 ))}
                             </div>
                             <div className="flex flex-col justify-center">
-                                <span className="text-xs font-bold text-white tracking-wider">Join 150+ Founders</span>
-                                <span className="text-[10px] text-white/40 uppercase tracking-widest">Deploying systems today</span>
+                                <span className="text-xs font-bold text-white tracking-wider">{rescueT.founders}</span>
+                                <span className="text-[10px] text-white/40 uppercase tracking-widest">{rescueT.deploying}</span>
                             </div>
                         </div>
                     </div>
@@ -95,15 +118,19 @@ export default function RescueArchitecture({ businessId }) {
                             <div className="border-b border-white/5 pb-4 mb-6 flex justify-between items-center">
                                 <div className="flex items-center gap-3">
                                     <span className="material-symbols-outlined text-white/40">calendar_month</span>
-                                    <span className="text-white font-bold tracking-wide">Schedule Architecture Review</span>
+                                    <span className="text-white font-bold tracking-wide">{rescueT.booking.title}</span>
                                 </div>
-                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest border border-white/10 px-2 py-1 rounded-md">45 Min Slot</span>
+                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest border border-white/10 px-2 py-1 rounded-md">{rescueT.booking.slot}</span>
                             </div>
 
                             <div className="space-y-4 mb-8">
                                 {/* Stylized calendar slots */}
                                 <div className="grid grid-cols-3 gap-3">
-                                    {['Today - 4:00 PM', 'Tmrw - 11:30 AM', 'Tmrw - 2:00 PM'].map((time, i) => (
+                                    {[
+                                        `${rescueT.booking.times.today} - 4:00 PM`,
+                                        `${rescueT.booking.times.tmrw} - 11:30 AM`,
+                                        `${rescueT.booking.times.tmrw} - 2:00 PM`
+                                    ].map((time, i) => (
                                         <div key={i} className={`p-3 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition-all ${i === 0 ? 'bg-ios-blue/10 border-ios-blue/30 text-ios-blue' : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white/80'}`}>
                                             <span className="text-[10px] md:text-[11px] font-bold tracking-wider">{time.split(' - ')[0]}</span>
                                             <span className="text-[10px] md:text-xs font-medium mt-1 whitespace-nowrap">{time.split(' - ')[1]}</span>
@@ -123,25 +150,25 @@ export default function RescueArchitecture({ businessId }) {
                                 {status === 'idle' && (
                                     <>
                                         <span className="material-symbols-outlined text-[18px]">engineering</span>
-                                        Book System Architect
+                                        {rescueT.booking.btn.idle}
                                     </>
                                 )}
                                 {status === 'loading' && (
                                     <>
                                         <span className="material-symbols-outlined animate-spin text-[18px]">sync</span>
-                                        Securing Slot...
+                                        {rescueT.booking.btn.loading}
                                     </>
                                 )}
                                 {status === 'success' && (
                                     <>
                                         <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                                        Slot Confirmed
+                                        {rescueT.booking.btn.success}
                                     </>
                                 )}
                                 {status === 'error' && (
                                     <>
                                         <span className="material-symbols-outlined text-[18px]">warning</span>
-                                        System Error
+                                        {rescueT.booking.btn.error}
                                     </>
                                 )}
                             </button>

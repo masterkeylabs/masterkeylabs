@@ -1,16 +1,27 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import IntakeWizard from '@/components/IntakeWizard';
-import { translations } from '@/lib/translations';
-
-// Removed metadata export because this is now a client component again.
-// RootLayout already has default metadata.
+import { useLanguage } from '@/lib/LanguageContext';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function Home() {
-    const [lang, setLang] = useState('en');
-    const t = translations[lang];
+    const { lang, setLang, t } = useLanguage();
+    const { user, loading: authLoading } = useAuth();
+    const [localId, setLocalId] = useState(null);
+    const [isCheckingLocal, setIsCheckingLocal] = useState(true);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setLocalId(localStorage.getItem('masterkey_business_id'));
+        }
+        setIsCheckingLocal(false);
+    }, []);
+
+    const loading = authLoading || isCheckingLocal;
+    const hasSession = user || localId;
+    const dashboardHref = user ? '/dashboard' : `/dashboard?id=${localId}`;
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
@@ -26,17 +37,29 @@ export default function Home() {
                         <div className="flex bg-white/5 rounded-full p-0.5 mr-2">
                             <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>EN</button>
                             <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HI</button>
+                            <button onClick={() => setLang('hinglish')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HG</button>
                         </div>
 
                         <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
 
-                        <Link href="/login" className="px-3 py-1.5 text-[10px] font-black text-white/60 hover:text-white transition-all uppercase tracking-widest">
-                            {lang === 'hi' ? 'लॉगिन' : 'LOGIN'}
-                        </Link>
+                        {loading ? (
+                            <div className="w-16 h-6 bg-white/5 animate-pulse rounded-full mx-2"></div>
+                        ) : hasSession ? (
+                            <Link href={dashboardHref} className="px-4 py-1.5 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
+                                <span className="material-symbols-outlined text-[14px]">dashboard</span>
+                                {t.nav.dashboard.toUpperCase()}
+                            </Link>
+                        ) : (
+                            <>
+                                <Link href="/login" className="px-3 py-1.5 text-[10px] font-black text-white/60 hover:text-white transition-all uppercase tracking-widest">
+                                    {t.nav.login.toUpperCase()}
+                                </Link>
 
-                        <Link href="/signup" className="ml-1 px-4 py-1.5 text-[10px] font-black bg-white/10 hover:bg-white/20 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-inner">
-                            {lang === 'hi' ? 'साइन अप' : 'SIGN UP'}
-                        </Link>
+                                <Link href="/signup" className="ml-1 px-4 py-1.5 text-[10px] font-black bg-white/10 hover:bg-white/20 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-inner">
+                                    {t.nav.signup.toUpperCase()}
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -65,6 +88,7 @@ export default function Home() {
                         <p className="text-white/50 text-base md:text-xl font-normal max-w-xl mt-4 leading-relaxed">
                             {t.hero.sub}
                         </p>
+
                     </div>
 
                     {/* Sunk-Cost Wizard */}
@@ -84,18 +108,85 @@ export default function Home() {
                     </div>
                 </section>
 
-                <footer className="border-t border-white/5 pt-20 pb-24 bg-black/40 mt-20">
+                {/* ═══════════ CORE SCANNING & DIAGNOSTIC SUITE ═══════════ */}
+                <section className="container mx-auto px-6 py-20 lg:py-28">
+                    {/* Section Header */}
+                    <div className="text-center max-w-3xl mx-auto mb-16">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-ios-blue/10 border border-ios-blue/20 mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-ios-blue animate-pulse"></span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ios-blue">{t.scanningSuite.badge}</span>
+                        </div>
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight mb-4">
+                            {t.scanningSuite.title1}<br className="hidden md:block" />
+                            <span className="text-ios-blue">{t.scanningSuite.title2}</span>
+                        </h2>
+                        <p className="text-white/40 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+                            {t.scanningSuite.sub}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                        {/* 1. Operational Waste */}
+                        <div className="group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500">
+                            <div className="w-12 h-12 rounded-2xl bg-ios-blue/10 flex items-center justify-center mb-6 border border-ios-blue/20 group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-ios-blue">account_balance_wallet</span>
+                            </div>
+                            <p className="text-[10px] font-black text-ios-blue uppercase tracking-widest mb-2">{t.scanningSuite.waste.module}</p>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.scanningSuite.waste.title}</h3>
+                            <p className="text-sm text-white/40 leading-relaxed mb-6">{t.scanningSuite.waste.sub}</p>
+                        </div>
+
+                        {/* 2. Night Loss */}
+                        <div className="group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500">
+                            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-purple-400">nights_stay</span>
+                            </div>
+                            <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-2">{t.scanningSuite.night.module}</p>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.scanningSuite.night.title}</h3>
+                            <p className="text-sm text-white/40 leading-relaxed mb-6">{t.scanningSuite.night.sub}</p>
+                        </div>
+
+                        {/* 3. Visibility */}
+                        <div className="group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500">
+                            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-cyan-400">visibility</span>
+                            </div>
+                            <p className="text-[10px] font-black text-cyan-400 uppercase tracking-widest mb-2">{t.scanningSuite.visibility.module}</p>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.scanningSuite.visibility.title}</h3>
+                            <p className="text-sm text-white/40 leading-relaxed mb-6">{t.scanningSuite.visibility.sub}</p>
+                        </div>
+
+                        {/* 4. Extinction Horizon */}
+                        <div className="group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500">
+                            <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6 border border-red-500/20 group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-red-400">history_toggle_off</span>
+                            </div>
+                            <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">{t.scanningSuite.threat.module}</p>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.scanningSuite.threat.title}</h3>
+                            <p className="text-sm text-white/40 leading-relaxed mb-6">{t.scanningSuite.threat.sub}</p>
+                        </div>
+                    </div>
+                </section>
+
+                <footer className="border-t border-white/5 pt-20 pb-24 bg-black/40 mt-0">
                     <div className="container mx-auto px-6 flex flex-col items-center text-center">
                         <div className="mb-10 opacity-80 flex items-center justify-center">
-                            <Image src="/logo-text.png" alt="MasterKey Labs" width={160} height={32} className="h-6 md:h-8 w-auto object-contain brightness-110" />
+                            <Image src="/logo-text.png" alt="MasterKey Labs" width={320} height={64} className="h-16 md:h-24 w-auto object-contain brightness-110" />
                         </div>
-                        <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-16">
-                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">Systems</span>
-                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">Infrastructure</span>
-                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">Intelligence</span>
-                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">Directives</span>
+                        <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-12">
+                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">{t.footer.systems}</span>
+                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">{t.footer.infrastructure}</span>
+                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">{t.footer.intelligence}</span>
+                            <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">{t.footer.directives}</span>
                         </div>
-                        <div className="text-white/10 text-[9px] tracking-[0.3em] font-bold uppercase">© 2025 MASTERKEY LABS — ADAPTIVE SYSTEMS PROTOCOL</div>
+
+                        {/* Legal and Contact */}
+                        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-12 text-[10px] font-bold uppercase tracking-[0.1em]">
+                            <Link href="/privacy" className="text-white/40 hover:text-ios-blue transition-colors">{t.footer.privacy}</Link>
+                            <Link href="/terms" className="text-white/40 hover:text-ios-blue transition-colors">{t.footer.terms}</Link>
+                        </div>
+
+                        <div className="text-white/10 text-[9px] tracking-[0.3em] font-bold uppercase">{t.footer.rights}</div>
                     </div>
                 </footer>
             </main>

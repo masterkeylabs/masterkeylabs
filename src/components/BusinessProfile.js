@@ -1,26 +1,50 @@
 import Link from 'next/link';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 
-export default function BusinessProfile({ business }) {
+export default function BusinessProfile({ business, t, lang }) {
+    // Access the raw data state injected from the Loss Audit component
+    const { opsWasteRaw } = useDiagnosticStore();
+
     if (!business) return null;
 
-    // Parse classification string which is formatted as "vertical::revenueBracket"
-    let vertical = business.classification || 'Unknown';
+    // Use translations for labels, fallback to English if t is missing
+    const profileT = t?.dashboard?.profile || {
+        title: "Business Profile",
+        managedBy: "Managed by",
+        vertical: "Vertical",
+        revenue: "Revenue",
+        employees: "Employees",
+        contact: "Contact"
+    };
+
+    let verticalCode = business.classification || 'Unknown';
     let revenueBracket = 'Not specified';
 
-    if (business.classification && business.classification.includes('::')) {
+    // Override classification with real live data from Operational Waste if available
+    if (opsWasteRaw?.industry) {
+        verticalCode = opsWasteRaw.industry;
+    }
+
+    // Revenue mapping logic
+    if (opsWasteRaw?.revenue_bracket) {
+        revenueBracket = opsWasteRaw.revenue_bracket;
+    } else if (business.classification && business.classification.includes('::')) {
         const parts = business.classification.split('::');
-        vertical = parts[0];
+        verticalCode = opsWasteRaw?.industry || parts[0];
         revenueBracket = parts[1];
     } else if (business.classification && business.classification.includes(' (')) {
-        // legacy format if any
         const match = business.classification.match(/(.*) \((.*)\)/);
         if (match) {
-            vertical = match[1];
+            verticalCode = opsWasteRaw?.industry || match[1];
             revenueBracket = match[2];
         }
     }
 
     const formatVertical = (v) => {
+        // Use translated verticals from t.verticals
+        const verticalLabel = t?.verticals?.[v.toLowerCase()];
+        if (verticalLabel) return verticalLabel;
+
         const mapping = {
             'retail': 'Retail',
             'fb': 'Food & Beverage',
@@ -28,7 +52,7 @@ export default function BusinessProfile({ business }) {
             'b2b': 'B2B Goods',
             'ecommerce': 'E-commerce'
         };
-        return mapping[v] || v;
+        return mapping[v.toLowerCase()] || v;
     };
 
     return (
@@ -42,27 +66,19 @@ export default function BusinessProfile({ business }) {
                     </div>
 
                     <div>
-                        <h3 className="text-[10px] text-ios-blue uppercase tracking-[0.2em] font-bold mb-2">Business Profile</h3>
+                        <h3 className="text-[10px] text-ios-blue uppercase tracking-[0.2em] font-bold mb-2">{profileT.title}</h3>
                         <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight group-hover:text-ios-blue transition-colors duration-300">{business.entity_name}</h2>
-                        <p className="text-white/50 text-sm mt-1">Managed by {business.owner_name}</p>
+                        <p className="text-white/50 text-sm mt-1">{profileT.managedBy} {business.owner_name}</p>
                     </div>
 
                     <div className="flex flex-wrap gap-4 md:gap-8 pr-6">
                         <div className="flex flex-col gap-1">
-                            <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Vertical</span>
-                            <span className="text-sm font-semibold text-white/90">{formatVertical(vertical)}</span>
+                            <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Email</span>
+                            <span className="text-sm font-semibold text-white/90">{business.email || 'N/A'}</span>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Revenue</span>
-                            <span className="text-sm font-semibold text-white/90">{revenueBracket}</span>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Employees</span>
-                            <span className="text-sm font-semibold text-white/90">{business.scalability || 'Unknown'}</span>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Contact</span>
-                            <span className="text-sm font-semibold text-white/90">{business.phone || business.email || 'N/A'}</span>
+                            <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">{profileT.contact}</span>
+                            <span className="text-sm font-semibold text-white/90">{business.phone || 'N/A'}</span>
                         </div>
                     </div>
                 </div>

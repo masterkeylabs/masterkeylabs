@@ -21,7 +21,7 @@ export default function HealthMeter({
     const threatLabel = isKhatra ? t.dashboard.healthMeter.risk : isSavdhan ? t.dashboard.healthMeter.watch : isSafe ? t.dashboard.healthMeter.verified : t.dashboard.healthMeter.scanning;
 
     return (
-        <div className="system-card border border-white/5 p-8 relative overflow-hidden h-full flex flex-col justify-between">
+        <div className="system-card border border-white/5 p-6 md:p-8 relative overflow-hidden h-full flex flex-col justify-between">
             <div className="absolute top-0 right-0 w-32 h-32 bg-ios-blue/5 blur-[50px] rounded-full"></div>
 
             <div className="relative z-10">
@@ -36,10 +36,10 @@ export default function HealthMeter({
                 </div>
 
                 <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-6xl font-bold tracking-tighter text-white">
+                    <span className="text-5xl md:text-6xl font-bold tracking-tighter text-white">
                         {score !== null ? displayScore : '--'}
                     </span>
-                    <span className="text-white/20 text-lg font-medium">/100</span>
+                    <span className="text-white/20 text-base md:text-lg font-medium">/100</span>
                 </div>
                 <p className={`text-[13px] font-bold ${zoneColor} uppercase tracking-widest`}>{defaultZone}</p>
             </div>

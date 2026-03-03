@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     const signOut = async () => {
         await supabase.auth.signOut();
+        localStorage.removeItem('masterkey_business_id');
         router.push('/');
     };
 

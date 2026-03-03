@@ -12,6 +12,7 @@ export const metadata = {
 };
 
 import { AuthProvider } from '@/lib/AuthContext';
+import { LanguageProvider } from '@/lib/LanguageContext';
 
 export default function RootLayout({ children }) {
   return (
@@ -20,11 +21,15 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
       </head>
-      <body className={`${spaceGrotesk.variable} font-sans antialiased bg-background-dark text-white selection:bg-primary/30 min-h-screen overflow-x-hidden`}
-        style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+      <body
+        className={`${spaceGrotesk.variable} font-sans antialiased bg-background-dark text-white selection:bg-primary/30 min-h-screen overflow-x-hidden`}
+        suppressHydrationWarning
+      >
+        <LanguageProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

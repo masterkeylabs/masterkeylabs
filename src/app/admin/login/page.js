@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -63,7 +64,7 @@ export default function AdminLogin() {
             <div className="relative z-10 w-full max-w-md">
                 {/* Logo Area */}
                 <div className="flex flex-col items-center mb-10 text-center">
-                    <img src="/logo-stacked.png" alt="MasterKey Labs" className="h-24 md:h-32 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.2)] mb-6" />
+                    <Image src="/logo-stacked.png" alt="MasterKey Labs" width={128} height={128} className="h-24 md:h-32 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.2)] mb-6" />
                     <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-primary text-[10px] font-black tracking-[0.25em] uppercase border border-primary/20">
                         Command Center Access
                     </div>

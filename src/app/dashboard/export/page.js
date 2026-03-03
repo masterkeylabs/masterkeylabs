@@ -148,21 +148,21 @@ function ExportContent() {
                             <div>
                                 <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Local Price / Unit (₹)</label>
                                 <input
-                                    type="number" min="10" max="500000" required
+                                    type="number" min="0" step="1000" max="500000" required
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all"
                                     placeholder="₹ 150"
                                     value={form.localPrice}
-                                    onChange={(e) => setForm({ ...form, localPrice: e.target.value })}
+                                    onChange={(e) => setForm({ ...form, localPrice: Math.max(0, parseInt(e.target.value) || 0).toString() })}
                                 />
                             </div>
                             <div>
                                 <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Monthly Qty</label>
                                 <input
-                                    type="number" min="1" max="1000000" required
+                                    type="number" min="0" step="1000" max="1000000" required
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all"
                                     placeholder="500"
                                     value={form.monthlyQty}
-                                    onChange={(e) => setForm({ ...form, monthlyQty: e.target.value })}
+                                    onChange={(e) => setForm({ ...form, monthlyQty: Math.max(0, parseInt(e.target.value) || 0).toString() })}
                                 />
                             </div>
                         </div>

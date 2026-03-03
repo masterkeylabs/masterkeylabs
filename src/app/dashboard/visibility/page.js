@@ -2,10 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
-import { calculateVisibility, VISIBILITY_SIGNALS, formatINR } from '@/lib/calculations';
+import { calculateVisibility, VISIBILITY_SIGNALS, formatINR, formatINRFull } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
-import { translations } from '@/lib/translations';
+import { useLanguage } from '@/lib/LanguageContext';
+import { FINAL_COUNTRIES, GET_CITIES } from '@/lib/countries';
 
 const STATUS_COLORS = {
     DOMINANT: { bg: 'bg-neon-green/10', border: 'border-neon-green/30', text: 'text-neon-green', fill: '#39ff14' },
@@ -19,16 +20,16 @@ import { Suspense } from 'react';
 
 function VisibilityContent() {
     const { business } = useAuth();
+    const { lang, t } = useLanguage();
     const searchParams = useSearchParams();
     const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
-
-    const [lang, setLang] = useState('en');
-    const t = translations[lang];
 
     const [answers, setAnswers] = useState(
         Object.fromEntries(VISIBILITY_SIGNALS.map(s => [s.id, false]))
     );
     const [city, setCity] = useState('');
+    const [country, setCountry] = useState('India');
+    const [avgTransactionValue, setAvgTransactionValue] = useState('');
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
 
@@ -48,14 +49,23 @@ function VisibilityContent() {
                 const savedSignals = data.signals || {};
                 setAnswers({ ...defaultAnswers, ...savedSignals });
                 setCity(data.city || '');
-                setResults(data);
+                setCountry(data.country || 'India');
+                setAvgTransactionValue(data.avg_transaction_value || '');
+                // Recalculate with new formula
+                const calc = calculateVisibility(
+                    { ...defaultAnswers, ...savedSignals },
+                    data.city || '',
+                    data.avg_transaction_value || 0
+                );
+                setResults(calc);
             }
         };
         load();
     }, [businessId]);
 
     const handleScan = async () => {
-        const calc = calculateVisibility(answers, city);
+        const avgValue = parseInt(avgTransactionValue) || 0;
+        const calc = calculateVisibility(answers, city, avgValue);
         setResults(calc);
 
         if (businessId) {
@@ -63,10 +73,14 @@ function VisibilityContent() {
             const payload = {
                 business_id: businessId,
                 city,
+                country,
                 signals: answers,
+                avg_transaction_value: avgValue,
                 percent: calc.percent,
                 status: calc.status,
                 missed_customers: calc.missedCustomers,
+                missed_revenue: calc.monthlyLoss,
+                annual_loss: calc.annualLoss,
                 gaps: calc.gaps,
                 created_at: new Date().toISOString()
             };
@@ -76,7 +90,6 @@ function VisibilityContent() {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             }
-            setSaving(false);
             setSaving(false);
         }
     };
@@ -93,98 +106,98 @@ function VisibilityContent() {
     const circumference = Math.PI * radius;
     const dashOffset = circumference - (percent / 100) * circumference;
 
+    const cityList = GET_CITIES(country);
+
     return (
         <FeatureLayout
-            title="Digital Visibility Scanner"
-            subtitle="Are customers finding you — or your competitors?"
-            backHref="/dashboard"
-            t={t}
+            title={t.visibility.title}
+            subtitle={t.visibility.subTitle}
+            backHref={businessId ? `/dashboard?id=${businessId}` : '/dashboard'}
         >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                 {/* Checklist */}
-                <div className="bg-carbon border border-white/10 rounded-xl p-8">
+                <div className="bg-carbon border border-white/10 rounded-xl p-5 md:p-8">
                     <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
                         <span className="material-symbols-outlined text-primary">checklist</span>
-                        10-Signal Audit
+                        {t.dashboard.auditSummary.header.log}
                     </h3>
-                    <p className="text-white/40 text-xs mb-6">Check all that apply to your business</p>
+                    <p className="text-white/40 text-xs mb-6">{t.visibility.formHeader}</p>
 
-                    <div>
-                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">Your City</label>
-                        <select
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all mb-5 appearance-none cursor-pointer"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                        >
-                            <option value="" className="bg-[#050505]">— Select your city —</option>
-                            <optgroup label="Metro Cities" className="bg-[#050505]">
-                                <option value="Mumbai" className="bg-[#050505]">Mumbai</option>
-                                <option value="Delhi" className="bg-[#050505]">Delhi</option>
-                                <option value="Bengaluru" className="bg-[#050505]">Bengaluru</option>
-                                <option value="Hyderabad" className="bg-[#050505]">Hyderabad</option>
-                                <option value="Chennai" className="bg-[#050505]">Chennai</option>
-                                <option value="Kolkata" className="bg-[#050505]">Kolkata</option>
-                                <option value="Pune" className="bg-[#050505]">Pune</option>
-                                <option value="Ahmedabad" className="bg-[#050505]">Ahmedabad</option>
-                            </optgroup>
-                            <optgroup label="Tier 2 Cities" className="bg-[#050505]">
-                                <option value="Indore" className="bg-[#050505]">Indore</option>
-                                <option value="Jaipur" className="bg-[#050505]">Jaipur</option>
-                                <option value="Lucknow" className="bg-[#050505]">Lucknow</option>
-                                <option value="Surat" className="bg-[#050505]">Surat</option>
-                                <option value="Nagpur" className="bg-[#050505]">Nagpur</option>
-                                <option value="Bhopal" className="bg-[#050505]">Bhopal</option>
-                                <option value="Chandigarh" className="bg-[#050505]">Chandigarh</option>
-                                <option value="Kochi" className="bg-[#050505]">Kochi</option>
-                                <option value="Coimbatore" className="bg-[#050505]">Coimbatore</option>
-                                <option value="Vadodara" className="bg-[#050505]">Vadodara</option>
-                                <option value="Rajkot" className="bg-[#050505]">Rajkot</option>
-                                <option value="Ludhiana" className="bg-[#050505]">Ludhiana</option>
-                                <option value="Agra" className="bg-[#050505]">Agra</option>
-                                <option value="Nashik" className="bg-[#050505]">Nashik</option>
-                                <option value="Varanasi" className="bg-[#050505]">Varanasi</option>
-                                <option value="Patna" className="bg-[#050505]">Patna</option>
-                                <option value="Ranchi" className="bg-[#050505]">Ranchi</option>
-                                <option value="Guwahati" className="bg-[#050505]">Guwahati</option>
-                                <option value="Visakhapatnam" className="bg-[#050505]">Visakhapatnam</option>
-                                <option value="Mysuru" className="bg-[#050505]">Mysuru</option>
-                                <option value="Jabalpur" className="bg-[#050505]">Jabalpur</option>
-                                <option value="Jodhpur" className="bg-[#050505]">Jodhpur</option>
-                                <option value="Raipur" className="bg-[#050505]">Raipur</option>
-                                <option value="Gwalior" className="bg-[#050505]">Gwalior</option>
-                                <option value="Amritsar" className="bg-[#050505]">Amritsar</option>
-                                <option value="Dehradun" className="bg-[#050505]">Dehradun</option>
-                                <option value="Bhubaneswar" className="bg-[#050505]">Bhubaneswar</option>
-                                <option value="Thiruvananthapuram" className="bg-[#050505]">Thiruvananthapuram</option>
-                                <option value="Noida" className="bg-[#050505]">Noida</option>
-                                <option value="Gurgaon" className="bg-[#050505]">Gurgaon</option>
-                                <option value="Faridabad" className="bg-[#050505]">Faridabad</option>
-                                <option value="Ghaziabad" className="bg-[#050505]">Ghaziabad</option>
-                            </optgroup>
-                        </select>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                        <div>
+                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.visibility.cityLabel.split('(')[0].trim() || 'Country'}</label>
+                            <select
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer"
+                                value={country}
+                                onChange={(e) => {
+                                    setCountry(e.target.value);
+                                    setCity(''); // Reset city when country changes
+                                }}
+                            >
+                                {FINAL_COUNTRIES.map(c => (
+                                    <option key={c} value={c} className="bg-[#050505]">{c}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.visibility.cityLabel}</label>
+                            {cityList.length > 0 ? (
+                                <select
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer"
+                                    value={city}
+                                    onChange={(e) => setCity(e.target.value)}
+                                >
+                                    <option value="" className="bg-[#050505]">{t.visibility.placeholders.citySelect}</option>
+                                    {cityList.map(c => (
+                                        <option key={c} value={c} className="bg-[#050505]">{c}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    type="text"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all"
+                                    placeholder={t.visibility.placeholders.cityInput}
+                                    value={city}
+                                    onChange={(e) => setCity(e.target.value)}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="mb-5">
+                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.opsOverheadLabel} (₹)</label>
+                        <input
+                            type="number" min="0" step="1000"
+                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all"
+                            placeholder={t.visibility.placeholders.revenue}
+                            value={avgTransactionValue}
+                            onChange={(e) => setAvgTransactionValue(Math.max(0, parseInt(e.target.value) || 0).toString())}
+                        />
+                        <p className="text-[9px] text-white/30 mt-1 italic">{t.visibility.lostRevenueSub.replace('{city}', city || '...')}</p>
                     </div>
 
                     <div className="space-y-2 mb-6">
                         {VISIBILITY_SIGNALS.map(signal => (
                             <button key={signal.id} type="button"
-                                className={`w-full flex items-center justify-between py-3 px-4 rounded-lg transition-all border text-left ${answers[signal.id]
+                                alt-label={signal.label}
+                                className={`w-full flex items-center justify-between py-2.5 px-3 md:py-3 md:px-4 rounded-lg transition-all border text-left ${answers[signal.id]
                                     ? 'bg-primary/10 border-primary/30'
                                     : 'bg-white/5 border-white/10 hover:border-white/20'}`}
                                 onClick={() => toggleSignal(signal.id)}
                             >
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${answers[signal.id]
+                                <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
+                                    <div className={`w-4 h-4 md:w-5 md:h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${answers[signal.id]
                                         ? 'border-cyan-500 bg-cyan-500'
                                         : 'border-white/30 bg-transparent'}`}>
                                         {answers[signal.id] && (
-                                            <svg viewBox="0 0 12 12" className="w-3 h-3" fill="none">
+                                            <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="none">
                                                 <path d="M2 6l3 3 5-5" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         )}
                                     </div>
-                                    <span className={`text-sm ${answers[signal.id] ? 'text-white' : 'text-white/60'}`}>{signal.label}</span>
+                                    <span className={`text-[12px] md:text-sm truncate ${answers[signal.id] ? 'text-white' : 'text-white/60'}`}>{t.visibility.signals[signal.id] || signal.label}</span>
                                 </div>
-                                <span className={`text-[10px] font-bold ${answers[signal.id] ? 'text-primary' : 'text-white/20'}`}>{signal.points} pts</span>
+                                <span className={`text-[9px] md:text-[10px] font-bold flex-shrink-0 ${answers[signal.id] ? 'text-primary' : 'text-white/20'}`}>{signal.points} pts</span>
                             </button>
                         ))}
                     </div>
@@ -192,10 +205,10 @@ function VisibilityContent() {
                     <button
                         onClick={handleScan}
                         disabled={saving}
-                        className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-4 rounded-lg uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+                        className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3.5 md:py-4 rounded-lg uppercase tracking-tight md:tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.3)]"
                     >
-                        <span className="material-symbols-outlined">radar</span>
-                        {saving ? 'Saving...' : 'Run Visibility Scan'}
+                        <span className="material-symbols-outlined text-sm md:text-base">radar</span>
+                        {saving ? t.visibility.scanningText : t.visibility.btnText}
                     </button>
                 </div>
 
@@ -204,8 +217,8 @@ function VisibilityContent() {
                     {results ? (
                         <>
                             {/* Score Gauge */}
-                            <div className={`${statusStyle.bg} border ${statusStyle.border} rounded-xl p-8 text-center`}>
-                                <div className="relative w-48 h-28 mx-auto mb-4">
+                            <div className={`${statusStyle.bg} border ${statusStyle.border} rounded-xl p-6 md:p-8 text-center`}>
+                                <div className="relative w-40 h-24 md:w-48 md:h-28 mx-auto mb-4">
                                     <svg viewBox="0 0 200 110" className="w-full">
                                         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="12" strokeLinecap="round" />
                                         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke={statusStyle.fill} strokeWidth="12" strokeLinecap="round"
@@ -218,43 +231,63 @@ function VisibilityContent() {
                                     </svg>
                                 </div>
                                 <div className={`inline-block px-4 py-1.5 rounded-full ${statusStyle.bg} border ${statusStyle.border}`}>
-                                    <p className={`text-sm font-black uppercase tracking-widest ${statusStyle.text}`}>
-                                        {results.status} {results.statusHindi && `/ ${results.statusHindi}`}
+                                    <p className={`text-xs md:text-sm font-black uppercase tracking-widest ${statusStyle.text}`}>
+                                        {t.common.statuses[results.status] || results.status}
                                     </p>
+                                </div>
+                                <p className="text-white/30 text-[10px] mt-2">{t.visibility.marketScore}: {results.invisibilityRate ?? (100 - percent)}%</p>
+                            </div>
+
+                            {/* Missed Customers + Searches */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-alert-red/10 border border-alert-red/30 rounded-xl p-5 text-center">
+                                    <p className="text-[10px] uppercase tracking-widest text-alert-red font-bold mb-1">{t.visibility.searchTermLabel}</p>
+                                    <p className="text-2xl font-black text-alert-red">~{(results.missedSearches ?? 0).toLocaleString('en-IN')}</p>
+                                    <p className="text-white/30 text-[9px] mt-1">{t.visibility.monthlyVolumeLabel}: {(results.cityMonthlySearches ?? 0).toLocaleString('en-IN')}/mo</p>
+                                </div>
+                                <div className="bg-alert-orange/10 border border-alert-orange/30 rounded-xl p-5 text-center">
+                                    <p className="text-[10px] uppercase tracking-widest text-alert-orange font-bold mb-1">{t.visibility.highIntent}</p>
+                                    <p className="text-2xl font-black text-alert-orange">~{results.missedCustomers ?? results.missed_customers}</p>
+                                    <p className="text-white/30 text-[9px] mt-1">{t.visibility.conversionRate}</p>
                                 </div>
                             </div>
 
-                            {/* Missed Customers */}
-                            <div className="bg-alert-red/10 border border-alert-red/30 rounded-xl p-6 text-center">
-                                <p className="text-[10px] uppercase tracking-widest text-alert-red font-bold mb-1">Estimated Missed Customers</p>
-                                <p className="text-3xl font-black text-alert-red">~{results.missedCustomers ?? results.missed_customers}</p>
-                                <p className="text-white/40 text-xs">potential customers / month not finding you</p>
-                            </div>
+                            {/* Revenue Loss (only if avg transaction value provided) */}
+                            {(results.monthlyLoss > 0) && (
+                                <div className="bg-black border-2 border-alert-red/30 rounded-xl p-6 text-center">
+                                    <p className="text-white/50 text-xs uppercase tracking-widest mb-2">{t.visibility.lostRevenue}</p>
+                                    <p className="text-3xl font-black text-alert-red tracking-tight">
+                                        {formatINRFull(results.monthlyLoss)}<span className="text-lg text-white/30">{t.nightLoss.perMonth}</span>
+                                    </p>
+                                    <p className="text-white/40 mt-2 text-xs">{t.nightLoss.annualLossLine.replace('{amount}', formatINR(results.annualLoss))}</p>
+                                </div>
+                            )}
 
                             {/* Gap Analysis */}
                             {results.gaps && results.gaps.length > 0 && (
                                 <div className="bg-carbon border border-white/10 rounded-xl p-6">
                                     <h4 className="text-sm font-bold text-white/60 uppercase tracking-widest mb-4">
-                                        Gap Analysis ({results.gaps.length} signals missing)
+                                        {t.visibility.gapsHeader.replace('{count}', results.gaps.length)}
                                     </h4>
                                     <div className="space-y-2">
                                         {results.gaps.map((gap, i) => (
                                             <div key={i} className="flex items-center justify-between py-2 px-3 bg-white/5 rounded-lg">
                                                 <div className="flex items-center gap-2">
                                                     <span className="material-symbols-outlined text-alert-red text-sm">close</span>
-                                                    <span className="text-sm text-white/70">{gap.label}</span>
+                                                    <span className="text-sm text-white/70">{t.visibility.signals[gap.id] || gap.label}</span>
                                                 </div>
                                                 <span className="text-[10px] font-bold text-alert-red">-{gap.points} pts</span>
                                             </div>
                                         ))}
                                     </div>
+                                    <p className="text-[9px] text-white/25 mt-4 leading-relaxed italic">{t.visibility.source}</p>
                                 </div>
                             )}
                         </>
                     ) : (
                         <div className="bg-carbon border border-white/10 rounded-xl p-12 text-center">
                             <span className="material-symbols-outlined text-6xl text-white/10 mb-4">radar</span>
-                            <p className="text-white/30 text-sm">Complete the checklist to scan your visibility</p>
+                            <p className="text-white/30 text-sm">{t.visibility.emptyState}</p>
                         </div>
                     )}
                 </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -107,7 +108,7 @@ export default function AdminDashboard() {
             {/* Sidebar */}
             <aside className="w-64 border-r border-white/5 bg-[#03081a] flex flex-col fixed h-full z-10 transition-all">
                 <div className="p-8">
-                    <img src="/logo-icon.png" alt="MasterKey Labs" className="h-16 w-auto mb-2 object-contain" />
+                    <Image src="/logo-icon.png" alt="MasterKey Labs" width={64} height={64} className="h-16 w-auto mb-2 object-contain" />
                     <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] mt-2">Command Center</p>
                 </div>
 
