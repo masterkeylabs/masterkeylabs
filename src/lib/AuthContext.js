@@ -12,10 +12,19 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter();
 
     useEffect(() => {
+        let isMounted = true;
+
+        // Safety timeout to prevent infinite loading screen
+        const safetyTimeout = setTimeout(() => {
+            if (isMounted) setLoading(false);
+        }, 5000);
+
         // Check active sessions and sets the user
         const getSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
+                if (!isMounted) return;
+
                 setUser(session?.user ?? null);
                 if (session?.user) {
                     await fetchBusinessProfile(session.user.id);
@@ -23,7 +32,10 @@ export const AuthProvider = ({ children }) => {
             } catch (error) {
                 console.error('Error getting session:', error);
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                    clearTimeout(safetyTimeout);
+                }
             }
         };
 
@@ -41,7 +53,11 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            isMounted = false;
+            clearTimeout(safetyTimeout);
+            subscription.unsubscribe();
+        };
     }, []);
 
     const fetchBusinessProfile = async (userId) => {
