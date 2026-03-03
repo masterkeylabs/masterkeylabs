@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateAIThreat, BUSINESS_VERTICALS } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
@@ -27,6 +27,7 @@ function AIThreatContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [form, setForm] = useState({
@@ -34,7 +35,7 @@ function AIThreatContent() {
         isOmnichannel: false,
         hasCRM: false,
         hasERP: false,
-        employeeCount: 25,
+        employeeCount: 0,
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -56,14 +57,14 @@ function AIThreatContent() {
                     isOmnichannel: data.is_omnichannel || false,
                     hasCRM: data.has_crm || false,
                     hasERP: data.has_erp || false,
-                    employeeCount: data.employee_count || 25,
+                    employeeCount: data.employee_count || 0,
                 });
                 // Recalculate with new formula
                 const calc = calculateAIThreat(data.industry || 'retail', {
                     isOmnichannel: data.is_omnichannel || false,
                     hasCRM: data.has_crm || false,
                     hasERP: data.has_erp || false,
-                    employeeCount: data.employee_count || 25,
+                    employeeCount: data.employee_count || 0,
                 });
                 setResults(calc);
             }
@@ -104,6 +105,8 @@ function AIThreatContent() {
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
+            } else {
+                router.refresh();
             }
             setSaving(false);
         }

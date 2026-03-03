@@ -73,13 +73,13 @@ export default function IntakeWizard({ t }) {
         const annualRevenue = REVENUE_MIDPOINTS[formData.revenueBracket] || 1250000;
 
         const lossData = calculateLossAudit(staffCost, Number(formData.opsSpend), Number(formData.marketingSpend), {
-            manualHoursPerWeek: 20,
+            manualHoursPerWeek: 0,
             hasCRM: false,
             hasERP: false,
             annualRevenue: annualRevenue
         });
 
-        const night = calculateNightLoss(15, '6pm', 5000, 'both');
+        const night = calculateNightLoss(0, '6pm', 0, 'both');
 
         const threat = calculateAIThreat(
             formData.vertical,
@@ -134,7 +134,7 @@ export default function IntakeWizard({ t }) {
     const syncAuditToSupabase = useCallback(async (bizId, currentResults) => {
         const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
         const staffCost = empCount * 25000;
-        const manualHours = 20;
+        const manualHours = 0;
         const hasCRM = false;
         const hasERP = false;
         const now = new Date().toISOString();
@@ -200,9 +200,9 @@ export default function IntakeWizard({ t }) {
         // 4. Save Night Loss Results
         const { error: e4 } = await supabase.from('night_loss_results').upsert({
             business_id: bizId,
-            daily_inquiries: 15,
+            daily_inquiries: 0,
             closing_time: '6pm',
-            profit_per_sale: 25000,
+            profit_per_sale: 0,
             response_time: formData.contactAfter6,
             monthly_days: 26,
             monthly_loss: currentResults.night.lostRevenue.monthlyLoss,
@@ -231,6 +231,7 @@ export default function IntakeWizard({ t }) {
                 email: formData.email,
                 phone: formData.whatsapp,
                 digital_footprint: formData.contactAfter6,
+                user_id: user?.id || null,
             };
 
             let newBiz;
@@ -297,20 +298,60 @@ export default function IntakeWizard({ t }) {
     };
 
     const skipLeadForm = useCallback(async (currentResults) => {
-        const id = business?.id || user?.id || localStorage.getItem('masterkey_business_id');
-        if (id && currentResults) {
+        let bizId = business?.id || localStorage.getItem('masterkey_business_id');
+
+        // If no business ID found but user is logged in, check if they already have one in DB
+        if (!bizId && user?.id) {
+            const { data: existingBiz } = await supabase
+                .from('businesses')
+                .select('id')
+                .eq('user_id', user.id)
+                .maybeSingle();
+            if (existingBiz) bizId = existingBiz.id;
+        }
+
+        // If STILL no business ID but user is logged in, create a placeholder business for them
+        // (This happens if a Google user finishes the audit without an existing record)
+        if (!bizId && user?.id) {
             try {
-                await syncAuditToSupabase(id, currentResults);
-                router.push(`/dashboard?id=${id}`);
+                const { data: newBiz, error: createError } = await supabase
+                    .from('businesses')
+                    .insert({
+                        entity_name: user.user_metadata?.full_name ? (user.user_metadata.full_name + "'s Business") : "My Business",
+                        owner_name: user.user_metadata?.full_name || user.email?.split('@')[0],
+                        email: user.email,
+                        user_id: user.id,
+                        classification: formData.vertical + "::" + formData.revenueBracket
+                    })
+                    .select()
+                    .single();
+
+                if (createError) throw createError;
+                bizId = newBiz.id;
+            } catch (err) {
+                console.error('Failed to create initial business:', err);
+                setErrorMsg("Failed to initialize business profile.");
+                return;
+            }
+        }
+
+        if (bizId && currentResults) {
+            try {
+                // Ensure the business matches the logged in user if possible
+                if (user?.id) {
+                    await supabase.from('businesses').update({ user_id: user.id }).eq('id', bizId);
+                }
+                await syncAuditToSupabase(bizId, currentResults);
+                localStorage.setItem('masterkey_business_id', bizId);
+                router.push(`/dashboard?id=${bizId}`);
             } catch (err) {
                 console.error('Auto-sync failed:', err);
-                // Even if sync fails, we might want to redirect, but maybe show error first
                 setErrorMsg("Dashboard sync failed. Please try again.");
             }
-        } else if (id) {
-            router.push(`/dashboard?id=${id}`);
+        } else if (bizId) {
+            router.push(`/dashboard?id=${bizId}`);
         }
-    }, [business, user, syncAuditToSupabase, router]);
+    }, [business, user, syncAuditToSupabase, router, formData.vertical, formData.revenueBracket]);
 
     const handleGoogleLogin = async () => {
         setIsGoogleLoading(true);

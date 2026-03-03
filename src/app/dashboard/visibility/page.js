@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateVisibility, VISIBILITY_SIGNALS, formatINR, formatINRFull } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
@@ -22,6 +22,7 @@ function VisibilityContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [answers, setAnswers] = useState(
@@ -89,6 +90,8 @@ function VisibilityContent() {
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
+            } else {
+                router.refresh();
             }
             setSaving(false);
         }

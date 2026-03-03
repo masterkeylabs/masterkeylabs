@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function SignupPage() {
     const [phone, setPhone] = useState('');
@@ -12,6 +13,7 @@ export default function SignupPage() {
     const [fullName, setFullName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { user } = useAuth();
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [success, setSuccess] = useState(false);
     const router = useRouter();
@@ -53,7 +55,8 @@ export default function SignupPage() {
                     owner_name: fullName,
                     email: email,
                     phone: phone,
-                    classification: 'direct_signup'
+                    classification: 'direct_signup',
+                    user_id: user?.id || null
                 })
                 .select()
                 .single();

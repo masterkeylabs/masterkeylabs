@@ -45,10 +45,15 @@ export const AuthProvider = ({ children }) => {
                 .from('businesses')
                 .select('*')
                 .eq('user_id', userId)
+                .order('created_at', { ascending: false })
+                .limit(1)
                 .maybeSingle();
 
             if (error) throw error;
-            setBusiness(data);
+            if (data) {
+                setBusiness(data);
+                localStorage.setItem('masterkey_business_id', data.id);
+            }
         } catch (error) {
             console.error('Error fetching business profile:', error.message);
         }
@@ -57,6 +62,8 @@ export const AuthProvider = ({ children }) => {
     const signOut = async () => {
         await supabase.auth.signOut();
         localStorage.removeItem('masterkey_business_id');
+        localStorage.removeItem('masterkey_user_name');
+        localStorage.removeItem('masterkey_user_phone');
         router.push('/');
     };
 

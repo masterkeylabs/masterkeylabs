@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateLossAudit, formatINR, formatINRFull, BUSINESS_VERTICALS } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
@@ -13,6 +13,7 @@ function LossAuditContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [form, setForm] = useState({
@@ -21,7 +22,7 @@ function LossAuditContent() {
         opsOverheads: '',
         annualRevenue: '',
         industry: 'manufacturing',
-        manualHours: 20,
+        manualHours: 0,
         hasCRM: false,
         hasERP: false,
     });
@@ -51,7 +52,7 @@ function LossAuditContent() {
                     opsOverheads: ops || '',
                     annualRevenue: data.annual_revenue || '',
                     industry: data.industry || 'manufacturing',
-                    manualHours: data.manual_hours || 20,
+                    manualHours: data.manual_hours || 0,
                     hasCRM: data.has_crm || false,
                     hasERP: data.has_erp || false,
                 });
@@ -62,7 +63,7 @@ function LossAuditContent() {
                     setResults(data);
                 } else if (staff || marketing || ops) {
                     const calc = calculateLossAudit(staff, ops, marketing, {
-                        manualHoursPerWeek: data.manual_hours || 20,
+                        manualHoursPerWeek: data.manual_hours || 0,
                         hasCRM: data.has_crm || false,
                         hasERP: data.has_erp || false,
                         annualRevenue: data.annual_revenue || 0
@@ -117,6 +118,8 @@ function LossAuditContent() {
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
+            } else {
+                router.refresh();
             }
             setSaving(false);
 

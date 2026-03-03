@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
 import { calculateNightLoss, formatINR, formatINRFull } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
@@ -13,11 +13,12 @@ function NightLossContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
 
     const [form, setForm] = useState({
-        dailyInquiries: 20,
-        closingTime: '8pm',
+        dailyInquiries: 0,
+        closingTime: '6pm',
         avgTransactionValue: '',
         businessType: 'both',
     });
@@ -36,16 +37,16 @@ function NightLossContent() {
                 .single();
             if (data) {
                 setForm({
-                    dailyInquiries: data.daily_inquiries || 20,
-                    closingTime: data.closing_time || '8pm',
+                    dailyInquiries: data.daily_inquiries || 0,
+                    closingTime: data.closing_time || '6pm',
                     avgTransactionValue: data.profit_per_sale || data.avg_transaction_value || '',
                     businessType: data.business_type || 'both',
                 });
                 // Recalculate with new formula for immediate display
                 if (data.profit_per_sale || data.avg_transaction_value) {
                     const calc = calculateNightLoss(
-                        data.daily_inquiries || 20,
-                        data.closing_time || '8pm',
+                        data.daily_inquiries || 0,
+                        data.closing_time || '6pm',
                         data.profit_per_sale || data.avg_transaction_value || 0,
                         data.business_type || 'both'
                     );
@@ -93,6 +94,8 @@ function NightLossContent() {
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
+            } else {
+                router.refresh();
             }
             setSaving(false);
         }

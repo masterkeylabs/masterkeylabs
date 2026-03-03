@@ -34,8 +34,11 @@ export async function POST(req) {
         // instead of raw ASCII text, preventing PDF corruption inside the email attachment.
         const pdfBuffer = Buffer.from(base64Data, 'base64');
 
+        // Use configurable sender or fallback to verified domain
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'reports@masterkeylabs.in';
+
         const { data: resData, error: resError } = await resend.emails.send({
-            from: 'MasterKey Intelligence <reports@masterkeylabs.in>',
+            from: `MasterKey Intelligence <${fromEmail}>`,
             to: email, // Can be user-provided via modal
             subject: `[CONFIDENTIAL] Comprehensive Audit Report - ${name}`,
             text: `Please find the requested Comprehensive System Audit Report for ${name} attached to this email.\n\nThis confidential PDF details your Total Annual Bleed, Operational Friction, and the actionable steps for your Masterkey Labs Survival Protocol.\n\nBest,\nMasterKey OS Automated Dispatch`,
