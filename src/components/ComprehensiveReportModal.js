@@ -338,7 +338,7 @@ export default function ComprehensiveReportInline({ businessName, computedData }
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
                                             <span className="text-sm font-medium text-white/60">Est. Conversion Rate</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{nightLossData.conversion_rate || 0}%</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{nightLossData.response_time === 'b2b' ? 20 : nightLossData.response_time === 'b2c' ? 25 : 23}%</span>
                                         </div>
                                         <div className="flex justify-between items-center pt-2">
                                             <span className="text-sm font-medium text-purple-400/80">Monthly Revenue Hemorrhage</span>

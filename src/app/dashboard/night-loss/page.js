@@ -78,7 +78,6 @@ function NightLossContent() {
                 daily_inquiries: form.dailyInquiries,
                 closing_time: form.closingTime,
                 profit_per_sale: avgValue,
-                business_type: form.businessType,
                 response_time: form.businessType, // backward compat
                 monthly_days: 30,
                 night_inquiries: calc.nightInquiries,
@@ -86,7 +85,6 @@ function NightLossContent() {
                 potential_revenue: calc.potentialRevenue,
                 monthly_loss: calc.monthlyLoss,
                 annual_loss: calc.annualLoss,
-                conversion_gap: calc.conversionGap,
                 created_at: new Date().toISOString()
             };
 
@@ -94,11 +92,12 @@ function NightLossContent() {
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
+                setSaving(false); // Fix: Re-enable button if save fails
             } else {
+                setSaving(false);
                 // On success, jump to next audit
                 router.push(`/dashboard/visibility?id=${businessId}`);
             }
-            setSaving(false);
         }
     };
 

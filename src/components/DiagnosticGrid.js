@@ -145,10 +145,14 @@ export default function DiagnosticGrid({ data, business, t }) {
                         <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-500/5 to-transparent border border-purple-500/10">
                             <div className="flex justify-between mb-2">
                                 <p className="text-[11px] font-bold text-white/60 uppercase">{ts.module02.gap || 'CONVERSION GAP'}</p>
-                                <p className="text-[11px] font-bold text-purple-400">{nightLoss?.conversion_gap || 0}%</p>
+                                <p className="text-[11px] font-bold text-purple-400">
+                                    {nightLoss?.response_time === 'b2b' ? 20 : nightLoss?.response_time === 'b2c' ? 25 : 23}%
+                                </p>
                             </div>
                             <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                                <div className="h-full bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" style={{ width: `${nightLoss?.conversion_gap || 0}%` }}></div>
+                                <div className="h-full bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"
+                                    style={{ width: `${nightLoss?.response_time === 'b2b' ? 20 : nightLoss?.response_time === 'b2c' ? 25 : 23}%` }}>
+                                </div>
                             </div>
                         </div>
                     </div>
