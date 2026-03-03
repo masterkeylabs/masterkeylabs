@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import IntakeWizard from '@/components/IntakeWizard';
+// import IntakeWizard from '@/components/IntakeWizard';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useAuth } from '@/lib/AuthContext';
 
@@ -91,20 +91,33 @@ export default function Home() {
 
                     </div>
 
-                    {/* Sunk-Cost Wizard */}
-                    <IntakeWizard t={t} />
+                    {/* CTA Section */}
+                    <div className="flex flex-col items-center gap-6 mt-4">
+                        <Link
+                            href={dashboardHref}
+                            className="ios-button-primary px-10 py-5 text-lg font-black tracking-tight glow-blue flex items-center gap-3 active:scale-[0.98] transition-all"
+                        >
+                            <span className="material-symbols-outlined">rocket_launch</span>
+                            {t?.hero?.cta || "GET STARTED"}
+                        </Link>
 
-                    <div className="mt-16 text-center max-w-xl">
-                        <p className="text-slate-300 text-sm md:text-base font-medium">
-                            {t.cta.main} <br />
-                            <span className="text-primary/70">{t.cta.sub}</span>
-                        </p>
-                        <div className="flex -space-x-2 justify-center mt-6">
+                        <div className="flex -space-x-2 items-center mt-4">
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="w-8 h-8 rounded-full border-2 border-background-dark bg-ios-gray-dark flex items-center justify-center text-[8px] font-bold text-white/40">MK</div>
+                                <div key={i} className="w-8 h-8 rounded-full border-2 border-background-dark bg-ios-gray-dark flex items-center justify-center text-[8px] font-bold text-white/40 shadow-xl">MK</div>
                             ))}
-                            <div className="w-8 h-8 rounded-full border-2 border-background-dark bg-ios-blue/10 flex items-center justify-center text-[10px] font-bold text-ios-blue font-mono">+1k</div>
+                            <div className="w-8 h-8 rounded-full border-2 border-background-dark bg-ios-blue/10 flex items-center justify-center text-[10px] font-bold text-ios-blue font-mono shadow-xl">+1k</div>
+                            <span className="ml-4 text-[10px] text-white/30 uppercase tracking-widest font-black">Trusted by 1,000+ businesses</span>
                         </div>
+                    </div>
+
+                    <div className="mt-20 text-center max-w-xl">
+                        <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed">
+                            {t.cta.main} <br />
+                            <span className="text-ios-blue/60 mt-1 block tracking-tight font-bold group">
+                                {t.cta.sub}
+                                <span className="inline-block ml-1 transition-transform group-hover:translate-x-1">→</span>
+                            </span>
+                        </p>
                     </div>
                 </section>
 
