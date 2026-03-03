@@ -22,7 +22,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         if (!existingData) return;
 
         let initialStep = 0;
-        if (!existingData.lossAudit?.created_at) initialStep = 1;
+        if (!existingData || (!existingData.lossAudit?.created_at && !existingData.nightLoss?.created_at && !existingData.missedCustomers?.created_at && !existingData.aiThreat?.created_at)) {
+            initialStep = 0;
+        }
+        else if (!existingData.lossAudit?.created_at) initialStep = 1;
         else if (!existingData.nightLoss?.created_at) initialStep = 2;
         else if (!existingData.missedCustomers?.created_at) initialStep = 3;
         else if (!existingData.aiThreat?.created_at) initialStep = 4;
@@ -252,7 +255,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     ];
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-2xl">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 sm:p-6 pt-[10vh] bg-black/40 backdrop-blur-md overflow-y-auto custom-scrollbar">
             <div className="w-full max-w-3xl bg-[#0a0a0c] border border-white/10 rounded-3xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh]">
 
                 {/* Header Sequence */}
