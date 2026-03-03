@@ -135,11 +135,7 @@ export default function DiagnosticGrid({ data, business, t }) {
                 </ModuleWrapper>
 
                 {/* 3. VISIBILITY */}
-                <ModuleWrapper
-                    unlocked={isM2Complete}
-                    href={`/dashboard/visibility${business?.id ? `?id=${business.id}` : ''}`}
-                    overlayText="Complete Night Loss Audit to Unlock"
-                >
+                <ModuleWrapper href={`/dashboard/visibility${business?.id ? `?id=${business.id}` : ''}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500 opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
                         <div>
