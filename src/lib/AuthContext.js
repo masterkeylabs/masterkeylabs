@@ -42,21 +42,31 @@ export const AuthProvider = ({ children }) => {
         getSession();
 
         // Listen for changes on auth state (sign in, sign out, etc.)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            const currentUser = session?.user ?? null;
-            setUser(currentUser);
-            if (currentUser) {
-                await fetchBusinessProfile(currentUser.id);
-            } else {
-                setBusiness(null);
+        const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            try {
+                const currentUser = session?.user ?? null;
+                setUser(currentUser);
+                if (currentUser) {
+                    await fetchBusinessProfile(currentUser.id);
+                } else {
+                    setBusiness(null);
+                }
+            } catch (err) {
+                console.error('Auth state change error:', err);
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                    clearTimeout(safetyTimeout);
+                }
             }
-            setLoading(false);
         });
 
         return () => {
             isMounted = false;
             clearTimeout(safetyTimeout);
-            subscription.unsubscribe();
+            if (authListener?.subscription) {
+                authListener.subscription.unsubscribe();
+            }
         };
     }, []);
 
