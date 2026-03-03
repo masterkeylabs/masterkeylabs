@@ -47,24 +47,7 @@ export default function DiagnosticGrid({ data, business, t }) {
         }
     };
 
-    const isM1Complete = !!lossAudit?.created_at;
-    const isM2Complete = !!nightLoss?.created_at;
-    const isM3Complete = !!missedCustomers?.created_at;
-
-    const ModuleWrapper = ({ children, unlocked, href, overlayText }) => {
-        if (!unlocked) {
-            return (
-                <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-white/[0.01] p-8 backdrop-blur-sm grayscale opacity-40 cursor-not-allowed group">
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/20 backdrop-blur-[2px]">
-                        <span className="material-symbols-outlined text-white/40 text-4xl mb-2">lock</span>
-                        <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{overlayText || 'Locked'}</p>
-                    </div>
-                    <div className="blur-md pointer-events-none">
-                        {children}
-                    </div>
-                </div>
-            );
-        }
+    const ModuleWrapper = ({ children, href }) => {
         return (
             <Link href={href} className="group cursor-pointer relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 block">
                 {children}
@@ -87,10 +70,7 @@ export default function DiagnosticGrid({ data, business, t }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
                 {/* 1. OPERATIONAL WASTE */}
-                <ModuleWrapper
-                    unlocked={true}
-                    href={`/dashboard/loss-audit${business?.id ? `?id=${business.id}` : ''}`}
-                >
+                <ModuleWrapper href={`/dashboard/loss-audit${business?.id ? `?id=${business.id}` : ''}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-ios-blue opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
                         <div>
@@ -121,11 +101,7 @@ export default function DiagnosticGrid({ data, business, t }) {
                 </ModuleWrapper>
 
                 {/* 2. NIGHT LOSS */}
-                <ModuleWrapper
-                    unlocked={isM1Complete}
-                    href={`/dashboard/night-loss${business?.id ? `?id=${business.id}` : ''}`}
-                    overlayText="Complete Operational Audit to Unlock"
-                >
+                <ModuleWrapper href={`/dashboard/night-loss${business?.id ? `?id=${business.id}` : ''}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-purple-500 opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
                         <div>
@@ -193,11 +169,7 @@ export default function DiagnosticGrid({ data, business, t }) {
                 </ModuleWrapper>
 
                 {/* 4. EXTINCTION HORIZON */}
-                <ModuleWrapper
-                    unlocked={isM3Complete}
-                    href={`/dashboard/ai-threat${business?.id ? `?id=${business.id}` : ''}`}
-                    overlayText="Complete Visibility Scan to Unlock"
-                >
+                <ModuleWrapper href={`/dashboard/ai-threat${business?.id ? `?id=${business.id}` : ''}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-red-500 opacity-30"></div>
                     <div className="flex justify-between items-start mb-8 text-left">
                         <div>

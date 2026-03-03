@@ -8,6 +8,7 @@ import FloatingFAB from '@/components/FloatingFAB';
 import RescueArchitecture from '@/components/RescueArchitecture';
 import BusinessProfile from '@/components/BusinessProfile';
 import ComprehensiveReportModal from '@/components/ComprehensiveReportModal';
+import DashboardIntakeWizard from '@/components/DashboardIntakeWizard';
 import { translations } from '@/lib/translations';
 
 import { useLanguage } from '@/lib/LanguageContext';
@@ -27,11 +28,14 @@ export default function DashboardGrid({ business, computedData }) {
 
     const { lossAudit, nightLoss, missedCustomers, aiThreat } = computedData || {};
 
+    const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
+
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden flex">
+            {auditsIncomplete && <DashboardIntakeWizard business={business} existingData={computedData} t={t} />}
             <Sidebar t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-            <main className="flex-1 ml-0 md:ml-64 p-4 md:p-10 relative overflow-y-auto min-h-screen w-full">
+            <main className={`flex-1 ml-0 md:ml-64 p-4 md:p-10 relative overflow-y-auto min-h-screen w-full transition-all duration-1000 ${auditsIncomplete ? 'blur-xl grayscale pointer-events-none opacity-40' : ''}`}>
                 {/* Background Sophistication */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-ios-blue/5 blur-[120px] rounded-full opacity-60"></div>
