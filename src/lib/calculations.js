@@ -343,7 +343,7 @@ export function calculateAIThreat(industry, options = {}) {
         'default': 72
     };
 
-    const normalizedIndustry = (industry || '').toLowerCase().trim();
+    const normalizedIndustry = (typeof industry === 'string' ? industry : (industry?.value || '')).toLowerCase().trim();
     const riskPct = industryRiskTable[normalizedIndustry] || industryRiskTable['default'];
 
     // Derive risk band from percentage

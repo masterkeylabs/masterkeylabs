@@ -32,7 +32,6 @@ export default function DashboardGrid({ business, computedData }) {
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden flex">
-            {auditsIncomplete && <DashboardIntakeWizard business={business} existingData={computedData} t={t} />}
             <Sidebar t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             <main className={`flex-1 ml-0 md:ml-64 p-4 md:p-10 relative overflow-y-auto min-h-screen w-full transition-all duration-1000 ${auditsIncomplete ? 'blur-xl grayscale pointer-events-none opacity-40' : ''}`}>
@@ -77,6 +76,8 @@ export default function DashboardGrid({ business, computedData }) {
                     </div>
                 </div>
             </main>
+
+            {auditsIncomplete && <DashboardIntakeWizard business={business} existingData={computedData} t={t} />}
 
             <FloatingFAB
                 businessName={business?.entity_name}
