@@ -13,8 +13,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     },
     global: {
         fetch: (...args) => {
-            // Force bypass of Next.js aggressive client-side fetch caching
-            return fetch(args[0], { ...args[1], cache: 'no-store' });
+            const options = args[1] || {};
+            // Only force no-store for GET requests or if cache isn't explicitly set
+            // Avoid messing with POST bodies in aggressive environments
+            return fetch(args[0], {
+                ...options,
+                cache: (options.method === 'GET' || !options.method) ? 'no-store' : options.cache
+            });
         }
     }
 })

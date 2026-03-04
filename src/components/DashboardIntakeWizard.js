@@ -111,6 +111,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         e.preventDefault();
         setIsSaving(true);
         setError(null);
+
+        // Timeout flag to prevent infinite hang on live
+        let connectionTimedOut = false;
+        const timeoutId = setTimeout(() => {
+            connectionTimedOut = true;
+            setError("Connection timed out. Please check your internet or try refreshing.");
+            setIsSaving(false);
+        }, 8000);
+
         try {
             const payload = {
                 entity_name: formM0.entityName,
@@ -129,6 +138,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                     .from('businesses')
                     .update(payload)
                     .eq('id', bizId);
+
+                if (connectionTimedOut) return;
                 if (saveErr) throw saveErr;
             } else {
                 // Create new
@@ -137,7 +148,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                     .insert(payload)
                     .select()
                     .single();
-                if (saveErr) throw saveErr;
+
+                if (connectionTimedOut) return;
+
+                // Specific check for missing "vertical" column error which often happens on live
+                if (saveErr) {
+                    if (saveErr.message?.includes('column "vertical" of relation "businesses" does not exist')) {
+                        throw new Error("System Schema Mismatch: Please run 'add_vertical_column.sql' in Supabase SQL editor.");
+                    }
+                    throw saveErr;
+                }
+
                 bizId = newBiz.id;
                 setActiveId(bizId);
 
@@ -147,13 +168,18 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 router.replace(`/dashboard?${params.toString()}`, { scroll: false });
             }
 
+            clearTimeout(timeoutId);
             // Sync forward
             setFormM1(prev => ({ ...prev, industry: formM0.industry }));
             setFormM4(prev => ({ ...prev, industry: formM0.industry }));
             setStep(1);
         } catch (err) {
-            setError(err.message);
+            if (!connectionTimedOut) {
+                setError(err.message || "An unexpected error occurred during authorization.");
+                console.error('Authorization Fault:', err);
+            }
         } finally {
+            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };

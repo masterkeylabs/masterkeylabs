@@ -24,7 +24,7 @@ export default function DashboardFallback() {
         if (loading) return;
 
         const id = business?.id || localId;
-        if (id && id !== 'null') {
+        if (id && id !== 'null' && id !== 'undefined' && id !== '') {
             // Business ID found — redirect with it
             router.replace(`/dashboard?id=${id}`);
         }

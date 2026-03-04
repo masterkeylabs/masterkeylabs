@@ -23,11 +23,13 @@ BEGIN
 
   -- Execute the HTTP POST request to Make.com Webhook
   -- Note: ensure the pg_net extension is enabled in Database > Extensions in Supabase
+  /*
   PERFORM net.http_post(
       url:='YOUR_MAKE_WEBHOOK_URL',
       body:=payload::jsonb,
       headers:='{"Content-Type": "application/json"}'::jsonb
   );
+  */
 
   RETURN NEW;
 END;
