@@ -1,7 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/lib/AuthContext';
 import {
     calculateLossAudit,
     calculateNightLoss,
@@ -13,7 +14,10 @@ import { formatIndian } from '@/utils/formatIndian';
 
 export default function DashboardIntakeWizard({ business, existingData, t, onComplete }) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { user } = useAuth();
     const [step, setStep] = useState(0);
+    const [activeId, setActiveId] = useState(business?.id || null);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
 
@@ -108,19 +112,40 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
         try {
-            if (!business?.id) throw new Error("No active business profile found. Please return to home and initialize.");
-
             const payload = {
                 entity_name: formM0.entityName,
                 owner_name: formM0.ownerName,
                 phone: formM0.whatsapp,
                 email: formM0.email,
                 vertical: formM0.industry,
-                id: business.id
+                user_id: user?.id || null
             };
 
-            const { error: saveErr } = await supabase.from('businesses').upsert(payload, { onConflict: 'id' });
-            if (saveErr) throw saveErr;
+            let bizId = activeId;
+
+            if (bizId) {
+                // Update existing
+                const { error: saveErr } = await supabase
+                    .from('businesses')
+                    .update(payload)
+                    .eq('id', bizId);
+                if (saveErr) throw saveErr;
+            } else {
+                // Create new
+                const { data: newBiz, error: saveErr } = await supabase
+                    .from('businesses')
+                    .insert(payload)
+                    .select()
+                    .single();
+                if (saveErr) throw saveErr;
+                bizId = newBiz.id;
+                setActiveId(bizId);
+
+                // Update URL to persist session on refresh
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('id', bizId);
+                router.replace(`/dashboard?${params.toString()}`, { scroll: false });
+            }
 
             // Sync forward
             setFormM1(prev => ({ ...prev, industry: formM0.industry }));
@@ -152,7 +177,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             });
 
             const payload = {
-                business_id: business.id,
+                business_id: activeId,
                 staff_salary: staff,
                 ops_overheads: ops,
                 marketing_budget: marketing,
@@ -195,7 +220,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const calc = calculateNightLoss(formM2.dailyInquiries, formM2.closingTime, avgValue, formM2.businessType);
 
             const payload = {
-                business_id: business.id,
+                business_id: activeId,
                 daily_inquiries: formM2.dailyInquiries,
                 closing_time: formM2.closingTime,
                 profit_per_sale: avgValue,
@@ -232,7 +257,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const activeSignalsArray = Object.keys(formM3.signals).filter(k => formM3.signals[k]);
 
             const payload = {
-                business_id: business.id,
+                business_id: activeId,
                 city: formM3.city.toLowerCase(),
                 country: 'India',
                 signals: formM3.signals, // This is already an object { hasGoogleMyBusiness: true... }
@@ -268,7 +293,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const calc = calculateAIThreat(industryValue, formM4);
 
             const payload = {
-                business_id: business.id,
+                business_id: activeId,
                 industry: formM4.industry,
                 score: calc.riskPct,
                 threat_level: calc.riskBand,
