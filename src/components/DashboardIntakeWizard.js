@@ -118,7 +118,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             connectionTimedOut = true;
             setError("Connection timed out. Please check your internet or try refreshing.");
             setIsSaving(false);
-        }, 8000);
+        }, 15000);
 
         try {
             const payload = {
