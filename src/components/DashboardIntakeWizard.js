@@ -50,14 +50,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         ownerName: business?.owner_name || '',
         whatsapp: business?.phone || '',
         email: business?.email || '',
-        industry: business?.vertical || 'retail',
     });
     const [formM1, setFormM1] = useState({
         staffSalary: existingData?.lossAudit?.staff_salary || '',
         marketingBudget: existingData?.lossAudit?.marketing_budget || '',
         opsOverheads: existingData?.lossAudit?.ops_overheads || '',
         annualRevenue: existingData?.lossAudit?.annual_revenue || '',
-        industry: existingData?.lossAudit?.industry || 'manufacturing',
+        industry: existingData?.lossAudit?.industry || business?.vertical || 'retail',
         manualHours: existingData?.lossAudit?.manual_hours || 0,
         hasCRM: existingData?.lossAudit?.has_crm || false,
         hasERP: existingData?.lossAudit?.has_erp || false,
@@ -126,7 +125,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 owner_name: formM0.ownerName,
                 phone: formM0.whatsapp,
                 email: formM0.email,
-                vertical: formM0.industry,
                 user_id: user?.id || null
             };
 
@@ -170,8 +168,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             clearTimeout(timeoutId);
             // Sync forward
-            setFormM1(prev => ({ ...prev, industry: formM0.industry }));
-            setFormM4(prev => ({ ...prev, industry: formM0.industry }));
             setStep(1);
         } catch (err) {
             if (!connectionTimedOut) {
@@ -226,6 +222,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             const { error: saveErr } = await supabase.from('loss_audit_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
+
+            // Also update the main business vertical for classification
+            await supabase.from('businesses').update({ vertical: formM1.industry }).eq('id', activeId);
+
             setStep(2);
         } catch (err) {
             setError(err.message);
@@ -456,28 +456,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                         />
                                     </div>
                                 </div>
-
-                                <div className="space-y-3 pt-6 border-t border-white/5">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Vertical / Industry Sector
-                                    </label>
-                                    <div className="relative group">
-                                        <select
-                                            required
-                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg"
-                                            value={formM0.industry}
-                                            onChange={e => setFormM0({ ...formM0, industry: e.target.value })}
-                                        >
-                                            {BUSINESS_VERTICALS.map(v => (
-                                                <option key={v.value} value={v.value} className="bg-[#0a0a0c]">{v.label}</option>
-                                            ))}
-                                        </select>
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 group-hover:text-ios-cyan transition-colors">
-                                            <span className="material-symbols-outlined">expand_more</span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div className="pt-4">
@@ -506,6 +484,28 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                                <div className="sm:col-span-2 space-y-3 pb-6 border-b border-white/5">
+                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
+                                        Vertical / Industry Sector
+                                    </label>
+                                    <div className="relative group">
+                                        <select
+                                            required
+                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg"
+                                            value={formM1.industry}
+                                            onChange={e => setFormM1({ ...formM1, industry: e.target.value })}
+                                        >
+                                            {BUSINESS_VERTICALS.map(v => (
+                                                <option key={v.value} value={v.value} className="bg-[#0a0a0c]">{v.label}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 group-hover:text-ios-cyan transition-colors">
+                                            <span className="material-symbols-outlined">expand_more</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-3">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
@@ -846,6 +846,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
