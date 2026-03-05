@@ -56,7 +56,7 @@ export default function DashboardFallback() {
         };
 
         return (
-            <div className="animate-fade-in w-full">
+            <div className="w-full">
                 <DashboardGrid
                     business={placeholderBusiness}
                     computedData={dummyData}

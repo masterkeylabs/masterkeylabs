@@ -406,8 +406,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     ];
 
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
-            <div className="w-full max-w-4xl bg-black/80 border border-white/10 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] md:max-h-[85vh] overflow-hidden relative border-glow shadow-glow-blue my-auto">
+        <div className="fixed inset-0 top-0 left-0 w-full h-full z-[150] flex items-center justify-center p-2 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
+            <div className="w-full max-w-4xl bg-black/80 border border-white/10 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] md:max-h-[85vh] overflow-hidden relative border-glow shadow-glow-blue">
 
                 {/* Visual Accent */}
                 <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-ios-cyan/50 to-transparent"></div>
