@@ -60,8 +60,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         ownerName: business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || '',
         whatsapp: business?.phone || '',
         email: business?.email || '',
-        industry: business?.vertical || 'retail',
-        annualRevenue: business?.annual_revenue || '',
     });
     const [formM1, setFormM1] = useState({
         staffSalary: existingData?.lossAudit?.staff_salary || '',
@@ -69,6 +67,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         opsOverheads: existingData?.lossAudit?.ops_overheads || '',
         manualHours: existingData?.lossAudit?.manual_hours || 3,
         // Moved from M0 to relevant operational step:
+        industry: business?.vertical || 'retail',
+        annualRevenue: business?.annual_revenue || '',
         employeeCount: business?.employee_count || '',
         hasCRM: business?.has_crm || false,
         hasERP: business?.has_erp || false,
@@ -132,8 +132,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 owner_name: formM0.ownerName,
                 phone: formM0.whatsapp,
                 email: formM0.email,
-                vertical: formM0.industry,
-                annual_revenue: parseFloat(formM0.annualRevenue) || 0,
                 user_id: user?.id || null,
                 classification: `dashboard_wizard::v2_rpc`
             };
@@ -213,7 +211,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 ops_overheads: ops,
                 marketing_budget: marketing,
                 annual_revenue: revenue,
-                industry: formM0.industry,
+                industry: formM1.industry,
                 manual_hours: Math.round(parseFloat(formM1.manualHours) || 0),
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP,
@@ -234,7 +232,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             // Update businesses table with newly collected metadata
             await supabase.from('businesses').update({
-                vertical: formM0.industry,
+                vertical: formM1.industry,
+                annual_revenue: revenue,
                 employee_count: parseInt(formM1.employeeCount) || 0,
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP
@@ -327,8 +326,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
         try {
-            const industryValue = formM0.industry;
-            if (!industryValue) throw new Error("Please select an industry sector in Step 0");
+            const industryValue = formM1.industry;
+            if (!industryValue) throw new Error("Please select an industry sector in Step 1");
 
             const calc = calculateAIThreat(industryValue, {
                 isOmnichannel: formM4.isOmnichannel,
@@ -477,34 +476,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </div>
                             </div>
 
-                            <div className="space-y-6 md:space-y-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
-                                <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">Business Profiling</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-3 col-span-2">
-                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Industry Sector</label>
-                                        <select
-                                            required
-                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
-                                            value={formM0.industry}
-                                            onChange={e => setFormM0({ ...formM0, industry: e.target.value })}
-                                        >
-                                            {BUSINESS_VERTICALS.map(v => (
-                                                <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="col-span-2">
-                                        <RangeSelector
-                                            label={t?.common?.revenueLabel || 'Estimated Annual Revenue'}
-                                            options={REVENUE_OPTIONS}
-                                            value={formM0.annualRevenue}
-                                            onChange={val => setFormM0({ ...formM0, annualRevenue: val })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
                             <div className="pt-4">
                                 <button
                                     disabled={isSaving}
@@ -559,10 +530,37 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     onChange={val => setFormM1({ ...formM1, manualHours: val })}
                                 />
 
+
                                 {/* Moved from Initialization to Contextual Operational Waste section */}
-                                {(!business?.employee_count || !business?.has_crm) && (
+                                {(!business?.employee_count || !business?.has_crm || !business?.vertical || !business?.annual_revenue) && (
                                     <div className="space-y-8 pt-4 border-t border-white/5">
-                                        <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold">Operational Context</h3>
+                                        <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold">Business & Operational Context</h3>
+
+                                        {!business?.vertical && (
+                                            <div className="space-y-3 col-span-2">
+                                                <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Industry Sector</label>
+                                                <select
+                                                    required
+                                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
+                                                    value={formM1.industry}
+                                                    onChange={e => setFormM1({ ...formM1, industry: e.target.value })}
+                                                >
+                                                    {BUSINESS_VERTICALS.map(v => (
+                                                        <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        )}
+
+                                        {!business?.annual_revenue && (
+                                            <RangeSelector
+                                                label={t?.common?.revenueLabel || 'Estimated Annual Revenue'}
+                                                options={REVENUE_OPTIONS}
+                                                value={formM1.annualRevenue}
+                                                onChange={val => setFormM1({ ...formM1, annualRevenue: val })}
+                                            />
+                                        )}
+
                                         {!business?.employee_count && (
                                             <RangeSelector
                                                 label={t?.common?.employeeCountLabel || 'Number of Employees (Operational Scale)'}
