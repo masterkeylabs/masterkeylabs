@@ -1,5 +1,5 @@
 -- ===================================================================
--- MASTERKEY OS: HIGH-PERFORMANCE INITIALIZATION RPC (FIXED)
+-- MASTERKEY OS: ULTRA-PERFORMANCE INITIALIZATION RPC (FIXED)
 -- ===================================================================
 
 CREATE OR REPLACE FUNCTION public.initialize_business_profile(
@@ -22,11 +22,20 @@ BEGIN
     v_phone := p_payload->>'phone';
     v_last10 := RIGHT(REGEXP_REPLACE(v_phone, '\D', '', 'g'), 10);
 
-    -- 2. Check for duplicates
+    -- 2. Check for duplicates (INDEXED SEARCH FIRST)
+    -- We use a simple query first which will hit the idx_businesses_email and idx_businesses_phone
     SELECT id INTO v_existing_id
     FROM public.businesses
-    WHERE (LOWER(email) = v_email OR RIGHT(REGEXP_REPLACE(phone, '\D', '', 'g'), 10) = v_last10)
+    WHERE (LOWER(email) = v_email OR phone = v_phone)
     LIMIT 1;
+
+    -- If not found by exact match, try the last 10 digits (slower, but only runs if exact match fails)
+    IF v_existing_id IS NULL AND v_last10 IS NOT NULL AND v_last10 != '' THEN
+        SELECT id INTO v_existing_id
+        FROM public.businesses
+        WHERE RIGHT(REGEXP_REPLACE(phone, '\D', '', 'g'), 10) = v_last10
+        LIMIT 1;
+    END IF;
 
     -- 3. Logic based on mode
     IF p_active_id IS NOT NULL THEN

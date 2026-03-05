@@ -30,6 +30,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     const [activeId, setActiveId] = useState(business?.id || null);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Initial state setup based on any existing data
     useEffect(() => {
@@ -141,6 +146,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             console.log('--- Authorization Sequence (RPC-V2) Start ---');
             console.log('Payload:', payload);
+            console.log('Active ID (p_active_id):', bizId);
 
             // Call our consolidated RPC for speed and reliability
             const { data: result, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
@@ -371,6 +377,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         "Module 03: Digital Invisibility",
         "Module 04: Extinction Horizon"
     ];
+
+    if (!mounted) return null;
 
     return (
         <div className="fixed inset-0 top-0 left-0 w-full h-full z-[150] flex items-center justify-center p-2 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
