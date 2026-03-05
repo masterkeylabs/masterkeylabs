@@ -10,16 +10,5 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         detectSessionInUrl: true,
         storageKey: 'masterkey-auth-token',
         flowType: 'pkce'
-    },
-    global: {
-        fetch: (...args) => {
-            const options = args[1] || {};
-            // Only force no-store for GET requests or if cache isn't explicitly set
-            // Avoid messing with POST bodies in aggressive environments
-            return fetch(args[0], {
-                ...options,
-                cache: (options.method === 'GET' || !options.method) ? 'no-store' : options.cache
-            });
-        }
     }
 })

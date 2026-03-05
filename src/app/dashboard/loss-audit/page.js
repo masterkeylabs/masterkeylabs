@@ -6,6 +6,12 @@ import { calculateLossAudit, formatINR, formatINRFull, BUSINESS_VERTICALS } from
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import {
+    RangeSelector,
+    REVENUE_OPTIONS,
+    PAYROLL_OPTIONS,
+    MANUAL_HOURS_OPTIONS
+} from '@/components/RangeSelector';
 
 import { Suspense } from 'react';
 
@@ -63,7 +69,7 @@ function LossAuditContent() {
                     setResults(data);
                 } else if (staff || marketing || ops) {
                     const calc = calculateLossAudit(staff, ops, marketing, {
-                        manualHoursPerWeek: data.manual_hours || 0,
+                        manualHoursPerDay: data.manual_hours || 0,
                         hasCRM: data.has_crm || false,
                         hasERP: data.has_erp || false,
                         annualRevenue: data.annual_revenue || 0
@@ -82,7 +88,7 @@ function LossAuditContent() {
         const marketing = parseFloat(form.marketingBudget) || 0;
 
         const calc = calculateLossAudit(staff, ops, marketing, {
-            manualHoursPerWeek: form.manualHours,
+            manualHoursPerDay: form.manualHours,
             hasCRM: form.hasCRM,
             hasERP: form.hasERP,
             annualRevenue: parseFloat(form.annualRevenue) || 0
@@ -155,72 +161,44 @@ function LossAuditContent() {
                             </select>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.staffSalaryLabel}</label>
-                                <input
-                                    type="number" min="0" step="any"
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
-                                    placeholder="₹ 3,00,000"
-                                    value={form.staffSalary}
-                                    onChange={(e) => setForm({ ...form, staffSalary: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.marketingBudgetLabel}</label>
-                                <input
-                                    type="number" min="0" step="any"
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
-                                    placeholder="₹ 50,000"
-                                    value={form.marketingBudget}
-                                    onChange={(e) => setForm({ ...form, marketingBudget: e.target.value })}
-                                    required
-                                />
-                            </div>
-                        </div>
+                        <RangeSelector
+                            label={t.lossAudit.staffSalaryLabel}
+                            options={PAYROLL_OPTIONS}
+                            value={form.staffSalary}
+                            onChange={val => setForm({ ...form, staffSalary: val })}
+                        />
 
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.opsOverheadLabel}</label>
-                            <input
-                                type="number" min="0" step="any"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
-                                placeholder="₹ 2,00,000"
-                                value={form.opsOverheads}
-                                onChange={(e) => setForm({ ...form, opsOverheads: e.target.value })}
-                                required
-                            />
-                        </div>
+                        <RangeSelector
+                            label={t.lossAudit.marketingBudgetLabel}
+                            options={PAYROLL_OPTIONS}
+                            value={form.marketingBudget}
+                            onChange={val => setForm({ ...form, marketingBudget: val })}
+                        />
 
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-1">{t.lossAudit.revenueLabel}</label>
-                            <input
-                                type="number" min="0" step="any"
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
-                                placeholder="₹ 25,00,000"
-                                value={form.annualRevenue}
-                                onChange={(e) => setForm({ ...form, annualRevenue: e.target.value })}
-                            />
-                            <p className="text-[9px] text-white/30 mt-1 italic">{t.lossAudit.revenueSub}</p>
-                        </div>
+                        <RangeSelector
+                            label={t.lossAudit.opsOverheadLabel}
+                            options={PAYROLL_OPTIONS}
+                            value={form.opsOverheads}
+                            onChange={val => setForm({ ...form, opsOverheads: val })}
+                        />
+
+                        <RangeSelector
+                            label={t.lossAudit.revenueLabel}
+                            options={REVENUE_OPTIONS}
+                            value={form.annualRevenue}
+                            onChange={val => setForm({ ...form, annualRevenue: val })}
+                        />
 
                         <div className="pt-4 border-t border-white/5">
                             <label className="text-[10px] text-ios-blue uppercase tracking-widest block mb-4 font-bold">{t.lossAudit.advancedHeader}</label>
 
                             <div className="space-y-6">
-                                <div>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <label className="text-[11px] text-white/80 font-medium">{t.lossAudit.manualHoursLabel}</label>
-                                        <span className="text-ios-blue font-bold font-mono">{form.manualHours || 20}h</span>
-                                    </div>
-                                    <input
-                                        type="range" min="0" max="60"
-                                        className="w-full accent-ios-blue h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
-                                        value={form.manualHours || 20}
-                                        onChange={(e) => setForm({ ...form, manualHours: parseInt(e.target.value) })}
-                                    />
-                                    <p className="text-[9px] text-white/30 mt-1 italic">{t.lossAudit.manualHoursSub}</p>
-                                </div>
+                                <RangeSelector
+                                    label={t.lossAudit.manualHoursLabel}
+                                    options={MANUAL_HOURS_OPTIONS}
+                                    value={form.manualHours}
+                                    onChange={val => setForm({ ...form, manualHours: val })}
+                                />
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <button

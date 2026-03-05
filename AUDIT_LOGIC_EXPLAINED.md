@@ -1,70 +1,52 @@
-# MasterKey OS: Audit Core Logic & Formulas
+# MasterKey OS: Audit Core Logic & Formulas (V2.0-Fixed)
 
-This document explains the "Magic under the hood"—the logic and formulas we use to find leaks and growth opportunities in your business.
-
----
-
-## 1. Operational Waste (The "Money Leak" Audit)
-We calculate how much money is "bleeding" out of your business due to manual work and inefficient systems.
-
-### Simple Explanation:
-*   We look at your Staff, Ops, and marketing costs.
-*   We apply a "Waste Factor" to each (e.g., 30% of marketing is often wasted).
-*   We adjust these wastes based on whether you have a CRM or ERP.
-
-### The Formula:
-1.  **Staff Waste** = $Staff Costs \times Factor$ (Base: 12%, +10% if >30 manual hrs/week)
-2.  **Ops Waste** = $Overheads \times Factor$ (Base: 15%, -10% if has ERP)
-3.  **Marketing Waste** = $Marketing Spend \times Factor$ (Base: 30%, -15% if has CRM)
-4.  **Total Burn** = $(Staff Waste + Ops Waste + Marketing Waste) + Penalty$
-    *   *Penalty is 8% of total if over ₹10L, else 3%.*
+This document explains the "Intelligence Layer"—the logic and scientific benchmarks we use to identify leaks and growth opportunities in your business.
 
 ---
 
-## 2. Missed After-Hours Revenue (The "Night Loss" Audit)
-This calculates how many sales you lose because you aren't replying to leads 24/7.
+## 1. Operational Waste (The "Leaks" Audit)
+This audit identifies how much capital is being "burned" by manual work, fragmented systems, and unoptimized marketing.
 
-### Simple Explanation:
-*   We estimate your night-time leads based on your closing time.
-*   We compare your current "Response Speed" to the speed of an **AI Instant Reply**.
-*   The difference between the two is your "Lost Revenue."
-
-### The Formula:
-1.  **Night Leads** = $Daily Leads \times Night Traffic Factor \times 26 Days$
-    *   *Night Traffic Factor: 6pm close = 0.38, 8pm = 0.25, 10pm = 0.14*
-2.  **Revenue Loss** = $Night Leads \times (28\% - Current CVR) \times Profit Per Sale$
-    *   *28% is the fixed conversion rate for AI Instant Response.*
+### 🧩 Simple Explanation:
+*   **Payroll**: We calculate how much time is lost to manual entry. If you have an **ERP**, your waste drops by **45%**.
+*   **Overheads**: 15% of administrative costs are typically lost to inefficiency. An **ERP** cuts this loss by **40%**.
+*   **Marketing**: Roughly **26%** of ad spend is wasted without tracking. A **CRM** reduces this waste by **45%**.
+*   **Coordination Drag**: As waste grows, it creates a "drag" that slows down the entire company (extra 8% penalty).
 
 ---
 
-## 3. Missed Local Customers (The "Visibility" Audit)
-This checks how many potential customers are searching for you but finding your competitors instead.
+## 2. Night Loss (The "Missed Leads" Audit)
+Calculates revenue lost because you don't respond to customers after you close.
 
-### Simple Explanation:
-*   We give you a score out of 100 based on your website, SEO, and social media.
-*   If you have a 40/100 score, you are "missing" 60% of potential search traffic.
-
-### The Formula:
-1.  **Visibility Score** = Sum of Point Weights:
-    *   Website (20), Google Maps (20), WhatsApp (15), SEO (15), Social Media (15), Ads (10), CRM (5).
-2.  **Missed Customers** = $Baseline Traffic \times (1 - (Score / 100))$
-    *   *Baseline: 1,200/mo for cities, 500/mo elsewhere.*
+### 🧩 Simple Explanation:
+*   **The Traffic**: Data shows that if you close at **6 PM**, **42%** of your daily customers are actually trying to reach you while you're asleep!
+*   **The Gap**: If an AI replies **instantly**, you are **10x more likely** to close a sale than if you reply the next morning.
+*   **The Loss**: We calculate exactly how many of those "After-Hours" leads you are losing because of the delay.
 
 ---
 
-## 4. Extinction Horizon (The "AI Threat" Audit)
-This measures how vulnerable your specific industry is to being replaced by AI.
+## 3. Digital Visibility (The "Invisibility" Audit)
+Measures the revenue you lose because local customers find your competitors instead of you.
 
-### Simple Explanation:
-*   Different industries have different "Risk Scores" (e.g., IT is high risk, Healthcare is lower).
-*   Having a physical shop + online presence (Omnichannel) makes you much safer.
-
-### The Formula:
-1.  **Risk Score %** = $Base Industry Risk - Resilience Multiplier$
-    *   *Resilience Multiplier: -18 points if Digital + Physical, +5 points if Physical Only.*
-2.  **Years to Disruption** = $(100 - Risk Score) / 10$
+### 🧩 Simple Explanation:
+*   **The Score**: You get points for your digital "Signals":
+    *   **Google Business**: 25 pts
+    *   **Mobile Website**: 20 pts
+    *   **Social & SEO**: 30 pts
+*   **The Reach**: We use city benchmarks (e.g., **40,000 monthly searches** in Metros) to see how many people are looking for services like yours.
+*   **The Loss**: If your score is low (e.g., 30/100), you are "invisible" to **70%** of your market. We assume a **6% conversion rate** to estimate lost profit.
 
 ---
 
-## Summary Data Flow
-Audit data is saved and synced using IDs to ensure the Dashboard always reflects the **latest single source of truth** for your business diagnostics.
+## 4. AI Threat (The "Extinction" Audit)
+Predicts when AI disruption will hit your industry and how long you have to pivot.
+
+### 🧩 Simple Explanation:
+*   **Risk Level**: Industries like **IT or Finance** are at "Critical" risk (**85%**), while **Healthcare** is lower (**38%**).
+*   **The Moat**: Having a **Physical Presence** (Omnichannel) adds a protective "moat" that buys you an extra **12 months** of safety.
+*   **The Runway**: We calculate your "Months Remaining" based on your industry, size, and tools (CRM/ERP).
+
+---
+
+## 💡 About Range Selections
+When you select a range (like **10L - 50L**), the system uses a **weighted representative value** (e.g., 30,00,000) for the math. This ensures you get high-quality diagnostic numbers without needing to enter exact, sensitive financial data.

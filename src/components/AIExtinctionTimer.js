@@ -1,0 +1,417 @@
+'use client';
+import { useState, useEffect, useRef } from "react";
+
+const SYSTEM_PROMPT = `You are an AI displacement risk analyst. Ground ALL analysis in these landmark studies:
+
+RESEARCH BASE:
+- Goldman Sachs (2023): 300M jobs globally exposed; 2/3 of US/EU jobs face some AI automation; 25% could be performed entirely by AI
+- McKinsey Global Institute (2024): 30% of US work hours automated by 2030; 14% of global workforce (375M workers) must change careers
+- World Economic Forum Future of Jobs (2025): 92M jobs displaced by 2030; 39% of skills will be obsolete; 86% of businesses affected by AI/info-processing by 2030
+- Oxford University (Frey & Osborne): Probability of automation scores by occupation — routine cognitive tasks highest risk
+- ARXIV/Penn+OpenAI: 80% of US workforce has 10%+ of tasks affected by LLMs; educated white-collar workers earning under $80K most exposed
+- PwC AI Jobs Barometer (2025): AI-skilled workers earn 56% wage premium; productivity gap widening fast between AI-users and non-users
+- Dario Amodei (Anthropic CEO): AI could replace up to 50% of entry-level office jobs within 5 years
+- McKinsey: 70% of companies will adopt at least one AI technology by 2030
+
+RISK TIERS (be specific, not vague):
+- CRITICAL (75-100): 0-3 years — data entry clerks, basic accountants, paralegals, customer service reps, schedulers, translators, basic coders, admin assistants, bookkeepers
+- HIGH (50-74): 3-6 years — mid-level managers, HR generalists, marketing analysts, sales ops, financial analysts, recruiters, copywriters, basic designers
+- MODERATE (25-49): 6-12 years — senior consultants, specialized sales, experienced teachers, therapists, complex project managers, skilled tradespeople with certification requirements  
+- RESILIENT (1-24): 12+ years — plumbers, electricians, surgeons, emergency responders, crisis counselors, master craftspeople, C-suite strategists, complex physical trades
+
+TASK: Given a job title or business type, return ONLY valid JSON (no markdown, no preamble, no explanation):
+{
+  "riskScore": <integer 1-100>,
+  "yearsRemaining": <number like 2.5 or 8>,
+  "threatLevel": <"CRITICAL"|"HIGH"|"MODERATE"|"RESILIENT">,
+  "topThreats": [<exactly 3 specific task descriptions being automated, under 8 words each>],
+  "humanEdge": [<exactly 2 skills that keep humans irreplaceable, under 6 words each>],
+  "verdict": <one punchy honest sentence under 18 words — no fluff>,
+  "urgency": <one action-oriented sentence under 15 words>,
+  "researchBasis": <one specific stat from the studies above relevant to this role>
+}`;
+
+const THREAT_CONFIG = {
+    CRITICAL: { color: "#FF2D2D", glow: "rgba(255,45,45,0.2)", label: "CRITICAL RISK", emoji: "🔴" },
+    HIGH: { color: "#FF6B00", glow: "rgba(255,107,0,0.2)", label: "HIGH RISK", emoji: "🟠" },
+    MODERATE: { color: "#FFB800", glow: "rgba(255,184,0,0.2)", label: "MODERATE RISK", emoji: "🟡" },
+    RESILIENT: { color: "#00C48C", glow: "rgba(0,196,140,0.2)", label: "RESILIENT", emoji: "🟢" },
+};
+
+function useAnimatedValue(target, duration = 1400) {
+    const [val, setVal] = useState(0);
+    useEffect(() => {
+        if (target === 0) return;
+        let current = 0;
+        const step = target / (duration / 16);
+        const t = setInterval(() => {
+            current += step;
+            if (current >= target) { setVal(target); clearInterval(t); }
+            else setVal(Math.floor(current));
+        }, 16);
+        return () => clearInterval(t);
+    }, [target]);
+    return val;
+}
+
+function TimerBlock({ value, label, color }) {
+    const animated = useAnimatedValue(value, 1200);
+    return (
+        <div style={{
+            flex: 1, background: "rgba(255,255,255,0.03)",
+            border: `1px solid ${color}33`, borderRadius: "14px",
+            padding: "18px 10px", textAlign: "center",
+        }}>
+            <div style={{
+                fontSize: "2.4rem", fontWeight: 900, color,
+                lineHeight: 1, fontVariantNumeric: "tabular-nums",
+                textShadow: `0 0 20px ${color}66`,
+            }}>
+                {String(animated).padStart(2, "0")}
+            </div>
+            <div style={{ fontSize: "0.58rem", color: "#555", letterSpacing: "2.5px", marginTop: "6px" }}>{label}</div>
+        </div>
+    );
+}
+
+function RiskBar({ score, color }) {
+    const [w, setW] = useState(0);
+    useEffect(() => { const t = setTimeout(() => setW(score), 200); return () => clearTimeout(t); }, [score]);
+    const animated = useAnimatedValue(score);
+    return (
+        <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                <span style={{ fontSize: "0.65rem", color: "#444", letterSpacing: "2px" }}>AUTOMATION EXPOSURE</span>
+                <span style={{ fontSize: "1rem", fontWeight: 800, color }}>{animated}%</span>
+            </div>
+            <div style={{ height: "5px", background: "rgba(255,255,255,0.05)", borderRadius: "99px", overflow: "hidden" }}>
+                <div style={{
+                    height: "100%", width: `${w}%`,
+                    background: `linear-gradient(90deg, ${color}66, ${color})`,
+                    borderRadius: "99px",
+                    transition: "width 1.6s cubic-bezier(0.22,1,0.36,1)",
+                    boxShadow: `0 0 10px ${color}55`,
+                }} />
+            </div>
+        </div>
+    );
+}
+
+export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
+    const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(null);
+    const [error, setError] = useState("");
+    const [dots, setDots] = useState(0);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (!loading) return;
+        const t = setInterval(() => setDots(d => (d + 1) % 4), 350);
+        return () => clearInterval(t);
+    }, [loading]);
+
+    const analyze = async () => {
+        const trimmed = input.trim();
+        if (!trimmed) { inputRef.current?.focus(); return; }
+        setLoading(true); setResult(null); setError("");
+        try {
+            const res = await fetch("/api/ai-risk", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    systemPrompt: SYSTEM_PROMPT,
+                    prompt: `Analyze this role or business type: "${trimmed}"`,
+                }),
+            });
+            const data = await res.json();
+
+            if (data.error) {
+                if (data.error.message && data.error.message.includes('API key')) {
+                    throw new Error("GEMINI_API_KEY is missing or invalid in .env.local");
+                }
+                throw new Error(data.error.message || data.error);
+            }
+
+            const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const clean = raw.trim();
+            setResult(JSON.parse(clean));
+        } catch (err) {
+            console.error(err);
+            setError(err.message || "Analysis failed — please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const cfg = result ? (THREAT_CONFIG[result.threatLevel] || THREAT_CONFIG.MODERATE) : null;
+    const years = result ? Math.floor(result.yearsRemaining) : 0;
+    const months = result ? Math.floor((result.yearsRemaining % 1) * 12) : 0;
+    const days = result ? Math.floor(((result.yearsRemaining * 12) % 1) * 30) : 0;
+
+    return (
+        <div style={{
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+            background: "#080809",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            borderRadius: "24px",
+            border: "1px solid rgba(255,255,255,0.05)",
+            backdropFilter: "blur(20px)"
+        }}>
+            <style>{`
+        * { box-sizing: border-box; }
+        input::placeholder { color: #333; }
+        input:focus { outline: none; }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
+
+            <div style={{ width: "100%", maxWidth: "460px" }}>
+
+                {/* ─── HEADER ─── */}
+                <div style={{ textAlign: "center", marginBottom: "28px" }}>
+                    <div style={{
+                        display: "inline-flex", alignItems: "center", gap: "6px",
+                        fontSize: "0.62rem", letterSpacing: "3px", color: "#FF2D2D",
+                        marginBottom: "14px", fontWeight: 700,
+                        animation: "blink 2s ease infinite",
+                    }}>
+                        <span>●</span> AI DISPLACEMENT ANALYSIS
+                    </div>
+                    <h1 style={{
+                        fontSize: "clamp(1.8rem, 6vw, 2.4rem)",
+                        fontWeight: 900, color: "#F0F0F0",
+                        margin: "0 0 10px", lineHeight: 1.1,
+                        letterSpacing: "-0.5px",
+                    }}>
+                        Will AI Replace<br />
+                        <span style={{ color: "#FF2D2D" }}>Your Business?</span>
+                    </h1>
+                    <p style={{ color: "#3A3A3A", fontSize: "0.83rem", margin: 0, lineHeight: 1.7 }}>
+                        Enter your job title or business type below.<br />
+                        Get your AI extinction timeline in seconds.
+                    </p>
+                </div>
+
+                {/* ─── INPUT + BUTTON ─── */}
+                <div style={{ marginBottom: "10px" }}>
+                    <input
+                        ref={inputRef}
+                        value={input}
+                        onChange={e => { setInput(e.target.value); setResult(null); setError(""); }}
+                        onKeyDown={e => e.key === "Enter" && !loading && analyze()}
+                        placeholder="e.g. accountant · HR manager · law firm · marketing agency"
+                        style={{
+                            width: "100%",
+                            background: "rgba(255,255,255,0.03)",
+                            border: "1px solid rgba(255,255,255,0.08)",
+                            borderRadius: "14px",
+                            padding: "16px 18px",
+                            color: "#E0E0E0",
+                            fontSize: "0.9rem",
+                            transition: "border 0.2s, background 0.2s",
+                            marginBottom: "10px",
+                        }}
+                        onFocus={e => {
+                            e.target.style.border = "1px solid rgba(255,45,45,0.4)";
+                            e.target.style.background = "rgba(255,45,45,0.03)";
+                        }}
+                        onBlur={e => {
+                            e.target.style.border = "1px solid rgba(255,255,255,0.08)";
+                            e.target.style.background = "rgba(255,255,255,0.03)";
+                        }}
+                    />
+
+                    <button
+                        onClick={analyze}
+                        disabled={loading}
+                        style={{
+                            width: "100%",
+                            padding: "15px",
+                            background: loading
+                                ? "rgba(255,45,45,0.15)"
+                                : "linear-gradient(135deg, #CC0000, #FF4500)",
+                            border: loading ? "1px solid rgba(255,45,45,0.2)" : "none",
+                            borderRadius: "14px",
+                            color: loading ? "#666" : "#fff",
+                            fontWeight: 800,
+                            fontSize: "0.9rem",
+                            letterSpacing: "0.3px",
+                            cursor: loading ? "not-allowed" : "pointer",
+                            transition: "all 0.2s",
+                            boxShadow: loading ? "none" : "0 6px 30px rgba(204,0,0,0.35)",
+                        }}
+                        onMouseEnter={e => { if (!loading) e.target.style.transform = "translateY(-1px)"; }}
+                        onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
+                    >
+                        {loading
+                            ? `Analyzing your risk${".".repeat(dots)}`
+                            : "Calculate My AI Risk →"
+                        }
+                    </button>
+                </div>
+
+                {error && (
+                    <p style={{ textAlign: "center", color: "#FF4444", fontSize: "0.8rem", marginTop: "8px" }}>{error}</p>
+                )}
+
+                {/* ─── RESULTS ─── */}
+                {result && cfg && (
+                    <div style={{
+                        marginTop: "20px",
+                        background: `radial-gradient(ellipse at top, ${cfg.glow} 0%, transparent 70%), rgba(255,255,255,0.02)`,
+                        border: `1px solid ${cfg.color}22`,
+                        borderRadius: "20px",
+                        padding: "24px",
+                        animation: "fadeUp 0.5s ease both",
+                    }}>
+
+                        {/* Threat level badge */}
+                        <div style={{ textAlign: "center", marginBottom: "12px" }}>
+                            <span style={{
+                                display: "inline-block",
+                                background: cfg.color,
+                                color: "#000",
+                                fontSize: "0.6rem",
+                                fontWeight: 900,
+                                letterSpacing: "3px",
+                                padding: "5px 16px",
+                                borderRadius: "99px",
+                                animation: result.threatLevel === "CRITICAL" || result.threatLevel === "HIGH"
+                                    ? "blink 1.8s ease infinite" : "none",
+                            }}>
+                                {cfg.emoji} {cfg.label}
+                            </span>
+                        </div>
+
+                        {/* Verdict */}
+                        <p style={{
+                            textAlign: "center",
+                            color: "#C0C0C0",
+                            fontSize: "0.92rem",
+                            fontStyle: "italic",
+                            margin: "0 0 20px",
+                            lineHeight: 1.6,
+                            padding: "0 8px",
+                        }}>
+                            "{result.verdict}"
+                        </p>
+
+                        {/* Risk bar */}
+                        <RiskBar score={result.riskScore} color={cfg.color} />
+
+                        {/* Timer */}
+                        <div style={{ marginTop: "22px" }}>
+                            <div style={{
+                                textAlign: "center",
+                                fontSize: "0.6rem",
+                                color: "#444",
+                                letterSpacing: "3px",
+                                marginBottom: "12px",
+                            }}>
+                                TIME TO ADAPT YOUR BUSINESS
+                            </div>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                                <TimerBlock value={years} label="YEARS" color={cfg.color} />
+                                <TimerBlock value={months} label="MONTHS" color={cfg.color} />
+                                <TimerBlock value={days} label="DAYS" color={cfg.color} />
+                            </div>
+                        </div>
+
+                        {/* Two-col breakdown */}
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "18px" }}>
+                            <div style={{
+                                background: "rgba(255,45,45,0.04)",
+                                border: "1px solid rgba(255,45,45,0.1)",
+                                borderRadius: "12px", padding: "14px",
+                            }}>
+                                <div style={{ fontSize: "0.58rem", color: "#FF4444", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
+                                    🤖 AI WILL HANDLE
+                                </div>
+                                {result.topThreats.map((t, i) => (
+                                    <div key={i} style={{ fontSize: "0.75rem", color: "#777", marginBottom: "5px", lineHeight: 1.4 }}>
+                                        ✗ {t}
+                                    </div>
+                                ))}
+                            </div>
+                            <div style={{
+                                background: "rgba(0,196,140,0.04)",
+                                border: "1px solid rgba(0,196,140,0.1)",
+                                borderRadius: "12px", padding: "14px",
+                            }}>
+                                <div style={{ fontSize: "0.58rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
+                                    🧠 YOUR EDGE
+                                </div>
+                                {result.humanEdge.map((s, i) => (
+                                    <div key={i} style={{ fontSize: "0.75rem", color: "#777", marginBottom: "5px", lineHeight: 1.4 }}>
+                                        ✓ {s}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Research citation */}
+                        <div style={{
+                            marginTop: "14px",
+                            borderLeft: `2px solid ${cfg.color}44`,
+                            paddingLeft: "12px",
+                            paddingTop: "8px",
+                            paddingBottom: "8px",
+                            marginBottom: guestMode ? "24px" : "0"
+                        }}>
+                            <div style={{ fontSize: "0.63rem", color: "#3A3A3A", lineHeight: 1.5 }}>
+                                📊 {result.researchBasis}
+                            </div>
+                        </div>
+
+                        {/* Guest CTA Button */}
+                        {guestMode && (
+                            <button
+                                onClick={onGetStarted}
+                                style={{
+                                    width: "100%",
+                                    padding: "16px",
+                                    background: "linear-gradient(135deg, #007AFF, #00C4FF)",
+                                    border: "none",
+                                    borderRadius: "14px",
+                                    color: "#fff",
+                                    fontWeight: 900,
+                                    fontSize: "1rem",
+                                    letterSpacing: "0.5px",
+                                    cursor: "pointer",
+                                    transition: "all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
+                                    boxShadow: "0 10px 30px rgba(0,122,255,0.3)",
+                                    marginTop: "10px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "10px",
+                                }}
+                                onMouseEnter={e => {
+                                    e.target.style.transform = "translateY(-2px) scale(1.02)";
+                                    e.target.style.boxShadow = "0 15px 40px rgba(0,122,255,0.4)";
+                                }}
+                                onMouseLeave={e => {
+                                    e.target.style.transform = "translateY(0) scale(1)";
+                                    e.target.style.boxShadow = "0 10px 30px rgba(0,122,255,0.3)";
+                                }}
+                            >
+                                START FULL BUSINESS AUDIT NOW
+                                <span style={{ fontSize: "1.2rem" }}>→</span>
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

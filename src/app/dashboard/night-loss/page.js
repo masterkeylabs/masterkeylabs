@@ -6,6 +6,11 @@ import { calculateNightLoss, formatINR, formatINRFull } from '@/lib/calculations
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import {
+    RangeSelector,
+    DAILY_LEADS_OPTIONS,
+    TXN_VALUE_OPTIONS
+} from '@/components/RangeSelector';
 
 import { Suspense } from 'react';
 
@@ -102,9 +107,11 @@ function NightLossContent() {
     };
 
     const CLOSING_TIMES = [
-        { value: '6pm', label: '6 PM', desc: '42% night traffic', rate: '42%' },
-        { value: '8pm', label: '8 PM', desc: '22% night traffic', rate: '22%' },
-        { value: '10pm', label: '10 PM', desc: '12% night traffic', rate: '12%' },
+        { value: '12am', label: '12 AM', desc: '75% night traffic' },
+        { value: '6pm', label: '6 PM', desc: '42% night traffic' },
+        { value: '8pm', label: '8 PM', desc: '22% night traffic' },
+        { value: '10pm', label: '10 PM', desc: '12% night traffic' },
+        { value: '24x7', label: '24/7', desc: '0% night traffic' },
     ];
 
     const BUSINESS_TYPES = [
@@ -131,44 +138,37 @@ function NightLossContent() {
                         {t.nightLoss.formHeader}
                     </h3>
                     <form onSubmit={handleCalculate} className="space-y-5">
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.dailyInquiriesLabel}</label>
-                            <input
-                                type="range" min="1" max="200" step="1"
-                                className="w-full accent-primary"
-                                value={form.dailyInquiries}
-                                onChange={(e) => setForm({ ...form, dailyInquiries: parseInt(e.target.value) })}
-                            />
-                            <p className="text-right text-primary font-bold text-lg">{form.dailyInquiries} {t.nightLoss.perMonth.split('/')[1] || '/ day'}</p>
-                        </div>
+                        <RangeSelector
+                            label={t.nightLoss.dailyInquiriesLabel}
+                            options={DAILY_LEADS_OPTIONS}
+                            value={form.dailyInquiries}
+                            onChange={val => setForm({ ...form, dailyInquiries: val })}
+                            colorClass="alert-orange"
+                        />
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.closingTimeLabel}</label>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                                 {CLOSING_TIMES.map(time => (
                                     <button key={time.value} type="button"
                                         className={`py-3 rounded-lg text-center transition-all border ${form.closingTime === time.value
-                                            ? 'bg-alert-orange/20 border-alert-orange/50 text-alert-orange'
+                                            ? 'bg-alert-orange/20 border-alert-orange/50 text-alert-orange shadow-[0_0_10px_rgba(255,165,0,0.2)]'
                                             : 'bg-white/5 border-white/10 text-white/50 hover:border-white/30'}`}
                                         onClick={() => setForm({ ...form, closingTime: time.value })}
                                     >
-                                        <p className="font-bold text-sm">{t.nightLoss.closingTimes[time.value]?.label || time.label}</p>
-                                        <p className="text-[9px] opacity-60">{t.nightLoss.closingTimes[time.value]?.desc || time.desc}</p>
+                                        <p className="font-bold text-[11px]">{t.nightLoss.closingTimes[time.value]?.label || time.label}</p>
+                                        <p className="text-[8px] opacity-60 uppercase">{t.nightLoss.closingTimes[time.value]?.desc || time.desc}</p>
                                     </button>
                                 ))}
                             </div>
 
                         </div>
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.avgTransactionLabel}</label>
-                            <input
-                                type="number" min="0" step="any" max="5000000" required
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-all font-mono"
-                                placeholder="₹ 1,500"
-                                value={form.avgTransactionValue}
-                                onChange={(e) => setForm({ ...form, avgTransactionValue: e.target.value })}
-                            />
-                            <p className="text-[9px] text-alert-orange/60 mt-1 italic">{t.nightLoss.avgTransactionSub}</p>
-                        </div>
+                        <RangeSelector
+                            label={t.nightLoss.avgTransactionLabel}
+                            options={TXN_VALUE_OPTIONS}
+                            value={form.avgTransactionValue}
+                            onChange={val => setForm({ ...form, avgTransactionValue: val })}
+                            colorClass="alert-orange"
+                        />
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.businessTypeLabel}</label>
                             <div className="grid grid-cols-3 gap-3">

@@ -26,7 +26,7 @@ export default async function DashboardPage(props) {
     ]);
 
     // Parse the data or fallback to defaults
-    const business = bizRes.data || { entity_name: 'Your Business', id: businessId };
+    const business = bizRes.data || { id: businessId };
 
     // 1. Loss Audit Result → show Recoverable Savings
     const lossAuditScore = lossRes.data?.saving_target || 0;

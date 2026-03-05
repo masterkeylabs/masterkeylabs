@@ -6,6 +6,7 @@ import { calculateAIThreat, BUSINESS_VERTICALS } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { RangeSelector, EMPLOYEE_OPTIONS, MANUAL_HOURS_OPTIONS } from '@/components/RangeSelector';
 
 import { Suspense } from 'react';
 
@@ -16,12 +17,7 @@ const DISPLAY_COLORS = {
     blue: { bg: 'bg-ios-blue/10', border: 'border-ios-blue/30', text: 'text-ios-blue', fill: '#0084ff' },
 };
 
-const EMPLOYEE_RANGES = [
-    { value: 5, label: '< 10', desc: 'Micro (+6 mo)' },
-    { value: 25, label: '10–49', desc: 'Small (neutral)' },
-    { value: 100, label: '50–200', desc: 'Medium (−6 mo)' },
-    { value: 300, label: '200+', desc: 'Large (−12 mo)' },
-];
+// EMPLOYEE_RANGES removed in favor of shared EMPLOYEE_OPTIONS
 
 function AIThreatContent() {
     const { business } = useAuth();
@@ -149,27 +145,17 @@ function AIThreatContent() {
                                 onChange={(e) => setForm({ ...form, industry: e.target.value })}
                             >
                                 {BUSINESS_VERTICALS.map(ind => (
-                                    <option key={ind.value} value={ind.value} className="bg-background-dark">{t.common.industries[ind.value] || ind.label} ({ind.risk}%)</option>
+                                    <option key={ind.value} value={ind.value} className="bg-background-dark">{t.common.industries[ind.value] || ind.label}</option>
                                 ))}
                             </select>
                         </div>
 
-                        <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.manualHoursLabel.split('(')[0].trim() || 'Employees'}</label>
-                            <div className="grid grid-cols-4 gap-2">
-                                {EMPLOYEE_RANGES.map(er => (
-                                    <button key={er.value} type="button"
-                                        className={`py-3 px-1 rounded-lg text-center transition-all border ${form.employeeCount === er.value
-                                            ? 'bg-ios-blue/10 border-ios-blue/30 text-ios-blue'
-                                            : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'}`}
-                                        onClick={() => setForm({ ...form, employeeCount: er.value })}
-                                    >
-                                        <p className="font-bold text-sm">{t.aiThreat.employeeRanges[er.value]?.label || er.label}</p>
-                                        <p className="text-[8px] opacity-50">{t.aiThreat.employeeRanges[er.value]?.desc || er.desc}</p>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        <RangeSelector
+                            label={t.common.employeeCountLabel || "Employee Count (Scale)"}
+                            options={EMPLOYEE_OPTIONS}
+                            value={form.employeeCount}
+                            onChange={val => setForm({ ...form, employeeCount: val })}
+                        />
 
                         <div className="pt-4 border-t border-white/5">
                             <label className="text-[10px] text-ios-blue uppercase tracking-widest block mb-4 font-bold">{t.dashboard.auditSummary.header.overview}</label>

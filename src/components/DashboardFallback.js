@@ -49,7 +49,8 @@ export default function DashboardFallback() {
             aiThreat: { score: 0 }
         };
         const placeholderBusiness = {
-            entity_name: user?.user_metadata?.full_name || 'Initialize System',
+            entity_name: 'Initialize System',
+            owner_name: user?.user_metadata?.full_name || '',
             email: user?.email || '',
             id: null
         };

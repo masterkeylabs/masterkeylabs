@@ -12,37 +12,47 @@ import {
 } from '@/lib/calculations';
 import { formatIndian } from '@/utils/formatIndian';
 
-export default function DashboardIntakeWizard({ business, existingData, t, onComplete }) {
+import {
+    RangeSelector,
+    REVENUE_OPTIONS,
+    EMPLOYEE_OPTIONS,
+    PAYROLL_OPTIONS,
+    MANUAL_HOURS_OPTIONS,
+    DAILY_LEADS_OPTIONS,
+    TXN_VALUE_OPTIONS
+} from './RangeSelector';
+
+export default function DashboardIntakeWizard({ business, existingData, t, onComplete, initialStep = 0 }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user } = useAuth();
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(initialStep);
     const [activeId, setActiveId] = useState(business?.id || null);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
 
     // Initial state setup based on any existing data
     useEffect(() => {
-        if (!existingData) return;
+        if (!existingData || initialStep !== 0) return;
 
-        let initialStep = 0;
+        let calculatedStep = 0;
         // Step 0: Ensure we have basic business info if they reached this component. If entity_name exists, skip.
         if (!business?.entity_name || business.entity_name === 'Initialize System' || !business.vertical) {
-            initialStep = 0;
+            calculatedStep = 0;
         } else if (!existingData || (!existingData.lossAudit?.created_at && !existingData.nightLoss?.created_at && !existingData.missedCustomers?.created_at && !existingData.aiThreat?.created_at)) {
-            initialStep = 1;
+            calculatedStep = 1;
         }
-        else if (!existingData.lossAudit?.created_at) initialStep = 1;
-        else if (!existingData.nightLoss?.created_at) initialStep = 2;
-        else if (!existingData.missedCustomers?.created_at) initialStep = 3;
-        else if (!existingData.aiThreat?.created_at) initialStep = 4;
-        else initialStep = 5; // All complete
+        else if (!existingData.lossAudit?.created_at) calculatedStep = 1;
+        else if (!existingData.nightLoss?.created_at) calculatedStep = 2;
+        else if (!existingData.missedCustomers?.created_at) calculatedStep = 3;
+        else if (!existingData.aiThreat?.created_at) calculatedStep = 4;
+        else calculatedStep = 5; // All complete
 
         // Only jump forward, don't force them back if they happen to open it manually
-        if (initialStep > step && initialStep <= 4) {
-            setStep(initialStep);
+        if (calculatedStep > step && calculatedStep <= 4) {
+            setStep(calculatedStep);
         }
-    }, [existingData, business]);
+    }, [existingData, business, initialStep]);
 
     // --- FORM STATES ---
     const [formM0, setFormM0] = useState({
@@ -50,16 +60,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         ownerName: business?.owner_name || '',
         whatsapp: business?.phone || '',
         email: business?.email || '',
+        industry: business?.vertical || 'retail',
+        annualRevenue: business?.annual_revenue || '',
+        employeeCount: business?.employee_count || '',
+        hasCRM: business?.has_crm || false,
+        hasERP: business?.has_erp || false,
     });
     const [formM1, setFormM1] = useState({
         staffSalary: existingData?.lossAudit?.staff_salary || '',
         marketingBudget: existingData?.lossAudit?.marketing_budget || '',
         opsOverheads: existingData?.lossAudit?.ops_overheads || '',
-        annualRevenue: existingData?.lossAudit?.annual_revenue || '',
-        industry: existingData?.lossAudit?.industry || business?.vertical || 'retail',
-        manualHours: existingData?.lossAudit?.manual_hours || 0,
-        hasCRM: existingData?.lossAudit?.has_crm || false,
-        hasERP: existingData?.lossAudit?.has_erp || false,
+        manualHours: existingData?.lossAudit?.manual_hours || 3,
     });
 
     const [formM2, setFormM2] = useState({
@@ -83,18 +94,12 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     });
 
     const [formM4, setFormM4] = useState({
-        industry: formM1.industry || 'other',
         aiAdoptionLevel: existingData?.aiThreat?.features?.aiAdoptionLevel || 'none',
         competitorAdoption: existingData?.aiThreat?.features?.competitorAdoption || 'low',
         operationalComplexity: existingData?.aiThreat?.features?.operationalComplexity || 'medium',
         marketPosition: existingData?.aiThreat?.features?.marketPosition || 'established',
-        hasDigitalMoat: existingData?.aiThreat?.features?.hasDigitalMoat || false
+        isOmnichannel: existingData?.aiThreat?.is_omnichannel || false
     });
-
-    // Keep M4 industry synced with M1
-    useEffect(() => {
-        setFormM4(prev => ({ ...prev, industry: formM1.industry }));
-    }, [formM1.industry]);
 
     // Keep M2/M3 avg value synced if empty
     useEffect(() => {
@@ -115,9 +120,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         let connectionTimedOut = false;
         const timeoutId = setTimeout(() => {
             connectionTimedOut = true;
-            setError("Connection timed out. Please check your internet or try refreshing.");
+            setError("Connection timed out (45s). Please check your internet, verify Supabase status, or ensure 'nuclear_fix.sql' indexes are applied.");
             setIsSaving(false);
-        }, 15000);
+            console.error('Authorization Timeout: Request exceeded 45 seconds.');
+        }, 45000);
 
         try {
             const payload = {
@@ -125,50 +131,90 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 owner_name: formM0.ownerName,
                 phone: formM0.whatsapp,
                 email: formM0.email,
+                vertical: formM0.industry,
+                annual_revenue: parseFloat(formM0.annualRevenue) || 0,
+                employee_count: parseInt(formM0.employeeCount) || 0,
+                has_crm: formM0.hasCRM,
+                has_erp: formM0.hasERP,
                 user_id: user?.id || null
             };
 
             let bizId = activeId;
+            if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = undefined;
+
+            console.log('--- Authorization Sequence Start ---');
+            console.log('Active ID:', bizId);
+            console.log('User Session:', user?.id);
+
+            let resultData = null;
 
             if (bizId) {
-                // Update existing
-                const { error: saveErr } = await supabase
+                console.log('Attempting UPDATE for ID:', bizId);
+                const { data, error: upErr } = await supabase
                     .from('businesses')
                     .update(payload)
-                    .eq('id', bizId);
+                    .eq('id', bizId)
+                    .select()
+                    .maybeSingle();
 
-                if (connectionTimedOut) return;
-                if (saveErr) throw saveErr;
-            } else {
-                // Create new
-                const { data: newBiz, error: saveErr } = await supabase
+                if (upErr) {
+                    console.error('Update Error:', upErr);
+                } else if (data) {
+                    console.log('Update Success:', data);
+                    resultData = data;
+                }
+            }
+
+            if (!resultData) {
+                console.log('Attempting INSERT or Fallback Upsert...');
+                // Try simple insert first
+                const { data, error: insErr } = await supabase
                     .from('businesses')
                     .insert(payload)
                     .select()
-                    .single();
+                    .maybeSingle();
 
-                if (connectionTimedOut) return;
+                if (insErr) {
+                    console.warn('Insert failed (maybe duplicate?), trying targeted upsert:', insErr.message);
+                    // Targeted upsert as last resort
+                    const { data: upData, error: finalErr } = await supabase
+                        .from('businesses')
+                        .upsert({ ...payload, id: bizId })
+                        .select()
+                        .maybeSingle();
 
-                // Specific check for missing "vertical" column error which often happens on live
-                if (saveErr) {
-                    if (saveErr.message?.includes('column "vertical" of relation "businesses" does not exist')) {
-                        throw new Error("System Schema Mismatch: Please run 'add_vertical_column.sql' in Supabase SQL editor.");
+                    if (finalErr) {
+                        console.error('Final Save Error:', finalErr);
+                        throw finalErr;
                     }
-                    throw saveErr;
+                    resultData = upData;
+                } else {
+                    console.log('Insert Success:', data);
+                    resultData = data;
                 }
-
-                bizId = newBiz.id;
-                setActiveId(bizId);
-
-                // Update URL to persist session on refresh
-                const params = new URLSearchParams(searchParams.toString());
-                params.set('id', bizId);
-                router.replace(`/dashboard?${params.toString()}`, { scroll: false });
             }
 
+            console.log('Authorization Sequence Finalized:', resultData);
+
+            if (connectionTimedOut) return;
+            if (!resultData) throw new Error("Could not save business profile record.");
+
+            bizId = resultData.id;
+            setActiveId(bizId);
+            localStorage.setItem('masterkey_business_id', bizId);
+
+            // Update URL to persist session on refresh
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('id', bizId);
+            router.replace(`/dashboard?${params.toString()}`, { scroll: false });
+
             clearTimeout(timeoutId);
-            // Sync forward
-            setStep(1);
+            // Sync forward or complete Step 0
+            if (step === 0 && onComplete) {
+                onComplete();
+            } else {
+                setStep(1);
+            }
         } catch (err) {
             if (!connectionTimedOut) {
                 setError(err.message || "An unexpected error occurred during authorization.");
@@ -189,12 +235,12 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const staff = parseFloat(formM1.staffSalary) || 0;
             const ops = parseFloat(formM1.opsOverheads) || 0;
             const marketing = parseFloat(formM1.marketingBudget) || 0;
-            const revenue = parseFloat(formM1.annualRevenue) || 0;
+            const revenue = parseFloat(formM0.annualRevenue) || 0;
 
             const calc = calculateLossAudit(staff, ops, marketing, {
-                manualHoursPerWeek: formM1.manualHours,
-                hasCRM: formM1.hasCRM,
-                hasERP: formM1.hasERP,
+                manualHoursPerDay: formM1.manualHours,
+                hasCRM: formM0.hasCRM,
+                hasERP: formM0.hasERP,
                 annualRevenue: revenue
             });
 
@@ -204,10 +250,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 ops_overheads: ops,
                 marketing_budget: marketing,
                 annual_revenue: revenue,
-                industry: formM1.industry,
+                industry: formM0.industry,
                 manual_hours: formM1.manualHours,
-                has_crm: formM1.hasCRM,
-                has_erp: formM1.hasERP,
+                has_crm: formM0.hasCRM,
+                has_erp: formM0.hasERP,
                 // Mapped from calc
                 staff_waste: calc.staffWaste,
                 marketing_waste: calc.marketingWaste,
@@ -224,7 +270,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             if (saveErr) throw saveErr;
 
             // Also update the main business vertical for classification
-            await supabase.from('businesses').update({ vertical: formM1.industry }).eq('id', activeId);
+            await supabase.from('businesses').update({ vertical: formM0.industry }).eq('id', activeId);
 
             setStep(2);
         } catch (err) {
@@ -313,23 +359,28 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
         try {
-            const industryValue = typeof formM4.industry === 'string' ? formM4.industry : formM4.industry?.value;
-            if (!industryValue) throw new Error("Please select an industry sector");
+            const industryValue = formM0.industry;
+            if (!industryValue) throw new Error("Please select an industry sector in Step 0");
 
-            const calc = calculateAIThreat(industryValue, formM4);
+            const calc = calculateAIThreat(industryValue, {
+                isOmnichannel: formM4.isOmnichannel,
+                hasCRM: formM0.hasCRM,
+                hasERP: formM0.hasERP,
+                employeeCount: parseInt(formM0.employeeCount) || 25
+            });
 
             const payload = {
                 business_id: activeId,
-                industry: formM4.industry,
+                industry: industryValue,
                 score: calc.riskPct,
                 threat_level: calc.riskBand,
                 years_left: Math.round(calc.yearsLeft || 0),
                 final_horizon: calc.finalHorizon || 0,
                 timeline_desc: calc.displayLabel,
                 is_omnichannel: formM4.isOmnichannel,
-                has_crm: formM4.hasCRM,
-                has_erp: formM4.hasERP,
-                employee_count: formM4.employeeCount,
+                has_crm: formM0.hasCRM,
+                has_erp: formM0.hasERP,
+                employee_count: parseInt(formM0.employeeCount) || 25,
                 created_at: new Date().toISOString()
             };
 
@@ -347,7 +398,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     };
 
     const STEP_TITLES = [
-        "System Authorization",
+        "System Authorization [V2.0-FIXED]",
         "Module 01: Operational Waste",
         "Module 02: Night Loss Leakage",
         "Module 03: Digital Invisibility",
@@ -458,6 +509,62 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </div>
                             </div>
 
+                            <div className="space-y-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                                <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">Business Profiling</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-3 col-span-2">
+                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Industry Sector</label>
+                                        <select
+                                            required
+                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
+                                            value={formM0.industry}
+                                            onChange={e => setFormM0({ ...formM0, industry: e.target.value })}
+                                        >
+                                            {BUSINESS_VERTICALS.map(v => (
+                                                <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="col-span-2">
+                                        <RangeSelector
+                                            label={t?.common?.revenueLabel || 'Estimated Annual Revenue'}
+                                            options={REVENUE_OPTIONS}
+                                            value={formM0.annualRevenue}
+                                            onChange={val => setFormM0({ ...formM0, annualRevenue: val })}
+                                        />
+                                    </div>
+
+                                    <div className="col-span-2">
+                                        <RangeSelector
+                                            label={t?.common?.employeeCountLabel || 'Number of Employees'}
+                                            options={EMPLOYEE_OPTIONS}
+                                            value={formM0.employeeCount}
+                                            onChange={val => setFormM0({ ...formM0, employeeCount: val })}
+                                        />
+                                    </div>
+
+                                    <div className="space-y-6 col-span-2 pt-4 border-t border-white/5">
+                                        <div className="flex items-center gap-6">
+                                            <div
+                                                onClick={() => setFormM0(prev => ({ ...prev, hasCRM: !prev.hasCRM }))}
+                                                className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM0.hasCRM ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
+                                            >
+                                                <span className="material-symbols-outlined">{formM0.hasCRM ? 'check_circle' : 'circle'}</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses CRM</span>
+                                            </div>
+                                            <div
+                                                onClick={() => setFormM0(prev => ({ ...prev, hasERP: !prev.hasERP }))}
+                                                className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM0.hasERP ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
+                                            >
+                                                <span className="material-symbols-outlined">{formM0.hasERP ? 'check_circle' : 'circle'}</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses ERP/Systems</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="pt-4">
                                 <button
                                     disabled={isSaving}
@@ -483,73 +590,34 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
-                                <div className="sm:col-span-2 space-y-3 pb-6 border-b border-white/5">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Vertical / Industry Sector
-                                    </label>
-                                    <div className="relative group">
-                                        <select
-                                            required
-                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg"
-                                            value={formM1.industry}
-                                            onChange={e => setFormM1({ ...formM1, industry: e.target.value })}
-                                        >
-                                            {BUSINESS_VERTICALS.map(v => (
-                                                <option key={v.value} value={v.value} className="bg-[#0a0a0c]">{v.label}</option>
-                                            ))}
-                                        </select>
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 group-hover:text-ios-cyan transition-colors">
-                                            <span className="material-symbols-outlined">expand_more</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div className="grid grid-cols-1 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                                <RangeSelector
+                                    label="Monthly Payroll / Staff Cost"
+                                    options={PAYROLL_OPTIONS}
+                                    value={formM1.staffSalary}
+                                    onChange={val => setFormM1({ ...formM1, staffSalary: val })}
+                                />
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Monthly Payroll / Staff (₹)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="0"
-                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/5 text-lg font-medium"
-                                        value={formM1.staffSalary}
-                                        onChange={e => setFormM1({ ...formM1, staffSalary: e.target.value })}
-                                    />
-                                </div>
+                                <RangeSelector
+                                    label="Monthly Marketing / Ad Spend"
+                                    options={PAYROLL_OPTIONS} // Reusing financial ranges
+                                    value={formM1.marketingBudget}
+                                    onChange={val => setFormM1({ ...formM1, marketingBudget: val })}
+                                />
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Monthly Ad Spend (₹)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="0"
-                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/5 text-lg font-medium"
-                                        value={formM1.marketingBudget}
-                                        onChange={e => setFormM1({ ...formM1, marketingBudget: e.target.value })}
-                                    />
-                                </div>
+                                <RangeSelector
+                                    label="Other Operational Overheads"
+                                    options={PAYROLL_OPTIONS} // Reusing financial ranges
+                                    value={formM1.opsOverheads}
+                                    onChange={val => setFormM1({ ...formM1, opsOverheads: val })}
+                                />
 
-                                <div className="sm:col-span-2 space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Other Operational Overheads (₹)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        placeholder="0"
-                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/5 text-lg font-medium"
-                                        value={formM1.opsOverheads}
-                                        onChange={e => setFormM1({ ...formM1, opsOverheads: e.target.value })}
-                                    />
-                                </div>
+                                <RangeSelector
+                                    label={t.lossAudit.manualHoursLabel}
+                                    options={MANUAL_HOURS_OPTIONS}
+                                    value={formM1.manualHours}
+                                    onChange={val => setFormM1({ ...formM1, manualHours: val })}
+                                />
                             </div>
 
                             <div className="pt-4 flex justify-end">
@@ -577,55 +645,37 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                             </div>
 
                             <div className="space-y-10 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
-                                <div className="space-y-4">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Daily Inquiries / Leads: <span className="text-white font-black ml-2 text-sm">{formM2.dailyInquiries}</span>
-                                    </label>
-                                    <input
-                                        type="range"
-                                        min="1"
-                                        max="200"
-                                        step="1"
-                                        className="w-full accent-ios-cyan h-2 bg-white/5 rounded-lg appearance-none cursor-pointer"
-                                        value={formM2.dailyInquiries}
-                                        onChange={e => setFormM2({ ...formM2, dailyInquiries: parseInt(e.target.value) })}
-                                    />
-                                </div>
+                                <RangeSelector
+                                    label="Daily New Inquiries / Leads Intensity"
+                                    options={DAILY_LEADS_OPTIONS}
+                                    value={formM2.dailyInquiries}
+                                    onChange={val => setFormM2({ ...formM2, dailyInquiries: val })}
+                                />
 
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
                                         Closing Time Sequence
                                     </label>
-                                    <div className="flex gap-4">
-                                        {['6pm', '8pm', '10pm'].map(time => (
+                                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                                        {['12pm', '6pm', '8pm', '10pm', '24x7'].map(time => (
                                             <div
                                                 key={time}
                                                 onClick={() => setFormM2({ ...formM2, closingTime: time })}
-                                                className={`flex-1 py-4 rounded-xl border cursor-pointer border-white/10 transition-all text-center group ${formM2.closingTime === time ? 'bg-ios-cyan/20 border-ios-cyan text-ios-cyan shadow-[0_0_15px_rgba(0,210,255,0.2)]' : 'bg-black/30 text-white/40 hover:border-white/20'}`}
+                                                className={`py-4 rounded-xl border cursor-pointer border-white/10 transition-all text-center group ${formM2.closingTime === time ? 'bg-ios-cyan/20 border-ios-cyan text-ios-cyan shadow-[0_0_15px_rgba(0,210,255,0.2)]' : 'bg-black/30 text-white/40 hover:border-white/20'}`}
                                             >
-                                                <p className="font-black uppercase tracking-widest text-xs">{time}</p>
+                                                <p className="font-black uppercase tracking-widest text-[10px]">{time === '24x7' ? '24/7' : time}</p>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Avg Transaction Value (₹)
-                                    </label>
-                                    <input
-                                        required
-                                        type="number"
-                                        step="any"
-                                        placeholder="Enter Amount"
-                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/5 text-lg font-medium"
-                                        value={formM2.avgTransactionValue}
-                                        onChange={e => setFormM2({ ...formM2, avgTransactionValue: e.target.value })}
-                                    />
-                                </div>
+                                <RangeSelector
+                                    label="Average Transaction / Ticket Value"
+                                    options={TXN_VALUE_OPTIONS}
+                                    value={formM2.avgTransactionValue}
+                                    onChange={val => setFormM2({ ...formM2, avgTransactionValue: val })}
+                                />
 
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
@@ -702,6 +752,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             { id: 'hasWebsite', label: 'Active Website' },
                                             { id: 'hasWhatsApp', label: 'WhatsApp Business' },
                                             { id: 'activeSocialMedia', label: 'Active Social Media' },
+                                            { id: 'seoOptimized', label: 'Local SEO Optimized' },
                                             { id: 'runsAds', label: 'Search/Social Ads' },
                                         ].map(sig => (
                                             <div
@@ -747,21 +798,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Industry Sector
+                                        Physical Moat (Omnichannel)
                                     </label>
-                                    <div className="relative group">
-                                        <select
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg transition-all"
-                                            value={formM4.industry}
-                                            onChange={e => setFormM4({ ...formM4, industry: e.target.value })}
-                                        >
-                                            {BUSINESS_VERTICALS.map(v => (
-                                                <option key={v.value} value={v.value} className="bg-neutral-900 text-white">{v.label}</option>
-                                            ))}
-                                        </select>
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
-                                            <span className="material-symbols-outlined">expand_more</span>
+                                    <div
+                                        onClick={() => setFormM4(prev => ({ ...prev, isOmnichannel: !prev.isOmnichannel }))}
+                                        className={`p-5 rounded-2xl border cursor-pointer transition-all flex items-center gap-4 group ${formM4.isOmnichannel ? 'bg-ios-cyan/10 border-ios-cyan/50 shadow-[0_0_15px_rgba(0,210,255,0.1)]' : 'bg-black/30 border-white/10 hover:border-white/20'}`}
+                                    >
+                                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${formM4.isOmnichannel ? 'bg-ios-cyan border-ios-cyan' : 'border-white/20 group-hover:border-white/40'}`}>
+                                            {formM4.isOmnichannel && <span className="material-symbols-outlined text-[16px] text-black font-bold">check</span>}
                                         </div>
+                                        <p className={`font-black text-[11px] uppercase tracking-wider ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>Physical Presence / Retail Moat</p>
                                     </div>
                                 </div>
 

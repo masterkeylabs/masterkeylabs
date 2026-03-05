@@ -9,6 +9,8 @@ export const translations = {
         },
         common: {
             market_context: "your market",
+            revenueLabel: "Estimated Annual Revenue",
+            employeeCountLabel: "Number of Employees (Operational Scale)",
             industries: {
                 it_services: "IT / BPO",
                 ecommerce: "E-commerce",
@@ -173,7 +175,7 @@ export const translations = {
             revenueLabel: "Estimated Annual Revenue",
             revenueSub: "Used for Coordination Drag calculation. Use midpoint if range (e.g. ₹25L–₹1Cr → ₹62.5L).",
             advancedHeader: "Advanced Diagnostic Metrics",
-            manualHoursLabel: "Weekly Manual Work Hours (per employee)",
+            manualHoursLabel: "Daily Manual Work Hours (per employee)",
             manualHoursSub: "Hours spent on spreadsheets, manual data entry, and repetitive follow-ups.",
             crmReadyLabel: "CRM Ready",
             crmSub: "Using Sales Hub",
@@ -654,7 +656,9 @@ export const translations = {
                 OKAY: "मध्यम",
                 GHOST: "अदृश्य (Ghost)",
                 INVISIBLE: "अदृश्य"
-            }
+            },
+            employeeCountLabel: "कर्मचारियों की संख्या (ऑपरेशनल स्केल)",
+            revenueLabel: "अनुमानित वार्षिक राजस्व"
         },
         hero: {
             title1: "भविष्य",
@@ -792,7 +796,7 @@ export const translations = {
             revenueLabel: "अनुमानित वार्षिक राजस्व",
             revenueSub: "कोआर्डिनेशन ड्रैग गणना के लिए उपयोग किया जाता है। यदि रेंज है तो मध्य बिंदु का उपयोग करें (जैसे ₹25L–₹1Cr → ₹62.5L)।",
             advancedHeader: "उन्नत डायग्नोस्टिक मेट्रिक्स",
-            manualHoursLabel: "साप्ताहिक मैन्युअल काम के घंटे (प्रति कर्मचारी)",
+            manualHoursLabel: "दैनिक मैन्युअल काम के घंटे (प्रति कर्मचारी)",
             manualHoursSub: "स्प्रेडशीट, मैन्युअल डेटा एंट्री और बार-बार किए जाने वाले फॉलो-अप पर खर्च किए गए घंटे।",
             crmReadyLabel: "CRM तैयार है",
             crmSub: "सेल्स हब का उपयोग कर रहे हैं",
@@ -1281,7 +1285,9 @@ export const translations = {
                 OKAY: "Okay",
                 GHOST: "Ghost",
                 INVISIBLE: "Invisible"
-            }
+            },
+            employeeCountLabel: "Employees ki count (Operational Scale)",
+            revenueLabel: "Estimated Annual Revenue"
         },
         hero: {
             title1: "Dhanda tab tikega jab",
@@ -1645,7 +1651,7 @@ export const translations = {
             revenueLabel: "Estimated Annual Revenue",
             revenueSub: "Coordination Drag ki calculation ke liye. Agar range hai toh midpoint use karein (e.g. ₹25L–₹1Cr → ₹62.5L).",
             advancedHeader: "Advanced Diagnostic Metrics",
-            manualHoursLabel: "Hafta bhar ke manual kaam ke ghante (per employee)",
+            manualHoursLabel: "Har din ke manual kaam ke ghante (per employee)",
             manualHoursSub: "Spreadsheets, manual data entry aur baar-baar follow-ups mein lagne wala time.",
             crmReadyLabel: "CRM Ready",
             crmSub: "Sales Hub use kar rahe hain",
@@ -1739,6 +1745,9 @@ export const translations = {
             }
         },
         common: {
+            market_context: "aapka market",
+            revenueLabel: "Estimated Annual Revenue",
+            employeeCountLabel: "Employees ki count (Operational Scale)",
             industries: {
                 it_services: "IT / BPO Services",
                 ecommerce: "E-commerce Business",

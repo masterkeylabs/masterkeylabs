@@ -51,7 +51,7 @@ export default function SignupPage() {
             const { data: newBiz, error: insertError } = await supabase
                 .from('businesses')
                 .insert({
-                    entity_name: fullName + "'s Business",
+                    entity_name: 'Initialize System',
                     owner_name: fullName,
                     email: email,
                     phone: phone,

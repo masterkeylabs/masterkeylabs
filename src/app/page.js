@@ -5,6 +5,7 @@ import Image from 'next/image';
 // import IntakeWizard from '@/components/IntakeWizard';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useAuth } from '@/lib/AuthContext';
+import AIExtinctionTimer from '@/components/AIExtinctionTimer';
 
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
@@ -97,6 +98,14 @@ export default function Home() {
                             {t.hero.sub}
                         </p>
 
+                    </div>
+
+                    {/* AI Extinction Timer Section — above CTA */}
+                    <div className="mt-10 mb-8 w-full max-w-4xl mx-auto px-4 animate-fade-in opacity-0" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+                        <AIExtinctionTimer
+                            guestMode={!user}
+                            onGetStarted={() => window.location.href = dashboardHref}
+                        />
                     </div>
 
                     {/* CTA Section */}

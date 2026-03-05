@@ -29,6 +29,7 @@ export const BUSINESS_VERTICALS = [
     { value: 'real_estate', label: 'Real Estate', risk: 58, band: 'MEDIUM' },
     { value: 'construction', label: 'Construction', risk: 58, band: 'MEDIUM' },
     { value: 'hospitality', label: 'Hospitality', risk: 58, band: 'MEDIUM' },
+    { value: 'service', label: 'Service Sector', risk: 58, band: 'MEDIUM' },
     { value: 'fb', label: 'Media / Content', risk: 58, band: 'MEDIUM' },
     // LOW-MED band (38%)
     { value: 'healthcare', label: 'Healthcare (clinical)', risk: 38, band: 'LOW-MED' },
@@ -51,7 +52,7 @@ export const BUSINESS_VERTICALS = [
  * @param {number} ops       - Monthly operational overheads (annual_overheads) in INR.
  * @param {number} marketing - Monthly marketing budget (annual_marketing_budget) in INR.
  * @param {object} options
- * @param {number} options.manualHoursPerWeek - Weekly manual work hours per employee (default 20)
+ * @param {number} options.manualHoursPerDay - Daily manual work hours per employee (default 3)
  * @param {boolean} options.hasCRM  - Whether business uses a CRM
  * @param {boolean} options.hasERP  - Whether business uses ERP/inventory system
  * @param {number} options.annualRevenue - Estimated annual revenue (for Coordination Drag)
@@ -61,17 +62,17 @@ export function calculateLossAudit(staff, ops, marketing, options = {}) {
     const s = Math.max(0, Number(staff) || 0);
     const o = Math.max(0, Number(ops) || 0);
     const m = Math.max(0, Number(marketing) || 0);
-    const { manualHoursPerWeek = 20, hasCRM = false, hasERP = false, annualRevenue = 0 } = options;
+    const { manualHoursPerDay = 3, hasCRM = false, hasERP = false, annualRevenue = 0 } = options;
     const rev = Math.max(0, Number(annualRevenue) || 0);
 
     // ── 1A. Payroll Waste ──────────────────────────────────────────────
     // Baseline: 15% of time on automatable tasks (NASSCOM SMB Ops Index 2023)
     let payrollWasteRate = 0.15;
 
-    // MODIFIER: Manual work hours (user input or default)
-    if (manualHoursPerWeek > 50) payrollWasteRate = 0.28;
-    else if (manualHoursPerWeek > 30) payrollWasteRate = 0.22;
-    else if (manualHoursPerWeek >= 15) payrollWasteRate = 0.15; // default
+    // MODIFIER: Manual work hours (user input or default) - Daily thresholds
+    if (manualHoursPerDay > 6) payrollWasteRate = 0.28;
+    else if (manualHoursPerDay >= 4) payrollWasteRate = 0.22;
+    else if (manualHoursPerDay >= 1) payrollWasteRate = 0.15; // default/baseline
     else payrollWasteRate = 0.09;
 
     // MODIFIER: ERP present (Gartner ERP ROI Report, 2023)
@@ -161,9 +162,11 @@ export function calculateNightLoss(dailyInquiries, closingTime, avgTransactionVa
     // ── 2A. Night Traffic Rate ─────────────────────────────────────────
     // Source: Google Consumer Insights India (2023) | Facebook IQ India Report (2022)
     const nightTrafficMap = {
-        '6pm': 0.42,   // 42% of daily leads arrive after 6 PM (prime evening window: 6–10 PM)
-        '8pm': 0.22,   // 22% arrive after 8 PM (late evening: 8 PM–midnight)
-        '10pm': 0.12,  // 12% arrive after 10 PM (night window: 10 PM–8 AM)
+        '12am': 0.75,  // 75% of leads arrive after 12 AM
+        '6pm': 0.42,   // 42% of daily leads arrive after 6 PM
+        '8pm': 0.22,   // 22% arrive after 8 PM
+        '10pm': 0.12,  // 12% arrive after 10 PM
+        '24x7': 0.00   // No night loss if operating 24x7
     };
     const nightTrafficRate = nightTrafficMap[closingTime] || 0.22;
 
@@ -338,7 +341,7 @@ export function calculateAIThreat(industry, options = {}) {
     const industryRiskTable = {
         'it_services': 85, 'ecommerce': 85, 'finance': 85, 'travel': 85, 'data_entry': 85,
         'retail': 72, 'manufacturing': 72, 'logistics': 72, 'education': 72,
-        'real_estate': 58, 'construction': 58, 'hospitality': 58, 'fb': 58,
+        'real_estate': 58, 'construction': 58, 'hospitality': 58, 'fb': 58, 'service': 58,
         'healthcare': 38, 'legal': 38, 'services': 38, 'b2b': 38,
         'default': 72
     };

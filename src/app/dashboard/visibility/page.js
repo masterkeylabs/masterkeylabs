@@ -6,6 +6,7 @@ import { calculateVisibility, VISIBILITY_SIGNALS, formatINR, formatINRFull } fro
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { RangeSelector, TXN_VALUE_OPTIONS } from '@/components/RangeSelector';
 import { FINAL_COUNTRIES, GET_CITIES } from '@/lib/countries';
 
 const STATUS_COLORS = {
@@ -181,17 +182,13 @@ function VisibilityContent() {
                         </div>
                     </div>
 
-                    <div className="mb-5">
-                        <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.opsOverheadLabel} (₹)</label>
-                        <input
-                            type="number" min="0" step="any"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all font-mono"
-                            placeholder={t.visibility.placeholders.revenue}
-                            value={avgTransactionValue}
-                            onChange={(e) => setAvgTransactionValue(e.target.value)}
-                        />
-                        <p className="text-[9px] text-white/30 mt-1 italic">{t.visibility.lostRevenueSub.replace('{city}', city || '...')}</p>
-                    </div>
+                    <RangeSelector
+                        label={t.lossAudit.opsOverheadLabel}
+                        options={TXN_VALUE_OPTIONS}
+                        value={parseFloat(avgTransactionValue) || ''}
+                        onChange={val => setAvgTransactionValue(val.toString())}
+                        colorClass="ios-cyan"
+                    />
 
                     <div className="space-y-2 mb-6">
                         {VISIBILITY_SIGNALS.map(signal => (

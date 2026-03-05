@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function DiagnosticGrid({ data, business, t }) {
+export default function DiagnosticGrid({ data, business, t, locked, onStartAudit }) {
     const { lossAudit, nightLoss, missedCustomers, aiThreat } = data || {};
     const [exporting, setExporting] = useState(false);
     const ts = t.dashboard.auditSummary;
@@ -58,7 +58,7 @@ export default function DiagnosticGrid({ data, business, t }) {
     if (!data) return null;
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 relative">
             <div className="flex justify-between items-end px-4">
                 <div className="flex items-center gap-2">
                     <span className="w-1 h-4 bg-ios-blue rounded-full"></span>
@@ -68,7 +68,7 @@ export default function DiagnosticGrid({ data, business, t }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4">
+            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 px-4 transition-all duration-1000 ${locked ? 'blur-2xl grayscale pointer-events-none opacity-40 scale-[0.98]' : ''}`}>
                 {/* 1. OPERATIONAL WASTE */}
                 <ModuleWrapper href={`/dashboard/loss-audit${business?.id ? `?id=${business.id}` : ''}`}>
                     <div className="absolute top-0 left-0 w-1 h-full bg-ios-blue opacity-30"></div>
@@ -195,6 +195,28 @@ export default function DiagnosticGrid({ data, business, t }) {
                     </div>
                 </ModuleWrapper>
             </div>
+
+            {/* Locked Overlay */}
+            {locked && (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pt-20">
+                    <div className="bg-black/40 backdrop-blur-md border border-white/10 p-10 rounded-[3rem] shadow-2xl text-center max-w-md mx-auto animate-bounce-in">
+                        <div className="w-20 h-20 bg-ios-blue/10 border border-ios-blue/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                            <span className="material-symbols-outlined text-4xl text-ios-blue animate-pulse">lock_open</span>
+                        </div>
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-3">Diagnostic Locked</h3>
+                        <p className="text-white/40 text-sm mb-8 leading-relaxed">
+                            Initialize your operational audit to unlock deep-level intelligence and profit leakage reports.
+                        </p>
+                        <button
+                            onClick={onStartAudit}
+                            className="w-full py-5 bg-ios-blue text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_0_30px_rgba(0,122,255,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3"
+                        >
+                            <span className="material-symbols-outlined">analytics</span>
+                            Start Performance Audit
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
