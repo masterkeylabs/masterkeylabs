@@ -126,10 +126,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         let connectionTimedOut = false;
         const timeoutId = setTimeout(() => {
             connectionTimedOut = true;
-            setError("Synchronization request exceeds 60s. Your connection may be unstable. Please try once more or refresh.");
+            setError("Synchronization request exceeds 120s. Your connection may be unstable. Please try once more or refresh.");
             setIsSaving(false);
-            console.error('Authorization Timeout: Request exceeded 60 seconds.');
-        }, 60000);
+            console.error('Authorization Timeout: Request exceeded 120 seconds.');
+        }, 120000);
 
         try {
             const payload = {
@@ -357,9 +357,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
 
-            // All done! Tell parent to refresh
+            // All done! Force a full page reload to clear any hydration artifacts and load fresh data
             if (onComplete) onComplete();
-            router.refresh(); // Force page hard refresh to load all stats natively
+            window.location.reload();
         } catch (err) {
             setError(err.message);
         } finally {
