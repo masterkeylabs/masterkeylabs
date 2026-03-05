@@ -8,11 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LoginPage() {
     const [phone, setPhone] = useState('');
-    const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [success, setSuccess] = useState(false);
     const router = useRouter();
 
     const [identifier, setIdentifier] = useState('');
@@ -102,7 +99,7 @@ export default function LoginPage() {
                             <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
                                 <span className="material-symbols-outlined text-white/40 text-3xl">vpn_key</span>
                             </div>
-                            <p className="text-white/60 text-sm">Verify your Terminal ID</p>
+                            <p className="text-white/60 text-sm">Terminal Access Sequence</p>
                         </div>
 
                         {error && (

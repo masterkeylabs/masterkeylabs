@@ -398,7 +398,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     };
 
     const STEP_TITLES = [
-        "System Authorization [V2.0-FIXED]",
+        "System Initialization [V2.0-FIXED]",
         "Module 01: Operational Waste",
         "Module 02: Night Loss Leakage",
         "Module 03: Digital Invisibility",
@@ -415,7 +415,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 {/* Header Sequence */}
                 <div className="px-6 py-6 md:px-10 md:py-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] shrink-0">
                     <div className="space-y-1">
-                        <p className="text-[10px] uppercase font-black tracking-[0.4em] text-ios-cyan/60">Verification Sequence: Step {step + 1} of 5</p>
+                        <p className="text-[10px] uppercase font-black tracking-[0.4em] text-ios-cyan/60">Initialization Sequence: Step {step + 1} of 5</p>
                         <h2 className="text-2xl font-black text-white uppercase tracking-tight">{STEP_TITLES[step]}</h2>
                     </div>
                     {/* Progress Bar Mini */}
@@ -449,7 +449,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Identity Verification</h3>
+                                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Identity Profiling</h3>
                                     <p className="text-white/40 text-sm leading-relaxed max-w-sm mx-auto">
                                         Initialize your enterprise protocol. Provide the core entity details to unlock deep-level diagnostics.
                                     </p>
@@ -573,10 +573,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <div className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                        {isSaving ? 'Synchronizing...' : 'Authorize & Initialize'}
+                                        {isSaving ? 'Synchronizing...' : 'Synchronize & Initialize'}
                                     </span>
                                 </button>
-                                <p className="text-center text-[9px] text-white/20 uppercase tracking-[0.2em] mt-4">Security Level 4: Encrypted Transmission Active</p>
+                                <p className="text-center text-[9px] text-white/20 uppercase tracking-[0.2em] mt-4">Secure Initialization Protocol Active</p>
                             </div>
                         </form>
                     )}

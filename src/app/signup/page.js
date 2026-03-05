@@ -9,13 +9,10 @@ import { useAuth } from '@/lib/AuthContext';
 
 export default function SignupPage() {
     const [phone, setPhone] = useState('');
-    const [otp, setOtp] = useState('');
     const [fullName, setFullName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { user } = useAuth();
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [success, setSuccess] = useState(false);
     const router = useRouter();
 
     const [email, setEmail] = useState('');
@@ -110,7 +107,7 @@ export default function SignupPage() {
                     <Link href="/">
                         <Image src="/logo-stacked.png" alt="MasterKey Logo" width={100} height={100} className="h-16 w-auto object-contain cursor-pointer transition-transform hover:scale-105" />
                     </Link>
-                    <h1 className="text-2xl font-bold mt-6 tracking-tight text-center">Registration Protocol</h1>
+                    <h1 className="text-2xl font-bold mt-6 tracking-tight text-center">Terminal Registration</h1>
                     <p className="text-white/40 text-sm mt-2">Activate your MasterKey terminal</p>
                 </div>
 
@@ -174,7 +171,7 @@ export default function SignupPage() {
                                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                             ) : (
                                 <>
-                                    <span>AUTHORIZE & ENTER</span>
+                                    <span>SYNCHRONIZE & ENTER</span>
                                     <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">bolt</span>
                                 </>
                             )}
