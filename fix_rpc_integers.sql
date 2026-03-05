@@ -1,7 +1,15 @@
 -- ===================================================================
--- MASTERKEY OS: ULTRA-PERFORMANCE INITIALIZATION RPC (FIXED)
+-- MASTERKEY OS: SMART UPSERT & SESSION RE-ANCHORING RPC
 -- ===================================================================
 
+-- 1. ENSURE SCHEMA CONSISTENCY
+-- Add missing columns if they don't exist
+ALTER TABLE public.businesses ADD COLUMN IF NOT EXISTS classification TEXT;
+ALTER TABLE public.businesses ADD COLUMN IF NOT EXISTS scalability TEXT;
+ALTER TABLE public.businesses ADD COLUMN IF NOT EXISTS digital_footprint TEXT;
+ALTER TABLE public.businesses ADD COLUMN IF NOT EXISTS vertical TEXT;
+
+-- 2. CREATE SMART UPSERT FUNCTION
 CREATE OR REPLACE FUNCTION public.initialize_business_profile(
     p_payload JSONB,
     p_active_id UUID DEFAULT NULL
@@ -13,61 +21,51 @@ AS $$
 DECLARE
     v_email TEXT;
     v_phone TEXT;
-    v_last10 TEXT;
-    v_existing_id UUID;
-    v_result JSONB;
+    v_id_to_use UUID;
+    v_record RECORD;
 BEGIN
-    -- 1. Extract and normalize
+    -- A. Normalize Input Data
     v_email := LOWER(TRIM(p_payload->>'email'));
-    v_phone := p_payload->>'phone';
-    v_last10 := RIGHT(REGEXP_REPLACE(v_phone, '\D', '', 'g'), 10);
+    v_phone := TRIM(p_payload->>'phone');
 
-    -- 2. Check for duplicates (INDEXED SEARCH FIRST)
-    -- We use a simple query first which will hit the idx_businesses_email and idx_businesses_phone
-    SELECT id INTO v_existing_id
-    FROM public.businesses
-    WHERE (LOWER(email) = v_email OR phone = v_phone)
-    LIMIT 1;
-
-    -- If not found by exact match, try the last 10 digits (slower, but only runs if exact match fails)
-    IF v_existing_id IS NULL AND v_last10 IS NOT NULL AND v_last10 != '' THEN
-        SELECT id INTO v_existing_id
-        FROM public.businesses
-        WHERE RIGHT(REGEXP_REPLACE(phone, '\D', '', 'g'), 10) = v_last10
-        LIMIT 1;
+    -- B. FIND THE BEST RECORD TO WORK WITH (Priority Search)
+    -- 1. Try p_active_id first (if it's a valid existing ID)
+    IF p_active_id IS NOT NULL THEN
+        SELECT id INTO v_id_to_use FROM public.businesses WHERE id = p_active_id;
     END IF;
 
-    -- 3. Logic based on mode
-    IF p_active_id IS NOT NULL THEN
-        -- UPDATE MODE
-        IF v_existing_id IS NOT NULL AND v_existing_id != p_active_id THEN
-            RETURN jsonb_build_object('error', '📵 This mobile or email is already registered to another enterprise.', 'code', 'DUPLICATE');
-        END IF;
+    -- 2. If not found by ID, try finding by Email
+    IF v_id_to_use IS NULL AND v_email IS NOT NULL AND v_email != '' THEN
+        SELECT id INTO v_id_to_use FROM public.businesses WHERE LOWER(email) = v_email LIMIT 1;
+    END IF;
 
+    -- 3. If still not found, try finding by Phone (raw match)
+    IF v_id_to_use IS NULL AND v_phone IS NOT NULL AND v_phone != '' THEN
+        SELECT id INTO v_id_to_use FROM public.businesses WHERE phone = v_phone LIMIT 1;
+    END IF;
+
+    -- C. UPDATE OR INSERT
+    IF v_id_to_use IS NOT NULL THEN
+        -- [UPDATE EXISTING]
         UPDATE public.businesses
         SET 
             entity_name = COALESCE(p_payload->>'entity_name', entity_name),
             owner_name = COALESCE(p_payload->>'owner_name', owner_name),
-            phone = COALESCE(p_payload->>'phone', phone),
-            email = COALESCE(p_payload->>'email', email),
+            phone = COALESCE(v_phone, phone),
+            email = COALESCE(v_email, email),
             vertical = COALESCE(p_payload->>'vertical', vertical),
             classification = COALESCE(p_payload->>'classification', classification),
             annual_revenue = COALESCE(NULLIF(p_payload->>'annual_revenue', '')::NUMERIC, NULLIF((p_payload->>'annual_revenue')::TEXT, 'null')::NUMERIC, annual_revenue, 0),
             employee_count = COALESCE(NULLIF(p_payload->>'employee_count', '')::INTEGER, NULLIF((p_payload->>'employee_count')::TEXT, 'null')::INTEGER, employee_count, 0),
             has_crm = COALESCE(NULLIF(p_payload->>'has_crm', '')::BOOLEAN, NULLIF((p_payload->>'has_crm')::TEXT, 'null')::BOOLEAN, has_crm, false),
             has_erp = COALESCE(NULLIF(p_payload->>'has_erp', '')::BOOLEAN, NULLIF((p_payload->>'has_erp')::TEXT, 'null')::BOOLEAN, has_erp, false),
-            user_id = NULLIF(p_payload->>'user_id', '')::UUID,
+            user_id = COALESCE(NULLIF(p_payload->>'user_id', '')::UUID, user_id),
             scalability = COALESCE(p_payload->>'scalability', scalability),
             digital_footprint = COALESCE(p_payload->>'digital_footprint', digital_footprint)
-        WHERE id = p_active_id
-        RETURNING to_jsonb(public.businesses.*) INTO v_result;
-
+        WHERE id = v_id_to_use
+        RETURNING * INTO v_record;
     ELSE
-        -- INSERT MODE
-        IF v_existing_id IS NOT NULL THEN
-            RETURN jsonb_build_object('error', '📵 This profile is already initialized. Please log in or use new credentials.', 'code', 'DUPLICATE');
-        END IF;
-
+        -- [INSERT NEW]
         INSERT INTO public.businesses (
             entity_name, owner_name, phone, email, vertical,
             annual_revenue, employee_count, has_crm, has_erp, user_id, 
@@ -75,8 +73,8 @@ BEGIN
         ) VALUES (
             p_payload->>'entity_name',
             p_payload->>'owner_name',
-            p_payload->>'phone',
-            p_payload->>'email',
+            v_phone,
+            v_email,
             p_payload->>'vertical',
             COALESCE(NULLIF(p_payload->>'annual_revenue', '')::NUMERIC, NULLIF((p_payload->>'annual_revenue')::TEXT, 'null')::NUMERIC, 0),
             COALESCE(NULLIF(p_payload->>'employee_count', '')::INTEGER, NULLIF((p_payload->>'employee_count')::TEXT, 'null')::INTEGER, 0),
@@ -87,9 +85,10 @@ BEGIN
             p_payload->>'scalability',
             p_payload->>'digital_footprint'
         )
-        RETURNING to_jsonb(public.businesses.*) INTO v_result;
+        RETURNING * INTO v_record;
     END IF;
 
-    RETURN v_result;
+    -- D. Return the result as JSONB
+    RETURN to_jsonb(v_record);
 END;
 $$;
