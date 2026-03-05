@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const MODELS = [
-    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
 ];
@@ -54,7 +54,7 @@ export async function POST(req) {
 
         // All models exhausted
         return NextResponse.json({
-            error: 'AI service is temporarily overloaded. Please try again in a minute.'
+            error: 'AI service is temporarily at capacity. Please try again in 30 seconds.'
         }, { status: 503 });
 
     } catch (error) {
