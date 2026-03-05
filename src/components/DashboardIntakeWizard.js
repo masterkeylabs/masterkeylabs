@@ -406,14 +406,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     ];
 
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
-            <div className="w-full max-w-4xl bg-black/80 border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[85vh] overflow-hidden relative border-glow shadow-glow-blue my-auto">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-2 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
+            <div className="w-full max-w-4xl bg-black/80 border border-white/10 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] md:max-h-[85vh] overflow-hidden relative border-glow shadow-glow-blue my-auto">
 
                 {/* Visual Accent */}
                 <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-ios-cyan/50 to-transparent"></div>
 
                 {/* Header Sequence */}
-                <div className="px-10 py-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] shrink-0">
+                <div className="px-6 py-6 md:px-10 md:py-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] shrink-0">
                     <div className="space-y-1">
                         <p className="text-[10px] uppercase font-black tracking-[0.4em] text-ios-cyan/60">Verification Sequence: Step {step + 1} of 5</p>
                         <h2 className="text-2xl font-black text-white uppercase tracking-tight">{STEP_TITLES[step]}</h2>
@@ -434,7 +434,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 )}
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar scroll-smooth">
+                <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar scroll-smooth">
 
                     {/* WIZARD STEP 0 : WELCOME & BIZ PROFILING */}
                     {step === 0 && (
@@ -456,7 +456,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </div>
                             </div>
 
-                            <div className="space-y-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                            <div className="space-y-6 md:space-y-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">Business Identity</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3">
@@ -509,7 +509,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </div>
                             </div>
 
-                            <div className="space-y-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                            <div className="space-y-6 md:space-y-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">Business Profiling</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3 col-span-2">
@@ -590,7 +590,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                            <div className="grid grid-cols-1 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <RangeSelector
                                     label="Monthly Payroll / Staff Cost"
                                     options={PAYROLL_OPTIONS}
@@ -644,7 +644,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </p>
                             </div>
 
-                            <div className="space-y-10 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                            <div className="space-y-10 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <RangeSelector
                                     label="Daily New Inquiries / Leads Intensity"
                                     options={DAILY_LEADS_OPTIONS}
@@ -724,7 +724,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </p>
                             </div>
 
-                            <div className="space-y-10 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                            <div className="space-y-10 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
@@ -794,7 +794,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-8 rounded-[2rem]">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <div className="space-y-3">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>

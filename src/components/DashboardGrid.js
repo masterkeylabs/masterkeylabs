@@ -35,14 +35,14 @@ export default function DashboardGrid({ business, computedData }) {
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden flex">
             <Sidebar t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-            <main className={`flex-1 ml-0 md:ml-64 p-4 md:p-10 relative overflow-y-auto min-h-screen w-full transition-all duration-1000 ${profileIncomplete ? 'blur-xl grayscale pointer-events-none opacity-40' : ''}`}>
+            <main className="flex-1 ml-0 md:ml-64 p-4 md:p-10 relative min-h-screen w-full max-w-full">
                 {/* Background Sophistication */}
                 <div className="fixed inset-0 pointer-events-none z-0">
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-ios-blue/5 blur-[120px] rounded-full opacity-60"></div>
-                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-ios-orange/5 blur-[120px] rounded-full opacity-40"></div>
+                    <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-ios-blue/5 blur-[120px] rounded-full opacity-60"></div>
+                    <div className="absolute bottom-0 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-ios-orange/5 blur-[120px] rounded-full opacity-40"></div>
                 </div>
 
-                <div className="max-w-7xl mx-auto relative z-10">
+                <div className={`max-w-7xl mx-auto relative z-10 transition-all duration-700 ${profileIncomplete ? 'blur-sm grayscale pointer-events-none opacity-50' : ''}`}>
                     <DashboardHeader
                         companyName={business?.entity_name || t.header.command}
                         lang={lang}

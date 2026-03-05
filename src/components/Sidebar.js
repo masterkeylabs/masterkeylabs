@@ -41,7 +41,7 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
             {sidebarOpen && (
                 <div className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm md:hidden" onClick={() => setSidebarOpen && setSidebarOpen(false)} />
             )}
-            <aside className={`w-64 border-r border-white/5 bg-background-dark flex flex-col fixed h-full z-[100] transition-transform duration-300 left-0 top-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+            <aside className={`w-64 border-r border-white/5 bg-background-dark flex flex-col fixed h-full z-[100] transition-transform duration-300 left-0 top-0 overflow-y-auto custom-scrollbar ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
                 <div className="p-8 flex items-center justify-between">
                     <div className="flex items-center gap-3 mb-2">
                         <Link href="/">

@@ -38,9 +38,9 @@ export default function Home() {
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '100px 100px' }}></div>
             <div className="fixed top-0 left-0 w-full h-screen spotlight pointer-events-none z-0"></div>
 
-            <header className="relative z-50 pt-8 pb-4">
-                {/* Navigation — top right language toggle */}
-                <div className="absolute top-4 right-6 md:right-12 flex items-center gap-4 z-50">
+            <header className="relative z-50 pt-6 pb-4 px-6">
+                {/* Navigation — responsive toggle */}
+                <div className="flex flex-col md:flex-row items-center md:justify-end gap-4 mb-8">
                     <div className="flex bg-white/5 rounded-full p-1 border border-white/10 backdrop-blur-md items-center shadow-[0_0_20px_rgba(0,0,0,0.5)]">
                         {/* Language Toggles */}
                         <div className="flex bg-white/5 rounded-full p-0.5 mr-2">
