@@ -118,54 +118,25 @@ function ProfileEditContent() {
                 phone: formData.whatsapp,
                 classification: `${formData.vertical}::${formData.revenueBracket}`,
                 digital_footprint: formData.contactAfter6,
-                user_id: user.id
+                user_id: user.id,
+                annual_revenue: parseFloat(formData.revenueBracket.replace(/[^0-9.]/g, '')) || 0,
+                employee_count: parseInt(formData.employees.replace(/[^0-9]/g, '')) || 0,
+                has_crm: formData.hasCRM || false,
+                has_erp: formData.hasERP || false
             };
 
-            // ── Duplicate Check ───────────────────────────────────────
-            const cleanPhone = formData.whatsapp.replace(/\D/g, '');
-            const last10 = cleanPhone.slice(-10);
+            console.log('--- Profile Update (RPC-V2) ---');
+            const { data: result, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
+                p_payload: bizPayload,
+                p_active_id: businessId || null
+            });
 
-            // Check if phone/email belongs to ANOTHER business
-            const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
-                supabase.from('businesses').select('id').ilike('phone', `%${last10}%`).not('id', 'eq', businessId).limit(1),
-                supabase.from('businesses').select('id').ilike('email', formData.email.trim()).not('id', 'eq', businessId).limit(1),
-            ]);
+            if (rpcErr) throw rpcErr;
+            if (result && result.error) throw new Error(result.error);
 
-            if (phoneDupe && phoneDupe.length > 0) {
-                setError("📵 This mobile number is already registered to another enterprise.");
-                setIsSaving(false);
-                return;
-            }
-            if (emailDupe && emailDupe.length > 0) {
-                setError("📧 This email address is already registered to another enterprise.");
-                setIsSaving(false);
-                return;
-            }
-            // ──────────────────────────────────────────────────────────
-
-            let finalBusinessId = businessId;
-
-            if (businessId) {
-                // Update Business Table
-                const { error: bizError } = await supabase
-                    .from('businesses')
-                    .update(bizPayload)
-                    .eq('id', businessId);
-
-                if (bizError) throw bizError;
-            } else {
-                // Create New Business Entry
-                const { data: newBiz, error: createError } = await supabase
-                    .from('businesses')
-                    .insert([bizPayload])
-                    .select()
-                    .single();
-
-                if (createError) throw createError;
-                if (newBiz) {
-                    finalBusinessId = newBiz.id;
-                    localStorage.setItem('masterkey_business_id', newBiz.id);
-                }
+            if (result) {
+                finalBusinessId = result.id;
+                localStorage.setItem('masterkey_business_id', result.id);
             }
 
             // ── Update loss_audit_results (non-blocking) ───────────────────

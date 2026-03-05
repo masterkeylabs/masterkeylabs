@@ -120,10 +120,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         let connectionTimedOut = false;
         const timeoutId = setTimeout(() => {
             connectionTimedOut = true;
-            setError("Connection timed out (45s). Please check your internet, verify Supabase status, or ensure 'nuclear_fix.sql' indexes are applied.");
+            setError("Synchronization request exceeds 60s. Your connection may be unstable. Please try once more or refresh.");
             setIsSaving(false);
-            console.error('Authorization Timeout: Request exceeded 45 seconds.');
-        }, 45000);
+            console.error('Authorization Timeout: Request exceeded 60 seconds.');
+        }, 60000);
 
         try {
             const payload = {
@@ -136,102 +136,41 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 employee_count: parseInt(formM0.employeeCount) || 0,
                 has_crm: formM0.hasCRM,
                 has_erp: formM0.hasERP,
-                user_id: user?.id || null
+                user_id: user?.id || null,
+                classification: `dashboard_wizard::v2_rpc`
             };
 
             let bizId = activeId;
-            if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = undefined;
+            if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Authorization Sequence Start ---');
-            console.log('Active ID:', bizId);
-            console.log('User Session:', user?.id);
+            console.log('--- Authorization Sequence (RPC-V2) Start ---');
+            console.log('Payload:', payload);
 
-            let resultData = null;
+            // Call our consolidated RPC for speed and reliability
+            const { data: result, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
+                p_payload: payload,
+                p_active_id: bizId
+            });
 
-            // ── Duplicate Check ───────────────────────────────────────
-            // Only check for duplicates if we are about to INSERT (i.e., no bizId)
-            if (!bizId) {
-                const cleanPhone = formM0.whatsapp.replace(/\D/g, '');
-                const last10 = cleanPhone.slice(-10);
+            if (rpcErr) throw rpcErr;
 
-                const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
-                    supabase.from('businesses').select('id').ilike('phone', `%${last10}%`).limit(1),
-                    supabase.from('businesses').select('id').ilike('email', formM0.email.trim()).limit(1),
-                ]);
-
-                if (phoneDupe && phoneDupe.length > 0) {
-                    setError("📵 This mobile number is already registered. Please contact support or use a different number.");
-                    setIsSaving(false);
-                    clearTimeout(timeoutId);
-                    return;
-                }
-                if (emailDupe && emailDupe.length > 0) {
-                    setError("📧 This email address is already registered. Please contact support or use a different email.");
-                    setIsSaving(false);
-                    clearTimeout(timeoutId);
-                    return;
-                }
-            }
-            // ──────────────────────────────────────────────────────────
-
-            if (bizId) {
-                console.log('Attempting UPDATE for ID:', bizId);
-                const { data, error: upErr } = await supabase
-                    .from('businesses')
-                    .update(payload)
-                    .eq('id', bizId)
-                    .select()
-                    .maybeSingle();
-
-                if (upErr) {
-                    console.error('Update Error:', upErr);
-                } else if (data) {
-                    console.log('Update Success:', data);
-                    resultData = data;
-                }
+            // Handle custom errors returned from inside the RPC
+            if (result && result.error) {
+                throw new Error(result.error);
             }
 
-            if (!resultData) {
-                console.log('Attempting INSERT or Fallback Upsert...');
-                // Try simple insert first
-                const { data, error: insErr } = await supabase
-                    .from('businesses')
-                    .insert(payload)
-                    .select()
-                    .maybeSingle();
-
-                if (insErr) {
-                    console.warn('Insert failed (maybe duplicate?), trying targeted upsert:', insErr.message);
-                    // Targeted upsert as last resort
-                    const { data: upData, error: finalErr } = await supabase
-                        .from('businesses')
-                        .upsert({ ...payload, id: bizId })
-                        .select()
-                        .maybeSingle();
-
-                    if (finalErr) {
-                        console.error('Final Save Error:', finalErr);
-                        throw finalErr;
-                    }
-                    resultData = upData;
-                } else {
-                    console.log('Insert Success:', data);
-                    resultData = data;
-                }
-            }
-
-            console.log('Authorization Sequence Finalized:', resultData);
+            console.log('Authorization Sequence Finalized (RPC-V2):', result);
 
             if (connectionTimedOut) return;
-            if (!resultData) throw new Error("Could not save business profile record.");
+            if (!result) throw new Error("Could not save business profile record via RPC.");
 
-            bizId = resultData.id;
-            setActiveId(bizId);
-            localStorage.setItem('masterkey_business_id', bizId);
+            const finalBizId = result.id;
+            setActiveId(finalBizId);
+            localStorage.setItem('masterkey_business_id', finalBizId);
 
             // Update URL to persist session on refresh
             const params = new URLSearchParams(searchParams.toString());
-            params.set('id', bizId);
+            params.set('id', finalBizId);
             router.replace(`/dashboard?${params.toString()}`, { scroll: false });
 
             clearTimeout(timeoutId);

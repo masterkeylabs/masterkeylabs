@@ -218,12 +218,8 @@ export default function IntakeWizard({ t }) {
         setSubmitting(true);
 
         try {
-            // ── Business Upsert Logic ──────────────────────────────────
-            const cleanPhone = formData.whatsapp.replace(/\D/g, '');
-            const last10 = cleanPhone.slice(-10);
-
-            // Base insert data
-            let insertData = {
+            // ── Business Initialization via RPC ────────────────────────
+            const bizPayload = {
                 entity_name: formData.businessName || (formData.contactName + " Business"),
                 classification: formData.vertical + "::" + formData.revenueBracket,
                 scalability: formData.employees,
@@ -232,40 +228,19 @@ export default function IntakeWizard({ t }) {
                 phone: formData.whatsapp,
                 digital_footprint: formData.contactAfter6,
                 user_id: user?.id || null,
+                vertical: formData.vertical,
+                annual_revenue: parseFloat(formData.revenueBracket.replace(/[^0-9.]/g, '')) || 0,
+                employee_count: parseInt(formData.employees.replace(/[^0-9]/g, '')) || 0
             };
 
-            let newBiz;
-            let error;
+            const { data: newBiz, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
+                p_payload: bizPayload,
+                p_active_id: null
+            });
 
-            // 1. Check for existing business by phone OR email
-            const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
-                supabase.from('businesses').select('id').ilike('phone', `%${last10}%`).limit(1),
-                supabase.from('businesses').select('id').ilike('email', formData.email.trim()).limit(1),
-            ]);
-
-            if (phoneDupe && phoneDupe.length > 0) {
-                setErrorMsg('📵 This mobile number is already registered. Please log in.');
-                setSubmitting(false);
-                return;
-            }
-            if (emailDupe && emailDupe.length > 0) {
-                setErrorMsg('📧 This email is already registered. Please log in.');
-                setSubmitting(false);
-                return;
-            }
-
-            // Insert new record (always new now, or we can upsert if we 
-            // want to allow "re-auditing" but the request says "check whether they exist")
-            const resInsert = await supabase
-                .from('businesses')
-                .insert(insertData)
-                .select()
-                .single();
-            newBiz = resInsert.data;
-            error = resInsert.error;
-            // ─────────────────────────────────────────────────────────────
-
-            if (error) throw error;
+            if (rpcErr) throw rpcErr;
+            if (newBiz && newBiz.error) throw new Error(newBiz.error);
+            // ────────────────────────────────────────────────────────────
 
             if (newBiz && results) {
                 // ── Log to user_signups table ──────────────────────────────
