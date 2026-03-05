@@ -199,7 +199,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const staff = parseFloat(formM1.staffSalary) || 0;
             const ops = parseFloat(formM1.opsOverheads) || 0;
             const marketing = parseFloat(formM1.marketingBudget) || 0;
-            const revenue = parseFloat(formM0.annualRevenue) || 0;
+            const revenue = parseFloat(formM1.annualRevenue) || 0;
 
             const calc = calculateLossAudit(staff, ops, marketing, {
                 manualHoursPerDay: formM1.manualHours,

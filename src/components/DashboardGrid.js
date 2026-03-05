@@ -29,7 +29,7 @@ export default function DashboardGrid({ business, computedData }) {
     const { lossAudit, nightLoss, missedCustomers, aiThreat } = computedData || {};
 
     const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
-    const profileIncomplete = !business?.id || !business?.entity_name || !business?.vertical || !business?.annual_revenue || business.entity_name === 'Initialize System';
+    const profileIncomplete = !business?.id || !business?.entity_name || !business?.vertical || (business?.annual_revenue === null || business?.annual_revenue === undefined) || business.entity_name === 'Initialize System';
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden flex">
