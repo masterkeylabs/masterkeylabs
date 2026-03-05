@@ -48,7 +48,9 @@ BEGIN
             employee_count = (p_payload->>'employee_count')::INTEGER,
             has_crm = (p_payload->>'has_crm')::BOOLEAN,
             has_erp = (p_payload->>'has_erp')::BOOLEAN,
-            user_id = (p_payload->>'user_id')::UUID
+            user_id = (p_payload->>'user_id')::UUID,
+            scalability = COALESCE(p_payload->>'scalability', scalability),
+            digital_footprint = COALESCE(p_payload->>'digital_footprint', digital_footprint)
         WHERE id = p_active_id
         RETURNING to_jsonb(public.businesses.*) INTO v_result;
 
@@ -60,7 +62,8 @@ BEGIN
 
         INSERT INTO public.businesses (
             entity_name, owner_name, phone, email, vertical,
-            annual_revenue, employee_count, has_crm, has_erp, user_id, classification
+            annual_revenue, employee_count, has_crm, has_erp, user_id, 
+            classification, scalability, digital_footprint
         ) VALUES (
             p_payload->>'entity_name',
             p_payload->>'owner_name',
@@ -72,7 +75,9 @@ BEGIN
             (p_payload->>'has_crm')::BOOLEAN,
             (p_payload->>'has_erp')::BOOLEAN,
             (p_payload->>'user_id')::UUID,
-            p_payload->>'classification'
+            p_payload->>'classification',
+            p_payload->>'scalability',
+            p_payload->>'digital_footprint'
         )
         RETURNING to_jsonb(public.businesses.*) INTO v_result;
     END IF;
