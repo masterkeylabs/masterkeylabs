@@ -330,6 +330,14 @@ export default function IntakeWizard({ t }) {
         setIsGoogleLoading(true);
         setErrorMsg(null);
         try {
+            // Save form data to allow recovery of lead information after Google redirect
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('masterkey_temp_form', JSON.stringify(formData));
+                if (results) {
+                    localStorage.setItem('masterkey_temp_results', JSON.stringify(results));
+                }
+            }
+
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
