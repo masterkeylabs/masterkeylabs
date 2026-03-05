@@ -127,10 +127,14 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             const data = await res.json();
 
             if (data.error) {
-                if (data.error.message && data.error.message.includes('API key')) {
+                const msg = data.error.message || data.error || '';
+                if (typeof msg === 'string' && (msg.includes('API key') || msg.includes('GEMINI_API_KEY'))) {
                     throw new Error("GEMINI_API_KEY is missing or invalid in .env.local");
                 }
-                throw new Error(data.error.message || data.error);
+                if (typeof msg === 'string' && (msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('demand') || msg.toLowerCase().includes('overload') || msg.toLowerCase().includes('resource'))) {
+                    throw new Error("Our AI engine is temporarily at capacity. Please try again in 30 seconds.");
+                }
+                throw new Error(typeof msg === 'string' ? msg : "Analysis failed — please try again.");
             }
 
             const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";

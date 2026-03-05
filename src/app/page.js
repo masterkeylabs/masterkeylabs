@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-// import IntakeWizard from '@/components/IntakeWizard';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useAuth } from '@/lib/AuthContext';
 import AIExtinctionTimer from '@/components/AIExtinctionTimer';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
@@ -48,6 +48,11 @@ export default function Home() {
                             <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HI</button>
                             <button onClick={() => setLang('hinglish')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HG</button>
                         </div>
+
+                        <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
+
+                        {/* Day / Night Toggle */}
+                        <ThemeToggle className="mx-1" />
 
                         <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
 

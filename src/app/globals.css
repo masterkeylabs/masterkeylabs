@@ -15,7 +15,142 @@ body {
   background: var(--color-background-dark);
   color: white;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
 }
+
+/* ============================================
+   DAY MODE OVERRIDES
+   Applied when <html data-theme="light">
+   ============================================ */
+:root[data-theme="light"] {
+  --color-background-dark: #F0F4F8;
+  --color-ios-surface: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="light"] body {
+  background: #F0F4F8;
+  color: #0D1117;
+}
+
+[data-theme="light"] .bg-background-dark,
+[data-theme="light"] .bg-\[\#050505\],
+[data-theme="light"] .bg-\[\#080809\],
+[data-theme="light"] .bg-\[\#0a0a0a\],
+[data-theme="light"] .bg-black\/40,
+[data-theme="light"] .bg-black\/30 {
+  background-color: #FFFFFF !important;
+}
+
+[data-theme="light"] .min-h-screen.bg-\[\#050505\],
+[data-theme="light"] .min-h-screen {
+  background: #F0F4F8;
+}
+
+/* Text color overrides for light mode */
+[data-theme="light"] .text-white {
+  color: #0D1117 !important;
+}
+
+[data-theme="light"] .text-white\/40 {
+  color: rgba(13, 17, 23, 0.5) !important;
+}
+
+[data-theme="light"] .text-white\/30 {
+  color: rgba(13, 17, 23, 0.4) !important;
+}
+
+[data-theme="light"] .text-white\/20 {
+  color: rgba(13, 17, 23, 0.3) !important;
+}
+
+[data-theme="light"] .text-white\/60 {
+  color: rgba(13, 17, 23, 0.7) !important;
+}
+
+[data-theme="light"] .text-white\/90 {
+  color: rgba(13, 17, 23, 0.9) !important;
+}
+
+[data-theme="light"] .text-white\/10 {
+  color: rgba(13, 17, 23, 0.2) !important;
+}
+
+[data-theme="light"] .text-slate-100 {
+  color: #0D1117 !important;
+}
+
+[data-theme="light"] .text-slate-300 {
+  color: #334155 !important;
+}
+
+/* Border overrides */
+[data-theme="light"] .border-white\/5,
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/\[0\.08\] {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Glass / Surface card overrides */
+[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .glass-premium {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 244, 248, 0.8) 100%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .system-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* white/5 bg panels */
+[data-theme="light"] .bg-white\/\[0\.02\],
+[data-theme="light"] .bg-white\/\[0\.03\],
+[data-theme="light"] .bg-white\/\[0\.04\],
+[data-theme="light"] .bg-white\/5,
+[data-theme="light"] .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Input overrides */
+[data-theme="light"] .ios-input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  color: #0D1117 !important;
+}
+
+[data-theme="light"] .ios-input::placeholder {
+  color: rgba(13, 17, 23, 0.4) !important;
+}
+
+/* Sidebar */
+[data-theme="light"] aside,
+[data-theme="light"] .sidebar-dark {
+  background: #FFFFFF !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* glow-blue button stays vibrant */
+[data-theme="light"] .ios-button-primary {
+  background: var(--color-ios-blue);
+  color: #000 !important;
+}
+
+/* Fixed background panels and overlays */
+[data-theme="light"] .fixed.inset-0.pointer-events-none {
+  opacity: 0.06 !important;
+}
+
+/* Remove the dark scanlines / gradients */
+[data-theme="light"] .spotlight {
+  display: none;
+}
+
 
 /* === iOS System Components === */
 .system-card {

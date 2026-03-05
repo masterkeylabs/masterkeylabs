@@ -35,7 +35,7 @@ export async function POST(req) {
         const pdfBuffer = Buffer.from(base64Data, 'base64');
 
         // Use configurable sender or fallback to verified domain
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'reports@masterkeylabs.in';
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'reports@masterkeylabs.ai';
 
         const { data: resData, error: resError } = await resend.emails.send({
             from: `MasterKey Intelligence <${fromEmail}>`,

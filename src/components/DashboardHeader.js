@@ -1,4 +1,4 @@
-
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function DashboardHeader({ companyName = "Nexus Corp.", lang, setLang, t, setSidebarOpen }) {
     return (
@@ -19,7 +19,7 @@ export default function DashboardHeader({ companyName = "Nexus Corp.", lang, set
                     </button>
                 )}
             </div>
-            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
                 {/* Language Switcher */}
                 <div className="flex bg-white/5 rounded-full p-1 border border-white/10 backdrop-blur-md">
                     <button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>EN</button>
@@ -27,6 +27,8 @@ export default function DashboardHeader({ companyName = "Nexus Corp.", lang, set
                     <button onClick={() => setLang('hi')} className={`px-3 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/40 hover:text-white/60'}`}>हिन्दी</button>
                 </div>
 
+                {/* Day / Night Toggle */}
+                <ThemeToggle />
 
                 <div className="system-card px-4 py-2 border border-white/5 flex items-center gap-2 bg-white/[0.01]">
                     <span className="material-symbols-outlined text-[14px] text-white/20">schedule</span>
