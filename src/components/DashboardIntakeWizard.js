@@ -177,11 +177,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             clearTimeout(timeoutId);
             // Sync forward or complete Step 0
-            if (step === 0 && onComplete) {
-                onComplete();
-            } else {
-                setStep(1);
-            }
+            if (onComplete) onComplete();
+            setStep(1);
         } catch (err) {
             if (!connectionTimedOut) {
                 setError(err.message || "An unexpected error occurred during authorization.");
