@@ -37,7 +37,6 @@ export default function IntakeWizard({ t }) {
     const [formData, setFormData] = useState({
         vertical: 'retail',
         revenueBracket: '5-20L',
-        employees: '1-10',
         marketingSpend: '50000',
         opsSpend: '100000',
         location: '',
@@ -132,7 +131,8 @@ export default function IntakeWizard({ t }) {
     }, [results, step]);
 
     const syncAuditToSupabase = useCallback(async (bizId, currentResults) => {
-        const empCount = formData.employees === '1-10' ? 5 : formData.employees === '11-50' ? 25 : formData.employees === '51-200' ? 100 : 250;
+        // Default to a medium-sized operational scale for the initial public audit
+        const empCount = 25;
         const staffCost = empCount * 25000;
         const manualHours = 0;
         const hasCRM = false;
@@ -222,15 +222,13 @@ export default function IntakeWizard({ t }) {
             const bizPayload = {
                 entity_name: formData.businessName || (formData.contactName + " Business"),
                 classification: formData.vertical + "::" + formData.revenueBracket,
-                scalability: formData.employees,
                 owner_name: formData.contactName,
                 email: formData.email,
                 phone: formData.whatsapp,
                 digital_footprint: formData.contactAfter6,
                 user_id: user?.id || null,
                 vertical: formData.vertical,
-                annual_revenue: parseFloat(formData.revenueBracket.replace(/[^0-9.]/g, '')) || 0,
-                employee_count: parseInt(formData.employees.replace(/[^0-9]/g, '')) || 0
+                annual_revenue: parseFloat(formData.revenueBracket.replace(/[^0-9.]/g, '')) || 0
             };
 
             const { data: newBiz, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
@@ -480,15 +478,6 @@ export default function IntakeWizard({ t }) {
                                     <div className="flex gap-1"><div className="w-8 h-1 bg-ios-blue rounded-full"></div><div className="w-8 h-1 bg-ios-blue rounded-full"></div><div className="w-8 h-1 bg-white/10 rounded-full"></div></div>
                                 </div>
                                 <div className="space-y-4">
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] text-white/30 uppercase tracking-widest font-bold ml-1">{wizardT.step2.employees}</label>
-                                        <select className="ios-input w-full" name="employees" value={formData.employees} onChange={handleChange}>
-                                            <option value="1-10" className="bg-[#020617]">1-10</option>
-                                            <option value="11-50" className="bg-[#020617]">11-50</option>
-                                            <option value="51-200" className="bg-[#020617]">51-200</option>
-                                            <option value="201+" className="bg-[#020617]">201+</option>
-                                        </select>
-                                    </div>
                                     <div className="space-y-1">
                                         <label className="text-[10px] text-white/30 uppercase tracking-widest font-bold ml-1">{wizardT.step2.marketing}</label>
                                         <input className="ios-input w-full" type="number" min="0" step="1000" name="marketingSpend" value={formData.marketingSpend} onChange={handleChange} />

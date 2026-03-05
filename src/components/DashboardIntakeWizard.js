@@ -62,15 +62,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         email: business?.email || '',
         industry: business?.vertical || 'retail',
         annualRevenue: business?.annual_revenue || '',
-        employeeCount: business?.employee_count || '',
-        hasCRM: business?.has_crm || false,
-        hasERP: business?.has_erp || false,
     });
     const [formM1, setFormM1] = useState({
         staffSalary: existingData?.lossAudit?.staff_salary || '',
         marketingBudget: existingData?.lossAudit?.marketing_budget || '',
         opsOverheads: existingData?.lossAudit?.ops_overheads || '',
         manualHours: existingData?.lossAudit?.manual_hours || 3,
+        // Moved from M0 to relevant operational step:
+        employeeCount: business?.employee_count || '',
+        hasCRM: business?.has_crm || false,
+        hasERP: business?.has_erp || false,
     });
 
     const [formM2, setFormM2] = useState({
@@ -133,9 +134,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 email: formM0.email,
                 vertical: formM0.industry,
                 annual_revenue: parseFloat(formM0.annualRevenue) || 0,
-                employee_count: parseInt(formM0.employeeCount) || 0,
-                has_crm: formM0.hasCRM,
-                has_erp: formM0.hasERP,
                 user_id: user?.id || null,
                 classification: `dashboard_wizard::v2_rpc`
             };
@@ -204,8 +202,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             const calc = calculateLossAudit(staff, ops, marketing, {
                 manualHoursPerDay: formM1.manualHours,
-                hasCRM: formM0.hasCRM,
-                hasERP: formM0.hasERP,
+                hasCRM: formM1.hasCRM,
+                hasERP: formM1.hasERP,
                 annualRevenue: revenue
             });
 
@@ -217,8 +215,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 annual_revenue: revenue,
                 industry: formM0.industry,
                 manual_hours: Math.round(parseFloat(formM1.manualHours) || 0),
-                has_crm: formM0.hasCRM,
-                has_erp: formM0.hasERP,
+                has_crm: formM1.hasCRM,
+                has_erp: formM1.hasERP,
                 // Mapped from calc
                 staff_waste: calc.staffWaste,
                 marketing_waste: calc.marketingWaste,
@@ -234,8 +232,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const { error: saveErr } = await supabase.from('loss_audit_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
 
-            // Also update the main business vertical for classification
-            await supabase.from('businesses').update({ vertical: formM0.industry }).eq('id', activeId);
+            // Update businesses table with newly collected metadata
+            await supabase.from('businesses').update({
+                vertical: formM0.industry,
+                employee_count: parseInt(formM1.employeeCount) || 0,
+                has_crm: formM1.hasCRM,
+                has_erp: formM1.hasERP
+            }).eq('id', activeId);
 
             setStep(2);
         } catch (err) {
@@ -329,9 +332,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             const calc = calculateAIThreat(industryValue, {
                 isOmnichannel: formM4.isOmnichannel,
-                hasCRM: formM0.hasCRM,
-                hasERP: formM0.hasERP,
-                employeeCount: parseInt(formM0.employeeCount) || 25
+                hasCRM: formM1.hasCRM,
+                hasERP: formM1.hasERP,
+                employeeCount: parseInt(formM1.employeeCount) || 25
             });
 
             const payload = {
@@ -343,9 +346,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 final_horizon: calc.finalHorizon || 0,
                 timeline_desc: calc.displayLabel,
                 is_omnichannel: formM4.isOmnichannel,
-                has_crm: formM0.hasCRM,
-                has_erp: formM0.hasERP,
-                employee_count: parseInt(formM0.employeeCount) || 25,
+                has_crm: formM1.hasCRM,
+                has_erp: formM1.hasERP,
+                employee_count: parseInt(formM1.employeeCount) || 25,
                 created_at: new Date().toISOString()
             };
 
@@ -499,34 +502,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             onChange={val => setFormM0({ ...formM0, annualRevenue: val })}
                                         />
                                     </div>
-
-                                    <div className="col-span-2">
-                                        <RangeSelector
-                                            label={t?.common?.employeeCountLabel || 'Number of Employees'}
-                                            options={EMPLOYEE_OPTIONS}
-                                            value={formM0.employeeCount}
-                                            onChange={val => setFormM0({ ...formM0, employeeCount: val })}
-                                        />
-                                    </div>
-
-                                    <div className="space-y-6 col-span-2 pt-4 border-t border-white/5">
-                                        <div className="flex items-center gap-6">
-                                            <div
-                                                onClick={() => setFormM0(prev => ({ ...prev, hasCRM: !prev.hasCRM }))}
-                                                className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM0.hasCRM ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
-                                            >
-                                                <span className="material-symbols-outlined">{formM0.hasCRM ? 'check_circle' : 'circle'}</span>
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses CRM</span>
-                                            </div>
-                                            <div
-                                                onClick={() => setFormM0(prev => ({ ...prev, hasERP: !prev.hasERP }))}
-                                                className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM0.hasERP ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
-                                            >
-                                                <span className="material-symbols-outlined">{formM0.hasERP ? 'check_circle' : 'circle'}</span>
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses ERP/Systems</span>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -583,6 +558,37 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     value={formM1.manualHours}
                                     onChange={val => setFormM1({ ...formM1, manualHours: val })}
                                 />
+
+                                {/* Moved from Initialization to Contextual Operational Waste section */}
+                                {(!business?.employee_count || !business?.has_crm) && (
+                                    <div className="space-y-8 pt-4 border-t border-white/5">
+                                        <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold">Operational Context</h3>
+                                        {!business?.employee_count && (
+                                            <RangeSelector
+                                                label={t?.common?.employeeCountLabel || 'Number of Employees (Operational Scale)'}
+                                                options={EMPLOYEE_OPTIONS}
+                                                value={formM1.employeeCount}
+                                                onChange={val => setFormM1({ ...formM1, employeeCount: val })}
+                                            />
+                                        )}
+                                        <div className="flex items-center gap-6">
+                                            <div
+                                                onClick={() => setFormM1(prev => ({ ...prev, hasCRM: !prev.hasCRM }))}
+                                                className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM1.hasCRM ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
+                                            >
+                                                <span className="material-symbols-outlined">{formM1.hasCRM ? 'check_circle' : 'circle'}</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses CRM</span>
+                                            </div>
+                                            <div
+                                                onClick={() => setFormM1(prev => ({ ...prev, hasERP: !prev.hasERP }))}
+                                                className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM1.hasERP ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
+                                            >
+                                                <span className="material-symbols-outlined">{formM1.hasERP ? 'check_circle' : 'circle'}</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses ERP/Systems</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="pt-4 flex justify-end">
