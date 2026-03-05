@@ -117,10 +117,31 @@ function ProfileEditContent() {
                 email: formData.email,
                 phone: formData.whatsapp,
                 classification: `${formData.vertical}::${formData.revenueBracket}`,
-                scalability: formData.employees,
                 digital_footprint: formData.contactAfter6,
                 user_id: user.id
             };
+
+            // ── Duplicate Check ───────────────────────────────────────
+            const cleanPhone = formData.whatsapp.replace(/\D/g, '');
+            const last10 = cleanPhone.slice(-10);
+
+            // Check if phone/email belongs to ANOTHER business
+            const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
+                supabase.from('businesses').select('id').ilike('phone', `%${last10}%`).not('id', 'eq', businessId).limit(1),
+                supabase.from('businesses').select('id').ilike('email', formData.email.trim()).not('id', 'eq', businessId).limit(1),
+            ]);
+
+            if (phoneDupe && phoneDupe.length > 0) {
+                setError("📵 This mobile number is already registered to another enterprise.");
+                setIsSaving(false);
+                return;
+            }
+            if (emailDupe && emailDupe.length > 0) {
+                setError("📧 This email address is already registered to another enterprise.");
+                setIsSaving(false);
+                return;
+            }
+            // ──────────────────────────────────────────────────────────
 
             let finalBusinessId = businessId;
 

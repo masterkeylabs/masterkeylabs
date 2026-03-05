@@ -148,6 +148,32 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             let resultData = null;
 
+            // ── Duplicate Check ───────────────────────────────────────
+            // Only check for duplicates if we are about to INSERT (i.e., no bizId)
+            if (!bizId) {
+                const cleanPhone = formM0.whatsapp.replace(/\D/g, '');
+                const last10 = cleanPhone.slice(-10);
+
+                const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
+                    supabase.from('businesses').select('id').ilike('phone', `%${last10}%`).limit(1),
+                    supabase.from('businesses').select('id').ilike('email', formM0.email.trim()).limit(1),
+                ]);
+
+                if (phoneDupe && phoneDupe.length > 0) {
+                    setError("📵 This mobile number is already registered. Please contact support or use a different number.");
+                    setIsSaving(false);
+                    clearTimeout(timeoutId);
+                    return;
+                }
+                if (emailDupe && emailDupe.length > 0) {
+                    setError("📧 This email address is already registered. Please contact support or use a different email.");
+                    setIsSaving(false);
+                    clearTimeout(timeoutId);
+                    return;
+                }
+            }
+            // ──────────────────────────────────────────────────────────
+
             if (bizId) {
                 console.log('Attempting UPDATE for ID:', bizId);
                 const { data, error: upErr } = await supabase
