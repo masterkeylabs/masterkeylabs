@@ -216,7 +216,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 marketing_budget: marketing,
                 annual_revenue: revenue,
                 industry: formM0.industry,
-                manual_hours: formM1.manualHours,
+                manual_hours: Math.round(parseFloat(formM1.manualHours) || 0),
                 has_crm: formM0.hasCRM,
                 has_erp: formM0.hasERP,
                 // Mapped from calc
@@ -363,7 +363,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     };
 
     const STEP_TITLES = [
-        "System Initialization [V2.0-FIXED]",
+        "System Initialization [V2.1-RPC]",
         "Module 01: Operational Waste",
         "Module 02: Night Loss Leakage",
         "Module 03: Digital Invisibility",
