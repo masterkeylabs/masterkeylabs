@@ -50,7 +50,7 @@ export default function DashboardFallback() {
         };
         const placeholderBusiness = {
             entity_name: 'Initialize System',
-            owner_name: user?.user_metadata?.full_name || '',
+            owner_name: user?.user_metadata?.full_name || user?.user_metadata?.name || '',
             email: user?.email || '',
             id: null
         };

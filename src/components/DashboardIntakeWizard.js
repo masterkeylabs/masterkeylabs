@@ -57,7 +57,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     // --- FORM STATES ---
     const [formM0, setFormM0] = useState({
         entityName: business?.entity_name && business.entity_name !== 'Initialize System' ? business.entity_name : '',
-        ownerName: business?.owner_name || '',
+        ownerName: business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || '',
         whatsapp: business?.phone || '',
         email: business?.email || '',
         industry: business?.vertical || 'retail',
