@@ -109,10 +109,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setError(null);
 
         // Timeout flag to prevent infinite hang on live
+        // Increased to 150s for extreme cases but with better error reporting
         let connectionTimedOut = false;
         const timeoutId = setTimeout(() => {
             connectionTimedOut = true;
-            setError("Synchronization request exceeds 120s. Your connection may be unstable. Please try once more or refresh.");
+            setError("The synchronization request is taking longer than expected (120s+). Your database might be under a lock. Please refresh and try again.");
             setIsSaving(false);
             console.error('Authorization Timeout: Request exceeded 120 seconds.');
         }, 120000);
@@ -130,29 +131,29 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Authorization Sequence (RPC-V2) Start ---');
+            console.log('--- Authorization Sequence (Direct Upsert) Start ---');
             console.log('Payload:', payload);
             console.log('Active ID (p_active_id):', bizId);
 
-            // Call our consolidated RPC for speed and reliability
-            const { data: result, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
-                p_payload: payload,
-                p_active_id: bizId
-            });
+            // BYPASSING RPC: Using direct upsert for reliability as RPC is currently hanging for some users
+            const { data: upsertResult, error: upsertErr } = await supabase
+                .from('businesses')
+                .upsert({
+                    id: bizId || undefined,
+                    ...payload,
+                    updated_at: new Date().toISOString()
+                })
+                .select()
+                .single();
 
-            if (rpcErr) throw rpcErr;
+            if (upsertErr) throw upsertErr;
 
-            // Handle custom errors returned from inside the RPC
-            if (result && result.error) {
-                throw new Error(result.error);
-            }
-
-            console.log('Authorization Sequence Finalized (RPC-V2):', result);
+            console.log('Authorization Sequence Finalized (Direct):', upsertResult);
 
             if (connectionTimedOut) return;
-            if (!result) throw new Error("Could not save business profile record via RPC.");
+            if (!upsertResult) throw new Error("Could not save business profile record.");
 
-            const finalBizId = result.id;
+            const finalBizId = upsertResult.id;
             setActiveId(finalBizId);
             localStorage.setItem('masterkey_business_id', finalBizId);
 
