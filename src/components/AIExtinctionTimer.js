@@ -115,6 +115,54 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const [dots, setDots] = useState(0);
     const [searchIndex, setSearchIndex] = useState(0);
     const inputRef = useRef(null);
+    const cardRef = useRef(null);
+
+    // Capture result card as image and share or download
+    const captureAndShare = async (platform) => {
+        if (!cardRef.current) return;
+        try {
+            const html2canvas = (await import('html2canvas')).default;
+            const canvas = await html2canvas(cardRef.current, {
+                backgroundColor: '#080809',
+                scale: 2,
+                useCORS: true,
+                logging: false,
+            });
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
+            const siteUrl = 'https://masterkeylabs.com';
+            const shareText = `🚨 AI Risk Alert: Check your AI Extinction Score on MasterkeyOS → ${siteUrl}`;
+
+            // Try native share (works on mobile & some desktop)
+            if (platform === 'native' && navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
+                return;
+            }
+
+            // Fallback: download image then open platform link
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ai-risk-score.png';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // After short delay open the platform share page so user can attach the downloaded image
+            const encodedText = encodeURIComponent(shareText);
+            const encodedUrl = encodeURIComponent(siteUrl);
+            const platformUrls = {
+                twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+                whatsapp: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+            };
+            if (platformUrls[platform]) {
+                setTimeout(() => window.open(platformUrls[platform], '_blank'), 800);
+            }
+        } catch (err) {
+            console.error('Share failed:', err);
+        }
+    };
 
     useEffect(() => {
         if (!loading) return;
@@ -310,14 +358,16 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                 {/* ─── RESULTS ─── */}
                 {result && cfg && (
-                    <div style={{
-                        marginTop: "20px",
-                        background: `radial-gradient(ellipse at top, ${cfg.glow} 0%, transparent 70%), rgba(255,255,255,0.02)`,
-                        border: `1px solid ${cfg.color}22`,
-                        borderRadius: "20px",
-                        padding: "24px",
-                        animation: "fadeUp 0.5s ease both",
-                    }}>
+                    <div
+                        ref={cardRef}
+                        style={{
+                            marginTop: "20px",
+                            background: `radial-gradient(ellipse at top, ${cfg.glow} 0%, transparent 70%), rgba(255,255,255,0.02)`,
+                            border: `1px solid ${cfg.color}22`,
+                            borderRadius: "20px",
+                            padding: "24px",
+                            animation: "fadeUp 0.5s ease both",
+                        }}>
 
                         {/* Threat level badge */}
                         <div style={{ textAlign: "center", marginBottom: "12px" }}>
@@ -419,67 +469,53 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                         {/* ─── SOCIAL SHARE ─── */}
                         {(() => {
-                            const siteUrl = "https://masterkeylabs.com";
-                            const yearsLeft = `${Math.floor(result.yearsRemaining)}y ${Math.floor((result.yearsRemaining % 1) * 12)}m`;
-                            const shareText = `🚨 AI Risk Alert: My business has ${yearsLeft} before AI disruption hits — rated "${result.threatLevel}" by the MasterkeyOS AI Extinction Timer.\n\n"${result.verdict.slice(0, 90)}..."\n\nCheck yours 👇`;
-                            const encodedText = encodeURIComponent(shareText);
-                            const encodedUrl = encodeURIComponent(siteUrl);
-
                             const platforms = [
-                                {
-                                    name: "X",
-                                    icon: "𝕏",
-                                    color: "#fff",
-                                    bg: "#000",
-                                    border: "rgba(255,255,255,0.15)",
-                                    url: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
-                                },
-                                {
-                                    name: "LinkedIn",
-                                    icon: "in",
-                                    color: "#fff",
-                                    bg: "#0A66C2",
-                                    border: "#0A66C2",
-                                    url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}`,
-                                },
-                                {
-                                    name: "WhatsApp",
-                                    icon: "💬",
-                                    color: "#fff",
-                                    bg: "#25D366",
-                                    border: "#25D366",
-                                    url: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
-                                },
-                                {
-                                    name: "Facebook",
-                                    icon: "f",
-                                    color: "#fff",
-                                    bg: "#1877F2",
-                                    border: "#1877F2",
-                                    url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
-                                },
+                                { name: "X", icon: "𝕏", color: "#fff", bg: "#000", border: "rgba(255,255,255,0.15)", key: "twitter" },
+                                { name: "LinkedIn", icon: "in", color: "#fff", bg: "#0A66C2", border: "#0A66C2", key: "linkedin" },
+                                { name: "WhatsApp", icon: "💬", color: "#fff", bg: "#25D366", border: "#25D366", key: "whatsapp" },
+                                { name: "Facebook", icon: "f", color: "#fff", bg: "#1877F2", border: "#1877F2", key: "facebook" },
                             ];
-
                             return (
-                                <div style={{ marginTop: "4px" }}>
-                                    <div style={{
-                                        textAlign: "center",
-                                        fontSize: "0.58rem",
-                                        color: "#666",
-                                        letterSpacing: "2px",
-                                        fontWeight: 700,
-                                        marginBottom: "10px",
-                                        textTransform: "uppercase",
-                                    }}>
+                                <div style={{ marginTop: "16px" }}>
+                                    <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#666", letterSpacing: "2px", fontWeight: 700, marginBottom: "10px", textTransform: "uppercase" }}>
                                         ⚡ Share Your Risk Score
                                     </div>
+
+                                    {/* Primary: Capture & Share button */}
+                                    <button
+                                        onClick={() => captureAndShare('native')}
+                                        style={{
+                                            width: "100%",
+                                            padding: "12px",
+                                            marginBottom: "8px",
+                                            background: `linear-gradient(135deg, ${cfg.color}cc, ${cfg.color})`,
+                                            border: "none",
+                                            borderRadius: "12px",
+                                            color: "#000",
+                                            fontWeight: 900,
+                                            fontSize: "0.8rem",
+                                            letterSpacing: "0.5px",
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "8px",
+                                            boxShadow: `0 6px 20px ${cfg.color}44`,
+                                            transition: "all 0.2s ease",
+                                        }}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; }}
+                                        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
+                                    >
+                                        <span style={{ fontSize: "1.1rem" }}>📸</span>
+                                        Capture &amp; Share Image
+                                    </button>
+
+                                    {/* Platform buttons (image downloaded + platform opened) */}
                                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
                                         {platforms.map(p => (
-                                            <a
+                                            <button
                                                 key={p.name}
-                                                href={p.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                                onClick={() => captureAndShare(p.key)}
                                                 title={`Share on ${p.name}`}
                                                 style={{
                                                     display: "flex",
@@ -494,26 +530,19 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                                     color: p.color,
                                                     fontSize: "0.9rem",
                                                     fontWeight: 900,
-                                                    textDecoration: "none",
-                                                    transition: "all 0.2s ease",
                                                     cursor: "pointer",
+                                                    transition: "all 0.2s ease",
                                                 }}
-                                                onMouseEnter={e => {
-                                                    e.currentTarget.style.transform = "translateY(-3px)";
-                                                    e.currentTarget.style.boxShadow = `0 8px 20px ${p.bg}66`;
-                                                }}
-                                                onMouseLeave={e => {
-                                                    e.currentTarget.style.transform = "translateY(0)";
-                                                    e.currentTarget.style.boxShadow = "none";
-                                                }}
+                                                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = `0 8px 20px ${p.bg}66`; }}
+                                                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                                             >
                                                 <span style={{ fontSize: "1rem", lineHeight: 1 }}>{p.icon}</span>
                                                 <span style={{ fontSize: "0.52rem", letterSpacing: "0.5px", opacity: 0.85, fontWeight: 700 }}>{p.name}</span>
-                                            </a>
+                                            </button>
                                         ))}
                                     </div>
                                     <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px", letterSpacing: "0.3px" }}>
-                                        Dare your network to check their risk score
+                                        Image saved • Attach it when the platform opens
                                     </p>
                                 </div>
                             );
