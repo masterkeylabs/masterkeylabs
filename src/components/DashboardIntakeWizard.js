@@ -131,37 +131,45 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Authorization Phase 1: Validating Credentials ---');
+            console.log('--- Auth Flow Log: Step 1 (Started) ---');
             if (!payload.email) throw new Error("Email registry entry required.");
 
             let finalBizId = bizId;
 
-            // 1. Safe Search: Check for existing profile using email or phone
-            // We only search if we don't have an active session ID
+            // 1. Search for existing profile (Split query for maximum safety)
             if (!finalBizId) {
-                console.log('Searching for existing profile for:', payload.email);
-
-                // Build a robust query string
-                let orFilter = `email.eq.${payload.email}`;
-                if (payload.phone) orFilter += `,phone.eq.${payload.phone}`;
-
-                const { data: existingBiz, error: findErr } = await supabase
+                console.log('--- Auth Flow Log: Step 2 (Searching Email) ---', payload.email);
+                const { data: byEmail, error: emailErr } = await supabase
                     .from('businesses')
                     .select('id')
-                    .or(orFilter)
+                    .eq('email', payload.email)
                     .maybeSingle();
 
-                if (findErr) {
-                    console.error('Search Fault:', findErr);
-                } else if (existingBiz) {
-                    finalBizId = existingBiz.id;
-                    console.log('Existing target anchored:', finalBizId);
+                if (emailErr) console.error('Email Search Fault:', emailErr);
+
+                if (byEmail) {
+                    finalBizId = byEmail.id;
+                    console.log('--- Auth Flow Log: Step 3 (Found by Email) ---', finalBizId);
+                } else if (payload.phone) {
+                    console.log('--- Auth Flow Log: Step 3b (Searching Phone) ---', payload.phone);
+                    const { data: byPhone, error: phoneErr } = await supabase
+                        .from('businesses')
+                        .select('id')
+                        .eq('phone', payload.phone)
+                        .maybeSingle();
+
+                    if (phoneErr) console.error('Phone Search Fault:', phoneErr);
+
+                    if (byPhone) {
+                        finalBizId = byPhone.id;
+                        console.log('--- Auth Flow Log: Step 4 (Found by Phone) ---', finalBizId);
+                    }
                 }
             }
 
-            console.log('--- Authorization Phase 2: Committing to Registry ---', finalBizId || 'NEW_RECORD');
+            console.log('--- Auth Flow Log: Step 5 (Committing Upsert) ---', finalBizId || 'NEW');
 
-            // 2. Execute Upsert with full payload
+            // 2. Perform Upsert
             const { data: upsertData, error: upsertErr } = await supabase
                 .from('businesses')
                 .upsert({
@@ -173,11 +181,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 .single();
 
             if (upsertErr) {
-                console.error('Commit Fault:', upsertErr);
+                console.error('--- Auth Flow Log: ERROR (Upsert) ---', upsertErr);
                 throw upsertErr;
             }
 
-            console.log('--- Authorization Phase 3: Synchronized ---', upsertData?.id);
+            console.log('--- Auth Flow Log: Step 6 (COMPLETE) ---', upsertData?.id);
 
             if (connectionTimedOut) {
                 console.warn('Network late arrival - already timed out by guard.');
