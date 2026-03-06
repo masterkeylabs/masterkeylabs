@@ -38,14 +38,14 @@ const SEARCH_STEPS = [
     "CALCULATING AUTOMATION HORIZON...",
     "ESTIMATING SURVIVAL METRICS...",
     "DECRYPTING EXTINCTION TIMELINE...",
-    "FINALIZING RISK PROFILE..."
+    "FINALIZING RISK PROFILE...",
 ];
 
 const THREAT_CONFIG = {
-    CRITICAL: { color: "#FF2D2D", glow: "rgba(255,45,45,0.2)", label: "CRITICAL RISK", emoji: "🔴" },
-    HIGH: { color: "#FF6B00", glow: "rgba(255,107,0,0.2)", label: "HIGH RISK", emoji: "🟠" },
-    MODERATE: { color: "#FFB800", glow: "rgba(255,184,0,0.2)", label: "MODERATE RISK", emoji: "🟡" },
-    RESILIENT: { color: "#00C48C", glow: "rgba(0,196,140,0.2)", label: "RESILIENT", emoji: "🟢" },
+    CRITICAL: { color: "#FF2D2D", glow: "rgba(255,45,45,0.15)", label: "CRITICAL RISK", emoji: "🔴" },
+    HIGH: { color: "#FF6B00", glow: "rgba(255,107,0,0.15)", label: "HIGH RISK", emoji: "🟠" },
+    MODERATE: { color: "#FFB800", glow: "rgba(255,184,0,0.15)", label: "MODERATE RISK", emoji: "🟡" },
+    RESILIENT: { color: "#00C48C", glow: "rgba(0,196,140,0.15)", label: "RESILIENT", emoji: "🟢" },
 };
 
 function useAnimatedValue(target, duration = 1400) {
@@ -107,6 +107,93 @@ function RiskBar({ score, color }) {
     );
 }
 
+// ─── Flat share-card rendered off-screen (no backdrop-filter, no blur) ───────
+function ShareCard({ result, cfg, jobTitle, years, months, days }) {
+    if (!result || !cfg) return null;
+    return (
+        <div style={{
+            width: "480px",
+            background: "#0d0d0f",
+            border: `2px solid ${cfg.color}44`,
+            borderRadius: "20px",
+            padding: "28px 28px 20px",
+            fontFamily: "'Arial', sans-serif",
+            color: "#F0F0F0",
+        }}>
+            {/* Brand header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
+                <div style={{ fontSize: "0.6rem", color: "#FF6D00", letterSpacing: "3px", fontWeight: 700 }}>
+                    ● MASTERKEYLABS · AI DISPLACEMENT ANALYSIS
+                </div>
+                <div style={{
+                    background: cfg.color, color: "#000",
+                    fontSize: "0.55rem", fontWeight: 900, letterSpacing: "2px",
+                    padding: "4px 12px", borderRadius: "99px",
+                }}>
+                    {cfg.emoji} {cfg.label}
+                </div>
+            </div>
+
+            {/* Job title */}
+            <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#fff", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "1px" }}>
+                {jobTitle}
+            </div>
+
+            {/* Verdict */}
+            <div style={{ fontSize: "0.78rem", color: "#999", fontStyle: "italic", marginBottom: "16px", lineHeight: 1.5 }}>
+                "{result.verdict}"
+            </div>
+
+            {/* Risk score row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "3rem", fontWeight: 900, color: cfg.color, lineHeight: 1 }}>{result.riskScore}%</div>
+                    <div style={{ fontSize: "0.5rem", color: "#555", letterSpacing: "2px", marginTop: "4px" }}>AUTOMATION RISK</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                    <div style={{ height: "6px", background: "rgba(255,255,255,0.06)", borderRadius: "99px", overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${result.riskScore}%`, background: `linear-gradient(90deg, ${cfg.color}66, ${cfg.color})`, borderRadius: "99px" }} />
+                    </div>
+                    <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+                        {[{ v: years, l: "YEARS" }, { v: months, l: "MONTHS" }, { v: days, l: "DAYS" }].map(({ v, l }) => (
+                            <div key={l} style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: `1px solid ${cfg.color}22`, borderRadius: "10px", padding: "10px 6px", textAlign: "center" }}>
+                                <div style={{ fontSize: "1.6rem", fontWeight: 900, color: cfg.color }}>{String(v).padStart(2, "0")}</div>
+                                <div style={{ fontSize: "0.45rem", color: "#444", letterSpacing: "2px", marginTop: "3px" }}>{l}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Two-col breakdown */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" }}>
+                <div style={{ background: "rgba(255,109,0,0.06)", border: "1px solid rgba(255,109,0,0.15)", borderRadius: "10px", padding: "12px" }}>
+                    <div style={{ fontSize: "0.52rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "8px", fontWeight: 700 }}>🤖 AI WILL HANDLE</div>
+                    {result.topThreats.map((t, i) => (
+                        <div key={i} style={{ fontSize: "0.68rem", color: "#999", marginBottom: "4px", lineHeight: 1.4 }}>✗ {t}</div>
+                    ))}
+                </div>
+                <div style={{ background: "rgba(0,196,140,0.05)", border: "1px solid rgba(0,196,140,0.12)", borderRadius: "10px", padding: "12px" }}>
+                    <div style={{ fontSize: "0.52rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "8px", fontWeight: 700 }}>🧠 YOUR EDGE</div>
+                    {result.humanEdge.map((s, i) => (
+                        <div key={i} style={{ fontSize: "0.68rem", color: "#999", marginBottom: "4px", lineHeight: 1.4 }}>✓ {s}</div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Research */}
+            <div style={{ borderLeft: `2px solid ${cfg.color}44`, paddingLeft: "10px", marginBottom: "14px" }}>
+                <div style={{ fontSize: "0.58rem", color: "#666", lineHeight: 1.5 }}>📊 {result.researchBasis}</div>
+            </div>
+
+            {/* Footer CTA */}
+            <div style={{ textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "12px" }}>
+                <div style={{ fontSize: "0.55rem", color: "#FF6D00", letterSpacing: "2px", fontWeight: 700 }}>masterkeylabs.com · CHECK YOUR RISK FREE →</div>
+            </div>
+        </div>
+    );
+}
+
 export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
@@ -114,38 +201,47 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const [error, setError] = useState("");
     const [dots, setDots] = useState(0);
     const [searchIndex, setSearchIndex] = useState(0);
+    const [captureStatus, setCaptureStatus] = useState("idle"); // idle | capturing | done | failed
     const inputRef = useRef(null);
     const cardRef = useRef(null);
-    const fullTimerRef = useRef(null);
+    const shareCardRef = useRef(null);
 
     const [previewImg, setPreviewImg] = useState(null);
 
-    // Auto-capture the full timer widget (header + input + results) after result renders
+    const cfg = result ? (THREAT_CONFIG[result.threatLevel] || THREAT_CONFIG.MODERATE) : null;
+    const years = result ? Math.floor(result.yearsRemaining) : 0;
+    const months = result ? Math.floor((result.yearsRemaining % 1) * 12) : 0;
+    const days = result ? Math.floor(((result.yearsRemaining * 12) % 1) * 30) : 0;
+
+    // Auto-capture the hidden flat share card after result renders
     useEffect(() => {
         if (!result) return;
         setPreviewImg(null);
+        setCaptureStatus("capturing");
         const timer = setTimeout(async () => {
-            const el = fullTimerRef.current;
-            if (!el) return;
+            const el = shareCardRef.current;
+            if (!el) { setCaptureStatus("failed"); return; }
             try {
                 const html2canvas = (await import('html2canvas')).default;
                 const canvas = await html2canvas(el, {
-                    backgroundColor: '#080809',
+                    backgroundColor: '#0d0d0f',
                     scale: 2,
                     useCORS: true,
                     allowTaint: true,
                     logging: false,
+                    foreignObjectRendering: false,
                 });
                 setPreviewImg(canvas.toDataURL('image/png'));
+                setCaptureStatus("done");
             } catch (err) {
                 console.error('Capture failed:', err);
-                setPreviewImg('failed');
+                setCaptureStatus("failed");
             }
-        }, 900);
+        }, 1000);
         return () => clearTimeout(timer);
     }, [result]);
 
-    // Share the captured image via platform
+    // Share handler — always opens the platform; downloads image if available
     const shareImage = async (platform) => {
         const siteUrl = 'https://masterkeylabs.com';
         const shareText = `🚨 My AI Risk Score from MasterkeyOS Extinction Timer → ${siteUrl}`;
@@ -160,32 +256,30 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             instagram: `https://www.instagram.com/`,
         };
 
-        // If image is captured, try native share or auto-download it first
         if (previewImg && previewImg !== 'failed') {
             try {
                 const res = await fetch(previewImg);
                 const blob = await res.blob();
                 const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
 
-                // On mobile: try native share sheet (supports Instagram, WhatsApp etc)
+                // Mobile native share
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
-                        return; // native share handled everything
-                    } catch (e) { /* user cancelled or not supported, fall through */ }
+                        return;
+                    } catch (e) { /* cancelled or not supported */ }
                 }
 
-                // Desktop: auto-download the image so user can attach it when posting
+                // Desktop: auto-download image
                 const objUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = objUrl;
                 a.download = 'ai-risk-score.png';
                 a.click();
                 URL.revokeObjectURL(objUrl);
-            } catch (e) { /* capture failed silently */ }
+            } catch (e) { /* silent */ }
         }
 
-        // Always open the platform — with a short delay so the download dialog doesn't block
         setTimeout(() => window.open(platformUrls[platform], '_blank'), 400);
     };
 
@@ -202,7 +296,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const analyze = async () => {
         const trimmed = input.trim();
         if (!trimmed) { inputRef.current?.focus(); return; }
-        setLoading(true); setResult(null); setError("");
+        setLoading(true); setResult(null); setError(""); setPreviewImg(null); setCaptureStatus("idle");
         try {
             const res = await fetch("/api/ai-risk", {
                 method: "POST",
@@ -226,8 +320,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             }
 
             const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-            const clean = raw.trim();
-            setResult(JSON.parse(clean));
+            setResult(JSON.parse(raw.trim()));
         } catch (err) {
             console.error(err);
             setError(err.message || "Analysis failed — please try again.");
@@ -236,10 +329,29 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
         }
     };
 
-    const cfg = result ? (THREAT_CONFIG[result.threatLevel] || THREAT_CONFIG.MODERATE) : null;
-    const years = result ? Math.floor(result.yearsRemaining) : 0;
-    const months = result ? Math.floor((result.yearsRemaining % 1) * 12) : 0;
-    const days = result ? Math.floor(((result.yearsRemaining * 12) % 1) * 30) : 0;
+    const socialPlatforms = [
+        {
+            name: "X", bg: "#000", border: "rgba(255,255,255,0.15)", key: "twitter",
+            svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.762l7.74-8.85L2.25 2.25h6.792l4.262 5.638L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
+        },
+        {
+            name: "LinkedIn", bg: "#0A66C2", border: "#0A66C2", key: "linkedin",
+            svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+        },
+        {
+            name: "WhatsApp", bg: "#25D366", border: "#25D366", key: "whatsapp",
+            svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" /></svg>
+        },
+        {
+            name: "Facebook", bg: "#1877F2", border: "#1877F2", key: "facebook",
+            svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+        },
+        {
+            name: "Instagram", bg: "#E1306C", border: "#E1306C", key: "instagram",
+            extraStyle: { background: "linear-gradient(135deg,#405DE6,#5851DB,#833AB4,#C13584,#E1306C,#FD1D1D)" },
+            svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" /></svg>
+        },
+    ];
 
     return (
         <div style={{
@@ -248,10 +360,9 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "20px",
+            padding: "16px",
             borderRadius: "24px",
             border: "1px solid rgba(255,255,255,0.05)",
-            backdropFilter: "blur(20px)"
         }}>
             <style>{`
         * { box-sizing: border-box; }
@@ -269,12 +380,30 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
           0% { background-position: -100% 0; }
           100% { background-position: 200% 0; }
         }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
+        .ext-timer-wrap { width: 100%; max-width: 460px; }
+
+        /* ── Mobile responsive ── */
+        @media (max-width: 500px) {
+          .ext-h1 { font-size: 1.7rem !important; }
+          .ext-timer-blocks { gap: 6px !important; }
+          .ext-timer-block { padding: 12px 6px !important; }
+          .ext-timer-num  { font-size: 1.8rem !important; }
+          .ext-share-grid { grid-template-columns: repeat(5,1fr) !important; gap: 4px !important; }
+          .ext-share-btn  { padding: 8px 2px !important; }
+          .ext-share-btn svg { width:15px !important; height:15px !important; }
+          .ext-share-label { font-size: 0.42rem !important; }
+          .ext-preview-img { max-height: 220px !important; }
+          .ext-breakdown { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
-            <div ref={fullTimerRef} style={{ width: "100%", maxWidth: "460px" }}>
+            <div className="ext-timer-wrap">
 
                 {/* ─── HEADER ─── */}
-                <div style={{ textAlign: "center", marginBottom: "28px" }}>
+                <div style={{ textAlign: "center", marginBottom: "24px" }}>
                     <div style={{
                         display: "inline-flex", alignItems: "center", gap: "6px",
                         fontSize: "0.62rem", letterSpacing: "3px", color: "#FF6D00",
@@ -283,8 +412,8 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                     }}>
                         <span>●</span> AI DISPLACEMENT ANALYSIS
                     </div>
-                    <h1 style={{
-                        fontSize: "clamp(1.8rem, 6vw, 2.4rem)",
+                    <h1 className="ext-h1" style={{
+                        fontSize: "clamp(1.7rem, 6vw, 2.4rem)",
                         fontWeight: 900, color: "#F0F0F0",
                         margin: "0 0 10px", lineHeight: 1.1,
                         letterSpacing: "-0.5px",
@@ -292,7 +421,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         Will AI Replace<br />
                         <span style={{ color: "#FF6D00" }}>Your Business?</span>
                     </h1>
-                    <p style={{ color: "#A0A0A0", fontSize: "0.83rem", margin: 0, lineHeight: 1.7 }}>
+                    <p style={{ color: "#A0A0A0", fontSize: "clamp(0.78rem,2.5vw,0.83rem)", margin: 0, lineHeight: 1.7 }}>
                         Enter your job title or business type below.<br />
                         Get your AI extinction timeline in seconds.
                     </p>
@@ -313,7 +442,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             borderRadius: "14px",
                             padding: "16px 18px",
                             color: "#E0E0E0",
-                            fontSize: "0.9rem",
+                            fontSize: "clamp(0.82rem,2.8vw,0.9rem)",
                             transition: "border 0.2s, background 0.2s",
                             marginBottom: "10px",
                         }}
@@ -342,14 +471,14 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             borderRadius: "14px",
                             color: loading ? "#FF6D00" : "#fff",
                             fontWeight: 800,
-                            fontSize: "0.8rem",
+                            fontSize: "clamp(0.75rem,2.5vw,0.8rem)",
                             letterSpacing: loading ? "1px" : "0.3px",
                             cursor: loading ? "not-allowed" : "pointer",
                             transition: "all 0.3s",
                             boxShadow: loading ? "none" : "0 6px 30px rgba(255,109,0,0.35)",
                         }}
-                        onMouseEnter={e => { if (!loading) e.target.style.transform = "translateY(-1px)"; }}
-                        onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
+                        onMouseEnter={e => { if (!loading) e.currentTarget.style.transform = "translateY(-1px)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
                     >
                         {loading && (
                             <div style={{
@@ -365,7 +494,6 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             {loading ? (
                                 <>
                                     <span style={{ fontSize: "12px", border: "1px solid currentColor", borderRadius: "50%", padding: "2px", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", animation: "spin 1s linear infinite" }}>
-                                        <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
                                         ⌛
                                     </span>
                                     {SEARCH_STEPS[searchIndex]}
@@ -390,159 +518,142 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             background: `radial-gradient(ellipse at top, ${cfg.glow} 0%, transparent 70%), rgba(255,255,255,0.02)`,
                             border: `1px solid ${cfg.color}22`,
                             borderRadius: "20px",
-                            padding: "24px",
+                            padding: "clamp(16px,4vw,24px)",
                             animation: "fadeUp 0.5s ease both",
                         }}>
 
-                        {/* Result card content */}
-                        <div>
-                            {/* Threat level badge */}
-                            <div style={{ textAlign: "center", marginBottom: "12px" }}>
-                                <span style={{
-                                    display: "inline-block",
-                                    background: cfg.color,
-                                    color: "#000",
-                                    fontSize: "0.6rem",
-                                    fontWeight: 900,
-                                    letterSpacing: "3px",
-                                    padding: "5px 16px",
-                                    borderRadius: "99px",
-                                    animation: result.threatLevel === "CRITICAL" || result.threatLevel === "HIGH"
-                                        ? "blink 1.8s ease infinite" : "none",
-                                }}>
-                                    {cfg.emoji} {cfg.label}
-                                </span>
-                            </div>
-
-                            {/* Verdict */}
-                            <p style={{
-                                textAlign: "center",
-                                color: "#C0C0C0",
-                                fontSize: "0.92rem",
-                                fontStyle: "italic",
-                                margin: "0 0 20px",
-                                lineHeight: 1.6,
-                                padding: "0 8px",
+                        {/* Threat badge */}
+                        <div style={{ textAlign: "center", marginBottom: "12px" }}>
+                            <span style={{
+                                display: "inline-block",
+                                background: cfg.color,
+                                color: "#000",
+                                fontSize: "0.6rem",
+                                fontWeight: 900,
+                                letterSpacing: "3px",
+                                padding: "5px 16px",
+                                borderRadius: "99px",
+                                animation: result.threatLevel === "CRITICAL" || result.threatLevel === "HIGH"
+                                    ? "blink 1.8s ease infinite" : "none",
                             }}>
-                                "{result.verdict}"
-                            </p>
-
-                            {/* Risk bar */}
-                            <RiskBar score={result.riskScore} color={cfg.color} />
-
-                            {/* Timer */}
-                            <div style={{ marginTop: "22px" }}>
-                                <div style={{
-                                    textAlign: "center",
-                                    fontSize: "0.6rem",
-                                    color: "#A0A0A0",
-                                    letterSpacing: "3px",
-                                    marginBottom: "12px",
-                                }}>
-                                    TIME TO ADAPT YOUR BUSINESS
-                                </div>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                    <TimerBlock value={years} label="YEARS" color={cfg.color} />
-                                    <TimerBlock value={months} label="MONTHS" color={cfg.color} />
-                                    <TimerBlock value={days} label="DAYS" color={cfg.color} />
-                                </div>
-                            </div>
-
-                            {/* Two-col breakdown */}
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "18px" }}>
-                                <div style={{
-                                    background: "rgba(255,109,0,0.04)",
-                                    border: "1px solid rgba(255,109,0,0.12)",
-                                    borderRadius: "12px", padding: "14px",
-                                }}>
-                                    <div style={{ fontSize: "0.58rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
-                                        🤖 AI WILL HANDLE
-                                    </div>
-                                    {result.topThreats.map((t, i) => (
-                                        <div key={i} style={{ fontSize: "0.75rem", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
-                                            ✗ {t}
-                                        </div>
-                                    ))}
-                                </div>
-                                <div style={{
-                                    background: "rgba(0,196,140,0.04)",
-                                    border: "1px solid rgba(0,196,140,0.1)",
-                                    borderRadius: "12px", padding: "14px",
-                                }}>
-                                    <div style={{ fontSize: "0.58rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
-                                        🧠 YOUR EDGE
-                                    </div>
-                                    {result.humanEdge.map((s, i) => (
-                                        <div key={i} style={{ fontSize: "0.75rem", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
-                                            ✓ {s}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Research citation */}
-                            <div style={{
-                                marginTop: "14px",
-                                borderLeft: `2px solid ${cfg.color}44`,
-                                paddingLeft: "12px",
-                                paddingTop: "8px",
-                                paddingBottom: "8px",
-                                marginBottom: "16px"
-                            }}>
-                                <div style={{ fontSize: "0.63rem", color: "#A0A0A0", lineHeight: 1.5 }}>
-                                    📊 {result.researchBasis}
-                                </div>
-                            </div>
-
+                                {cfg.emoji} {cfg.label}
+                            </span>
                         </div>
 
-                        {/* ─── SOCIAL SHARE (outside capture ref) ─── */}
-                        <div style={{ marginTop: "16px" }}>
-                            <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#666", letterSpacing: "2px", fontWeight: 700, marginBottom: "10px", textTransform: "uppercase" }}>
+                        {/* Verdict */}
+                        <p style={{
+                            textAlign: "center",
+                            color: "#C0C0C0",
+                            fontSize: "clamp(0.82rem,2.8vw,0.92rem)",
+                            fontStyle: "italic",
+                            margin: "0 0 20px",
+                            lineHeight: 1.6,
+                            padding: "0 8px",
+                        }}>
+                            "{result.verdict}"
+                        </p>
+
+                        <RiskBar score={result.riskScore} color={cfg.color} />
+
+                        {/* Timer */}
+                        <div style={{ marginTop: "22px" }}>
+                            <div style={{
+                                textAlign: "center",
+                                fontSize: "0.6rem",
+                                color: "#A0A0A0",
+                                letterSpacing: "3px",
+                                marginBottom: "12px",
+                            }}>
+                                TIME TO ADAPT YOUR BUSINESS
+                            </div>
+                            <div className="ext-timer-blocks" style={{ display: "flex", gap: "10px" }}>
+                                <TimerBlock value={years} label="YEARS" color={cfg.color} />
+                                <TimerBlock value={months} label="MONTHS" color={cfg.color} />
+                                <TimerBlock value={days} label="DAYS" color={cfg.color} />
+                            </div>
+                        </div>
+
+                        {/* Two-col breakdown */}
+                        <div className="ext-breakdown" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "18px" }}>
+                            <div style={{
+                                background: "rgba(255,109,0,0.04)",
+                                border: "1px solid rgba(255,109,0,0.12)",
+                                borderRadius: "12px", padding: "14px",
+                            }}>
+                                <div style={{ fontSize: "0.58rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
+                                    🤖 AI WILL HANDLE
+                                </div>
+                                {result.topThreats.map((t, i) => (
+                                    <div key={i} style={{ fontSize: "clamp(0.7rem,2.3vw,0.75rem)", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
+                                        ✗ {t}
+                                    </div>
+                                ))}
+                            </div>
+                            <div style={{
+                                background: "rgba(0,196,140,0.04)",
+                                border: "1px solid rgba(0,196,140,0.1)",
+                                borderRadius: "12px", padding: "14px",
+                            }}>
+                                <div style={{ fontSize: "0.58rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
+                                    🧠 YOUR EDGE
+                                </div>
+                                {result.humanEdge.map((s, i) => (
+                                    <div key={i} style={{ fontSize: "clamp(0.7rem,2.3vw,0.75rem)", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
+                                        ✓ {s}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Research citation */}
+                        <div style={{
+                            marginTop: "14px",
+                            borderLeft: `2px solid ${cfg.color}44`,
+                            paddingLeft: "12px",
+                            paddingTop: "8px",
+                            paddingBottom: "8px",
+                            marginBottom: "4px"
+                        }}>
+                            <div style={{ fontSize: "0.63rem", color: "#A0A0A0", lineHeight: 1.5 }}>
+                                📊 {result.researchBasis}
+                            </div>
+                        </div>
+
+                        {/* ─── SOCIAL SHARE ─── */}
+                        <div style={{ marginTop: "18px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "16px" }}>
+                            <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#666", letterSpacing: "2px", fontWeight: 700, marginBottom: "12px", textTransform: "uppercase" }}>
                                 ⚡ Share Your Risk Score
                             </div>
 
                             {/* Captured image preview */}
-                            {previewImg && previewImg !== 'failed' ? (
-                                <div style={{ marginBottom: "10px", borderRadius: "12px", overflow: "hidden", border: `1px solid ${cfg.color}33` }}>
-                                    <img src={previewImg} alt="Your AI Risk Score" style={{ width: "100%", display: "block", borderRadius: "12px" }} />
-                                </div>
-                            ) : previewImg !== 'failed' ? (
+                            {captureStatus === "capturing" && (
                                 <div style={{ marginBottom: "10px", borderRadius: "12px", background: "rgba(255,255,255,0.03)", height: "50px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                                    <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>
-                                    <span style={{ fontSize: "0.62rem", color: "#555", letterSpacing: "1px" }}>Generating preview...</span>
+                                    <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2">
+                                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                                    </svg>
+                                    <span style={{ fontSize: "0.62rem", color: "#555", letterSpacing: "1px" }}>Generating share image...</span>
                                 </div>
-                            ) : null}
+                            )}
 
-                            {/* 5 Platform Buttons with official SVG logos */}
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
-                                {[
-                                    {
-                                        name: "X", bg: "#000", border: "rgba(255,255,255,0.15)", key: "twitter",
-                                        svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.762l7.74-8.85L2.25 2.25h6.792l4.262 5.638L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
-                                    },
-                                    {
-                                        name: "LinkedIn", bg: "#0A66C2", border: "#0A66C2", key: "linkedin",
-                                        svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-                                    },
-                                    {
-                                        name: "WhatsApp", bg: "#25D366", border: "#25D366", key: "whatsapp",
-                                        svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" /></svg>
-                                    },
-                                    {
-                                        name: "Facebook", bg: "#1877F2", border: "#1877F2", key: "facebook",
-                                        svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-                                    },
-                                    {
-                                        name: "Instagram", bg: "#E1306C", border: "#E1306C", key: "instagram",
-                                        extraStyle: { background: "linear-gradient(135deg,#405DE6,#5851DB,#833AB4,#C13584,#E1306C,#FD1D1D,#F56040,#F77737,#FCAF45,#FFDC80)" },
-                                        svg: <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" /></svg>
-                                    },
-                                ].map(p => (
+                            {captureStatus === "done" && previewImg && (
+                                <div style={{ marginBottom: "12px", borderRadius: "12px", overflow: "hidden", border: `1px solid ${cfg.color}33` }}>
+                                    <img
+                                        className="ext-preview-img"
+                                        src={previewImg}
+                                        alt="Your AI Risk Score"
+                                        style={{ width: "100%", display: "block", borderRadius: "12px", maxHeight: "300px", objectFit: "cover" }}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Platform buttons — ALWAYS clickable */}
+                            <div className="ext-share-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
+                                {socialPlatforms.map(p => (
                                     <button
                                         key={p.name}
+                                        className="ext-share-btn"
                                         onClick={() => shareImage(p.key)}
-                                        title={p.key === 'instagram' ? 'Opens Instagram — image auto-downloaded if available' : `Share on ${p.name}`}
+                                        title={p.key === 'instagram' ? 'Opens Instagram — image auto-downloaded' : `Share on ${p.name}`}
                                         style={{
                                             display: "flex",
                                             flexDirection: "column",
@@ -558,23 +669,55 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                             fontWeight: 700,
                                             cursor: "pointer",
                                             opacity: 1,
-                                            transition: "all 0.2s ease",
+                                            transition: "transform 0.15s ease, box-shadow 0.15s ease",
+                                            WebkitTapHighlightColor: "transparent",
+                                            touchAction: "manipulation",
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px) scale(1.05)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.5)"; }}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px) scale(1.06)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.5)"; }}
                                         onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0) scale(1)"; e.currentTarget.style.boxShadow = "none"; }}
+                                        onTouchStart={e => { e.currentTarget.style.transform = "scale(0.95)"; }}
+                                        onTouchEnd={e => { e.currentTarget.style.transform = "scale(1)"; }}
                                     >
                                         {p.svg}
-                                        <span style={{ fontSize: "0.46rem", opacity: 0.9, letterSpacing: "0.3px", lineHeight: 1 }}>{p.name}</span>
+                                        <span className="ext-share-label" style={{ fontSize: "0.46rem", opacity: 0.9, letterSpacing: "0.3px", lineHeight: 1 }}>{p.name}</span>
                                     </button>
                                 ))}
                             </div>
-                            <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px" }}>
-                                {previewImg && previewImg !== 'failed' ? 'Image auto-saved when sharing • tap any platform to post' : 'Click any platform to share your risk score'}
+
+                            <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px", lineHeight: 1.5 }}>
+                                {captureStatus === "done"
+                                    ? "Image auto-saved when sharing · tap to open platform"
+                                    : captureStatus === "failed"
+                                        ? "Tap any platform to share your score"
+                                        : "Generating share image..."}
                             </p>
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* ─── HIDDEN FLAT SHARE CARD (captured by html2canvas) ─── */}
+            {result && cfg && (
+                <div
+                    ref={shareCardRef}
+                    style={{
+                        position: "fixed",
+                        top: "-9999px",
+                        left: "-9999px",
+                        zIndex: -1,
+                        pointerEvents: "none",
+                    }}
+                >
+                    <ShareCard
+                        result={result}
+                        cfg={cfg}
+                        jobTitle={input}
+                        years={years}
+                        months={months}
+                        days={days}
+                    />
+                </div>
+            )}
         </div>
     );
 }
