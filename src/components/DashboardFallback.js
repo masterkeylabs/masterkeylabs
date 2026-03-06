@@ -22,7 +22,7 @@ export default function DashboardFallback() {
             'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
             'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
             'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
+            'Prefer': 'return=representation,resolution=merge-duplicates'
         };
         const options = {
             method,
