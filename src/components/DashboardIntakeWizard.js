@@ -131,29 +131,44 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Authorization Sequence (RPC) Start ---');
+            console.log('--- Authorization Sequence (Direct) Start ---');
             console.log('Payload:', payload);
             console.log('Active ID (p_active_id):', bizId);
 
-            // Restoring the RPC call for smart initialization (deduplication by email/phone)
-            const { data: rpcRes, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
-                p_payload: payload,
-                p_active_id: bizId
-            });
+            let finalBizId = bizId;
 
-            if (rpcErr) throw rpcErr;
+            // 1. If we don't have an active ID, try to find an existing record by email or phone
+            if (!finalBizId) {
+                const { data: existingBiz, error: findErr } = await supabase
+                    .from('businesses')
+                    .select('id')
+                    .or(`email.eq.${payload.email},phone.eq.${payload.phone}`)
+                    .maybeSingle();
 
-            console.log('Authorization Sequence Finalized (RPC):', rpcRes);
+                if (existingBiz) {
+                    finalBizId = existingBiz.id;
+                    console.log('Existing profile detected:', finalBizId);
+                }
+            }
+
+            // 2. Perform Upsert
+            const { data: upsertData, error: upsertErr } = await supabase
+                .from('businesses')
+                .upsert({
+                    id: finalBizId || undefined,
+                    ...payload,
+                    updated_at: new Date().toISOString()
+                })
+                .select()
+                .single();
+
+            if (upsertErr) throw upsertErr;
 
             if (connectionTimedOut) return;
+            if (!upsertData) throw new Error("Could not finalize business profile record.");
 
-            // Handle potential variations in RPC return format
-            let finalBizId = null;
-            if (Array.isArray(rpcRes) && rpcRes[0]) finalBizId = rpcRes[0].id;
-            else if (rpcRes && rpcRes.id) finalBizId = rpcRes.id;
-            else if (typeof rpcRes === 'string') finalBizId = rpcRes;
-
-            if (!finalBizId) throw new Error("Could not retrieve business profile record.");
+            finalBizId = upsertData.id;
+            console.log('Authorization Sequence Finalized (Direct):', finalBizId);
             setActiveId(finalBizId);
             localStorage.setItem('masterkey_business_id', finalBizId);
 
