@@ -116,16 +116,16 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const [searchIndex, setSearchIndex] = useState(0);
     const inputRef = useRef(null);
     const cardRef = useRef(null);
-    const shareCardRef = useRef(null);
+    const fullTimerRef = useRef(null);
 
     const [previewImg, setPreviewImg] = useState(null);
 
-    // Auto-capture ONLY the result content (not share buttons) after result renders
+    // Auto-capture the full timer widget (header + input + results) after result renders
     useEffect(() => {
         if (!result) return;
         setPreviewImg(null);
         const timer = setTimeout(async () => {
-            const el = shareCardRef.current;
+            const el = fullTimerRef.current;
             if (!el) return;
             try {
                 const html2canvas = (await import('html2canvas')).default;
@@ -139,53 +139,54 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                 setPreviewImg(canvas.toDataURL('image/png'));
             } catch (err) {
                 console.error('Capture failed:', err);
-                // Fallback: mark as failed so buttons still work via text share
                 setPreviewImg('failed');
             }
-        }, 800);
+        }, 900);
         return () => clearTimeout(timer);
     }, [result]);
 
     // Share the captured image via platform
     const shareImage = async (platform) => {
-        if (!previewImg) return;
         const siteUrl = 'https://masterkeylabs.com';
         const shareText = `🚨 My AI Risk Score from MasterkeyOS Extinction Timer → ${siteUrl}`;
         const encodedText = encodeURIComponent(shareText);
         const encodedUrl = encodeURIComponent(siteUrl);
-
-        // Convert dataURL to blob/file
-        const res = await fetch(previewImg);
-        const blob = await res.blob();
-        const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
-
-        // On mobile: try native share sheet (supports Instagram, WhatsApp etc)
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
-                return;
-            } catch (e) { /* user cancelled or unsupported */ }
-        }
-
-        // Desktop fallback: download image + open platform
-        const objUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = objUrl;
-        a.download = 'ai-risk-score.png';
-        a.click();
-        URL.revokeObjectURL(objUrl);
 
         const platformUrls = {
             twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
             linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
             whatsapp: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-            instagram: null, // Instagram has no direct web share URL
+            instagram: `https://www.instagram.com/`,
         };
-        if (platformUrls[platform]) {
-            setTimeout(() => window.open(platformUrls[platform], '_blank'), 700);
+
+        // If image is captured, try native share or auto-download it first
+        if (previewImg && previewImg !== 'failed') {
+            try {
+                const res = await fetch(previewImg);
+                const blob = await res.blob();
+                const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
+
+                // On mobile: try native share sheet (supports Instagram, WhatsApp etc)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
+                        return; // native share handled everything
+                    } catch (e) { /* user cancelled or not supported, fall through */ }
+                }
+
+                // Desktop: auto-download the image so user can attach it when posting
+                const objUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objUrl;
+                a.download = 'ai-risk-score.png';
+                a.click();
+                URL.revokeObjectURL(objUrl);
+            } catch (e) { /* capture failed silently */ }
         }
-        // Instagram: image is downloaded, user opens app manually
+
+        // Always open the platform — with a short delay so the download dialog doesn't block
+        setTimeout(() => window.open(platformUrls[platform], '_blank'), 400);
     };
 
     useEffect(() => {
@@ -270,7 +271,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
         }
       `}</style>
 
-            <div style={{ width: "100%", maxWidth: "460px" }}>
+            <div ref={fullTimerRef} style={{ width: "100%", maxWidth: "460px" }}>
 
                 {/* ─── HEADER ─── */}
                 <div style={{ textAlign: "center", marginBottom: "28px" }}>
@@ -393,8 +394,8 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             animation: "fadeUp 0.5s ease both",
                         }}>
 
-                        {/* Inner div captured as share card — excludes share buttons */}
-                        <div ref={shareCardRef}>
+                        {/* Result card content */}
+                        <div>
                             {/* Threat level badge */}
                             <div style={{ textAlign: "center", marginBottom: "12px" }}>
                                 <span style={{
@@ -493,7 +494,6 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 </div>
                             </div>
 
-                            {/* Close shareCardRef inner div */}
                         </div>
 
                         {/* ─── SOCIAL SHARE (outside capture ref) ─── */}
@@ -542,8 +542,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                     <button
                                         key={p.name}
                                         onClick={() => shareImage(p.key)}
-                                        disabled={!previewImg || previewImg === 'failed'}
-                                        title={p.key === 'instagram' ? 'Image saved — open Instagram app to post' : `Share on ${p.name}`}
+                                        title={p.key === 'instagram' ? 'Opens Instagram — image auto-downloaded if available' : `Share on ${p.name}`}
                                         style={{
                                             display: "flex",
                                             flexDirection: "column",
@@ -557,11 +556,11 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                             borderRadius: "10px",
                                             color: "#fff",
                                             fontWeight: 700,
-                                            cursor: (previewImg && previewImg !== 'failed') ? "pointer" : "not-allowed",
-                                            opacity: (previewImg && previewImg !== 'failed') ? 1 : 0.35,
+                                            cursor: "pointer",
+                                            opacity: 1,
                                             transition: "all 0.2s ease",
                                         }}
-                                        onMouseEnter={e => { if (previewImg && previewImg !== 'failed') { e.currentTarget.style.transform = "translateY(-3px) scale(1.05)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.5)"; } }}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px) scale(1.05)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.5)"; }}
                                         onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0) scale(1)"; e.currentTarget.style.boxShadow = "none"; }}
                                     >
                                         {p.svg}
@@ -570,7 +569,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 ))}
                             </div>
                             <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px" }}>
-                                {previewImg === 'failed' ? 'Share via text • image capture unavailable in this browser' : 'Image auto-saved • Open Instagram app to post'}
+                                {previewImg && previewImg !== 'failed' ? 'Image auto-saved when sharing • tap any platform to post' : 'Click any platform to share your risk score'}
                             </p>
                         </div>
                     </div>
