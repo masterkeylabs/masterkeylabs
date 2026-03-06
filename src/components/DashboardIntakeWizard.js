@@ -131,27 +131,37 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Authorization Sequence (Direct) Start ---');
-            console.log('Payload:', payload);
-            console.log('Active ID (p_active_id):', bizId);
+            console.log('--- Authorization Phase 1: Validating Credentials ---');
+            if (!payload.email) throw new Error("Email registry entry required.");
 
             let finalBizId = bizId;
 
-            // 1. If we don't have an active ID, try to find an existing record by email or phone
+            // 1. Safe Search: Check for existing profile using email or phone
+            // We only search if we don't have an active session ID
             if (!finalBizId) {
+                console.log('Searching for existing profile for:', payload.email);
+
+                // Build a robust query string
+                let orFilter = `email.eq.${payload.email}`;
+                if (payload.phone) orFilter += `,phone.eq.${payload.phone}`;
+
                 const { data: existingBiz, error: findErr } = await supabase
                     .from('businesses')
                     .select('id')
-                    .or(`email.eq.${payload.email},phone.eq.${payload.phone}`)
+                    .or(orFilter)
                     .maybeSingle();
 
-                if (existingBiz) {
+                if (findErr) {
+                    console.error('Search Fault:', findErr);
+                } else if (existingBiz) {
                     finalBizId = existingBiz.id;
-                    console.log('Existing profile detected:', finalBizId);
+                    console.log('Existing target anchored:', finalBizId);
                 }
             }
 
-            // 2. Perform Upsert
+            console.log('--- Authorization Phase 2: Committing to Registry ---', finalBizId || 'NEW_RECORD');
+
+            // 2. Execute Upsert with full payload
             const { data: upsertData, error: upsertErr } = await supabase
                 .from('businesses')
                 .upsert({
@@ -162,13 +172,21 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 .select()
                 .single();
 
-            if (upsertErr) throw upsertErr;
+            if (upsertErr) {
+                console.error('Commit Fault:', upsertErr);
+                throw upsertErr;
+            }
 
-            if (connectionTimedOut) return;
-            if (!upsertData) throw new Error("Could not finalize business profile record.");
+            console.log('--- Authorization Phase 3: Synchronized ---', upsertData?.id);
+
+            if (connectionTimedOut) {
+                console.warn('Network late arrival - already timed out by guard.');
+                return;
+            }
+
+            if (!upsertData) throw new Error("Synchronization established but record returned null.");
 
             finalBizId = upsertData.id;
-            console.log('Authorization Sequence Finalized (Direct):', finalBizId);
             setActiveId(finalBizId);
             localStorage.setItem('masterkey_business_id', finalBizId);
 
