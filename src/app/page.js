@@ -21,13 +21,14 @@ export default function Home() {
     }, []);
 
     const loading = authLoading || isCheckingLocal;
-    const hasSession = user || localId;
 
-    // Improved redirection logic:
-    // 1. If we have a business profile for an authenticated user, use it.
-    // 2. Otherwise if it's a guest session with a local ID, use that.
-    // 3. If authenticated but profile-less, go to dashboard (will hit fallback).
-    // 4. Default to signup if no session at all.
+    // We only consider it a valid session if:
+    // 1. User is logged in AND has a business profile
+    // 2. OR User is a guest with a localId (guest session)
+    // If user is logged in but has NO business profile (wiped DB), we treat them as needing signup/intake.
+    const hasActiveBusiness = business || (localId && !user);
+    const hasSession = !!hasActiveBusiness;
+
     const rawId = business?.id || localId;
     const effectiveId = (rawId && rawId !== 'null') ? rawId : null;
     const dashboardHref = effectiveId ? `/dashboard?id=${effectiveId}` : (user ? '/dashboard' : '/signup');

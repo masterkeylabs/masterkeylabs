@@ -80,13 +80,18 @@ export const AuthProvider = ({ children }) => {
                 .limit(1)
                 .maybeSingle();
 
-            if (error) throw error;
             if (data) {
                 setBusiness(data);
                 localStorage.setItem('masterkey_business_id', data.id);
+            } else {
+                setBusiness(null);
+                // Clear local storage if no business is found for the logged in user
+                localStorage.removeItem('masterkey_business_id');
             }
         } catch (error) {
             console.error('Error fetching business profile:', error.message);
+            setBusiness(null);
+            localStorage.removeItem('masterkey_business_id');
         }
     };
 
