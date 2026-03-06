@@ -15,6 +15,28 @@ export default function DashboardFallback() {
     const { t } = useLanguage();
     const [localId, setLocalId] = useState(null);
 
+    // Raw Fetch Bypass Helper
+    const rawFetch = async (table, method, body = null, query = '') => {
+        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/${table}${query}`;
+        const headers = {
+            'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        };
+        const options = {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : null
+        };
+        const res = await fetch(url, options);
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || 'Network response was not ok');
+        }
+        return await res.json();
+    };
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const id = localStorage.getItem('masterkey_business_id');
@@ -72,39 +94,39 @@ export default function DashboardFallback() {
                             classification: formData.vertical ? `${formData.vertical}::${formData.revenueBracket}` : `dashboard_wizard::v2_rpc`
                         };
 
-                        console.log('--- Google Recovery: Syncing Profile (Direct) ---');
+                        console.log('--- Google Recovery: Syncing Profile (Direct RAW) ---');
                         let newBizId = null;
 
-                        // 1. Check for existing profile by email/phone first
-                        const { data: existingBiz } = await supabase
-                            .from('businesses')
-                            .select('id')
-                            .or(`email.eq.${payload.email},phone.eq.${payload.phone}`)
-                            .maybeSingle();
-
-                        if (existingBiz) {
-                            newBizId = existingBiz.id;
-                            console.log('Existing target found during recovery:', newBizId);
+                        // 1. Check for existing profile by email/phone first (RAW)
+                        const searchByContactResults = await rawFetch('businesses', 'GET', null, `?or=(email.eq.${payload.email},phone.eq.${payload.phone})&select=id`);
+                        if (searchByContactResults && searchByContactResults.length > 0) {
+                            newBizId = searchByContactResults[0].id;
+                            console.log('Existing target found during recovery (RAW):', newBizId);
                         }
 
-                        // 2. Transact profile via direct Upsert
-                        const { data: upsertData, error: upsertErr } = await supabase
-                            .from('businesses')
-                            .upsert({
-                                id: newBizId || undefined,
+                        // 2. Transact profile via direct Upsert (RAW)
+                        let upsertResult;
+                        if (newBizId) {
+                            const patchResults = await rawFetch('businesses', 'PATCH', {
                                 ...payload,
                                 updated_at: new Date().toISOString()
-                            })
-                            .select()
-                            .single();
+                            }, `?id=eq.${newBizId}`);
+                            upsertResult = patchResults[0];
+                        } else {
+                            const postResults = await rawFetch('businesses', 'POST', {
+                                ...payload,
+                                updated_at: new Date().toISOString()
+                            });
+                            upsertResult = postResults[0];
+                        }
 
-                        if (upsertErr) throw upsertErr;
-                        newBizId = upsertData.id;
+                        if (!upsertResult && !newBizId) throw new Error("Upsert failed during recovery.");
+                        newBizId = upsertResult?.id || newBizId;
 
                         if (newBizId) {
                             if (results) {
-                                // Sync audits
-                                await supabase.from('loss_audit_results').insert({
+                                // Sync audits (RAW)
+                                await rawFetch('loss_audit_results', 'POST', {
                                     business_id: newBizId,
                                     staff_salary: 25 * 25000,
                                     marketing_budget: Number(formData.marketingSpend) || 0,
@@ -120,7 +142,7 @@ export default function DashboardFallback() {
                                     coordination_drag: results.coordinationDrag || 0,
                                     total_burn: results.totalSilosLost || 0,
                                     saving_target: results.recoverableSavings || 0,
-                                    calculation_basis: JSON.stringify(results)
+                                    created_at: new Date().toISOString()
                                 });
 
                                 const aiCalc = calculateAIThreat(formData.vertical || 'retail', {
@@ -130,7 +152,7 @@ export default function DashboardFallback() {
                                     employeeCount: 25
                                 });
 
-                                await supabase.from('ai_threat_results').insert({
+                                await rawFetch('ai_threat_results', 'POST', {
                                     business_id: newBizId,
                                     industry: formData.vertical || 'retail',
                                     score: aiCalc.riskPct,
@@ -141,21 +163,20 @@ export default function DashboardFallback() {
                                     is_omnichannel: formData.contactAfter6 || false,
                                     has_crm: false,
                                     has_erp: false,
-                                    employee_count: 25
+                                    employee_count: 25,
+                                    created_at: new Date().toISOString()
                                 });
 
-                                await supabase.from('visibility_results').insert({
+                                await rawFetch('visibility_results', 'POST', {
                                     business_id: newBizId,
                                     missed_customers: results.missedCustomers || 0,
-                                    total_searches: typeof results.missedCustomers === 'number' ? results.missedCustomers * 2 : 0,
-                                    competitor_wins: results.missedCustomers || 0
+                                    created_at: new Date().toISOString()
                                 });
 
-                                await supabase.from('night_loss_results').insert({
+                                await rawFetch('night_loss_results', 'POST', {
                                     business_id: newBizId,
                                     monthly_loss: results.nightLoss || 0,
-                                    hours_unattended: 14,
-                                    unanswered_queries: Math.round((results.nightLoss || 0) / 1000)
+                                    created_at: new Date().toISOString()
                                 });
                             }
 

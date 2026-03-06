@@ -25,6 +25,28 @@ import {
 export default function DashboardIntakeWizard({ business, existingData, t, onComplete, initialStep = 0, mode = 'audit' }) {
     const router = useRouter();
     const searchParams = useSearchParams();
+
+    // Raw Fetch Bypass Helper to prevent browser library deadlocks
+    const rawFetch = async (table, method, body = null, query = '') => {
+        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/${table}${query}`;
+        const headers = {
+            'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        };
+        const options = {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : null
+        };
+        const res = await fetch(url, options);
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || 'Network response was not ok');
+        }
+        return await res.json();
+    };
     const { user } = useAuth();
     const [step, setStep] = useState(initialStep);
     const [activeId, setActiveId] = useState(business?.id || null);
@@ -108,14 +130,12 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
 
-        // Timeout flag to prevent infinite hang on live
-        // Increased to 150s for extreme cases but with better error reporting
         let connectionTimedOut = false;
         const timeoutId = setTimeout(() => {
             connectionTimedOut = true;
             setError("The synchronization request is taking longer than expected (120s+). Your database might be under a lock. Please refresh and try again.");
             setIsSaving(false);
-            console.error('Authorization Timeout: Request exceeded 120 seconds.');
+            console.error('Authorization Timeout: Request exceeded 120 seconds. This is often a browser-side deadlock.');
         }, 120000);
 
         try {
@@ -125,87 +145,69 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 phone: formM0.whatsapp,
                 email: formM0.email,
                 user_id: user?.id || null,
-                classification: `dashboard_wizard::v2_rpc`
+                classification: `dashboard_wizard::v2_raw_bypass`
             };
 
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Auth Flow Log: Step 1 (Started) ---');
+            console.log('--- Auth Flow Log: Step 1 (Started RAW Bypass) ---');
             if (!payload.email) throw new Error("Email registry entry required.");
 
             let finalBizId = bizId;
 
-            // 1. Search for existing profile (Split query for maximum safety)
+            // 1. Search for existing profile (Split query for maximum safety via RAW fetch)
             if (!finalBizId) {
-                console.log('--- Auth Flow Log: Step 2 (Searching Email) ---', payload.email);
-                const { data: byEmail, error: emailErr } = await supabase
-                    .from('businesses')
-                    .select('id')
-                    .eq('email', payload.email)
-                    .maybeSingle();
+                console.log('--- Auth Flow Log: Step 2 (Searching Email RAW) ---', payload.email);
+                const resultsByEmail = await rawFetch('businesses', 'GET', null, `?email=eq.${encodeURIComponent(payload.email)}&select=id`);
 
-                if (emailErr) console.error('Email Search Fault:', emailErr);
-
-                if (byEmail) {
-                    finalBizId = byEmail.id;
-                    console.log('--- Auth Flow Log: Step 3 (Found by Email) ---', finalBizId);
+                if (resultsByEmail && resultsByEmail.length > 0) {
+                    finalBizId = resultsByEmail[0].id;
+                    console.log('--- Auth Flow Log: Step 3 (Found by Email RAW) ---', finalBizId);
                 } else if (payload.phone) {
-                    console.log('--- Auth Flow Log: Step 3b (Searching Phone) ---', payload.phone);
-                    const { data: byPhone, error: phoneErr } = await supabase
-                        .from('businesses')
-                        .select('id')
-                        .eq('phone', payload.phone)
-                        .maybeSingle();
-
-                    if (phoneErr) console.error('Phone Search Fault:', phoneErr);
-
-                    if (byPhone) {
-                        finalBizId = byPhone.id;
-                        console.log('--- Auth Flow Log: Step 4 (Found by Phone) ---', finalBizId);
+                    console.log('--- Auth Flow Log: Step 3b (Searching Phone RAW) ---', payload.phone);
+                    const resultsByPhone = await rawFetch('businesses', 'GET', null, `?phone=eq.${encodeURIComponent(payload.phone)}&select=id`);
+                    if (resultsByPhone && resultsByPhone.length > 0) {
+                        finalBizId = resultsByPhone[0].id;
+                        console.log('--- Auth Flow Log: Step 4 (Found by Phone RAW) ---', finalBizId);
                     }
                 }
             }
 
-            console.log('--- Auth Flow Log: Step 5 (Committing Upsert) ---', finalBizId || 'NEW');
+            console.log('--- Auth Flow Log: Step 5 (Committing Upsert RAW) ---', finalBizId || 'NEW');
 
-            // 2. Perform Upsert
-            const { data: upsertData, error: upsertErr } = await supabase
-                .from('businesses')
-                .upsert({
-                    id: finalBizId || undefined,
+            // 2. Perform Upsert via RAW fetch
+            let upsertResult;
+            if (finalBizId) {
+                // Update existing
+                const results = await rawFetch('businesses', 'PATCH', {
                     ...payload,
                     updated_at: new Date().toISOString()
-                })
-                .select()
-                .single();
-
-            if (upsertErr) {
-                console.error('--- Auth Flow Log: ERROR (Upsert) ---', upsertErr);
-                throw upsertErr;
+                }, `?id=eq.${finalBizId}`);
+                upsertResult = results[0];
+            } else {
+                // Insert new
+                const results = await rawFetch('businesses', 'POST', {
+                    ...payload,
+                    updated_at: new Date().toISOString()
+                });
+                upsertResult = results[0];
             }
 
-            console.log('--- Auth Flow Log: Step 6 (COMPLETE) ---', upsertData?.id);
+            console.log('--- Auth Flow Log: Step 6 (COMPLETE RAW) ---', upsertResult?.id);
 
-            if (connectionTimedOut) {
-                console.warn('Network late arrival - already timed out by guard.');
-                return;
-            }
+            if (connectionTimedOut) return;
+            if (!upsertResult && !finalBizId) throw new Error("Synchronization established but record returned null.");
 
-            if (!upsertData) throw new Error("Synchronization established but record returned null.");
-
-            finalBizId = upsertData.id;
+            finalBizId = upsertResult?.id || finalBizId;
             setActiveId(finalBizId);
             localStorage.setItem('masterkey_business_id', finalBizId);
 
-            // Update URL to persist session on refresh
             const params = new URLSearchParams(searchParams.toString());
             params.set('id', finalBizId);
             router.replace(`/dashboard?${params.toString()}`, { scroll: false });
 
             if (onComplete) onComplete();
-
-            // If in profile mode, we reload to show the dashboard grid
             if (mode === 'profile') {
                 window.location.reload();
             } else {
@@ -271,19 +273,18 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 01 Submit: Upserting results ---', activeId);
-            const { error: saveErr } = await supabase.from('loss_audit_results').upsert(payload, { onConflict: 'business_id' });
-            if (saveErr) throw saveErr;
+            console.log('--- Module 01 Submit: Upserting results RAW ---', activeId);
+            await rawFetch('loss_audit_results', 'POST', payload, `?on_conflict=business_id`);
 
             if (connectionTimedOut) return;
 
-            console.log('--- Module 01 Submit: Updating metadata ---');
-            await supabase.from('businesses').update({
+            console.log('--- Module 01 Submit: Updating metadata RAW ---');
+            await rawFetch('businesses', 'PATCH', {
                 annual_revenue: revenue,
                 employee_count: parseInt(formM1.employeeCount) || 0,
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP
-            }).eq('id', activeId);
+            }, `?id=eq.${activeId}`);
 
             console.log('--- Module 01 Submit: SUCCESS ---');
             setStep(2);
