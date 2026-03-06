@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const SYSTEM_PROMPT = `You are an AI displacement risk analyst. Ground ALL analysis in these landmark studies:
 
@@ -115,6 +116,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const [dots, setDots] = useState(0);
     const [searchIndex, setSearchIndex] = useState(0);
     const inputRef = useRef(null);
+    const router = useRouter();
 
     useEffect(() => {
         if (!loading) return;
@@ -410,49 +412,74 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             paddingLeft: "12px",
                             paddingTop: "8px",
                             paddingBottom: "8px",
-                            marginBottom: guestMode ? "24px" : "0"
+                            marginBottom: "20px"
                         }}>
                             <div style={{ fontSize: "0.63rem", color: "#3A3A3A", lineHeight: 1.5 }}>
                                 📊 {result.researchBasis}
                             </div>
                         </div>
 
-                        {/* Guest CTA Button */}
-                        {guestMode && (
+                        {/* ─── ALWAYS-VISIBLE CTA ─── */}
+                        <div style={{ marginTop: "4px" }}>
+                            <div style={{
+                                textAlign: "center",
+                                fontSize: "0.58rem",
+                                color: cfg.color,
+                                letterSpacing: "2.5px",
+                                fontWeight: 700,
+                                marginBottom: "10px",
+                                animation: "blink 2s ease infinite",
+                            }}>
+                                ⚡ TIME IS RUNNING OUT
+                            </div>
                             <button
-                                onClick={onGetStarted}
+                                onClick={() => router.push('/signup')}
                                 style={{
                                     width: "100%",
-                                    padding: "16px",
-                                    background: "linear-gradient(135deg, #007AFF, #00C4FF)",
+                                    padding: "17px",
+                                    background: `linear-gradient(135deg, ${cfg.color}cc, ${cfg.color})`,
                                     border: "none",
                                     borderRadius: "14px",
-                                    color: "#fff",
+                                    color: result.threatLevel === 'RESILIENT' ? '#000' : '#fff',
                                     fontWeight: 900,
-                                    fontSize: "1rem",
+                                    fontSize: "0.95rem",
                                     letterSpacing: "0.5px",
                                     cursor: "pointer",
                                     transition: "all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
-                                    boxShadow: "0 10px 30px rgba(0,122,255,0.3)",
-                                    marginTop: "10px",
+                                    boxShadow: `0 12px 35px ${cfg.color}44`,
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     gap: "10px",
+                                    position: "relative",
+                                    overflow: "hidden",
                                 }}
                                 onMouseEnter={e => {
-                                    e.target.style.transform = "translateY(-2px) scale(1.02)";
-                                    e.target.style.boxShadow = "0 15px 40px rgba(0,122,255,0.4)";
+                                    e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                                    e.currentTarget.style.boxShadow = `0 18px 45px ${cfg.color}66`;
                                 }}
                                 onMouseLeave={e => {
-                                    e.target.style.transform = "translateY(0) scale(1)";
-                                    e.target.style.boxShadow = "0 10px 30px rgba(0,122,255,0.3)";
+                                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                                    e.currentTarget.style.boxShadow = `0 12px 35px ${cfg.color}44`;
                                 }}
                             >
-                                START FULL BUSINESS AUDIT NOW
-                                <span style={{ fontSize: "1.2rem" }}>→</span>
+                                <div style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+                                    backgroundSize: "50% 100%",
+                                    backgroundRepeat: "no-repeat",
+                                    animation: "scan 2.5s linear infinite",
+                                }} />
+                                <span style={{ position: "relative", zIndex: 1 }}>
+                                    START YOUR FULL BUSINESS AUDIT
+                                </span>
+                                <span style={{ fontSize: "1.3rem", position: "relative", zIndex: 1 }}>→</span>
                             </button>
-                        )}
+                            <p style={{ textAlign: "center", color: "#333", fontSize: "0.65rem", marginTop: "8px", letterSpacing: "0.5px" }}>
+                                Free · No credit card required · Get your full report in minutes
+                            </p>
+                        </div>
                     </div>
                 )}
             </div>
