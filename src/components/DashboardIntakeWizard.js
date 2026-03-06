@@ -8,7 +8,9 @@ import {
     calculateNightLoss,
     calculateVisibility,
     calculateAIThreat,
-    BUSINESS_VERTICALS
+    BUSINESS_VERTICALS,
+    parseNumericalRange,
+    parseHoursRange
 } from '@/lib/calculations';
 import { formatIndian } from '@/utils/formatIndian';
 
@@ -249,13 +251,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
         try {
             console.log('--- Module 01 Submit: Starting Calculation ---');
-            const staff = parseFloat(formM1.staffSalary) || 0;
-            const ops = parseFloat(formM1.opsOverheads) || 0;
-            const marketing = parseFloat(formM1.marketingBudget) || 0;
+            const staff = parseNumericalRange(formM1.staffSalary);
+            const ops = parseNumericalRange(formM1.opsOverheads);
+            const marketing = parseNumericalRange(formM1.marketingBudget);
             const revenue = parseFloat(formM1.annualRevenue) || 0;
+            const hours = parseHoursRange(formM1.manualHours);
 
             const calc = calculateLossAudit(staff, ops, marketing, {
-                manualHoursPerDay: formM1.manualHours,
+                manualHoursPerDay: hours,
                 hasCRM: formM1.hasCRM,
                 hasERP: formM1.hasERP,
                 annualRevenue: revenue
@@ -267,8 +270,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 ops_overheads: ops,
                 marketing_budget: marketing,
                 annual_revenue: revenue,
-                industry: business?.vertical || 'retail',
-                manual_hours: Math.round(parseFloat(formM1.manualHours) || 0),
+                industry: business?.vertical || formM4.industry || 'retail',
+                manual_hours: Math.round(hours),
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP,
                 staff_waste: calc.staffWaste,
@@ -323,14 +326,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
         try {
             console.log('--- Module 02 Submit: Starting RAW ---');
-            const avgValue = parseFloat(formM2.avgTransactionValue) || 0;
+            const dailyLeads = parseNumericalRange(formM2.dailyInquiries);
+            const avgValue = parseNumericalRange(formM2.avgTransactionValue);
             if (avgValue <= 0) throw new Error("Average transaction value is required.");
 
-            const calc = calculateNightLoss(formM2.dailyInquiries, formM2.closingTime, avgValue, formM2.businessType);
+            const calc = calculateNightLoss(dailyLeads, formM2.closingTime, avgValue, formM2.businessType);
 
             const payload = {
                 business_id: activeId,
-                daily_inquiries: formM2.dailyInquiries,
+                daily_inquiries: Math.round(dailyLeads),
                 closing_time: formM2.closingTime,
                 profit_per_sale: avgValue,
                 response_time: formM2.businessType,
@@ -373,7 +377,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         try {
             console.log('--- Module 03 Submit: Starting RAW ---');
             if (!formM3.city) throw new Error("City is required.");
-            const avgVal = parseFloat(formM2.avgTransactionValue) || 0;
+            const avgVal = parseNumericalRange(formM2.avgTransactionValue);
             const calc = calculateVisibility(formM3.signals, formM3.city, avgVal);
 
             const payload = {
@@ -420,38 +424,42 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
         try {
             console.log('--- Module 04 Submit: Starting RAW ---');
-            const industryValue = formM4.industry || business?.vertical;
-            if (!industryValue) throw new Error("Please select an industry sector to finalize.");
-
-            const calc = calculateAIThreat(industryValue, {
+            const empCount = parseNumericalRange(formM1.employeeCount || 25);
+            const calc = calculateAIThreat(formM4.industry, {
                 isOmnichannel: formM4.isOmnichannel,
                 hasCRM: formM1.hasCRM,
                 hasERP: formM1.hasERP,
-                employeeCount: parseInt(formM1.employeeCount) || 25
+                employeeCount: empCount
             });
 
             const payload = {
                 business_id: activeId,
-                industry: industryValue,
-                score: calc.riskPct,
-                threat_level: calc.riskBand,
-                years_left: Math.round(calc.yearsLeft || 0),
-                final_horizon: calc.finalHorizon || 0,
+                score: Math.round(calc.riskPct),
+                years_left: Math.round(calc.yearsLeft),
+                threat_level: calc.threatLevel,
                 timeline_desc: calc.displayLabel,
+                industry: formM4.industry,
                 is_omnichannel: formM4.isOmnichannel,
-                has_crm: formM1.hasCRM,
-                has_erp: formM1.hasERP,
-                employee_count: parseInt(formM1.employeeCount) || 25,
+                employee_count: empCount,
+                features: {
+                    aiAdoptionLevel: formM4.aiAdoptionLevel,
+                    competitorAdoption: formM4.competitorAdoption,
+                    operationalComplexity: formM4.operationalComplexity,
+                },
                 created_at: new Date().toISOString()
             };
 
             console.log('--- Module 04 Submit: Upserting results RAW ---');
             await rawFetch('ai_threat_results', 'POST', payload, `?on_conflict=business_id`);
 
-            if (connectionTimedOut) return;
+            // GLOBAL SYNC: Save industry to businesses table
+            console.log('--- Module 04 Submit: Global Industry Sync RAW ---');
+            await rawFetch('businesses', 'PATCH', {
+                vertical: formM4.industry,
+                employee_count: empCount
+            }, `?id=eq.${activeId}`);
 
-            console.log('--- Module 04 Submit: Finalizing business vertical RAW ---');
-            await rawFetch('businesses', 'PATCH', { vertical: industryValue }, `?id=eq.${activeId}`);
+            if (connectionTimedOut) return;
 
             console.log('--- Module 04 Submit: FULL SEQUENCE COMPLETE RAW ---');
             if (onComplete) onComplete();

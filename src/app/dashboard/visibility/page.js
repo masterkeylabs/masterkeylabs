@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
-import { calculateVisibility, VISIBILITY_SIGNALS, formatINR, formatINRFull } from '@/lib/calculations';
+import { calculateVisibility, VISIBILITY_SIGNALS, formatINR, formatINRFull, parseNumericalRange } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -48,30 +48,35 @@ function VisibilityContent() {
                 .maybeSingle();
 
             if (data) {
-                // Merge saved signals with the full default set to keep all keys present
                 const defaultAnswers = Object.fromEntries(VISIBILITY_SIGNALS.map(s => [s.id, false]));
                 const savedSignals = data.signals || {};
                 setAnswers({ ...defaultAnswers, ...savedSignals });
                 setCity(data.city || '');
                 setCountry(data.country || 'India');
                 setAvgTransactionValue(data.avg_transaction_value ? data.avg_transaction_value.toString() : '');
-                // Recalculate with new formula
+
+                // Recalculate with parsing
+                const avgNum = parseNumericalRange(data.avg_transaction_value);
                 const calc = calculateVisibility(
                     { ...defaultAnswers, ...savedSignals },
                     data.city || '',
-                    parseFloat(data.avg_transaction_value) || 0
+                    avgNum
                 );
                 setResults(calc);
             } else {
-                // 2. If no Visibility results exist, fetch ops_overheads from 1st module (Operational Waste)
+                // 2. Fetch fallback from other modules or business profile
                 const { data: lossData } = await supabase
                     .from('loss_audit_results')
                     .select('ops_overheads')
                     .eq('business_id', businessId)
                     .maybeSingle();
 
-                if (lossData?.ops_overheads !== undefined && lossData?.ops_overheads !== null) {
+                if (lossData?.ops_overheads) {
                     setAvgTransactionValue(lossData.ops_overheads.toString());
+                } else if (businessId) {
+                    // Try business metadata
+                    const { data: biz } = await supabase.from('businesses').select('avg_transaction_value').eq('id', businessId).single();
+                    if (biz?.avg_transaction_value) setAvgTransactionValue(biz.avg_transaction_value.toString());
                 }
             }
         };
@@ -79,7 +84,7 @@ function VisibilityContent() {
     }, [businessId]);
 
     const handleScan = async () => {
-        const avgValue = parseFloat(avgTransactionValue) || 0;
+        const avgValue = parseNumericalRange(avgTransactionValue);
         const calc = calculateVisibility(answers, city, avgValue);
         setResults(calc);
 
@@ -105,7 +110,6 @@ function VisibilityContent() {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             } else {
-                // On success, jump to next audit
                 router.push(`/dashboard/ai-threat?id=${businessId}`);
             }
             setSaving(false);

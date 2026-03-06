@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
-import { calculateLossAudit, formatINR, formatINRFull, BUSINESS_VERTICALS } from '@/lib/calculations';
+import { calculateLossAudit, formatINR, formatINRFull, BUSINESS_VERTICALS, parseNumericalRange, parseHoursRange } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -27,7 +27,7 @@ function LossAuditContent() {
         marketingBudget: '',
         opsOverheads: '',
         annualRevenue: '',
-        industry: 'manufacturing',
+        industry: business?.vertical || 'retail',
         manualHours: 0,
         hasCRM: false,
         hasERP: false,
@@ -39,7 +39,7 @@ function LossAuditContent() {
     useEffect(() => {
         if (!businessId) return;
         const load = async () => {
-            const { data } = await supabase
+            const { data: auditData } = await supabase
                 .from('loss_audit_results')
                 .select('*')
                 .eq('business_id', businessId)
@@ -47,48 +47,58 @@ function LossAuditContent() {
                 .limit(1)
                 .maybeSingle();
 
-            if (data) {
-                const staff = data.staff_salary || 0;
-                const marketing = data.marketing_budget || 0;
-                const ops = data.ops_overheads || 0;
+            // Load business vertical if form.industry is default
+            let currentIndustry = auditData?.industry || business?.vertical || 'retail';
 
+            if (!auditData?.industry && businessId) {
+                const { data: biz } = await supabase.from('businesses').select('vertical').eq('id', businessId).single();
+                if (biz?.vertical) currentIndustry = biz.vertical;
+            }
+
+            if (auditData) {
                 setForm({
-                    staffSalary: staff || '',
-                    marketingBudget: marketing || '',
-                    opsOverheads: ops || '',
-                    annualRevenue: data.annual_revenue || '',
-                    industry: data.industry || 'manufacturing',
-                    manualHours: data.manual_hours || 0,
-                    hasCRM: data.has_crm || false,
-                    hasERP: data.has_erp || false,
+                    staffSalary: auditData.staff_salary || '',
+                    marketingBudget: auditData.marketing_budget || '',
+                    opsOverheads: auditData.ops_overheads || '',
+                    annualRevenue: auditData.annual_revenue || '',
+                    industry: currentIndustry,
+                    manualHours: auditData.manual_hours || 0,
+                    hasCRM: auditData.has_crm || false,
+                    hasERP: auditData.has_erp || false,
                 });
 
-                // If results are stored in the DB, use them. 
-                // Otherwise (or if they are 0), recalculate locally for immediate UI feedback.
-                if (data.total_burn > 0) {
-                    setResults(data);
-                } else if (staff || marketing || ops) {
+                if (auditData.total_burn > 0) {
+                    setResults(auditData);
+                } else {
+                    const staff = parseNumericalRange(auditData.staff_salary);
+                    const marketing = parseNumericalRange(auditData.marketing_budget);
+                    const ops = parseNumericalRange(auditData.ops_overheads);
+                    const hours = parseHoursRange(auditData.manual_hours);
+
                     const calc = calculateLossAudit(staff, ops, marketing, {
-                        manualHoursPerDay: data.manual_hours || 0,
-                        hasCRM: data.has_crm || false,
-                        hasERP: data.has_erp || false,
-                        annualRevenue: data.annual_revenue || 0
+                        manualHoursPerDay: hours,
+                        hasCRM: auditData.has_crm || false,
+                        hasERP: auditData.has_erp || false,
+                        annualRevenue: parseFloat(auditData.annual_revenue) || 0
                     });
                     setResults(calc);
                 }
+            } else {
+                setForm(prev => ({ ...prev, industry: currentIndustry }));
             }
         };
         load();
-    }, [businessId]);
+    }, [businessId, business?.vertical]);
 
     const handleCalculate = async (e) => {
         e.preventDefault();
-        const staff = parseFloat(form.staffSalary) || 0;
-        const ops = parseFloat(form.opsOverheads) || 0;
-        const marketing = parseFloat(form.marketingBudget) || 0;
+        const staff = parseNumericalRange(form.staffSalary);
+        const ops = parseNumericalRange(form.opsOverheads);
+        const marketing = parseNumericalRange(form.marketingBudget);
+        const hours = parseHoursRange(form.manualHours);
 
         const calc = calculateLossAudit(staff, ops, marketing, {
-            manualHoursPerDay: form.manualHours,
+            manualHoursPerDay: hours,
             hasCRM: form.hasCRM,
             hasERP: form.hasERP,
             annualRevenue: parseFloat(form.annualRevenue) || 0
@@ -106,7 +116,7 @@ function LossAuditContent() {
                 ops_overheads: ops,
                 annual_revenue: parseInt(form.annualRevenue) || 0,
                 industry: form.industry,
-                manual_hours: form.manualHours,
+                manual_hours: Math.round(hours),
                 has_crm: form.hasCRM,
                 has_erp: form.hasERP,
                 staff_waste: calc.staffWaste,
@@ -121,11 +131,14 @@ function LossAuditContent() {
             };
 
             const { error: saveErr } = await supabase.from('loss_audit_results').upsert(fullPayload, { onConflict: 'business_id' });
+
+            // Also update global business vertical
+            await supabase.from('businesses').update({ vertical: form.industry }).eq('id', businessId);
+
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
             } else {
-                // On success, jump to next audit
                 router.push(`/dashboard/night-loss?id=${businessId}`);
             }
             setSaving(false);

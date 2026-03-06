@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import FeatureLayout from '@/components/FeatureLayout';
-import { calculateNightLoss, formatINR, formatINRFull } from '@/lib/calculations';
+import { calculateNightLoss, formatINR, formatINRFull, parseNumericalRange } from '@/lib/calculations';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -39,20 +39,24 @@ function NightLossContent() {
                 .eq('business_id', businessId)
                 .order('created_at', { ascending: false })
                 .limit(1)
-                .single();
+                .maybeSingle();
             if (data) {
                 setForm({
                     dailyInquiries: data.daily_inquiries || 0,
                     closingTime: data.closing_time || '6pm',
-                    avgTransactionValue: parseFloat(data.profit_per_sale || data.avg_transaction_value || 0) || '',
+                    avgTransactionValue: data.profit_per_sale || data.avg_transaction_value || '',
                     businessType: data.response_time || data.business_type || 'both',
                 });
-                // Recalculate with new formula for immediate display
-                if (data.profit_per_sale || data.avg_transaction_value) {
+
+                // Recalculate with parsing for accurate display
+                const dailyLeads = parseNumericalRange(data.daily_inquiries);
+                const avgValue = parseNumericalRange(data.profit_per_sale || data.avg_transaction_value);
+
+                if (avgValue > 0) {
                     const calc = calculateNightLoss(
-                        data.daily_inquiries || 0,
+                        dailyLeads,
                         data.closing_time || '6pm',
-                        parseFloat(data.profit_per_sale || data.avg_transaction_value || 0),
+                        avgValue,
                         data.response_time || data.business_type || 'both'
                     );
                     setResults(calc);
@@ -66,24 +70,25 @@ function NightLossContent() {
 
     const handleCalculate = async (e) => {
         e.preventDefault();
-        const avgValue = parseFloat(form.avgTransactionValue) || 0;
+        const dailyLeads = parseNumericalRange(form.dailyInquiries);
+        const avgValue = parseNumericalRange(form.avgTransactionValue);
 
         if (avgValue <= 0) {
             alert('Please enter your average transaction value (₹). This is required to calculate revenue loss.');
             return;
         }
 
-        const calc = calculateNightLoss(form.dailyInquiries, form.closingTime, avgValue, form.businessType);
+        const calc = calculateNightLoss(dailyLeads, form.closingTime, avgValue, form.businessType);
         setResults(calc);
 
         if (businessId) {
             setSaving(true);
             const payload = {
                 business_id: businessId,
-                daily_inquiries: form.dailyInquiries,
+                daily_inquiries: Math.round(dailyLeads),
                 closing_time: form.closingTime,
                 profit_per_sale: avgValue,
-                response_time: form.businessType, // backward compat
+                response_time: form.businessType,
                 monthly_days: 30,
                 night_inquiries: calc.nightInquiries,
                 current_revenue: calc.currentRevenue,
@@ -97,12 +102,10 @@ function NightLossContent() {
             if (saveErr) {
                 console.error('Save Error:', saveErr);
                 alert(`Sync Failed: ${saveErr.message}`);
-                setSaving(false); // Fix: Re-enable button if save fails
             } else {
-                setSaving(false);
-                // On success, jump to next audit
                 router.push(`/dashboard/visibility?id=${businessId}`);
             }
+            setSaving(false);
         }
     };
 
