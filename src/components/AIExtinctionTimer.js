@@ -297,36 +297,77 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
         const trimmed = input.trim();
         if (!trimmed) { inputRef.current?.focus(); return; }
         setLoading(true); setResult(null); setError(""); setPreviewImg(null); setCaptureStatus("idle");
-        try {
-            const res = await fetch("/api/ai-risk", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    systemPrompt: SYSTEM_PROMPT,
-                    prompt: `Analyze this role or business type: "${trimmed}"`,
-                }),
-            });
-            const data = await res.json();
 
-            if (data.error) {
-                const msg = data.error.message || data.error || '';
-                if (typeof msg === 'string' && (msg.includes('API key') || msg.includes('GEMINI_API_KEY'))) {
-                    throw new Error("GEMINI_API_KEY is missing or invalid in .env.local");
+        const MAX_RETRIES = 3;
+        const RETRY_DELAYS = [5000, 10000, 15000];
+
+        const isQuotaErr = (msg) =>
+            typeof msg === 'string' && (
+                msg.toLowerCase().includes('quota') ||
+                msg.toLowerCase().includes('demand') ||
+                msg.toLowerCase().includes('overload') ||
+                msg.toLowerCase().includes('resource') ||
+                msg.toLowerCase().includes('capacity') ||
+                msg.toLowerCase().includes('rate')
+            );
+
+        for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                const res = await fetch("/api/ai-risk", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        systemPrompt: SYSTEM_PROMPT,
+                        prompt: `Analyze this role or business type: "${trimmed}"`,
+                    }),
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                    const msg = data.error.message || data.error || '';
+                    if (typeof msg === 'string' && (msg.includes('API key') || msg.includes('GEMINI_API_KEY'))) {
+                        setError("GEMINI_API_KEY is missing or invalid in .env.local");
+                        break;
+                    }
+                    if (isQuotaErr(msg) && attempt < MAX_RETRIES) {
+                        const secs = Math.ceil(RETRY_DELAYS[attempt] / 1000);
+                        for (let s = secs; s > 0; s--) {
+                            setError(`⏳ High demand — retrying in ${s}s (attempt ${attempt + 1}/${MAX_RETRIES})...`);
+                            await new Promise(r => setTimeout(r, 1000));
+                        }
+                        setError("");
+                        continue;
+                    }
+                    if (isQuotaErr(msg)) {
+                        setError("Our AI engine is under high demand. Please wait a moment and try again.");
+                        break;
+                    }
+                    setError(typeof msg === 'string' ? msg : "Analysis failed — please try again.");
+                    break;
                 }
-                if (typeof msg === 'string' && (msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('demand') || msg.toLowerCase().includes('overload') || msg.toLowerCase().includes('resource'))) {
-                    throw new Error("Our AI engine is temporarily at capacity. Please try again in 30 seconds.");
+
+                const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                setResult(JSON.parse(raw.trim()));
+                setError("");
+                break;
+
+            } catch (err) {
+                if (isQuotaErr(err.message) && attempt < MAX_RETRIES) {
+                    const secs = Math.ceil(RETRY_DELAYS[attempt] / 1000);
+                    for (let s = secs; s > 0; s--) {
+                        setError(`⏳ High demand — retrying in ${s}s (attempt ${attempt + 1}/${MAX_RETRIES})...`);
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                    setError("");
+                    continue;
                 }
-                throw new Error(typeof msg === 'string' ? msg : "Analysis failed — please try again.");
+                console.error(err);
+                setError(err.message || "Analysis failed — please try again.");
+                break;
             }
-
-            const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-            setResult(JSON.parse(raw.trim()));
-        } catch (err) {
-            console.error(err);
-            setError(err.message || "Analysis failed — please try again.");
-        } finally {
-            setLoading(false);
         }
+
+        setLoading(false);
     };
 
     const socialPlatforms = [
