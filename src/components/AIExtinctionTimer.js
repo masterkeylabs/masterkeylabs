@@ -204,7 +204,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                 <div style={{ textAlign: "center", marginBottom: "28px" }}>
                     <div style={{
                         display: "inline-flex", alignItems: "center", gap: "6px",
-                        fontSize: "0.62rem", letterSpacing: "3px", color: "#FF2D2D",
+                        fontSize: "0.62rem", letterSpacing: "3px", color: "#FF6D00",
                         marginBottom: "14px", fontWeight: 700,
                         animation: "blink 2s ease infinite",
                     }}>
@@ -217,9 +217,9 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         letterSpacing: "-0.5px",
                     }}>
                         Will AI Replace<br />
-                        <span style={{ color: "#FF2D2D" }}>Your Business?</span>
+                        <span style={{ color: "#FF6D00" }}>Your Business?</span>
                     </h1>
-                    <p style={{ color: "#3A3A3A", fontSize: "0.83rem", margin: 0, lineHeight: 1.7 }}>
+                    <p style={{ color: "#A0A0A0", fontSize: "0.83rem", margin: 0, lineHeight: 1.7 }}>
                         Enter your job title or business type below.<br />
                         Get your AI extinction timeline in seconds.
                     </p>
@@ -245,8 +245,8 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             marginBottom: "10px",
                         }}
                         onFocus={e => {
-                            e.target.style.border = "1px solid rgba(255,45,45,0.4)";
-                            e.target.style.background = "rgba(255,45,45,0.03)";
+                            e.target.style.border = "1px solid rgba(255,109,0,0.4)";
+                            e.target.style.background = "rgba(255,109,0,0.03)";
                         }}
                         onBlur={e => {
                             e.target.style.border = "1px solid rgba(255,255,255,0.08)";
@@ -263,17 +263,17 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             width: "100%",
                             padding: "15px",
                             background: loading
-                                ? "rgba(255,45,45,0.1)"
-                                : "linear-gradient(135deg, #CC0000, #FF4500)",
-                            border: loading ? "1px solid rgba(255,45,45,0.2)" : "none",
+                                ? "rgba(255,109,0,0.1)"
+                                : "linear-gradient(135deg, #E65100, #FF6D00)",
+                            border: loading ? "1px solid rgba(255,109,0,0.2)" : "none",
                             borderRadius: "14px",
-                            color: loading ? "#FF4500" : "#fff",
+                            color: loading ? "#FF6D00" : "#fff",
                             fontWeight: 800,
                             fontSize: "0.8rem",
                             letterSpacing: loading ? "1px" : "0.3px",
                             cursor: loading ? "not-allowed" : "pointer",
                             transition: "all 0.3s",
-                            boxShadow: loading ? "none" : "0 6px 30px rgba(204,0,0,0.35)",
+                            boxShadow: loading ? "none" : "0 6px 30px rgba(255,109,0,0.35)",
                         }}
                         onMouseEnter={e => { if (!loading) e.target.style.transform = "translateY(-1px)"; }}
                         onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
@@ -282,7 +282,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             <div style={{
                                 position: "absolute",
                                 top: 0, left: 0, width: "100%", height: "100%",
-                                background: "linear-gradient(90deg, transparent, rgba(255,45,45,0.2), transparent)",
+                                background: "linear-gradient(90deg, transparent, rgba(255,109,0,0.2), transparent)",
                                 backgroundSize: "50% 100%",
                                 backgroundRepeat: "no-repeat",
                                 animation: "scan 1.5s linear infinite"
@@ -305,7 +305,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                 </div>
 
                 {error && (
-                    <p style={{ textAlign: "center", color: "#FF4444", fontSize: "0.8rem", marginTop: "8px" }}>{error}</p>
+                    <p style={{ textAlign: "center", color: "#FF6D00", fontSize: "0.8rem", marginTop: "8px" }}>{error}</p>
                 )}
 
                 {/* ─── RESULTS ─── */}
@@ -358,7 +358,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             <div style={{
                                 textAlign: "center",
                                 fontSize: "0.6rem",
-                                color: "#444",
+                                color: "#A0A0A0",
                                 letterSpacing: "3px",
                                 marginBottom: "12px",
                             }}>
@@ -374,15 +374,15 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         {/* Two-col breakdown */}
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "18px" }}>
                             <div style={{
-                                background: "rgba(255,45,45,0.04)",
-                                border: "1px solid rgba(255,45,45,0.1)",
+                                background: "rgba(255,109,0,0.04)",
+                                border: "1px solid rgba(255,109,0,0.12)",
                                 borderRadius: "12px", padding: "14px",
                             }}>
-                                <div style={{ fontSize: "0.58rem", color: "#FF4444", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
+                                <div style={{ fontSize: "0.58rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
                                     🤖 AI WILL HANDLE
                                 </div>
                                 {result.topThreats.map((t, i) => (
-                                    <div key={i} style={{ fontSize: "0.75rem", color: "#777", marginBottom: "5px", lineHeight: 1.4 }}>
+                                    <div key={i} style={{ fontSize: "0.75rem", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
                                         ✗ {t}
                                     </div>
                                 ))}
@@ -396,7 +396,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                     🧠 YOUR EDGE
                                 </div>
                                 {result.humanEdge.map((s, i) => (
-                                    <div key={i} style={{ fontSize: "0.75rem", color: "#777", marginBottom: "5px", lineHeight: 1.4 }}>
+                                    <div key={i} style={{ fontSize: "0.75rem", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
                                         ✓ {s}
                                     </div>
                                 ))}
@@ -412,7 +412,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             paddingBottom: "8px",
                             marginBottom: "8px"
                         }}>
-                            <div style={{ fontSize: "0.63rem", color: "#3A3A3A", lineHeight: 1.5 }}>
+                            <div style={{ fontSize: "0.63rem", color: "#A0A0A0", lineHeight: 1.5 }}>
                                 📊 {result.researchBasis}
                             </div>
                         </div>
