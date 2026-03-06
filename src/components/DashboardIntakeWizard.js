@@ -227,7 +227,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         e.preventDefault();
         setIsSaving(true);
         setError(null);
+
+        let connectionTimedOut = false;
+        const timeoutId = setTimeout(() => {
+            connectionTimedOut = true;
+            setError("The synchronization request is taking longer than expected (120s+). Your database might be under a lock. Please refresh and try again.");
+            setIsSaving(false);
+            console.error('Module 01 Sync Timeout: Request exceeded 120 seconds.');
+        }, 120000);
+
         try {
+            console.log('--- Module 01 Submit: Starting Calculation ---');
             const staff = parseFloat(formM1.staffSalary) || 0;
             const ops = parseFloat(formM1.opsOverheads) || 0;
             const marketing = parseFloat(formM1.marketingBudget) || 0;
@@ -246,11 +256,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 ops_overheads: ops,
                 marketing_budget: marketing,
                 annual_revenue: revenue,
-                industry: business?.vertical || 'retail', // Use existing or default, logic moved to M4
+                industry: business?.vertical || 'retail',
                 manual_hours: Math.round(parseFloat(formM1.manualHours) || 0),
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP,
-                // Mapped from calc
                 staff_waste: calc.staffWaste,
                 marketing_waste: calc.marketingWaste,
                 ops_waste: calc.opsWaste,
@@ -262,10 +271,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
+            console.log('--- Module 01 Submit: Upserting results ---', activeId);
             const { error: saveErr } = await supabase.from('loss_audit_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
 
-            // Update businesses table with newly collected metadata
+            if (connectionTimedOut) return;
+
+            console.log('--- Module 01 Submit: Updating metadata ---');
             await supabase.from('businesses').update({
                 annual_revenue: revenue,
                 employee_count: parseInt(formM1.employeeCount) || 0,
@@ -273,10 +285,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 has_erp: formM1.hasERP
             }).eq('id', activeId);
 
+            console.log('--- Module 01 Submit: SUCCESS ---');
             setStep(2);
         } catch (err) {
-            setError(err.message);
+            if (!connectionTimedOut) {
+                setError(err.message);
+                console.error('Module 01 Fault:', err);
+            }
         } finally {
+            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -286,7 +303,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         e.preventDefault();
         setIsSaving(true);
         setError(null);
+
+        let connectionTimedOut = false;
+        const timeoutId = setTimeout(() => {
+            connectionTimedOut = true;
+            setError("Request timeout. Please refresh.");
+            setIsSaving(false);
+        }, 120000);
+
         try {
+            console.log('--- Module 02 Submit: Starting ---');
             const avgValue = parseFloat(formM2.avgTransactionValue) || 0;
             if (avgValue <= 0) throw new Error("Average transaction value is required.");
 
@@ -307,12 +333,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
+            console.log('--- Module 02 Submit: Upserting results ---');
             const { error: saveErr } = await supabase.from('night_loss_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
+
+            if (connectionTimedOut) return;
+            console.log('--- Module 02 Submit: SUCCESS ---');
             setStep(3);
         } catch (err) {
-            setError(err.message);
+            if (!connectionTimedOut) setError(err.message);
         } finally {
+            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -322,18 +353,25 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         e.preventDefault();
         setIsSaving(true);
         setError(null);
+
+        let connectionTimedOut = false;
+        const timeoutId = setTimeout(() => {
+            connectionTimedOut = true;
+            setError("Request timeout. Please refresh.");
+            setIsSaving(false);
+        }, 120000);
+
         try {
+            console.log('--- Module 03 Submit: Starting ---');
             if (!formM3.city) throw new Error("City is required.");
             const avgVal = parseFloat(formM2.avgTransactionValue) || 0;
             const calc = calculateVisibility(formM3.signals, formM3.city, avgVal);
-
-            const activeSignalsArray = Object.keys(formM3.signals).filter(k => formM3.signals[k]);
 
             const payload = {
                 business_id: activeId,
                 city: formM3.city.toLowerCase(),
                 country: 'India',
-                signals: formM3.signals, // This is already an object { hasGoogleMyBusiness: true... }
+                signals: formM3.signals,
                 avg_transaction_value: avgVal,
                 percent: calc.percent,
                 status: calc.status,
@@ -344,12 +382,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
+            console.log('--- Module 03 Submit: Upserting results ---');
             const { error: saveErr } = await supabase.from('visibility_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
+
+            if (connectionTimedOut) return;
+            console.log('--- Module 03 Submit: SUCCESS ---');
             setStep(4);
         } catch (err) {
-            setError(err.message);
+            if (!connectionTimedOut) setError(err.message);
         } finally {
+            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -359,7 +402,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         e.preventDefault();
         setIsSaving(true);
         setError(null);
+
+        let connectionTimedOut = false;
+        const timeoutId = setTimeout(() => {
+            connectionTimedOut = true;
+            setError("Request timeout. Please refresh.");
+            setIsSaving(false);
+        }, 120000);
+
         try {
+            console.log('--- Module 04 Submit: Starting ---');
             const industryValue = formM4.industry || business?.vertical;
             if (!industryValue) throw new Error("Please select an industry sector to finalize.");
 
@@ -385,20 +437,24 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
+            console.log('--- Module 04 Submit: Upserting results ---');
             const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
 
-            // Save vertical back to businesses table
+            if (connectionTimedOut) return;
+
+            console.log('--- Module 04 Submit: Finalizing business vertical ---');
             await supabase.from('businesses').update({
                 vertical: industryValue
             }).eq('id', activeId);
 
-            // All done! Force a full page reload to clear any hydration artifacts and load fresh data
+            console.log('--- Module 04 Submit: FULL SEQUENCE COMPLETE ---');
             if (onComplete) onComplete();
             window.location.reload();
         } catch (err) {
-            setError(err.message);
+            if (!connectionTimedOut) setError(err.message);
         } finally {
+            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
