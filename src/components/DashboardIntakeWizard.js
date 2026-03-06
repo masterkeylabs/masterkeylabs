@@ -131,29 +131,29 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Authorization Sequence (Direct Upsert) Start ---');
+            console.log('--- Authorization Sequence (RPC) Start ---');
             console.log('Payload:', payload);
             console.log('Active ID (p_active_id):', bizId);
 
-            // BYPASSING RPC: Using direct upsert for reliability as RPC is currently hanging for some users
-            const { data: upsertResult, error: upsertErr } = await supabase
-                .from('businesses')
-                .upsert({
-                    id: bizId || undefined,
-                    ...payload,
-                    updated_at: new Date().toISOString()
-                })
-                .select()
-                .single();
+            // Restoring the RPC call for smart initialization (deduplication by email/phone)
+            const { data: rpcRes, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
+                p_payload: payload,
+                p_active_id: bizId
+            });
 
-            if (upsertErr) throw upsertErr;
+            if (rpcErr) throw rpcErr;
 
-            console.log('Authorization Sequence Finalized (Direct):', upsertResult);
+            console.log('Authorization Sequence Finalized (RPC):', rpcRes);
 
             if (connectionTimedOut) return;
-            if (!upsertResult) throw new Error("Could not save business profile record.");
 
-            const finalBizId = upsertResult.id;
+            // Handle potential variations in RPC return format
+            let finalBizId = null;
+            if (Array.isArray(rpcRes) && rpcRes[0]) finalBizId = rpcRes[0].id;
+            else if (rpcRes && rpcRes.id) finalBizId = rpcRes.id;
+            else if (typeof rpcRes === 'string') finalBizId = rpcRes;
+
+            if (!finalBizId) throw new Error("Could not retrieve business profile record.");
             setActiveId(finalBizId);
             localStorage.setItem('masterkey_business_id', finalBizId);
 

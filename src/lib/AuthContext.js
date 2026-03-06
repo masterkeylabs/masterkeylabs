@@ -85,8 +85,10 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('masterkey_business_id', data.id);
             } else {
                 setBusiness(null);
-                // Clear local storage if no business is found for the logged in user
+                // Hard reset of all business-related local storage if no DB record found
                 localStorage.removeItem('masterkey_business_id');
+                localStorage.removeItem('masterkey_user_name');
+                localStorage.removeItem('masterkey_user_phone');
             }
         } catch (error) {
             console.error('Error fetching business profile:', error.message);
