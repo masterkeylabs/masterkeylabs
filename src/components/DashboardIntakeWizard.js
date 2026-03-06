@@ -22,7 +22,7 @@ import {
     TXN_VALUE_OPTIONS
 } from './RangeSelector';
 
-export default function DashboardIntakeWizard({ business, existingData, t, onComplete, initialStep = 0 }) {
+export default function DashboardIntakeWizard({ business, existingData, t, onComplete, initialStep = 0, mode = 'audit' }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user } = useAuth();
@@ -36,28 +36,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setMounted(true);
     }, []);
 
-    // Initial state setup based on any existing data
+    // Initial state setup based on mode
     useEffect(() => {
-        if (!existingData || initialStep !== 0) return;
-
-        let calculatedStep = 0;
-        // Step 0: Ensure we have basic business info if they reached this component. If entity_name exists, skip.
-        if (!business?.entity_name || business.entity_name === 'Initialize System' || !business.vertical) {
-            calculatedStep = 0;
-        } else if (!existingData || (!existingData.lossAudit?.created_at && !existingData.nightLoss?.created_at && !existingData.missedCustomers?.created_at && !existingData.aiThreat?.created_at)) {
-            calculatedStep = 1;
+        if (mode === 'profile') {
+            setStep(0);
+        } else if (mode === 'audit' && step === 0) {
+            setStep(1); // Start at audit step
         }
-        else if (!existingData.lossAudit?.created_at) calculatedStep = 1;
-        else if (!existingData.nightLoss?.created_at) calculatedStep = 2;
-        else if (!existingData.missedCustomers?.created_at) calculatedStep = 3;
-        else if (!existingData.aiThreat?.created_at) calculatedStep = 4;
-        else calculatedStep = 5; // All complete
-
-        // Only jump forward, don't force them back if they happen to open it manually
-        if (calculatedStep > step && calculatedStep <= 4) {
-            setStep(calculatedStep);
-        }
-    }, [existingData, business, initialStep]);
+    }, [mode]);
 
     // --- FORM STATES ---
     const [formM0, setFormM0] = useState({
@@ -71,8 +57,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         marketingBudget: existingData?.lossAudit?.marketing_budget || '',
         opsOverheads: existingData?.lossAudit?.ops_overheads || '',
         manualHours: existingData?.lossAudit?.manual_hours || 3,
-        // Moved from M0 to relevant operational step:
-        industry: business?.vertical || 'retail',
+        // Industry/Vertical removed from Step 1:
         annualRevenue: business?.annual_revenue || '',
         employeeCount: business?.employee_count || '',
         hasCRM: business?.has_crm || false,
@@ -100,6 +85,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     });
 
     const [formM4, setFormM4] = useState({
+        industry: business?.vertical || 'retail', // Moved here
         aiAdoptionLevel: existingData?.aiThreat?.features?.aiAdoptionLevel || 'none',
         competitorAdoption: existingData?.aiThreat?.features?.competitorAdoption || 'low',
         operationalComplexity: existingData?.aiThreat?.features?.operationalComplexity || 'medium',
@@ -175,10 +161,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             params.set('id', finalBizId);
             router.replace(`/dashboard?${params.toString()}`, { scroll: false });
 
-            clearTimeout(timeoutId);
-            // Sync forward or complete Step 0
             if (onComplete) onComplete();
-            setStep(1);
+
+            // If in profile mode, we reload to show the dashboard grid
+            if (mode === 'profile') {
+                window.location.reload();
+            } else {
+                setStep(1);
+            }
         } catch (err) {
             if (!connectionTimedOut) {
                 setError(err.message || "An unexpected error occurred during authorization.");
@@ -214,7 +204,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 ops_overheads: ops,
                 marketing_budget: marketing,
                 annual_revenue: revenue,
-                industry: formM1.industry,
+                industry: business?.vertical || 'retail', // Use existing or default, logic moved to M4
                 manual_hours: Math.round(parseFloat(formM1.manualHours) || 0),
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP,
@@ -235,7 +225,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             // Update businesses table with newly collected metadata
             await supabase.from('businesses').update({
-                vertical: formM1.industry,
                 annual_revenue: revenue,
                 employee_count: parseInt(formM1.employeeCount) || 0,
                 has_crm: formM1.hasCRM,
@@ -329,8 +318,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
         try {
-            const industryValue = formM1.industry;
-            if (!industryValue) throw new Error("Please select an industry sector in Step 1");
+            const industryValue = formM4.industry || business?.vertical;
+            if (!industryValue) throw new Error("Please select an industry sector to finalize.");
 
             const calc = calculateAIThreat(industryValue, {
                 isOmnichannel: formM4.isOmnichannel,
@@ -356,6 +345,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
             if (saveErr) throw saveErr;
+
+            // Save vertical back to businesses table
+            await supabase.from('businesses').update({
+                vertical: industryValue
+            }).eq('id', activeId);
 
             // All done! Force a full page reload to clear any hydration artifacts and load fresh data
             if (onComplete) onComplete();
@@ -387,14 +381,22 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 {/* Header Sequence */}
                 <div className="px-6 py-6 md:px-10 md:py-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] shrink-0">
                     <div className="space-y-1">
-                        <p className="text-[10px] uppercase font-black tracking-[0.4em] text-ios-cyan/60">Initialization Sequence: Step {step + 1} of 5</p>
-                        <h2 className="text-2xl font-black text-white uppercase tracking-tight">{STEP_TITLES[step]}</h2>
+                        <p className="text-[10px] uppercase font-black tracking-[0.4em] text-ios-cyan/60">
+                            {mode === 'profile' ? 'Profile Setup' : `Audit Sequence: Step ${step} of 4`}
+                        </p>
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tight">
+                            {mode === 'profile' ? 'Initialize Business' : STEP_TITLES[step]}
+                        </h2>
                     </div>
                     {/* Progress Bar Mini */}
                     <div className="flex gap-1.5 bg-white/5 p-1 rounded-full px-3 border border-white/5">
-                        {[0, 1, 2, 3, 4].map(i => (
-                            <div key={i} className={`w-3 h-3 rounded-full transition-all duration-700 ${step >= i ? 'bg-ios-cyan scale-110 shadow-[0_0_12px_rgba(0,210,255,0.8)]' : 'bg-white/10'}`}></div>
-                        ))}
+                        {mode === 'profile' ? (
+                            <div className="w-3 h-3 rounded-full bg-ios-cyan scale-110 shadow-[0_0_12px_rgba(0,210,255,0.8)]"></div>
+                        ) : (
+                            [1, 2, 3, 4].map(i => (
+                                <div key={i} className={`w-3 h-3 rounded-full transition-all duration-700 ${step >= i ? 'bg-ios-cyan scale-110 shadow-[0_0_12px_rgba(0,210,255,0.8)]' : 'bg-white/10'}`}></div>
+                            ))
+                        )}
                     </div>
                 </div>
 
@@ -540,22 +542,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 {(!business?.employee_count || !business?.has_crm || !business?.vertical || !business?.annual_revenue) && (
                                     <div className="space-y-8 pt-4 border-t border-white/5">
                                         <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold">Business & Operational Context</h3>
-
-                                        {!business?.vertical && (
-                                            <div className="space-y-3 col-span-2">
-                                                <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Industry Sector</label>
-                                                <select
-                                                    required
-                                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
-                                                    value={formM1.industry}
-                                                    onChange={e => setFormM1({ ...formM1, industry: e.target.value })}
-                                                >
-                                                    {BUSINESS_VERTICALS.map(v => (
-                                                        <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        )}
 
                                         {!business?.annual_revenue && (
                                             <RangeSelector
@@ -769,6 +755,26 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
+                                {!business?.vertical && (
+                                    <div className="space-y-3 col-span-2 border-b border-white/5 pb-8 mb-2">
+                                        <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 mb-4">
+                                            <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
+                                            Industry Sector Orientation
+                                        </label>
+                                        <select
+                                            required
+                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
+                                            value={formM4.industry}
+                                            onChange={e => setFormM4({ ...formM4, industry: e.target.value })}
+                                        >
+                                            {BUSINESS_VERTICALS.map(v => (
+                                                <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
+                                            ))}
+                                        </select>
+                                        <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">Critical for AI risk benchmark calibration.</p>
+                                    </div>
+                                )}
+
                                 <div className="space-y-3">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>

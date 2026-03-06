@@ -459,14 +459,6 @@ export default function IntakeWizard({ t }) {
                                 </div>
                                 <div className="space-y-4">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] text-white/30 uppercase tracking-widest font-bold ml-1">{wizardT.step1.vertical}</label>
-                                        <select className="ios-input w-full" name="vertical" value={formData.vertical} onChange={handleChange}>
-                                            {BUSINESS_VERTICALS.map(v => (
-                                                <option key={v.value} value={v.value} className="bg-[#020617]">{t?.verticals?.[v.value] || v.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-1">
                                         <label className="text-[10px] text-white/30 uppercase tracking-widest font-bold ml-1">{wizardT.step1.revenue}</label>
                                         <select className="ios-input w-full" name="revenueBracket" value={formData.revenueBracket} onChange={handleChange}>
                                             <option value="0-5L" className="bg-[#020617]">₹0 - ₹5 Lakh</option>
@@ -508,12 +500,20 @@ export default function IntakeWizard({ t }) {
                                     <div className="flex gap-1"><div className="w-8 h-1 bg-ios-blue rounded-full"></div><div className="w-8 h-1 bg-ios-blue rounded-full"></div><div className="w-8 h-1 bg-ios-blue rounded-full"></div></div>
                                 </div>
                                 <div className="space-y-4">
+                                    <div className="space-y-1">
+                                        <label className="text-[10px] text-white/30 uppercase tracking-widest font-bold ml-1">{wizardT.step1.vertical}</label>
+                                        <select className="ios-input w-full" name="vertical" value={formData.vertical} onChange={handleChange}>
+                                            {BUSINESS_VERTICALS.map(v => (
+                                                <option key={v.value} value={v.value} className="bg-[#020617]">{t?.verticals?.[v.value] || v.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] text-white/50 uppercase tracking-widest font-bold ml-1">{wizardT.step3.inquiry}</label>
                                         <div className="grid grid-cols-1 gap-2">
-                                            <button onClick={() => setFormData({ ...formData, contactAfter6: 'ignored' })} className={`py-4 px-4 rounded-xl text-left border text-sm font-semibold transition-all ${formData.contactAfter6 === 'ignored' ? 'bg-ios-blue/10 border-ios-blue text-ios-blue' : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}>{wizardT.step3.options.ignored}</button>
-                                            <button onClick={() => setFormData({ ...formData, contactAfter6: 'manual' })} className={`py-4 px-4 rounded-xl text-left border text-sm font-semibold transition-all ${formData.contactAfter6 === 'manual' ? 'bg-ios-blue/10 border-ios-blue text-ios-blue' : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}>{wizardT.step3.options.manual}</button>
-                                            <button onClick={() => setFormData({ ...formData, contactAfter6: 'ai' })} className={`py-4 px-4 rounded-xl text-left border text-sm font-semibold transition-all ${formData.contactAfter6 === 'ai' ? 'bg-ios-blue/10 border-ios-blue text-ios-blue' : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}>{wizardT.step3.options.ai}</button>
+                                            <button type="button" onClick={() => setFormData({ ...formData, contactAfter6: 'ignored' })} className={`py-4 px-4 rounded-xl text-left border text-sm font-semibold transition-all ${formData.contactAfter6 === 'ignored' ? 'bg-ios-blue/10 border-ios-blue text-ios-blue' : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}>{wizardT.step3.options.ignored}</button>
+                                            <button type="button" onClick={() => setFormData({ ...formData, contactAfter6: 'manual' })} className={`py-4 px-4 rounded-xl text-left border text-sm font-semibold transition-all ${formData.contactAfter6 === 'manual' ? 'bg-ios-blue/10 border-ios-blue text-ios-blue' : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}>{wizardT.step3.options.manual}</button>
+                                            <button type="button" onClick={() => setFormData({ ...formData, contactAfter6: 'ai' })} className={`py-4 px-4 rounded-xl text-left border text-sm font-semibold transition-all ${formData.contactAfter6 === 'ai' ? 'bg-ios-blue/10 border-ios-blue text-ios-blue' : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10'}`}>{wizardT.step3.options.ai}</button>
                                         </div>
                                     </div>
                                 </div>
