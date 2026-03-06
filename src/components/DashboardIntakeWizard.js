@@ -322,7 +322,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         }, 120000);
 
         try {
-            console.log('--- Module 02 Submit: Starting ---');
+            console.log('--- Module 02 Submit: Starting RAW ---');
             const avgValue = parseFloat(formM2.avgTransactionValue) || 0;
             if (avgValue <= 0) throw new Error("Average transaction value is required.");
 
@@ -343,12 +343,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 02 Submit: Upserting results ---');
-            const { error: saveErr } = await supabase.from('night_loss_results').upsert(payload, { onConflict: 'business_id' });
-            if (saveErr) throw saveErr;
+            console.log('--- Module 02 Submit: Upserting results RAW ---');
+            await rawFetch('night_loss_results', 'POST', payload, `?on_conflict=business_id`);
 
             if (connectionTimedOut) return;
-            console.log('--- Module 02 Submit: SUCCESS ---');
+            console.log('--- Module 02 Submit: SUCCESS RAW ---');
             setStep(3);
         } catch (err) {
             if (!connectionTimedOut) setError(err.message);
@@ -372,7 +371,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         }, 120000);
 
         try {
-            console.log('--- Module 03 Submit: Starting ---');
+            console.log('--- Module 03 Submit: Starting RAW ---');
             if (!formM3.city) throw new Error("City is required.");
             const avgVal = parseFloat(formM2.avgTransactionValue) || 0;
             const calc = calculateVisibility(formM3.signals, formM3.city, avgVal);
@@ -392,12 +391,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 03 Submit: Upserting results ---');
-            const { error: saveErr } = await supabase.from('visibility_results').upsert(payload, { onConflict: 'business_id' });
-            if (saveErr) throw saveErr;
+            console.log('--- Module 03 Submit: Upserting results RAW ---');
+            await rawFetch('visibility_results', 'POST', payload, `?on_conflict=business_id`);
 
             if (connectionTimedOut) return;
-            console.log('--- Module 03 Submit: SUCCESS ---');
+            console.log('--- Module 03 Submit: SUCCESS RAW ---');
             setStep(4);
         } catch (err) {
             if (!connectionTimedOut) setError(err.message);
@@ -421,7 +419,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         }, 120000);
 
         try {
-            console.log('--- Module 04 Submit: Starting ---');
+            console.log('--- Module 04 Submit: Starting RAW ---');
             const industryValue = formM4.industry || business?.vertical;
             if (!industryValue) throw new Error("Please select an industry sector to finalize.");
 
@@ -447,18 +445,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 04 Submit: Upserting results ---');
-            const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
-            if (saveErr) throw saveErr;
+            console.log('--- Module 04 Submit: Upserting results RAW ---');
+            await rawFetch('ai_threat_results', 'POST', payload, `?on_conflict=business_id`);
 
             if (connectionTimedOut) return;
 
-            console.log('--- Module 04 Submit: Finalizing business vertical ---');
-            await supabase.from('businesses').update({
-                vertical: industryValue
-            }).eq('id', activeId);
+            console.log('--- Module 04 Submit: Finalizing business vertical RAW ---');
+            await rawFetch('businesses', 'PATCH', { vertical: industryValue }, `?id=eq.${activeId}`);
 
-            console.log('--- Module 04 Submit: FULL SEQUENCE COMPLETE ---');
+            console.log('--- Module 04 Submit: FULL SEQUENCE COMPLETE RAW ---');
             if (onComplete) onComplete();
             window.location.reload();
         } catch (err) {
