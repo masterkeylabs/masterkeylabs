@@ -410,12 +410,114 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             paddingLeft: "12px",
                             paddingTop: "8px",
                             paddingBottom: "8px",
-                            marginBottom: "8px"
+                            marginBottom: "16px"
                         }}>
                             <div style={{ fontSize: "0.63rem", color: "#A0A0A0", lineHeight: 1.5 }}>
                                 📊 {result.researchBasis}
                             </div>
                         </div>
+
+                        {/* ─── SOCIAL SHARE ─── */}
+                        {(() => {
+                            const siteUrl = "https://masterkeylabs.com";
+                            const yearsLeft = `${Math.floor(result.yearsRemaining)}y ${Math.floor((result.yearsRemaining % 1) * 12)}m`;
+                            const shareText = `🚨 AI Risk Alert: My business has ${yearsLeft} before AI disruption hits — rated "${result.threatLevel}" by the MasterkeyOS AI Extinction Timer.\n\n"${result.verdict.slice(0, 90)}..."\n\nCheck yours 👇`;
+                            const encodedText = encodeURIComponent(shareText);
+                            const encodedUrl = encodeURIComponent(siteUrl);
+
+                            const platforms = [
+                                {
+                                    name: "X",
+                                    icon: "𝕏",
+                                    color: "#fff",
+                                    bg: "#000",
+                                    border: "rgba(255,255,255,0.15)",
+                                    url: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+                                },
+                                {
+                                    name: "LinkedIn",
+                                    icon: "in",
+                                    color: "#fff",
+                                    bg: "#0A66C2",
+                                    border: "#0A66C2",
+                                    url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}`,
+                                },
+                                {
+                                    name: "WhatsApp",
+                                    icon: "💬",
+                                    color: "#fff",
+                                    bg: "#25D366",
+                                    border: "#25D366",
+                                    url: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
+                                },
+                                {
+                                    name: "Facebook",
+                                    icon: "f",
+                                    color: "#fff",
+                                    bg: "#1877F2",
+                                    border: "#1877F2",
+                                    url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
+                                },
+                            ];
+
+                            return (
+                                <div style={{ marginTop: "4px" }}>
+                                    <div style={{
+                                        textAlign: "center",
+                                        fontSize: "0.58rem",
+                                        color: "#666",
+                                        letterSpacing: "2px",
+                                        fontWeight: 700,
+                                        marginBottom: "10px",
+                                        textTransform: "uppercase",
+                                    }}>
+                                        ⚡ Share Your Risk Score
+                                    </div>
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+                                        {platforms.map(p => (
+                                            <a
+                                                key={p.name}
+                                                href={p.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title={`Share on ${p.name}`}
+                                                style={{
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    gap: "5px",
+                                                    padding: "10px 6px",
+                                                    background: p.bg,
+                                                    border: `1px solid ${p.border}`,
+                                                    borderRadius: "12px",
+                                                    color: p.color,
+                                                    fontSize: "0.9rem",
+                                                    fontWeight: 900,
+                                                    textDecoration: "none",
+                                                    transition: "all 0.2s ease",
+                                                    cursor: "pointer",
+                                                }}
+                                                onMouseEnter={e => {
+                                                    e.currentTarget.style.transform = "translateY(-3px)";
+                                                    e.currentTarget.style.boxShadow = `0 8px 20px ${p.bg}66`;
+                                                }}
+                                                onMouseLeave={e => {
+                                                    e.currentTarget.style.transform = "translateY(0)";
+                                                    e.currentTarget.style.boxShadow = "none";
+                                                }}
+                                            >
+                                                <span style={{ fontSize: "1rem", lineHeight: 1 }}>{p.icon}</span>
+                                                <span style={{ fontSize: "0.52rem", letterSpacing: "0.5px", opacity: 0.85, fontWeight: 700 }}>{p.name}</span>
+                                            </a>
+                                        ))}
+                                    </div>
+                                    <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px", letterSpacing: "0.3px" }}>
+                                        Dare your network to check their risk score
+                                    </p>
+                                </div>
+                            );
+                        })()}
                     </div>
                 )}
             </div>
