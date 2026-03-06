@@ -90,7 +90,15 @@ export default function Home() {
             <main className="relative z-10">
                 <section className="container mx-auto px-6 py-4 lg:py-8 flex flex-col items-center">
 
-                    {/* Hook & Copy - restored previous content */}
+                    {/* AI Extinction Timer — shown first, above the hook */}
+                    <div className="mb-10 w-full max-w-4xl mx-auto px-4 animate-fade-in opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                        <AIExtinctionTimer
+                            guestMode={!user}
+                            onGetStarted={() => window.location.href = dashboardHref}
+                        />
+                    </div>
+
+                    {/* Hook & Copy */}
                     <div className="flex flex-col items-center gap-4 max-w-4xl text-center mb-10">
                         <p className="text-white/40 text-[10px] sm:text-xs uppercase tracking-[0.2em] font-medium mb-2">
                             &quot;{t.tagline}&quot;
@@ -106,24 +114,20 @@ export default function Home() {
                             {t.hero.sub}
                         </p>
 
-                    </div>
-
-                    {/* AI Extinction Timer Section — above CTA */}
-                    <div className="mt-10 mb-8 w-full max-w-4xl mx-auto px-4 animate-fade-in opacity-0" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-                        <AIExtinctionTimer
-                            guestMode={!user}
-                            onGetStarted={() => window.location.href = dashboardHref}
-                        />
-                    </div>
-
-                    <div className="mt-20 text-center max-w-xl">
-                        <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed">
-                            {t.cta.main} <br />
-                            <span className="text-ios-blue/60 mt-1 block tracking-tight font-bold group">
-                                {t.cta.sub}
-                                <span className="inline-block ml-1 transition-transform group-hover:translate-x-1">→</span>
-                            </span>
-                        </p>
+                        {/* CTA below the hook */}
+                        <div className="mt-6 flex flex-col items-center gap-3 w-full max-w-sm">
+                            <Link
+                                href="/signup"
+                                className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.2em] text-white transition-all duration-300 shadow-[0_12px_35px_rgba(255,45,45,0.35)] hover:shadow-[0_18px_45px_rgba(255,45,45,0.55)] hover:-translate-y-0.5"
+                                style={{ background: 'linear-gradient(135deg, #CC0000, #FF4500)' }}
+                            >
+                                Start Your Full Business Audit
+                                <span className="text-lg">→</span>
+                            </Link>
+                            <p className="text-white/20 text-[11px] tracking-wide">
+                                Free &middot; No credit card required &middot; Get your full report in minutes
+                            </p>
+                        </div>
                     </div>
                 </section>
 
