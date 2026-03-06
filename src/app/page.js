@@ -31,7 +31,9 @@ export default function Home() {
 
     const rawId = business?.id || localId;
     const effectiveId = (rawId && rawId !== 'null') ? rawId : null;
-    const dashboardHref = effectiveId ? `/dashboard?id=${effectiveId}` : (user ? '/dashboard' : '/signup');
+
+    // STRICT FLOW: If logged in, go to dashboard. If guest, ALWAYS go to signup.
+    const dashboardHref = user ? (effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard') : '/signup';
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
@@ -112,25 +114,6 @@ export default function Home() {
                             guestMode={!user}
                             onGetStarted={() => window.location.href = dashboardHref}
                         />
-                    </div>
-
-                    {/* CTA Section */}
-                    <div className="flex flex-col items-center gap-6 mt-4">
-                        <Link
-                            href={dashboardHref}
-                            className="ios-button-primary px-10 py-5 text-lg font-black tracking-tight glow-blue flex items-center gap-3 active:scale-[0.98] transition-all"
-                        >
-                            <span className="material-symbols-outlined">rocket_launch</span>
-                            {t?.hero?.cta || "GET STARTED"}
-                        </Link>
-
-                        <div className="flex -space-x-2 items-center mt-4">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="w-8 h-8 rounded-full border-2 border-background-dark bg-ios-gray-dark flex items-center justify-center text-[8px] font-bold text-white/40 shadow-xl">MK</div>
-                            ))}
-                            <div className="w-8 h-8 rounded-full border-2 border-background-dark bg-ios-blue/10 flex items-center justify-center text-[10px] font-bold text-ios-blue font-mono shadow-xl">+1k</div>
-                            <span className="ml-4 text-[10px] text-white/30 uppercase tracking-widest font-black">Trusted by 1,000+ businesses</span>
-                        </div>
                     </div>
 
                     <div className="mt-20 text-center max-w-xl">
