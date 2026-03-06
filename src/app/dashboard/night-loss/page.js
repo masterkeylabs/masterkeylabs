@@ -44,16 +44,16 @@ function NightLossContent() {
                 setForm({
                     dailyInquiries: data.daily_inquiries || 0,
                     closingTime: data.closing_time || '6pm',
-                    avgTransactionValue: data.profit_per_sale || data.avg_transaction_value || '',
-                    businessType: data.business_type || 'both',
+                    avgTransactionValue: parseFloat(data.profit_per_sale || data.avg_transaction_value || 0) || '',
+                    businessType: data.response_time || data.business_type || 'both',
                 });
                 // Recalculate with new formula for immediate display
                 if (data.profit_per_sale || data.avg_transaction_value) {
                     const calc = calculateNightLoss(
                         data.daily_inquiries || 0,
                         data.closing_time || '6pm',
-                        data.profit_per_sale || data.avg_transaction_value || 0,
-                        data.business_type || 'both'
+                        parseFloat(data.profit_per_sale || data.avg_transaction_value || 0),
+                        data.response_time || data.business_type || 'both'
                     );
                     setResults(calc);
                 } else {

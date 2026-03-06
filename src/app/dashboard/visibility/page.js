@@ -54,12 +54,12 @@ function VisibilityContent() {
                 setAnswers({ ...defaultAnswers, ...savedSignals });
                 setCity(data.city || '');
                 setCountry(data.country || 'India');
-                setAvgTransactionValue(data.avg_transaction_value || '');
+                setAvgTransactionValue(data.avg_transaction_value ? data.avg_transaction_value.toString() : '');
                 // Recalculate with new formula
                 const calc = calculateVisibility(
                     { ...defaultAnswers, ...savedSignals },
                     data.city || '',
-                    data.avg_transaction_value || 0
+                    parseFloat(data.avg_transaction_value) || 0
                 );
                 setResults(calc);
             } else {

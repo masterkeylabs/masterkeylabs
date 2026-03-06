@@ -455,7 +455,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             console.log('--- Module 04 Submit: FULL SEQUENCE COMPLETE RAW ---');
             if (onComplete) onComplete();
-            window.location.reload();
+            // window.location.reload(); // Removed: Handled by DashboardGrid unlocking sequence
         } catch (err) {
             if (!connectionTimedOut) setError(err.message);
         } finally {

@@ -55,13 +55,13 @@ function AIThreatContent() {
                     isOmnichannel: aiData.is_omnichannel || false,
                     hasCRM: aiData.has_crm || false,
                     hasERP: aiData.has_erp || false,
-                    employeeCount: aiData.employee_count || 0,
+                    employeeCount: aiData.employee_count || 5,
                 });
                 const calc = calculateAIThreat(aiData.industry || 'retail', {
                     isOmnichannel: aiData.is_omnichannel || false,
                     hasCRM: aiData.has_crm || false,
                     hasERP: aiData.has_erp || false,
-                    employeeCount: aiData.employee_count || 0,
+                    employeeCount: aiData.employee_count || 5,
                 });
                 setResults(calc);
             } else {
