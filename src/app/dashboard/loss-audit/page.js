@@ -15,6 +15,15 @@ import {
 
 import { Suspense } from 'react';
 
+const SEARCH_STEPS = [
+    "INITIALIZING OPERATIONAL SCAN...",
+    "ANALYZING EXPENSE STRUCTURE...",
+    "DETECTING WORKFLOW GAPS...",
+    "CALCULATING COORDINATION DRAG...",
+    "MAPPING REVENUE LEAKS...",
+    "FINALIZING LOSS AUDIT..."
+];
+
 function LossAuditContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
@@ -34,6 +43,7 @@ function LossAuditContent() {
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [searchIndex, setSearchIndex] = useState(0);
 
     // Load existing results
     useEffect(() => {
@@ -89,6 +99,15 @@ function LossAuditContent() {
         };
         load();
     }, [businessId, business?.vertical]);
+
+    useEffect(() => {
+        if (!saving) return;
+        setSearchIndex(0);
+        const s = setInterval(() => {
+            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+        }, 800);
+        return () => clearInterval(s);
+    }, [saving]);
 
     const handleCalculate = async (e) => {
         e.preventDefault();
@@ -248,11 +267,31 @@ function LossAuditContent() {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="w-full bg-ios-blue hover:bg-ios-blue/80 text-white font-bold py-4 md:py-5 rounded-2xl uppercase tracking-tight md:tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,132,255,0.2)] mt-8"
+                            className="w-full relative overflow-hidden bg-ios-blue hover:bg-ios-blue/80 text-white font-bold py-4 md:py-5 rounded-2xl uppercase tracking-tight md:tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,132,255,0.2)] mt-8"
                         >
-                            <span className="material-symbols-outlined text-sm md:text-base">analytics</span>
-                            {saving ? t.lossAudit.syncingText : t.lossAudit.btnText}
+                            {saving && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%] animate-scan" style={{ animation: 'scan 1.5s linear infinite' }} />
+                            )}
+                            <span className="relative z-10 flex items-center gap-3">
+                                {saving ? (
+                                    <>
+                                        <span className="animate-spin text-sm">⌛</span>
+                                        {SEARCH_STEPS[searchIndex]}
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined text-sm md:text-base">analytics</span>
+                                        {t.lossAudit.btnText}
+                                    </>
+                                )}
+                            </span>
                         </button>
+                        <style jsx>{`
+                            @keyframes scan {
+                                0% { background-position: -100% 0; }
+                                100% { background-position: 200% 0; }
+                            }
+                        `}</style>
                     </form>
                 </div>
 

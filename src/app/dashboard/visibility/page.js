@@ -19,6 +19,15 @@ const STATUS_COLORS = {
 
 import { Suspense } from 'react';
 
+const SEARCH_STEPS = [
+    "CRAWLING SEARCH ENGINES...",
+    "MAPPING COMPETITOR FOOTPRINT...",
+    "DETECTING VISIBILITY GAPS...",
+    "ANALYZING MARKET SIGNALS...",
+    "QUANTIFYING MISSED OPPORTUNITY...",
+    "FINALIZING MARKET SCAN..."
+];
+
 function VisibilityContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
@@ -34,6 +43,7 @@ function VisibilityContent() {
     const [avgTransactionValue, setAvgTransactionValue] = useState('');
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [searchIndex, setSearchIndex] = useState(0);
 
     useEffect(() => {
         if (!businessId) return;
@@ -82,6 +92,15 @@ function VisibilityContent() {
         };
         load();
     }, [businessId]);
+
+    useEffect(() => {
+        if (!saving) return;
+        setSearchIndex(0);
+        const s = setInterval(() => {
+            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+        }, 800);
+        return () => clearInterval(s);
+    }, [saving]);
 
     const handleScan = async () => {
         const avgValue = parseNumericalRange(avgTransactionValue);
@@ -223,11 +242,31 @@ function VisibilityContent() {
                     <button
                         onClick={handleScan}
                         disabled={saving}
-                        className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3.5 md:py-4 rounded-lg uppercase tracking-tight md:tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+                        className="w-full relative overflow-hidden bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3.5 md:py-4 rounded-lg uppercase tracking-tight md:tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.3)]"
                     >
-                        <span className="material-symbols-outlined text-sm md:text-base">radar</span>
-                        {saving ? t.visibility.scanningText : t.visibility.btnText}
+                        {saving && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-transparent bg-[length:200%_100%] animate-scan" style={{ animation: 'scan 1.5s linear infinite' }} />
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                            {saving ? (
+                                <>
+                                    <span className="animate-spin text-sm">⌛</span>
+                                    {SEARCH_STEPS[searchIndex]}
+                                </>
+                            ) : (
+                                <>
+                                    <span className="material-symbols-outlined text-sm md:text-base">radar</span>
+                                    {t.visibility.btnText}
+                                </>
+                            )}
+                        </span>
                     </button>
+                    <style jsx>{`
+                        @keyframes scan {
+                            0% { background-position: -100% 0; }
+                            100% { background-position: 200% 0; }
+                        }
+                    `}</style>
                 </div>
 
                 {/* Results */}

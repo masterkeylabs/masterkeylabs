@@ -31,6 +31,16 @@ TASK: Given a job title or business type, return ONLY valid JSON (no markdown, n
   "researchBasis": <one specific stat from the studies above relevant to this role>
 }`;
 
+const SEARCH_STEPS = [
+    "INITIALIZING NEURAL ENGINE...",
+    "SCANNING DISPLACEMENT DATABASES...",
+    "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
+    "CALCULATING AUTOMATION HORIZON...",
+    "ESTIMATING SURVIVAL METRICS...",
+    "DECRYPTING EXTINCTION TIMELINE...",
+    "FINALIZING RISK PROFILE..."
+];
+
 const THREAT_CONFIG = {
     CRITICAL: { color: "#FF2D2D", glow: "rgba(255,45,45,0.2)", label: "CRITICAL RISK", emoji: "🔴" },
     HIGH: { color: "#FF6B00", glow: "rgba(255,107,0,0.2)", label: "HIGH RISK", emoji: "🟠" },
@@ -103,12 +113,17 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const [dots, setDots] = useState(0);
+    const [searchIndex, setSearchIndex] = useState(0);
     const inputRef = useRef(null);
 
     useEffect(() => {
         if (!loading) return;
+        setSearchIndex(0);
         const t = setInterval(() => setDots(d => (d + 1) % 4), 350);
-        return () => clearInterval(t);
+        const s = setInterval(() => {
+            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+        }, 800);
+        return () => { clearInterval(t); clearInterval(s); };
     }, [loading]);
 
     const analyze = async () => {
@@ -177,6 +192,10 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
         }
+        @keyframes scan {
+          0% { background-position: -100% 0; }
+          100% { background-position: 200% 0; }
+        }
       `}</style>
 
             <div style={{ width: "100%", maxWidth: "460px" }}>
@@ -239,28 +258,49 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         onClick={analyze}
                         disabled={loading}
                         style={{
+                            position: "relative",
+                            overflow: "hidden",
                             width: "100%",
                             padding: "15px",
                             background: loading
-                                ? "rgba(255,45,45,0.15)"
+                                ? "rgba(255,45,45,0.1)"
                                 : "linear-gradient(135deg, #CC0000, #FF4500)",
                             border: loading ? "1px solid rgba(255,45,45,0.2)" : "none",
                             borderRadius: "14px",
-                            color: loading ? "#666" : "#fff",
+                            color: loading ? "#FF4500" : "#fff",
                             fontWeight: 800,
-                            fontSize: "0.9rem",
-                            letterSpacing: "0.3px",
+                            fontSize: "0.8rem",
+                            letterSpacing: loading ? "1px" : "0.3px",
                             cursor: loading ? "not-allowed" : "pointer",
-                            transition: "all 0.2s",
+                            transition: "all 0.3s",
                             boxShadow: loading ? "none" : "0 6px 30px rgba(204,0,0,0.35)",
                         }}
                         onMouseEnter={e => { if (!loading) e.target.style.transform = "translateY(-1px)"; }}
                         onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
                     >
-                        {loading
-                            ? `Analyzing your risk${".".repeat(dots)}`
-                            : "Calculate My AI Risk →"
-                        }
+                        {loading && (
+                            <div style={{
+                                position: "absolute",
+                                top: 0, left: 0, width: "100%", height: "100%",
+                                background: "linear-gradient(90deg, transparent, rgba(255,45,45,0.2), transparent)",
+                                backgroundSize: "50% 100%",
+                                backgroundRepeat: "no-repeat",
+                                animation: "scan 1.5s linear infinite"
+                            }} />
+                        )}
+                        <span style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                            {loading ? (
+                                <>
+                                    <span style={{ fontSize: "12px", border: "1px solid currentColor", borderRadius: "50%", padding: "2px", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", animation: "spin 1s linear infinite" }}>
+                                        <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+                                        ⌛
+                                    </span>
+                                    {SEARCH_STEPS[searchIndex]}
+                                </>
+                            ) : (
+                                "Calculate My AI Risk →"
+                            )}
+                        </span>
                     </button>
                 </div>
 

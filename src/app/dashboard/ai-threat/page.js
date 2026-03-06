@@ -19,6 +19,16 @@ const DISPLAY_COLORS = {
 
 // EMPLOYEE_RANGES removed in favor of shared EMPLOYEE_OPTIONS
 
+const SEARCH_STEPS = [
+    "INITIALIZING NEURAL ENGINE...",
+    "SCANNING DISPLACEMENT DATABASES...",
+    "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
+    "CALCULATING AUTOMATION HORIZON...",
+    "ESTIMATING SURVIVAL METRICS...",
+    "DECRYPTING EXTINCTION TIMELINE...",
+    "FINALIZING RISK PROFILE..."
+];
+
 function AIThreatContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
@@ -35,6 +45,7 @@ function AIThreatContent() {
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [searchIndex, setSearchIndex] = useState(0);
 
     // Load existing results or pre-populate
     useEffect(() => {
@@ -79,6 +90,15 @@ function AIThreatContent() {
         };
         load();
     }, [businessId, business?.vertical]);
+
+    useEffect(() => {
+        if (!saving) return;
+        setSearchIndex(0);
+        const s = setInterval(() => {
+            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+        }, 800);
+        return () => clearInterval(s);
+    }, [saving]);
 
     const handleCalculate = async (e) => {
         e.preventDefault();
@@ -194,11 +214,31 @@ function AIThreatContent() {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="w-full bg-ios-blue hover:bg-ios-blue/80 text-white font-bold py-4 md:py-5 rounded-2xl uppercase tracking-tight md:tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,132,255,0.2)] mt-4"
+                            className="w-full relative overflow-hidden bg-ios-blue hover:bg-ios-blue/80 text-white font-bold py-4 md:py-5 rounded-2xl uppercase tracking-tight md:tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,132,255,0.2)] mt-4"
                         >
-                            <span className="material-symbols-outlined text-sm md:text-base">radar</span>
-                            {saving ? t.visibility.scanningText : t.aiThreat.btnText}
+                            {saving && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%] animate-scan" style={{ animation: 'scan 1.5s linear infinite' }} />
+                            )}
+                            <span className="relative z-10 flex items-center gap-3">
+                                {saving ? (
+                                    <>
+                                        <span className="animate-spin">⌛</span>
+                                        {SEARCH_STEPS[searchIndex]}
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined text-sm md:text-base">radar</span>
+                                        {t.aiThreat.btnText}
+                                    </>
+                                )}
+                            </span>
                         </button>
+                        <style jsx>{`
+                            @keyframes scan {
+                                0% { background-position: -100% 0; }
+                                100% { background-position: 200% 0; }
+                            }
+                        `}</style>
                     </form>
                 </div>
 

@@ -14,6 +14,15 @@ import {
 
 import { Suspense } from 'react';
 
+const SEARCH_STEPS = [
+    "MONITORING AFTER-HOURS TRAFFIC...",
+    "TRACING CONNECTION DECAY...",
+    "QUANTIFYING SLEEP-MODE WASTE...",
+    "ANALYZING MISSED CONVERSIONS...",
+    "CALCULATING NIGHTLY REVENUE LEAK...",
+    "FINALIZING NIGHT LOSS DATA..."
+];
+
 function NightLossContent() {
     const { business } = useAuth();
     const { lang, t } = useLanguage();
@@ -29,6 +38,7 @@ function NightLossContent() {
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [searchIndex, setSearchIndex] = useState(0);
 
     useEffect(() => {
         if (!businessId) return;
@@ -67,6 +77,15 @@ function NightLossContent() {
         };
         load();
     }, [businessId]);
+
+    useEffect(() => {
+        if (!saving) return;
+        setSearchIndex(0);
+        const s = setInterval(() => {
+            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+        }, 800);
+        return () => clearInterval(s);
+    }, [saving]);
 
     const handleCalculate = async (e) => {
         e.preventDefault();
@@ -191,12 +210,33 @@ function NightLossContent() {
 
                         </div>
                         <button
-                            type="submit" disabled={saving}
-                            className="w-full bg-orange-500 hover:bg-orange-400 text-white font-bold py-3.5 md:py-4 rounded-lg uppercase tracking-tight md:tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+                            type="submit"
+                            disabled={saving}
+                            className="w-full relative overflow-hidden bg-orange-500 hover:bg-orange-400 text-white font-bold py-3.5 md:py-4 rounded-lg uppercase tracking-tight md:tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
                         >
-                            <span className="material-symbols-outlined text-sm md:text-base">calculate</span>
-                            {saving ? t.nightLoss.savingText : t.nightLoss.btnText}
+                            {saving && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%] animate-scan" style={{ animation: 'scan 1.5s linear infinite' }} />
+                            )}
+                            <span className="relative z-10 flex items-center gap-3">
+                                {saving ? (
+                                    <>
+                                        <span className="animate-spin text-sm">⌛</span>
+                                        {SEARCH_STEPS[searchIndex]}
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="material-symbols-outlined text-sm md:text-base">calculate</span>
+                                        {t.nightLoss.btnText}
+                                    </>
+                                )}
+                            </span>
                         </button>
+                        <style jsx>{`
+                            @keyframes scan {
+                                0% { background-position: -100% 0; }
+                                100% { background-position: 200% 0; }
+                            }
+                        `}</style>
                     </form>
                 </div>
 
