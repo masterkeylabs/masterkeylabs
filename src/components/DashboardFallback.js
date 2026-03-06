@@ -72,17 +72,34 @@ export default function DashboardFallback() {
                             classification: formData.vertical ? `${formData.vertical}::${formData.revenueBracket}` : `dashboard_wizard::v2_rpc`
                         };
 
-                        const { data: newBizRes, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
-                            p_payload: payload,
-                            p_active_id: null
-                        });
-
-                        if (rpcErr) throw rpcErr;
-
+                        console.log('--- Google Recovery: Syncing Profile (Direct) ---');
                         let newBizId = null;
-                        if (Array.isArray(newBizRes) && newBizRes[0]) newBizId = newBizRes[0].id;
-                        else if (newBizRes && newBizRes.id) newBizId = newBizRes.id;
-                        else if (typeof newBizRes === 'string') newBizId = newBizRes;
+
+                        // 1. Check for existing profile by email/phone first
+                        const { data: existingBiz } = await supabase
+                            .from('businesses')
+                            .select('id')
+                            .or(`email.eq.${payload.email},phone.eq.${payload.phone}`)
+                            .maybeSingle();
+
+                        if (existingBiz) {
+                            newBizId = existingBiz.id;
+                            console.log('Existing target found during recovery:', newBizId);
+                        }
+
+                        // 2. Transact profile via direct Upsert
+                        const { data: upsertData, error: upsertErr } = await supabase
+                            .from('businesses')
+                            .upsert({
+                                id: newBizId || undefined,
+                                ...payload,
+                                updated_at: new Date().toISOString()
+                            })
+                            .select()
+                            .single();
+
+                        if (upsertErr) throw upsertErr;
+                        newBizId = upsertData.id;
 
                         if (newBizId) {
                             if (results) {
