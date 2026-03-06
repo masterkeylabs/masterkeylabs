@@ -174,7 +174,7 @@ function AIThreatContent() {
                                 ].map(factor => (
                                     <button key={factor.key} type="button"
                                         onClick={() => setForm({ ...form, [factor.key]: !form[factor.key] })}
-                                        className={`w - full flex items - center justify - between p - 4 rounded - xl border transition - all ${form[factor.key] ? 'bg-ios-blue/10 border-ios-blue/50' : 'bg-white/5 border-white/10 opacity-60'} `}
+                                        className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${form[factor.key] ? 'bg-ios-blue/10 border-ios-blue/50' : 'bg-white/5 border-white/10 opacity-60'}`}
                                     >
                                         <div className="text-left">
                                             <p className="text-sm font-bold text-white uppercase tracking-tight">{t.aiThreat.factors[factor.key].label}</p>
@@ -182,7 +182,7 @@ function AIThreatContent() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className="text-[9px] text-ios-blue/60 font-bold">{t.aiThreat.factors[factor.key].bonus}</span>
-                                            <span className={`material - symbols - outlined text - 2xl ${form[factor.key] ? 'text-ios-blue' : 'text-white/20'} `}>
+                                            <span className={`material-symbols-outlined text-2xl ${form[factor.key] ? 'text-ios-blue' : 'text-white/20'}`}>
                                                 {form[factor.key] ? 'check_circle' : 'radio_button_unchecked'}
                                             </span>
                                         </div>
@@ -207,25 +207,25 @@ function AIThreatContent() {
                     {results ? (
                         <>
                             {/* Risk Score */}
-                            <div className={`bg - black border - 2 ${colorStyle.border} rounded - 2xl p - 6 md: p - 10 text - center shadow - 2xl`}>
+                            <div className={`bg-black border-2 ${colorStyle.border} rounded-2xl p-6 md:p-10 text-center shadow-2xl`}>
                                 <p className="text-white/50 text-xs uppercase tracking-[0.3em] mb-4">{t.aiThreat.threatLevel}</p>
-                                <p className={`text - 5xl md: text - 7xl font - black tracking - tighter ${colorStyle.text} `}>
+                                <p className={`text-5xl md:text-7xl font-black tracking-tighter ${colorStyle.text}`}>
                                     {results.riskPct}<span className="text-xl md:text-2xl text-white/20">%</span>
                                 </p>
-                                <p className={`text - sm font - bold uppercase tracking - [0.2em] mt - 3 ${colorStyle.text} `}>
+                                <p className={`text-sm font-bold uppercase tracking-[0.2em] mt-3 ${colorStyle.text}`}>
                                     {t.common.statuses[results.riskLevel] || results.riskBand}
                                 </p>
                             </div>
 
                             {/* Time Horizon */}
-                            <div className={`${colorStyle.bg} border ${colorStyle.border} rounded - 2xl p - 6 md: p - 8 text - center`}>
+                            <div className={`${colorStyle.bg} border ${colorStyle.border} rounded-2xl p-6 md:p-8 text-center`}>
                                 <p className="text-white/50 text-xs uppercase tracking-[0.2em] mb-3">{t.aiThreat.ttlHeadline}</p>
                                 <p className="text-4xl md:text-5xl font-black text-white tracking-tight">
                                     {results.finalHorizon} <span className="text-lg text-white/30">{t.aiThreat.months.toLowerCase()}</span>
                                 </p>
                                 <p className="text-white/40 text-xs mt-1">({results.yearsLeft} years)</p>
-                                <div className={`inline - block px - 4 py - 2 rounded - full mt - 4 ${colorStyle.bg} border ${colorStyle.border} `}>
-                                    <p className={`text - [10px] md: text - xs font - bold uppercase tracking - widest ${colorStyle.text} `}>
+                                <div className={`inline-block px-4 py-2 rounded-full mt-4 ${colorStyle.bg} border ${colorStyle.border}`}>
+                                    <p className={`text-[10px] md:text-xs font-bold uppercase tracking-widest ${colorStyle.text}`}>
                                         {t.aiThreat.statusLabels[results.displayColor]}
                                     </p>
                                 </div>
@@ -241,13 +241,15 @@ function AIThreatContent() {
                                     </div>
                                     <div className="flex justify-between py-2 px-3 bg-white/5 rounded-lg">
                                         <span className="text-white/60">{t.aiThreat.modifiers}</span>
-                                        <span className={`font - bold ${results.modifier >= 0 ? 'text-neon-green' : 'text-alert-red'} `}>
+                                        <span className={`font-bold ${results.modifier >= 0 ? 'text-neon-green' : 'text-alert-red'}`}>
                                             {results.modifier >= 0 ? '+' : ''}{results.modifier} mo
                                         </span>
                                     </div>
                                     <div className="flex justify-between py-2 px-3 bg-white/5 rounded-lg border border-white/10">
                                         <span className="text-white font-bold">{t.aiThreat.ttlHeadline}</span>
-                                        <span className={`font - black ${colorStyle.text} `}>{results.finalHorizon} {t.aiThreat.months.toLowerCase()}</span>
+                                        <span className={`font-black ${colorStyle.text}`}>
+                                            {results.finalHorizon} {t.aiThreat.months.toLowerCase()}
+                                        </span>
                                     </div>
                                 </div>
                                 <p className="text-[9px] text-white/25 mt-4 leading-relaxed italic">{t.aiThreat.source}</p>
