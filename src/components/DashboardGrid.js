@@ -31,6 +31,24 @@ export default function DashboardGrid({ business, computedData }) {
     const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
 
+    // DIAGNOSTIC LOGS
+    useEffect(() => {
+        console.log('--- DashboardGrid State ---');
+        console.log('Business ID:', business?.id);
+        console.log('Entity Name:', business?.entity_name);
+        console.log('Profile Incomplete:', profileIncomplete);
+        if (profileIncomplete) {
+            console.log('Reasons for Incomplete Profile:', {
+                noId: !business?.id,
+                noName: !business?.entity_name,
+                noOwner: !business?.owner_name,
+                noPhone: !business?.phone,
+                noEmail: !business?.email,
+                isDefaultName: business?.entity_name === 'Initialize System'
+            });
+        }
+    }, [business, profileIncomplete]);
+
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden flex">
             <Sidebar t={t} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

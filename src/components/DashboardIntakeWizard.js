@@ -194,7 +194,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 upsertResult = results[0];
             }
 
-            console.log('--- Auth Flow Log: Step 6 (COMPLETE RAW) ---', upsertResult?.id);
+            console.log('--- Auth Flow Log: Step 6 (COMPLETE RAW) ---', {
+                returnedId: upsertResult?.id,
+                fallbackId: finalBizId,
+                foundResult: !!upsertResult
+            });
 
             if (connectionTimedOut) return;
             if (!upsertResult && !finalBizId) throw new Error("Synchronization established but record returned null.");
@@ -208,8 +212,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             router.replace(`/dashboard?${params.toString()}`, { scroll: false });
 
             if (onComplete) onComplete();
+
+            // If in profile mode, we wait a moment for DB commitment before reload
             if (mode === 'profile') {
-                window.location.reload();
+                console.log('--- Auth Flow Log: Step 7 (Settle & Reload) ---');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000); // 1 second settle time
             } else {
                 setStep(1);
             }

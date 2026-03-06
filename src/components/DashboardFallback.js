@@ -47,12 +47,14 @@ export default function DashboardFallback() {
     useEffect(() => {
         if (loading) return;
 
-        // Prioritize the business object from AuthContext (Server Truth)
-        // Fallback to localId only if we are absolutely sure about it
         const id = business?.id || localId;
+        console.log('--- DashboardFallback Tracing ---', {
+            source: business?.id ? 'AuthContext' : 'LocalStorage',
+            id,
+            urlId: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null
+        });
 
         if (id && id !== 'null' && id !== 'undefined' && id !== '') {
-            // Check if we are already on the dashboard with this ID
             const currentUrlId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null;
             if (currentUrlId !== id) {
                 console.log('--- Terminal Handshake: Redirecting to verified session ---', id);
