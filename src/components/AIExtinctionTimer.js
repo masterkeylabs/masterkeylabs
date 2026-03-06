@@ -117,51 +117,72 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const inputRef = useRef(null);
     const cardRef = useRef(null);
 
-    // Capture result card as image and share or download
-    const captureAndShare = async (platform) => {
-        if (!cardRef.current) return;
-        try {
-            const html2canvas = (await import('html2canvas')).default;
-            const canvas = await html2canvas(cardRef.current, {
-                backgroundColor: '#080809',
-                scale: 2,
-                useCORS: true,
-                logging: false,
-            });
-            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-            const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
-            const siteUrl = 'https://masterkeylabs.com';
-            const shareText = `🚨 AI Risk Alert: Check your AI Extinction Score on MasterkeyOS → ${siteUrl}`;
+    const [previewImg, setPreviewImg] = useState(null);
 
-            // Try native share (works on mobile & some desktop)
-            if (platform === 'native' && navigator.canShare && navigator.canShare({ files: [file] })) {
+    // Auto-capture result card when result renders
+    useEffect(() => {
+        if (!result || !cardRef.current) return;
+        setPreviewImg(null); // reset
+        // Wait for card to fully render before capturing
+        const timer = setTimeout(async () => {
+            try {
+                const html2canvas = (await import('html2canvas')).default;
+                const canvas = await html2canvas(cardRef.current, {
+                    backgroundColor: '#080809',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    // Exclude the share section itself from the capture
+                    ignoreElements: el => el.dataset.shareSection === 'true',
+                });
+                setPreviewImg(canvas.toDataURL('image/png'));
+            } catch (err) {
+                console.error('Auto-capture failed:', err);
+            }
+        }, 600);
+        return () => clearTimeout(timer);
+    }, [result]);
+
+    // Share the captured image via platform
+    const shareImage = async (platform) => {
+        if (!previewImg) return;
+        const siteUrl = 'https://masterkeylabs.com';
+        const shareText = `🚨 My AI Risk Score from MasterkeyOS Extinction Timer → ${siteUrl}`;
+        const encodedText = encodeURIComponent(shareText);
+        const encodedUrl = encodeURIComponent(siteUrl);
+
+        // Convert dataURL to blob/file
+        const res = await fetch(previewImg);
+        const blob = await res.blob();
+        const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
+
+        // On mobile: try native share sheet (supports Instagram, WhatsApp etc)
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
                 await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
                 return;
-            }
-
-            // Fallback: download image then open platform link
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'ai-risk-score.png';
-            a.click();
-            URL.revokeObjectURL(url);
-
-            // After short delay open the platform share page so user can attach the downloaded image
-            const encodedText = encodeURIComponent(shareText);
-            const encodedUrl = encodeURIComponent(siteUrl);
-            const platformUrls = {
-                twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
-                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-                whatsapp: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
-                facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-            };
-            if (platformUrls[platform]) {
-                setTimeout(() => window.open(platformUrls[platform], '_blank'), 800);
-            }
-        } catch (err) {
-            console.error('Share failed:', err);
+            } catch (e) { /* user cancelled or unsupported */ }
         }
+
+        // Desktop fallback: download image + open platform
+        const objUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = objUrl;
+        a.download = 'ai-risk-score.png';
+        a.click();
+        URL.revokeObjectURL(objUrl);
+
+        const platformUrls = {
+            twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+            whatsapp: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+            instagram: null, // Instagram has no direct web share URL
+        };
+        if (platformUrls[platform]) {
+            setTimeout(() => window.open(platformUrls[platform], '_blank'), 700);
+        }
+        // Instagram: image is downloaded, user opens app manually
     };
 
     useEffect(() => {
@@ -468,85 +489,64 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         </div>
 
                         {/* ─── SOCIAL SHARE ─── */}
-                        {(() => {
-                            const platforms = [
-                                { name: "X", icon: "𝕏", color: "#fff", bg: "#000", border: "rgba(255,255,255,0.15)", key: "twitter" },
-                                { name: "LinkedIn", icon: "in", color: "#fff", bg: "#0A66C2", border: "#0A66C2", key: "linkedin" },
-                                { name: "WhatsApp", icon: "💬", color: "#fff", bg: "#25D366", border: "#25D366", key: "whatsapp" },
-                                { name: "Facebook", icon: "f", color: "#fff", bg: "#1877F2", border: "#1877F2", key: "facebook" },
-                            ];
-                            return (
-                                <div style={{ marginTop: "16px" }}>
-                                    <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#666", letterSpacing: "2px", fontWeight: 700, marginBottom: "10px", textTransform: "uppercase" }}>
-                                        ⚡ Share Your Risk Score
-                                    </div>
+                        <div data-share-section="true" style={{ marginTop: "16px" }}>
+                            <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#666", letterSpacing: "2px", fontWeight: 700, marginBottom: "10px", textTransform: "uppercase" }}>
+                                ⚡ Share Your Risk Score
+                            </div>
 
-                                    {/* Primary: Capture & Share button */}
+                            {/* Captured image preview */}
+                            {previewImg ? (
+                                <div style={{ marginBottom: "10px", borderRadius: "12px", overflow: "hidden", border: `1px solid ${cfg.color}33` }}>
+                                    <img src={previewImg} alt="Your AI Risk Score" style={{ width: "100%", display: "block", borderRadius: "12px" }} />
+                                </div>
+                            ) : (
+                                <div style={{ marginBottom: "10px", borderRadius: "12px", background: "rgba(255,255,255,0.03)", height: "60px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <span style={{ fontSize: "0.65rem", color: "#555", letterSpacing: "1px" }}>Generating preview...</span>
+                                </div>
+                            )}
+
+                            {/* 5 Platform Buttons */}
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
+                                {[
+                                    { name: "X", icon: "𝕏", bg: "#000", border: "rgba(255,255,255,0.15)", key: "twitter" },
+                                    { name: "LinkedIn", icon: "in", bg: "#0A66C2", border: "#0A66C2", key: "linkedin" },
+                                    { name: "WhatsApp", icon: "💬", bg: "#25D366", border: "#25D366", key: "whatsapp" },
+                                    { name: "Facebook", icon: "f", bg: "#1877F2", border: "#1877F2", key: "facebook" },
+                                    { name: "Instagram", icon: "📸", bg: "linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", border: "#e6683c", key: "instagram" },
+                                ].map(p => (
                                     <button
-                                        onClick={() => captureAndShare('native')}
+                                        key={p.name}
+                                        onClick={() => shareImage(p.key)}
+                                        disabled={!previewImg}
+                                        title={p.key === 'instagram' ? 'Image saved — open Instagram to post' : `Share on ${p.name}`}
                                         style={{
-                                            width: "100%",
-                                            padding: "12px",
-                                            marginBottom: "8px",
-                                            background: `linear-gradient(135deg, ${cfg.color}cc, ${cfg.color})`,
-                                            border: "none",
-                                            borderRadius: "12px",
-                                            color: "#000",
-                                            fontWeight: 900,
-                                            fontSize: "0.8rem",
-                                            letterSpacing: "0.5px",
-                                            cursor: "pointer",
                                             display: "flex",
+                                            flexDirection: "column",
                                             alignItems: "center",
                                             justifyContent: "center",
-                                            gap: "8px",
-                                            boxShadow: `0 6px 20px ${cfg.color}44`,
+                                            gap: "4px",
+                                            padding: "9px 4px",
+                                            background: p.bg,
+                                            border: `1px solid ${p.border}`,
+                                            borderRadius: "10px",
+                                            color: "#fff",
+                                            fontWeight: 900,
+                                            cursor: previewImg ? "pointer" : "not-allowed",
+                                            opacity: previewImg ? 1 : 0.4,
                                             transition: "all 0.2s ease",
                                         }}
-                                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-                                        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
+                                        onMouseEnter={e => { if (previewImg) { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.4)"; } }}
+                                        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                                     >
-                                        <span style={{ fontSize: "1.1rem" }}>📸</span>
-                                        Capture &amp; Share Image
+                                        <span style={{ fontSize: "1rem", lineHeight: 1 }}>{p.icon}</span>
+                                        <span style={{ fontSize: "0.48rem", opacity: 0.85, letterSpacing: "0.3px" }}>{p.name}</span>
                                     </button>
-
-                                    {/* Platform buttons (image downloaded + platform opened) */}
-                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
-                                        {platforms.map(p => (
-                                            <button
-                                                key={p.name}
-                                                onClick={() => captureAndShare(p.key)}
-                                                title={`Share on ${p.name}`}
-                                                style={{
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    gap: "5px",
-                                                    padding: "10px 6px",
-                                                    background: p.bg,
-                                                    border: `1px solid ${p.border}`,
-                                                    borderRadius: "12px",
-                                                    color: p.color,
-                                                    fontSize: "0.9rem",
-                                                    fontWeight: 900,
-                                                    cursor: "pointer",
-                                                    transition: "all 0.2s ease",
-                                                }}
-                                                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = `0 8px 20px ${p.bg}66`; }}
-                                                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
-                                            >
-                                                <span style={{ fontSize: "1rem", lineHeight: 1 }}>{p.icon}</span>
-                                                <span style={{ fontSize: "0.52rem", letterSpacing: "0.5px", opacity: 0.85, fontWeight: 700 }}>{p.name}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px", letterSpacing: "0.3px" }}>
-                                        Image saved • Attach it when the platform opens
-                                    </p>
-                                </div>
-                            );
-                        })()}
+                                ))}
+                            </div>
+                            <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px" }}>
+                                Image auto-saved • Open Instagram app to post
+                            </p>
+                        </div>
                     </div>
                 )}
             </div>
