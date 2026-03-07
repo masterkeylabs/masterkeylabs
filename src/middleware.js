@@ -37,16 +37,27 @@ export async function middleware(request) {
     if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
-        // Pass the intended destination so they can return after login
         url.searchParams.set('next', request.nextUrl.pathname)
-        return NextResponse.redirect(url)
+
+        // IMPORTANT: We must create the redirect response AND then copy the cookies
+        // from our supabaseResponse to ensure session refreshes aren't lost.
+        const redirectResponse = NextResponse.redirect(url)
+        supabaseResponse.cookies.getAll().forEach((cookie) => {
+            redirectResponse.cookies.set(cookie.name, cookie.value, cookie.options)
+        })
+        return redirectResponse
     }
 
     // 2. Convenience Logic: If already logged in, skip login/signup pages
     if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user) {
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
-        return NextResponse.redirect(url)
+
+        const redirectResponse = NextResponse.redirect(url)
+        supabaseResponse.cookies.getAll().forEach((cookie) => {
+            redirectResponse.cookies.set(cookie.name, cookie.value, cookie.options)
+        })
+        return redirectResponse
     }
 
     return supabaseResponse
