@@ -14,6 +14,7 @@ export const metadata = {
 import { AuthProvider } from '@/lib/AuthContext';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
+import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 
 export default function RootLayout({ children }) {
   return (
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700;900&display=swap" rel="stylesheet" />
         {/* Prevent flash of wrong theme */}
         <script dangerouslySetInnerHTML={{
           __html: `
@@ -40,6 +42,7 @@ export default function RootLayout({ children }) {
           <LanguageProvider>
             <AuthProvider>
               {children}
+              <FloatingWhatsApp />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

@@ -45,23 +45,23 @@ export const translations = {
             sub: "Our AI-driven system performs a deep-layer scan of your business ecosystem to identify and resolve hidden inefficiencies:",
             waste: {
                 module: "Module 01",
-                title: "Operational Waste",
-                sub: "Scans for redundancies in workflows, manual task overlaps, and resource leakage within your daily business processes."
+                title: "See where your money is leaking",
+                sub: "Find hidden waste and resource leakage in your daily business processes."
             },
             night: {
                 module: "Module 02",
-                title: "Missed After-Hours Revenue",
-                sub: "Identifies revenue or productivity decay occurring during 'Dark Hours' or system downtime when automated oversight is absent."
+                title: "Earn while you sleep",
+                sub: "Respond to customers 24/7 and never miss a lead."
             },
             visibility: {
                 module: "Module 03",
-                title: "Missed Local Customers",
-                sub: "Analyzes your digital footprint and internal data transparency to ensure every asset is trackable."
+                title: "Stop losing customers to competitors",
+                sub: "Make sure local customers find you first on Google and social media."
             },
             threat: {
                 module: "Module 04",
-                title: "Extinction Horizon",
-                sub: "A predictive scan that identifies market shifts, outdated tech stacks, or declining trends that could threaten your business’s long-term relevance."
+                title: "Is your business AI-proof?",
+                sub: "Check how AI will change your business in the next 2-3 years."
             }
         },
         diagnostic: {
@@ -342,20 +342,65 @@ export const translations = {
             main: "Speak to an Architect",
             waMessage: "Hi Masterkey Labs, my business ({businessName}) is in the {threatZone} zone. My system audit shows I am bleeding {lossText}/year. I need to build a Digital Factory."
         },
+        extinctionTimer: {
+            analysisBadge: "AI DISPLACEMENT ANALYSIS",
+            title1: "Will AI Replace",
+            title2: "Your Business?",
+            sub: "Enter your job title or business type below. Get your AI extinction timeline in seconds.",
+            placeholder: "e.g. accountant · HR manager · law firm · marketing agency",
+            calculateBtn: "Calculate My AI Risk →",
+            yearsLabel: "YEARS",
+            monthsLabel: "MONTHS",
+            daysLabel: "DAYS",
+            exposureLabel: "AUTOMATION EXPOSURE",
+            highRiskBadge: "HIGH RISK",
+            modRiskBadge: "MODERATE RISK",
+            safeBadge: "RESILIENT",
+            timeToAdapt: "TIME TO ADAPT YOUR BUSINESS",
+            aiWillHandle: "AI WILL HANDLE",
+            humanEdgeLabel: "YOUR EDGE",
+            sharePrompt: "Share this on Social Media",
+            exportLabel: "Export Your Analysis",
+            generatingImage: "Generating share image...",
+            shareNoticeDone: "Image auto-saved when sharing · tap to open platform",
+            resultTitle: "AI doesn't have to be the end of your story.",
+            resultSub: "It's time to build your Digital Factory.",
+            seeLeaksBtn: "See your Profit Leaks — 4 min Audit →",
+            whatsappSecondary: "or chat with us on WhatsApp →",
+            searchSteps: [
+                "INITIALIZING NEURAL ENGINE...",
+                "SCANNING DISPLACEMENT DATABASES...",
+                "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
+                "CALCULATING AUTOMATION HORIZON...",
+                "ESTIMATING SURVIVAL METRICS...",
+                "DECRYPTING EXTINCTION TIMELINE...",
+                "FINALIZING RISK PROFILE...",
+            ],
+            threatLevels: {
+                CRITICAL: "CRITICAL RISK",
+                HIGH: "HIGH RISK",
+                MODERATE: "MODERATE RISK",
+                RESILIENT: "RESILIENT"
+            },
+            marketTTL: "Market Relevance TTL",
+            extinctionSub: "Projected time until business extinction if unoptimized.",
+            days: "Days",
+            deploy: "Deploy Protocol"
+        },
         dashboard: {
             risksTitle: "Immediate Capital Risks",
             logTitle: "Protocol Intelligence Log",
             logStatus: "Status: Live Monitoring",
             auditSummary: {
                 header: {
-                    log: "Diagnostic Intelligence Log",
-                    overview: "System Survival Overview",
+                    log: "Profit Leak Intelligence Log",
+                    overview: "Your AI Survival Report",
                     exportBtn: "Export Intelligence Report",
                     exporting: "Analyzing Systems..."
                 },
                 module01: {
                     tag: "The Internal Leak",
-                    title: "Operational Waste",
+                    title: "Where your money is leaking",
                     hole: "Monthly Revenue Hole",
                     payroll: "Payroll Waste",
                     overhead: "Overhead Waste",
@@ -400,7 +445,7 @@ export const translations = {
             },
             diagnosticGrid: {
                 waste: {
-                    title: "Operational Waste",
+                    title: "Where your money is leaking",
                     sub: "Recoverable monthly savings"
                 },
                 night: {
@@ -482,12 +527,6 @@ export const translations = {
                 markets: { title: "Global Markets", run: "Explore", sub: "Your products could sell for 3-7x more internationally" }
             },
             protocolSearch: "Protocol Search",
-            extinctionTimer: {
-                marketTTL: "Market Relevance TTL",
-                extinctionSub: "Projected time until business extinction if unoptimized.",
-                days: "Days",
-                deploy: "Deploy Protocol"
-            },
             diagnosticLog: {
                 systemLog: "System Log v2.0",
                 stream: "Diagnostic Stream",
@@ -523,7 +562,7 @@ export const translations = {
                 },
                 module01: {
                     tag: "Module 01: The Internal Leak",
-                    title: "Operational Waste",
+                    title: "Where your money is leaking",
                     hole: "Monthly Resource Hole",
                     payroll: "Payroll Inefficiency",
                     overhead: "Overhead Waste",
@@ -672,23 +711,23 @@ export const translations = {
             sub: "हमारा AI-आधारित सिस्टम छिपी हुई अक्षमताओं को पहचानने और हल करने के लिए आपके बिजनेस इकोसिस्टम का गहरा स्कैन करता है:",
             waste: {
                 module: "मॉड्यूल 01",
-                title: "ऑपरेशनल वेस्ट",
-                sub: "वर्कफ़्लो में फालतू कामों, मैन्युअल कामों के दोहराव और आपके दैनिक बिजनेस प्रोसेस में संसाधनों के रिसाव को स्कैन करता है।"
+                title: "पैसे कहाँ लीक हो रहे हैं",
+                sub: "जानें आपके बिजनेस में पैसा कहाँ बर्बाद हो रहा है, हम बताएंगे।"
             },
             night: {
                 module: "मॉड्यूल 02",
-                title: "मिस किया गया आफ्टर-ऑवर्स रेवेन्यू",
-                sub: "उन रेवेन्यू या उत्पादकता की गिरावट की पहचान करता है जो \"डार्क आवर्स\" या सिस्टम डाउनटाइम के दौरान होती हैं जब स्वचालित निगरानी गायब होती है।"
+                title: "Earn while you sleep",
+                sub: "ग्राहक रात में भी मैसेज करें, तो उन्हें तुरंत 2 सेकंड में रिस्पांस मिलेगा।"
             },
             visibility: {
-                module: "मॉड्यूल 03",
-                title: "मिस किए गए स्थानीय ग्राहक",
-                sub: "यह सुनिश्चित करने के लिए कि हर संपत्ति ट्रैक करने योग्य है, आपके डिजिटल फुटप्रिंट और आंतरिक डेटा पारदर्शिता का विश्लेषण करता है।"
+                module: "म़ॉड्यूल 03",
+                title: "ग्राहकों को कॉम्पिटिटर्स के लिए खोना बंद करें",
+                sub: "डिजिटल प्रेजेंस ऑडिट — ताकि लोग आपको गूगल पर आसानी से ढूंढ सकें।"
             },
             threat: {
                 module: "मॉड्यूल 04",
-                title: "एक्स्तिंक्शन होराइजन",
-                sub: "एक प्रेडिक्टिव स्कैन जो बाजार के बदलावों, पुराने टेक स्टैक या गिरते रुझानों की पहचान करता है जो आपके बिजनेस की दीर्घकालिक प्रासंगिकता को खतरे में डाल सकते हैं।"
+                title: "क्या आपका बिजनेस AI-प्रूफ है?",
+                sub: "चेक करें कि AI आपके बिजनेस को अगले 2-3 साल में कितना बदल देगा।"
             }
         },
         diagnostic: {
@@ -977,6 +1016,51 @@ export const translations = {
             main: "आर्किटेक्ट से बात करें",
             waMessage: "नमस्ते मास्टरकी लैब्स, मेरा व्यवसाय ({businessName}) {threatZone} ज़ोन में है। मेरे सिस्टम ऑडिट से पता चलता है कि मुझे हर साल {lossText} का नुकसान हो रहा है। मुझे डिजिटल फैक्ट्री बनाने की जरूरत है।"
         },
+        extinctionTimer: {
+            analysisBadge: "AI विस्थापन विश्लेषण",
+            title1: "क्या AI आपके",
+            title2: "बिजनेस की जगह लेगा?",
+            sub: "नीचे अपना जॉब टाइटल या बिजनेस टाइप दर्ज करें। सेकंडों में अपनी AI विलुप्ति (Extinction) टाइमलाइन प्राप्त करें।",
+            placeholder: "जैसे: अकाउंटेंट · एचआर मैनेजर · लॉ फर्म · मार्केटिंग एजेंसी",
+            calculateBtn: "मेरा AI जोखिम कैलकुलेट करें →",
+            yearsLabel: "वर्ष",
+            monthsLabel: "महीने",
+            daysLabel: "दिन",
+            exposureLabel: "ऑटोमेशन एक्सपोजर",
+            highRiskBadge: "उच्च जोखिम",
+            modRiskBadge: "मध्यम जोखिम",
+            safeBadge: "सुरक्षित (Resilient)",
+            timeToAdapt: "अपने बिजनेस को ढालने का समय",
+            aiWillHandle: "AI ये काम संभालेगा",
+            humanEdgeLabel: "आपकी बढ़त (Human Edge)",
+            sharePrompt: "इसे सोशल मीडिया पर शेयर करें",
+            exportLabel: "अपना विश्लेषण एक्सपोर्ट करें",
+            generatingImage: "शेयर इमेज तैयार हो रही है...",
+            shareNoticeDone: "शेयर करते समय इमेज ऑटो-सेव हो जाती है · प्लेटफार्म खोलने के लिए टैप करें",
+            resultTitle: "AI आपके बिजनेस का अंत नहीं है।",
+            resultSub: "अब अपनी डिजिटल फैक्ट्री बनाने का समय है।",
+            seeLeaksBtn: "अपना प्रॉफिट लीक देखें — 4 मिनट ऑडिट →",
+            whatsappSecondary: "या व्हाट्सएप पर हमसे बात करें →",
+            searchSteps: [
+                "न्यूरल इंजन इनिशियलाइज़ हो रहा है...",
+                "विस्थापन डेटाबेस स्कैन किया जा रहा है...",
+                "गोल्डमैन सैक्स (2023) अनुमानों का मिलान...",
+                "ऑटोमेशन होराइजन की गणना...",
+                "सर्वाइवल मेट्रिक्स का अनुमान...",
+                "एक्सतिंक्शन टाइमलाइन डिकोड की जा रही है...",
+                "रिस्क प्रोफाइल को अंतिम रूप दिया जा रहा है...",
+            ],
+            threatLevels: {
+                CRITICAL: "गंभीर जोखिम",
+                HIGH: "उच्च जोखिम",
+                MODERATE: "मध्यम जोखिम",
+                RESILIENT: "सुरक्षित (Resilient)"
+            },
+            marketTTL: "मार्केट प्रासंगिकता TTL",
+            extinctionSub: "ग्रोथ प्रोटोकॉल अनऑप्टिमाइज्ड रहने पर बिजनेस खत्म होने का अनुमानित समय।",
+            days: "दिन",
+            deploy: "प्रोटोकॉल लागू करें"
+        },
         dashboard: {
             risksTitle: "तत्काल पूंजी जोखिम (Risks)",
             logStatus: "स्थिति: लाइव मॉनिटरिंग",
@@ -1121,12 +1205,6 @@ export const translations = {
                 markets: { title: "वैश्विक बाजार", run: "एक्सप्लोर करें", sub: "आपके उत्पाद दुनिया भर में 3-7 गुना अधिक दाम पर बिक सकते हैं" }
             },
             protocolSearch: "प्रोटोकॉल सर्च",
-            extinctionTimer: {
-                marketTTL: "मार्केट प्रासंगिकता TTL",
-                extinctionSub: "ग्रोथ प्रोटोकॉल अनऑप्टिमाइज्ड रहने पर बिजनेस खत्म होने का अनुमानित समय।",
-                days: "दिन",
-                deploy: "प्रोटोकॉल लागू करें"
-            },
             diagnosticLog: {
                 systemLog: "सिस्टम लॉग v2.0",
                 stream: "डायग्नोस्टिक स्ट्रीम",
@@ -1155,14 +1233,14 @@ export const translations = {
             },
             auditSummary: {
                 header: {
-                    log: "डायग्नोस्टिक इंटेलिजेंस लॉग",
-                    overview: "सिस्टम सर्वाइवल ओवरव्यू",
-                    exportBtn: "इंटेलिजेंस रिपोर्ट निर्यात करें",
+                    log: "प्रॉफिट लीक इंटेलिजेंस लॉग",
+                    overview: "आपकी AI सर्वाइवल रिपोर्ट",
+                    exportBtn: "इंटेलीजेंस रिपोर्ट एक्सपोर्ट करें",
                     exporting: "सिस्टम का विश्लेषण हो रहा है..."
                 },
                 module01: {
                     tag: "मॉड्यूल 01: इंटरनल लीक",
-                    title: "ऑपरेशनल वेस्ट",
+                    title: "पैसे कहाँ लीक हो रहे हैं",
                     hole: "मासिक संसाधन छेद (Hole)",
                     payroll: "पेरोल अक्षमता",
                     marketing: "मार्केटिंग ब्लीड",
@@ -1184,7 +1262,7 @@ export const translations = {
                 },
                 module04: {
                     tag: "मॉड्यूल 04: सर्वाइवल डेडलाइन",
-                    title: "एक्स्तिंक्शन होराइजन",
+                    title: "क्या आपका बिजनेस AI-प्रूफ है?",
                     ttl: "मार्केट प्रासंगिकता TTL",
                     months: "महीने",
                     complexity: "सर्वाइवल कॉम्प्लेक्सिटी",
@@ -1301,23 +1379,23 @@ export const translations = {
             sub: "Hamara AI-driven system aapke business ecosystem ka deep-layer scan karta hai hidden inefficiencies ko identify aur resolve karne ke liye:",
             waste: {
                 module: "Module 01",
-                title: "Operational Waste",
-                sub: "Workflows mein redundancies, manual task overlaps, aur daily processes ke resource leakage ko scan karta hai."
+                title: "See where your money is leaking",
+                sub: "Local dhanda mein kahan paisa fasa hai, hum batayenge."
             },
             night: {
                 module: "Module 02",
-                title: "Missed After-Hours Revenue",
-                sub: "Dark Hours ke dauran hone wale revenue loss ko scan karta hai."
+                title: "Earn while you sleep",
+                sub: "Customer aapko night mein message kare, response 2 second mein jayega."
             },
             visibility: {
                 module: "Module 03",
-                title: "Missed Local Customers",
-                sub: "Aapke digital footprint ka analysis karta hai."
+                title: "Stop losing customers to competitors",
+                sub: "Digital presence audit — taaki log aapko Google par asaani se dhund sakein."
             },
             threat: {
                 module: "Module 04",
-                title: "Extinction Horizon",
-                sub: "Ek predictive scan jo market shifts aur outdated tech stacks ko identify karta hai jo dhande ke liye khatra ho sakte hain."
+                title: "Is your business AI-proof?",
+                sub: "Check karein ki AI aapke dhande ko agle 2-3 saal mein kitna badal dega."
             }
         },
         diagnostic: {
@@ -1449,18 +1527,63 @@ export const translations = {
             main: "Architect se baat karein",
             waMessage: "Hi Masterkey Labs, mera business ({businessName}) {threatZone} zone mein hai. Mere system audit se pata chala hai ki mujhe har saal {lossText} ka nuksan ho raha hai. Mujhe Digital Factory banani hai."
         },
+        extinctionTimer: {
+            analysisBadge: "AI DISPLACEMENT ANALYSIS",
+            title1: "Kya AI aapke",
+            title2: "Business ko replace karega?",
+            sub: "Niche apna job title ya business type enter karein. Kuch seconds mein apni AI extinction timeline check karein.",
+            placeholder: "e.g. accountant · HR manager · law firm · marketing agency",
+            calculateBtn: "Mera AI Risk Calculate karein →",
+            yearsLabel: "YEARS",
+            monthsLabel: "MONTHS",
+            daysLabel: "DAYS",
+            exposureLabel: "AUTOMATION EXPOSURE",
+            highRiskBadge: "HIGH RISK",
+            modRiskBadge: "MODERATE RISK",
+            safeBadge: "RESILIENT",
+            timeToAdapt: "TIME TO ADAPT YOUR BUSINESS",
+            aiWillHandle: "AI WILL HANDLE",
+            humanEdgeLabel: "YOUR EDGE",
+            sharePrompt: "Share this on Social Media",
+            exportLabel: "Export Your Analysis",
+            generatingImage: "Generating share image...",
+            shareNoticeDone: "Image auto-saved when sharing · tap to open platform",
+            resultTitle: "AI aapke dhande ka ant nahi hai.",
+            resultSub: "Ab apni Digital Factory banane ka time hai.",
+            seeLeaksBtn: "Apna Profit Leak dekhein — 4 min Audit →",
+            whatsappSecondary: "ya WhatsApp par chat karein →",
+            searchSteps: [
+                "INITIALIZING NEURAL ENGINE...",
+                "SCANNING DISPLACEMENT DATABASES...",
+                "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
+                "CALCULATING AUTOMATION HORIZON...",
+                "ESTIMATING SURVIVAL METRICS...",
+                "DECRYPTING EXTINCTION TIMELINE...",
+                "FINALIZING RISK PROFILE...",
+            ],
+            threatLevels: {
+                CRITICAL: "CRITICAL RISK",
+                HIGH: "HIGH RISK",
+                MODERATE: "MODERATE RISK",
+                RESILIENT: "RESILIENT"
+            },
+            marketTTL: "Market Relevance TTL",
+            extinctionSub: "Dhanda khatm hone ka estimated time agar optimize nahi kiya toh.",
+            days: "Din",
+            deploy: "Deploy Protocol"
+        },
         dashboard: {
             risksTitle: "Immediate Capital Risks",
             auditSummary: {
                 header: {
-                    log: "Diagnostic Intelligence Log",
-                    overview: "System Survival Overview",
+                    log: "Profit Leak Log",
+                    overview: "AI Survival Report",
                     exportBtn: "Export Intelligence Report",
                     exporting: "Analyzing Systems..."
                 },
                 module01: {
                     tag: "Module 01: The Internal Leak",
-                    title: "Operational Waste",
+                    title: "See where your money is leaking",
                     hole: "Monthly Resource Hole",
                     payroll: "Payroll Inefficiency",
                     overhead: "Overhead Waste",
@@ -1492,7 +1615,7 @@ export const translations = {
                 },
                 module04: {
                     tag: "Module 04: Survival Deadline",
-                    title: "Extinction Horizon",
+                    title: "Is your business AI-proof?",
                     ttl: "Market Relevance TTL",
                     months: "Months",
                     complexity: "Survival Complexity",
@@ -1513,7 +1636,7 @@ export const translations = {
             },
             diagnosticGrid: {
                 waste: {
-                    title: "Operational Waste",
+                    title: "Where your money is leaking",
                     sub: "Har mahine ki bachat"
                 },
                 night: {
@@ -1595,12 +1718,6 @@ export const translations = {
                 markets: { title: "Global Markets", run: "Explore", sub: "International markets mein zyada paisa bachega" }
             },
             protocolSearch: "Protocol Search",
-            extinctionTimer: {
-                marketTTL: "Market Relevance TTL",
-                extinctionSub: "Dhanda khatm hone ka estimated time agar optimize nahi kiya toh.",
-                days: "Din",
-                deploy: "Deploy Protocol"
-            },
             diagnosticLog: {
                 systemLog: "System Log v2.0",
                 stream: "Diagnostic Stream",

@@ -9,6 +9,7 @@ import RescueArchitecture from '@/components/RescueArchitecture';
 import BusinessProfile from '@/components/BusinessProfile';
 import ComprehensiveReportModal from '@/components/ComprehensiveReportModal';
 import DashboardIntakeWizard from '@/components/DashboardIntakeWizard';
+import BleedSummaryCard from '@/components/BleedSummaryCard';
 import { translations } from '@/lib/translations';
 
 import { useLanguage } from '@/lib/LanguageContext';
@@ -124,6 +125,12 @@ export default function DashboardGrid({ business, computedData }) {
                         {/* New Business Profile Block */}
                         <BusinessProfile business={business} t={t} lang={lang} />
 
+                        {/* BLEED SUMMARY CARD (P4 Implementation) */}
+                        <BleedSummaryCard
+                            t={t}
+                            locked={auditsIncomplete}
+                        />
+
                         {/* Highlighting the 4 deterministic calculations using the DiagnosticGrid */}
                         <section className="animate-fade-in opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                             <DiagnosticGrid
@@ -136,7 +143,7 @@ export default function DashboardGrid({ business, computedData }) {
                         </section>
 
                         {/* Automatically Generated Comprehensive Audit Report */}
-                        <section className={`${auditsIncomplete ? 'blur-md pointer-events-none opacity-50 transition-all duration-700' : ''}`}>
+                        <section id="comprehensive-report" className={`${auditsIncomplete ? 'blur-md pointer-events-none opacity-50 transition-all duration-700' : ''}`}>
                             <ComprehensiveReportModal businessName={business?.entity_name} computedData={computedData} t={t} />
                         </section>
 

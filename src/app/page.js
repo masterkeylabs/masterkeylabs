@@ -114,20 +114,7 @@ export default function Home() {
                             {t.hero.sub}
                         </p>
 
-                        {/* CTA below the hook */}
-                        <div className="mt-6 flex flex-col items-center gap-3 w-full max-w-sm">
-                            <Link
-                                href="/signup"
-                                className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.2em] text-white transition-all duration-300 shadow-[0_12px_35px_rgba(255,109,0,0.35)] hover:shadow-[0_18px_45px_rgba(255,109,0,0.55)] hover:-translate-y-0.5"
-                                style={{ background: 'linear-gradient(135deg, #E65100, #FF6D00)' }}
-                            >
-                                Start Your Full Business Audit
-                                <span className="text-lg">→</span>
-                            </Link>
-                            <p className="text-white/20 text-[11px] tracking-wide">
-                                Free &middot; No credit card required &middot; Get your full report in minutes
-                            </p>
-                        </div>
+                        {/* CTA below the hook removed to avoid conflict with AI Timer (Fix #2) */}
                     </div>
                 </section>
 

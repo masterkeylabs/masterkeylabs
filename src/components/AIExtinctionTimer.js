@@ -1,5 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const SYSTEM_PROMPT = `You are an AI displacement risk analyst. Ground ALL analysis in these landmark studies:
 
@@ -91,7 +93,7 @@ function RiskBar({ score, color }) {
     return (
         <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <span style={{ fontSize: "0.65rem", color: "#444", letterSpacing: "2px" }}>AUTOMATION EXPOSURE</span>
+                <span style={{ fontSize: "0.65rem", color: "#444", letterSpacing: "2px" }}>{t.extinctionTimer.exposureLabel}</span>
                 <span style={{ fontSize: "1rem", fontWeight: 800, color }}>{animated}%</span>
             </div>
             <div style={{ height: "5px", background: "rgba(255,255,255,0.05)", borderRadius: "99px", overflow: "hidden" }}>
@@ -108,7 +110,7 @@ function RiskBar({ score, color }) {
 }
 
 // ─── Flat share-card rendered off-screen (no backdrop-filter, no blur) ───────
-function ShareCard({ result, cfg, jobTitle, years, months, days }) {
+function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
     if (!result || !cfg) return null;
     return (
         <div style={{
@@ -129,7 +131,7 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
                     fontSize: "0.6rem", letterSpacing: "4px", color: "#FF6D00",
                     fontWeight: 800, marginBottom: "16px", textTransform: "uppercase"
                 }}>
-                    <span style={{ fontSize: "0.5rem" }}>◆</span> AI DISPLACEMENT ANALYSIS
+                    <span style={{ fontSize: "0.5rem" }}>◆</span> {t.extinctionTimer.analysisBadge}
                 </div>
                 <h1 style={{
                     fontSize: "3rem",
@@ -137,12 +139,12 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
                     margin: "0 0 12px", lineHeight: 1.05,
                     letterSpacing: "-1.5px",
                 }}>
-                    Will AI Replace<br />
-                    <span style={{ color: "#FF6000" }}>Your Business?</span>
+                    {t.extinctionTimer.title1}<br />
+                    <span style={{ color: "#FF6000" }}>{t.extinctionTimer.title2}</span>
                 </h1>
                 <p style={{ color: "#888", fontSize: "0.95rem", margin: 0, lineHeight: 1.6, fontWeight: 500 }}>
-                    Enter your job title or business type below.<br />
-                    Get your AI extinction timeline in seconds.
+                    {t.extinctionTimer.sub.split('.')[0]}.<br />
+                    {t.extinctionTimer.sub.split('.')[1]}
                 </p>
             </div>
 
@@ -175,7 +177,7 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
                 marginBottom: "48px",
                 letterSpacing: "0.5px"
             }}>
-                Calculate My AI Risk →
+                {t.extinctionTimer.calculateBtn}
             </div>
 
             {/* 4. Result Card (matches main UI) */}
@@ -273,6 +275,7 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
 }
 
 export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
+    const { t } = useLanguage();
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -545,7 +548,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         marginBottom: "14px", fontWeight: 700,
                         animation: "blink 2s ease infinite",
                     }}>
-                        <span>●</span> AI DISPLACEMENT ANALYSIS
+                        <span>●</span> {t.extinctionTimer.analysisBadge}
                     </div>
                     <h1 className="ext-h1" style={{
                         fontSize: "clamp(1.7rem, 6vw, 2.4rem)",
@@ -553,12 +556,12 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         margin: "0 0 10px", lineHeight: 1.1,
                         letterSpacing: "-0.5px",
                     }}>
-                        Will AI Replace<br />
-                        <span style={{ color: "#FF6D00" }}>Your Business?</span>
+                        {t.extinctionTimer.title1}<br />
+                        <span style={{ color: "#FF6D00" }}>{t.extinctionTimer.title2}</span>
                     </h1>
                     <p style={{ color: "#A0A0A0", fontSize: "clamp(0.78rem,2.5vw,0.83rem)", margin: 0, lineHeight: 1.7 }}>
-                        Enter your job title or business type below.<br />
-                        Get your AI extinction timeline in seconds.
+                        {t.extinctionTimer.sub.split('.')[0]}.<br />
+                        {t.extinctionTimer.sub.split('.')[1]}
                     </p>
                 </div>
 
@@ -569,7 +572,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                         value={input}
                         onChange={e => { setInput(e.target.value); setResult(null); setError(""); }}
                         onKeyDown={e => e.key === "Enter" && !loading && analyze()}
-                        placeholder="e.g. accountant · HR manager · law firm · marketing agency"
+                        placeholder={t.extinctionTimer.placeholder}
                         style={{
                             width: "100%",
                             background: "rgba(255,255,255,0.03)",
@@ -598,7 +601,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             position: "relative",
                             overflow: "hidden",
                             width: "100%",
-                            padding: "15px",
+                            padding: "18px",
                             background: loading
                                 ? "rgba(255,109,0,0.1)"
                                 : "linear-gradient(135deg, #E65100, #FF6D00)",
@@ -631,10 +634,10 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                     <span style={{ fontSize: "12px", border: "1px solid currentColor", borderRadius: "50%", padding: "2px", width: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", animation: "spin 1s linear infinite" }}>
                                         ⌛
                                     </span>
-                                    {SEARCH_STEPS[searchIndex]}
+                                    {t.extinctionTimer.searchSteps[searchIndex]}
                                 </>
                             ) : (
-                                "Calculate My AI Risk →"
+                                t.extinctionTimer.calculateBtn
                             )}
                         </span>
                     </button>
@@ -671,7 +674,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 animation: result.threatLevel === "CRITICAL" || result.threatLevel === "HIGH"
                                     ? "blink 1.8s ease infinite" : "none",
                             }}>
-                                {cfg.emoji} {cfg.label}
+                                {cfg.emoji} {t.extinctionTimer.threatLevels[result.threatLevel] || cfg.label}
                             </span>
                         </div>
 
@@ -699,12 +702,12 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 letterSpacing: "3px",
                                 marginBottom: "12px",
                             }}>
-                                TIME TO ADAPT YOUR BUSINESS
+                                {t.extinctionTimer.timeToAdapt}
                             </div>
                             <div className="ext-timer-blocks" style={{ display: "flex", gap: "10px" }}>
-                                <TimerBlock value={years} label="YEARS" color={cfg.color} />
-                                <TimerBlock value={months} label="MONTHS" color={cfg.color} />
-                                <TimerBlock value={days} label="DAYS" color={cfg.color} />
+                                <TimerBlock value={years} label={t.extinctionTimer.yearsLabel} color={cfg.color} />
+                                <TimerBlock value={months} label={t.extinctionTimer.monthsLabel} color={cfg.color} />
+                                <TimerBlock value={days} label={t.extinctionTimer.daysLabel} color={cfg.color} />
                             </div>
                         </div>
 
@@ -716,7 +719,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 borderRadius: "12px", padding: "14px",
                             }}>
                                 <div style={{ fontSize: "0.58rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
-                                    🤖 AI WILL HANDLE
+                                    🤖 {t.extinctionTimer.aiWillHandle}
                                 </div>
                                 {result.topThreats.map((t, i) => (
                                     <div key={i} style={{ fontSize: "clamp(0.7rem,2.3vw,0.75rem)", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
@@ -730,7 +733,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 borderRadius: "12px", padding: "14px",
                             }}>
                                 <div style={{ fontSize: "0.58rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "10px", fontWeight: 700 }}>
-                                    🧠 YOUR EDGE
+                                    🧠 {t.extinctionTimer.humanEdgeLabel}
                                 </div>
                                 {result.humanEdge.map((s, i) => (
                                     <div key={i} style={{ fontSize: "clamp(0.7rem,2.3vw,0.75rem)", color: "#B0B0B0", marginBottom: "5px", lineHeight: 1.4 }}>
@@ -788,7 +791,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                     <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2">
                                         <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                                     </svg>
-                                    <span style={{ fontSize: "0.62rem", color: "#555", letterSpacing: "1px" }}>Generating share image...</span>
+                                    <span style={{ fontSize: "0.62rem", color: "#555", letterSpacing: "1px" }}>{t.extinctionTimer.generatingImage}</span>
                                 </div>
                             )}
 
@@ -843,11 +846,116 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                             <p style={{ textAlign: "center", color: shareNotice ? "#FF6D00" : "#555", fontSize: "0.58rem", marginTop: "8px", lineHeight: 1.5, fontWeight: shareNotice ? 800 : 400, transition: "color 0.3s" }}>
                                 {shareNotice || (captureStatus === "done"
-                                    ? "Image auto-saved when sharing · tap to open platform"
+                                    ? t.extinctionTimer.shareNoticeDone
                                     : captureStatus === "failed"
                                         ? "Tap any platform to share your score"
                                         : "Generating share image...")}
                             </p>
+                        </div>
+
+                        {/* ─── NEW: POST-RESULT CTA CARD (Fix #1) ─── */}
+                        <div style={{
+                            marginTop: "32px",
+                            background: "rgba(255,255,255,0.03)",
+                            border: `1px solid ${cfg.color}33`,
+                            borderRadius: "20px",
+                            padding: "24px",
+                            textAlign: "center",
+                            animation: "fadeUp 0.6s ease 0.3s both",
+                            position: "relative",
+                            overflow: "hidden"
+                        }}>
+                            {/* Visual Accent */}
+                            <div style={{
+                                position: "absolute",
+                                top: 0, left: 0, right: 0, height: "2px",
+                                background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)`
+                            }} />
+
+                            <div style={{
+                                display: "inline-block",
+                                background: cfg.color === '#FF2D2D' ? 'rgba(255,45,45,0.1)' : cfg.color === '#FF6B00' ? 'rgba(255,107,0,0.1)' : 'rgba(0,229,255,0.1)',
+                                border: `1px solid ${cfg.color}55`,
+                                color: cfg.color,
+                                fontSize: "0.6rem",
+                                fontWeight: 900,
+                                padding: "5px 14px",
+                                borderRadius: "99px",
+                                marginBottom: "14px",
+                                textTransform: "uppercase",
+                                letterSpacing: "1.5px"
+                            }}>
+                                {result.riskScore > 70 ? '🚨 IMMEDIATE ACTION REQUIRED' : '💡 OPTIMIZATION REQUIRED'}
+                            </div>
+
+                            <h3 style={{
+                                color: "#fff",
+                                fontSize: "clamp(1rem, 3.5vw, 1.15rem)",
+                                fontWeight: 900,
+                                marginBottom: "10px",
+                                lineHeight: 1.3,
+                                letterSpacing: "-0.5px"
+                            }}>
+                                AI is coming for {input.toLowerCase() || 'your role'}.<br />
+                                Don't just watch — adapt.
+                            </h3>
+                            <p style={{
+                                color: "#A0A0A0",
+                                fontSize: "0.78rem",
+                                marginBottom: "24px",
+                                lineHeight: 1.6,
+                                maxWidth: "280px",
+                                margin: "0 auto 24px"
+                            }}>
+                                Our system detected high friction in your workflow. See exactly where you are losing revenue.
+                            </p>
+
+                            <Link
+                                href={`/audit?vertical=${cfg.key}&role=${encodeURIComponent(input)}`}
+                                style={{
+                                    display: "block",
+                                    background: "linear-gradient(135deg, #00E5FF, #0099FF)",
+                                    color: "#000",
+                                    textDecoration: "none",
+                                    padding: "16px",
+                                    borderRadius: "14px",
+                                    fontSize: "0.85rem",
+                                    fontWeight: 900,
+                                    marginBottom: "14px",
+                                    boxShadow: "0 10px 25px rgba(0,229,255,0.25)",
+                                    transition: "transform 0.2s ease",
+                                    transform: "scale(1)",
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
+                                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                            >
+                                See your Profit Leaks — 4 min Audit →
+                            </Link>
+
+                            <a
+                                href="https://wa.me/91XXXXXXXXXX?text=Hi! I just did the AI Extinction Audit for my business. I want to discuss how to protect my business from AI threats."
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    color: "#00C48C",
+                                    fontSize: "0.78rem",
+                                    fontWeight: 700,
+                                    textDecoration: "none",
+                                    padding: "8px 12px",
+                                    borderRadius: "8px",
+                                    transition: "background 0.2s"
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = "rgba(0,196,140,0.05)"}
+                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.342 2.518.938 3.565l-.994 3.634 3.717-.974c1.011.552 2.169.869 3.407.87 3.181 0 5.767-2.586 5.768-5.766 0-3.181-2.587-5.766-5.768-5.766zM12.031 3c4.935 0 8.938 4.003 8.938 8.938s-4.003 8.938-8.938 8.938c-1.572 0-3.045-.407-4.326-1.118l-5.705 1.494 1.521-5.558c-.808-1.353-1.278-2.937-1.278-4.631 0-4.935 4.003-8.938 8.938-8.938z" />
+                                </svg>
+                                or chat with us on WhatsApp →
+                            </a>
                         </div>
                     </div>
                 )}
@@ -856,24 +964,18 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             {/* ─── HIDDEN FLAT SHARE CARD (captured by html2canvas) ─── */}
             {
                 result && cfg && (
-                    <div
-                        ref={shareCardRef}
-                        style={{
-                            position: "fixed",
-                            top: "-9999px",
-                            left: "-9999px",
-                            zIndex: -1,
-                            pointerEvents: "none",
-                        }}
-                    >
-                        <ShareCard
-                            result={result}
-                            cfg={cfg}
-                            jobTitle={input}
-                            years={years}
-                            months={months}
-                            days={days}
-                        />
+                    <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+                        <div id="share-card-target" ref={shareCardRef}>
+                            <ShareCard
+                                result={result}
+                                cfg={cfg}
+                                jobTitle={input}
+                                years={years}
+                                months={months}
+                                days={days}
+                                t={t}
+                            />
+                        </div>
                     </div>
                 )
             }

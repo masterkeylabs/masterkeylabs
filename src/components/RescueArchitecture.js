@@ -172,6 +172,11 @@ export default function RescueArchitecture({ businessId, t }) {
                                     </>
                                 )}
                             </button>
+
+                            <p className="text-[9px] text-center text-white/30 mt-4 leading-relaxed tracking-wider uppercase">
+                                No sales pitch. No strings attached.<br />
+                                Just a technical blueprint for your survival.
+                            </p>
                         </div>
                     </div>
                 </div>
