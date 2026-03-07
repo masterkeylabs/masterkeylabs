@@ -33,11 +33,11 @@ export default function DashboardGrid({ business, computedData }) {
     const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
 
-    // Handle Unlocking Sequence
     const handleWizardComplete = () => {
         if (!auditsIncomplete) {
-            // Already complete, just close
+            // Already complete, just close and force reload to fetch fresh data
             setShowAuditWizard(false);
+            window.location.reload();
             return;
         }
 
