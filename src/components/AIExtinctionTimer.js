@@ -923,27 +923,35 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 Our system detected high friction in your workflow. See exactly where you are losing revenue.
                             </p>
 
-                            <Link
-                                href={`/audit?vertical=${cfg.key}&role=${encodeURIComponent(input)}`}
+                            <button
+                                onClick={onGetStarted}
                                 style={{
                                     display: "block",
+                                    width: "100%",
                                     background: "linear-gradient(135deg, #00E5FF, #0099FF)",
                                     color: "#000",
-                                    textDecoration: "none",
+                                    border: "none",
+                                    cursor: "pointer",
                                     padding: "16px",
                                     borderRadius: "14px",
                                     fontSize: "0.85rem",
                                     fontWeight: 900,
                                     marginBottom: "14px",
                                     boxShadow: "0 10px 25px rgba(0,229,255,0.25)",
-                                    transition: "transform 0.2s ease",
+                                    transition: "transform 0.2s ease, filter 0.2s ease",
                                     transform: "scale(1)",
                                 }}
-                                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.02)"}
-                                onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.transform = "scale(1.02)";
+                                    e.currentTarget.style.filter = "brightness(1.1)";
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.transform = "scale(1)";
+                                    e.currentTarget.style.filter = "brightness(1)";
+                                }}
                             >
                                 See your Profit Leaks — 4 min Audit →
-                            </Link>
+                            </button>
 
                             <a
                                 href="https://wa.me/91XXXXXXXXXX?text=Hi! I just did the AI Extinction Audit for my business. I want to discuss how to protect my business from AI threats."

@@ -14,6 +14,7 @@ export default function DashboardFallback() {
     useEffect(() => {
         const recoverByLocalStorage = async () => {
             if (loading || business?.id) return;
+            const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
             if (localBizId) {
                 const { data } = await supabase.from('businesses').select('*').eq('id', localBizId).maybeSingle();
                 if (data) {

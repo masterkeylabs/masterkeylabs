@@ -16,8 +16,8 @@ export default function Home() {
 
     const effectiveId = business?.id || null;
 
-    // STRICT FLOW: If logged in, go to dashboard. If guest, ALWAYS go to signup.
-    const dashboardHref = user ? (effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard') : '/signup';
+    // STRICT FLOW: If logged in OR have a session ID, go to dashboard. Otherwise go to signup.
+    const dashboardHref = (user || effectiveId) ? (effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard') : '/signup';
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">

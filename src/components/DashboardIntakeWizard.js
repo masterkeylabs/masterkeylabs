@@ -221,9 +221,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             if (onComplete) onComplete();
 
             if (mode === 'profile') {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // Parent onComplete already handles standard refresh/transition
+                console.log('Profile Sync Complete');
             } else {
                 setStep(1);
             }
