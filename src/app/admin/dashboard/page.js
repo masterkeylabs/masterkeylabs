@@ -19,6 +19,11 @@ export default function AdminDashboard() {
 
     const COLORS = ['#00e5ff', '#ff3d00', '#ffd600', '#00e676', '#d500f9', '#3d5afe', '#ff9100'];
 
+    const formatToIST = (dateString, options) => {
+        if (!dateString) return 'N/A';
+        return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', ...options }).format(new Date(dateString));
+    };
+
     useEffect(() => {
         const session = localStorage.getItem('admin_session');
         if (!session) {
@@ -84,7 +89,7 @@ export default function AdminDashboard() {
         // Mocking trend based on registration date for visual appeal
         const groups = {};
         businesses.forEach(b => {
-            const date = new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const date = formatToIST(b.created_at, { month: 'short', day: 'numeric' });
             groups[date] = (groups[date] || 0) + (b.loss_audit_results?.[0]?.total_burn || 0);
         });
         return Object.keys(groups).slice(0, 7).reverse().map(date => ({
@@ -345,8 +350,8 @@ export default function AdminDashboard() {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <div className="text-xs font-mono text-white/40">{new Date(biz.created_at).toLocaleDateString()}</div>
-                                                <div className="text-[10px] text-white/20 font-medium uppercase tracking-widest mt-1">{new Date(biz.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                                <div className="text-xs font-mono text-white/40">{formatToIST(biz.created_at, { year: 'numeric', month: 'short', day: '2-digit' })}</div>
+                                                <div className="text-[10px] text-white/20 font-medium uppercase tracking-widest mt-1">{formatToIST(biz.created_at, { hour: '2-digit', minute: '2-digit', hour12: true })}</div>
                                             </td>
                                         </tr>
                                     );
