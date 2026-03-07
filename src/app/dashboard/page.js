@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabaseServer';
 import { calculateLossAudit } from '@/lib/calculations';
 import DashboardGrid from '@/components/DashboardGrid';
 import DashboardFallback from '@/components/DashboardFallback';
@@ -8,17 +8,32 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function DashboardPage(props) {
-    const searchParams = await props.searchParams;
-    const businessId = searchParams?.id || null;
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!businessId) {
-        // If no ID in URL, show the client fallback which checks localStorage and redirects
+    if (!user) {
+        // If not logged in, middleware catches it, but fallback UI just in case
         return <DashboardFallback />;
     }
 
-    // Await all Supabase queries concurrently on the server
-    const [bizRes, lossRes, threatRes, nightRes, visRes] = await Promise.all([
-        supabase.from('businesses').select('*').eq('id', businessId).maybeSingle(),
+    // 1. Securely fetch the business profile belonging to this user
+    const { data: business, error: bizError } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    if (!business) {
+        // Logged in, but no business profile found
+        return <DashboardFallback />;
+    }
+
+    const businessId = business.id;
+
+    // 2. Await all metric queries concurrently using the secure businessId
+    const [lossRes, threatRes, nightRes, visRes] = await Promise.all([
         supabase.from('loss_audit_results').select('*').eq('business_id', businessId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
         supabase.from('ai_threat_results').select('*').eq('business_id', businessId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
         supabase.from('night_loss_results').select('*').eq('business_id', businessId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
@@ -26,8 +41,6 @@ export default async function DashboardPage(props) {
     ]);
 
     // Parse the data or fallback to defaults
-    const business = bizRes.data || { id: businessId };
-
     // 1. Loss Audit Result → show Recoverable Savings
     const lossAuditScore = lossRes.data?.saving_target || 0;
 
@@ -40,7 +53,7 @@ export default async function DashboardPage(props) {
     // 4. AI Threat Result
     const aiThreatScore = threatRes.data?.score || 0;
 
-    const fetchErrors = [lossRes.error, threatRes.error, nightRes.error, visRes.error].filter(Boolean);
+    const fetchErrors = [bizError, lossRes.error, threatRes.error, nightRes.error, visRes.error].filter(Boolean);
     if (fetchErrors.length > 0) {
         console.warn('Dashboard Data Fetch Warning:', fetchErrors);
     }

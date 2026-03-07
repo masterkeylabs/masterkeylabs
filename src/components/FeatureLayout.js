@@ -11,11 +11,10 @@ export default function FeatureLayout({ children, title, subtitle, backHref }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
-        const id = localStorage.getItem('masterkey_business_id');
-        if (id) {
-            setDashboardHref(`/dashboard?id=${id}`);
-        } else if (backHref) {
+        if (backHref) {
             setDashboardHref(backHref);
+        } else {
+            setDashboardHref(`/dashboard`);
         }
     }, [backHref]);
 

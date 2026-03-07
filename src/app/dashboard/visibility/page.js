@@ -33,7 +33,7 @@ function VisibilityContent() {
     const { lang, t } = useLanguage();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
+    const businessId = business?.id;
 
     const [answers, setAnswers] = useState(
         Object.fromEntries(VISIBILITY_SIGNALS.map(s => [s.id, false]))

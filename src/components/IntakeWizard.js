@@ -21,18 +21,14 @@ export default function IntakeWizard({ t }) {
     const router = useRouter();
     const { user, business } = useAuth();
     const [step, setStep] = useState(0);
-    const [localId, setLocalId] = useState(null);
+    // localId removed
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState(null);
     const [displayScore, setDisplayScore] = useState(0);
     const [scanIdx, setScanIdx] = useState(0);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setLocalId(localStorage.getItem('masterkey_business_id'));
-        }
-    }, []);
+    // Removed localStorage sync
 
     const [formData, setFormData] = useState({
         vertical: 'retail',
@@ -260,8 +256,7 @@ export default function IntakeWizard({ t }) {
                 await syncAuditToSupabase(newBiz.id, results);
             }
 
-            localStorage.setItem('masterkey_business_id', newBiz.id);
-            router.push(`/dashboard?id=${newBiz.id}`);
+            router.push(`/dashboard`);
 
         } catch (error) {
             console.error(error);
@@ -271,7 +266,7 @@ export default function IntakeWizard({ t }) {
     };
 
     const skipLeadForm = useCallback(async (currentResults) => {
-        let bizId = business?.id || localStorage.getItem('masterkey_business_id');
+        let bizId = business?.id;
 
         // If no business ID found but user is logged in, check if they already have one in DB
         if (!bizId && user?.id) {
@@ -315,14 +310,13 @@ export default function IntakeWizard({ t }) {
                     await supabase.from('businesses').update({ user_id: user.id }).eq('id', bizId);
                 }
                 await syncAuditToSupabase(bizId, currentResults);
-                localStorage.setItem('masterkey_business_id', bizId);
-                router.push(`/dashboard?id=${bizId}`);
+                router.push(`/dashboard`);
             } catch (err) {
                 console.error('Auto-sync failed:', err);
                 setErrorMsg("Dashboard sync failed. Please try again.");
             }
         } else if (bizId) {
-            router.push(`/dashboard?id=${bizId}`);
+            router.push(`/dashboard`);
         }
     }, [business, user, syncAuditToSupabase, router, formData.vertical, formData.revenueBracket]);
 
@@ -352,7 +346,7 @@ export default function IntakeWizard({ t }) {
     };
 
     useEffect(() => {
-        if (step === 5 && results && (user || business || localStorage.getItem('masterkey_business_id'))) {
+        if (step === 5 && results && (user || business)) {
             skipLeadForm(results);
         }
     }, [step, user, business, results, skipLeadForm]);

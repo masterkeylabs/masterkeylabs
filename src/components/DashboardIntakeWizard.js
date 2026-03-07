@@ -28,12 +28,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Raw Fetch Bypass Helper to prevent browser library deadlocks
+    // Secure Fetch Helper: Uses authenticated session token to enforce RLS
     const rawFetch = async (table, method, body = null, query = '') => {
+        const { data: { session } } = await supabase.auth.getSession();
+
         const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/${table}${query}`;
         const headers = {
             'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+            'Authorization': session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
             'Content-Type': 'application/json',
             'Prefer': 'return=representation,resolution=merge-duplicates'
         };
@@ -49,7 +51,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         }
         return await res.json();
     };
-    const { user } = useAuth();
+
+    const { user, fetchBusinessProfile } = useAuth();
     const [step, setStep] = useState(initialStep);
     const [activeId, setActiveId] = useState(business?.id || null);
     const [isSaving, setIsSaving] = useState(false);
@@ -207,11 +210,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             finalBizId = upsertResult?.id || finalBizId;
             setActiveId(finalBizId);
-            localStorage.setItem('masterkey_business_id', finalBizId);
 
-            const params = new URLSearchParams(searchParams.toString());
-            params.set('id', finalBizId);
-            router.replace(`/dashboard?${params.toString()}`, { scroll: false });
+            if (fetchBusinessProfile) {
+                await fetchBusinessProfile(user?.id);
+            }
+            router.replace(`/dashboard`, { scroll: false });
 
             if (onComplete) onComplete();
 

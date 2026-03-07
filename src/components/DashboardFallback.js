@@ -11,64 +11,15 @@ import Link from 'next/link';
 
 export default function DashboardFallback() {
     const router = useRouter();
-    const { business, loading, user } = useAuth();
+    const { business, loading, user, fetchBusinessProfile } = useAuth();
     const { t } = useLanguage();
-    const [localId, setLocalId] = useState(null);
 
-    // Raw Fetch Bypass Helper
-    const rawFetch = async (table, method, body = null, query = '') => {
-        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/${table}${query}`;
-        const headers = {
-            'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation,resolution=merge-duplicates'
-        };
-        const options = {
-            method,
-            headers,
-            body: body ? JSON.stringify(body) : null
-        };
-        const res = await fetch(url, options);
-        if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.message || 'Network response was not ok');
-        }
-        return await res.json();
-    };
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const id = localStorage.getItem('masterkey_business_id');
-            setLocalId(id);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (loading) return;
-
-        const id = business?.id || localId;
-        console.log('--- DashboardFallback Tracing ---', {
-            source: business?.id ? 'AuthContext' : 'LocalStorage',
-            id,
-            urlId: typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null
-        });
-
-        if (id && id !== 'null' && id !== 'undefined' && id !== '') {
-            const currentUrlId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null;
-            if (currentUrlId !== id) {
-                console.log('--- Terminal Handshake: Redirecting to verified session ---', id);
-                router.replace(`/dashboard?id=${id}`);
-            }
-        }
-    }, [business, loading, router, localId]);
-
-    // Handle Google OAuth post-redirect recovery
+    // Handle Google OAuth post-redirect recovery securely
     useEffect(() => {
         const processPendingGoogleSignup = async () => {
             if (loading) return;
 
-            if (user?.id && !business?.id && (!localId || localId === 'null')) {
+            if (user?.id && !business?.id) {
                 const pendingFormStr = localStorage.getItem('masterkey_temp_form');
                 if (pendingFormStr) {
                     try {
@@ -96,39 +47,27 @@ export default function DashboardFallback() {
                             classification: formData.vertical ? `${formData.vertical}::${formData.revenueBracket}` : `dashboard_wizard::v2_rpc`
                         };
 
-                        console.log('--- Google Recovery: Syncing Profile (Direct RAW) ---');
+                        console.log('--- Google Recovery: Syncing Profile (Secure Client) ---');
                         let newBizId = null;
 
-                        // 1. Check for existing profile by email/phone first (RAW)
-                        const searchByContactResults = await rawFetch('businesses', 'GET', null, `?or=(email.eq.${payload.email},phone.eq.${payload.phone})&select=id`);
-                        if (searchByContactResults && searchByContactResults.length > 0) {
-                            newBizId = searchByContactResults[0].id;
-                            console.log('Existing target found during recovery (RAW):', newBizId);
-                        }
+                        // 1. Check for existing profile by user_id
+                        const { data: existingBiz } = await supabase.from('businesses').select('id').eq('user_id', user.id).maybeSingle();
 
-                        // 2. Transact profile via direct Upsert (RAW)
-                        let upsertResult;
-                        if (newBizId) {
-                            const patchResults = await rawFetch('businesses', 'PATCH', {
-                                ...payload,
-                                updated_at: new Date().toISOString()
-                            }, `?id=eq.${newBizId}`);
-                            upsertResult = patchResults[0];
+                        // 2. Transact profile via direct Upsert securely
+                        if (existingBiz?.id) {
+                            newBizId = existingBiz.id;
+                            const { error } = await supabase.from('businesses').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', newBizId);
+                            if (error) throw error;
                         } else {
-                            const postResults = await rawFetch('businesses', 'POST', {
-                                ...payload,
-                                updated_at: new Date().toISOString()
-                            });
-                            upsertResult = postResults[0];
+                            const { data: postResult, error } = await supabase.from('businesses').insert({ ...payload, updated_at: new Date().toISOString() }).select().single();
+                            if (error) throw error;
+                            newBizId = postResult.id;
                         }
-
-                        if (!upsertResult && !newBizId) throw new Error("Upsert failed during recovery.");
-                        newBizId = upsertResult?.id || newBizId;
 
                         if (newBizId) {
                             if (results) {
-                                // Sync audits (RAW)
-                                await rawFetch('loss_audit_results', 'POST', {
+                                // Sync audits (Secure Client)
+                                await supabase.from('loss_audit_results').insert([{
                                     business_id: newBizId,
                                     staff_salary: 25 * 25000,
                                     marketing_budget: Number(formData.marketingSpend) || 0,
@@ -145,7 +84,7 @@ export default function DashboardFallback() {
                                     total_burn: results.totalSilosLost || 0,
                                     saving_target: results.recoverableSavings || 0,
                                     created_at: new Date().toISOString()
-                                });
+                                }]);
 
                                 const aiCalc = calculateAIThreat(formData.vertical || 'retail', {
                                     isOmnichannel: formData.contactAfter6 || false,
@@ -154,7 +93,7 @@ export default function DashboardFallback() {
                                     employeeCount: 25
                                 });
 
-                                await rawFetch('ai_threat_results', 'POST', {
+                                await supabase.from('ai_threat_results').insert([{
                                     business_id: newBizId,
                                     industry: formData.vertical || 'retail',
                                     score: aiCalc.riskPct,
@@ -167,26 +106,31 @@ export default function DashboardFallback() {
                                     has_erp: false,
                                     employee_count: 25,
                                     created_at: new Date().toISOString()
-                                });
+                                }]);
 
-                                await rawFetch('visibility_results', 'POST', {
+                                await supabase.from('visibility_results').insert([{
                                     business_id: newBizId,
                                     missed_customers: results.missedCustomers || 0,
                                     created_at: new Date().toISOString()
-                                });
+                                }]);
 
-                                await rawFetch('night_loss_results', 'POST', {
+                                await supabase.from('night_loss_results').insert([{
                                     business_id: newBizId,
                                     monthly_loss: results.nightLoss || 0,
                                     created_at: new Date().toISOString()
-                                });
+                                }]);
                             }
 
                             localStorage.removeItem('masterkey_temp_form');
                             localStorage.removeItem('masterkey_temp_results');
-                            localStorage.setItem('masterkey_business_id', newBizId);
 
-                            window.location.href = `/dashboard?id=${newBizId}`;
+                            // Make sure global context knows about the new business
+                            if (fetchBusinessProfile) {
+                                await fetchBusinessProfile(user.id);
+                            }
+
+                            // Let the router handle the dashboard reload securely
+                            router.replace('/dashboard');
                             return;
                         }
                     } catch (e) {
@@ -197,7 +141,7 @@ export default function DashboardFallback() {
         };
 
         processPendingGoogleSignup();
-    }, [user, business, loading, localId]);
+    }, [user, business, loading, fetchBusinessProfile, router]);
 
     if (loading) {
         return (
@@ -210,7 +154,7 @@ export default function DashboardFallback() {
 
     // If we've finished loading and STILL don't have a business ID,
     // show the DashboardGrid with empty values so they see the "4 audits" directly.
-    if (!business?.id && (!localId || localId === 'null')) {
+    if (!business?.id) {
         const dummyData = {
             lossAudit: { saving_target: 0 },
             nightLoss: { monthly_loss: 0 },

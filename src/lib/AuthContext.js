@@ -14,12 +14,10 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         let isMounted = true;
 
-        // Safety timeout to prevent infinite loading screen
         const safetyTimeout = setTimeout(() => {
             if (isMounted) setLoading(false);
         }, 5000);
 
-        // Check active sessions and sets the user
         const getSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
@@ -41,7 +39,6 @@ export const AuthProvider = ({ children }) => {
 
         getSession();
 
-        // Listen for changes on auth state (sign in, sign out, etc.)
         const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
             try {
                 const currentUser = session?.user ?? null;
@@ -82,26 +79,17 @@ export const AuthProvider = ({ children }) => {
 
             if (data) {
                 setBusiness(data);
-                localStorage.setItem('masterkey_business_id', data.id);
             } else {
                 setBusiness(null);
-                // Hard reset of all business-related local storage if no DB record found
-                localStorage.removeItem('masterkey_business_id');
-                localStorage.removeItem('masterkey_user_name');
-                localStorage.removeItem('masterkey_user_phone');
             }
         } catch (error) {
             console.error('Error fetching business profile:', error.message);
             setBusiness(null);
-            localStorage.removeItem('masterkey_business_id');
         }
     };
 
     const signOut = async () => {
         await supabase.auth.signOut();
-        localStorage.removeItem('masterkey_business_id');
-        localStorage.removeItem('masterkey_user_name');
-        localStorage.removeItem('masterkey_user_phone');
         router.push('/');
     };
 

@@ -10,7 +10,7 @@ function ProfileEditContent() {
     const { business, user } = useAuth();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const businessId = business?.id || searchParams.get('id') || (typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null);
+    const businessId = business?.id;
 
     const [lang, setLang] = useState('en');
     const t = translations[lang];
@@ -136,7 +136,6 @@ function ProfileEditContent() {
 
             if (result) {
                 finalBusinessId = result.id;
-                localStorage.setItem('masterkey_business_id', result.id);
             }
 
             // ── Update loss_audit_results (non-blocking) ───────────────────

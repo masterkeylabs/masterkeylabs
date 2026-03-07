@@ -1,0 +1,108 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ΓÜá The 
+"middleware" file 
+convention is deprecated. 
+Please use "proxy" 
+instead. Learn more: https
+://nextjs.org/docs/message
+s/middleware-to-proxy
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (Γ  
+  Üá The "middle...lewa   
+ re-to-proxy:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build 
+failed with 1 errors:
+./src/middleware.js:2:1
+Module not found: Can't 
+resolve 'next/response'
+[0m [90m 1 |[39m 
+[36mimport[39m { 
+createServerClient } 
+[36mfrom[39m 
+[32m'@supabase/ssr'[39m
+[31m[1m>[22m[39m[90m 
+2 |[39m [36mimport[39m 
+{ [33mNextResponse[39m 
+} [36mfrom[39m 
+[32m'next/response'[39m
+ [90m   |[39m [31m[1m^
+[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1
+m^[22m[39m
+ [90m 3 |[39m
+ [90m 4 |[39m 
+[36mexport[39m 
+[36masync[39m 
+[36mfunction[39m 
+middleware(request) {
+ [90m 5 |[39m     
+[36mlet[39m 
+supabaseResponse 
+[33m=[39m [33mNextRespo
+nse[39m[33m.[39mnext({
+[0m
+
+Import map: aliased to 
+module 'next' with 
+subpath '/response' 
+inside of [project]/
+
+
+https://nextjs.org/docs/me
+ssages/module-not-found
+
+
+    at <unknown> 
+(./src/middleware.js:2:1)
+    at <unknown> (https://
+nextjs.org/docs/messages/m
+odule-not-found)

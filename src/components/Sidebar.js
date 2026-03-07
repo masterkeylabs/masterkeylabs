@@ -12,8 +12,7 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
     const [activeNav, setActiveNav] = useState('status');
 
     useEffect(() => {
-        const id = localStorage.getItem('masterkey_business_id');
-        if (id) setDashboardHref(`/dashboard?id=${id}`);
+        setDashboardHref(`/dashboard`);
     }, []);
 
     const handleStatus = () => {

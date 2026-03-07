@@ -10,27 +10,11 @@ import ThemeToggle from '@/components/ThemeToggle';
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
     const { user, business, loading: authLoading } = useAuth();
-    const [localId, setLocalId] = useState(null);
-    const [isCheckingLocal, setIsCheckingLocal] = useState(true);
+    // localId removed
+    const loading = authLoading;
+    const hasSession = !!business;
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setLocalId(localStorage.getItem('masterkey_business_id'));
-        }
-        setIsCheckingLocal(false);
-    }, []);
-
-    const loading = authLoading || isCheckingLocal;
-
-    // We only consider it a valid session if:
-    // 1. User is logged in AND has a business profile
-    // 2. OR User is a guest with a localId (guest session)
-    // If user is logged in but has NO business profile (wiped DB), we treat them as needing signup/intake.
-    const hasActiveBusiness = business || (localId && !user);
-    const hasSession = !!hasActiveBusiness;
-
-    const rawId = business?.id || localId;
-    const effectiveId = (rawId && rawId !== 'null') ? rawId : null;
+    const effectiveId = business?.id || null;
 
     // STRICT FLOW: If logged in, go to dashboard. If guest, ALWAYS go to signup.
     const dashboardHref = user ? (effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard') : '/signup';
