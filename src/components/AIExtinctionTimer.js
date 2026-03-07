@@ -112,83 +112,139 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
     if (!result || !cfg) return null;
     return (
         <div style={{
-            width: "480px",
-            background: "#0d0d0f",
-            border: `2px solid ${cfg.color}44`,
-            borderRadius: "20px",
-            padding: "28px 28px 20px",
-            fontFamily: "'Arial', sans-serif",
+            width: "500px",
+            background: "#080809",
+            border: `1px solid rgba(255,255,255,0.05)`,
+            borderRadius: "24px",
+            padding: "32px",
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
             color: "#F0F0F0",
         }}>
-            {/* Brand header */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
-                <div style={{ fontSize: "0.6rem", color: "#FF6D00", letterSpacing: "3px", fontWeight: 700 }}>
-                    ● MASTERKEYLABS · AI DISPLACEMENT ANALYSIS
-                </div>
+            {/* 1. Header label */}
+            <div style={{ textAlign: "center", marginBottom: "20px" }}>
                 <div style={{
-                    background: cfg.color, color: "#000",
-                    fontSize: "0.55rem", fontWeight: 900, letterSpacing: "2px",
-                    padding: "4px 12px", borderRadius: "99px",
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    fontSize: "0.6rem", letterSpacing: "3px", color: "#FF6D00",
+                    fontWeight: 700, marginBottom: "12px"
                 }}>
-                    {cfg.emoji} {cfg.label}
+                    <span>●</span> AI DISPLACEMENT ANALYSIS
                 </div>
+                <h1 style={{
+                    fontSize: "1.8rem",
+                    fontWeight: 900, color: "#F0F0F0",
+                    margin: "0 0 8px", lineHeight: 1.1,
+                    letterSpacing: "-0.5px",
+                }}>
+                    Will AI Replace<br />
+                    <span style={{ color: "#FF6D00" }}>Your Business?</span>
+                </h1>
+                <p style={{ color: "#A0A0A0", fontSize: "0.75rem", margin: 0, lineHeight: 1.5 }}>
+                    Enter your job title or business type below.<br />
+                    Get your AI extinction timeline in seconds.
+                </p>
             </div>
 
-            {/* Job title */}
-            <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#fff", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "1px" }}>
-                {jobTitle}
+            {/* 2. Mock Input Box */}
+            <div style={{
+                width: "100%",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: "14px",
+                padding: "14px 18px",
+                color: "#E0E0E0",
+                fontSize: "0.85rem",
+                marginBottom: "10px",
+            }}>
+                {jobTitle || "software developer"}
             </div>
 
-            {/* Verdict */}
-            <div style={{ fontSize: "0.78rem", color: "#999", fontStyle: "italic", marginBottom: "16px", lineHeight: 1.5 }}>
-                "{result.verdict}"
+            {/* 3. Mock Primary Button */}
+            <div style={{
+                width: "100%",
+                padding: "14px",
+                background: "linear-gradient(135deg, #E65100, #FF6D00)",
+                borderRadius: "14px",
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: "0.75rem",
+                textAlign: "center",
+                boxShadow: "0 6px 20px rgba(255,109,0,0.3)",
+                marginBottom: "24px",
+            }}>
+                Calculate My AI Risk →
             </div>
 
-            {/* Risk score row */}
-            <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
-                <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "3rem", fontWeight: 900, color: cfg.color, lineHeight: 1 }}>{result.riskScore}%</div>
-                    <div style={{ fontSize: "0.5rem", color: "#555", letterSpacing: "2px", marginTop: "4px" }}>AUTOMATION RISK</div>
+            {/* 4. Result Card (matches main UI) */}
+            <div style={{
+                background: `radial-gradient(ellipse at top, ${cfg.glow} 0%, transparent 70%), rgba(255,255,255,0.02)`,
+                border: `1px solid ${cfg.color}22`,
+                borderRadius: "20px",
+                padding: "24px",
+            }}>
+                {/* Risk Score Row */}
+                <div style={{ textAlign: "center", marginBottom: "16px" }}>
+                    <span style={{
+                        display: "inline-block", background: cfg.color, color: "#000",
+                        fontSize: "0.55rem", fontWeight: 900, letterSpacing: "3px",
+                        padding: "5px 16px", borderRadius: "99px",
+                    }}>
+                        {cfg.emoji} {cfg.label}
+                    </span>
                 </div>
-                <div style={{ flex: 1 }}>
-                    <div style={{ height: "6px", background: "rgba(255,255,255,0.06)", borderRadius: "99px", overflow: "hidden" }}>
+
+                <div style={{ fontSize: "0.85rem", color: "#C0C0C0", fontStyle: "italic", textAlign: "center", marginBottom: "20px", lineHeight: 1.6 }}>
+                    "{result.verdict}"
+                </div>
+
+                {/* Automation Exposure Bar */}
+                <div style={{ marginBottom: "20px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "0.6rem", color: "#444", letterSpacing: "2px" }}>AUTOMATION EXPOSURE</span>
+                        <span style={{ fontSize: "0.9rem", fontWeight: 800, color: cfg.color }}>{result.riskScore}%</span>
+                    </div>
+                    <div style={{ height: "5px", background: "rgba(255,255,255,0.05)", borderRadius: "99px", overflow: "hidden" }}>
                         <div style={{ height: "100%", width: `${result.riskScore}%`, background: `linear-gradient(90deg, ${cfg.color}66, ${cfg.color})`, borderRadius: "99px" }} />
                     </div>
-                    <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
-                        {[{ v: years, l: "YEARS" }, { v: months, l: "MONTHS" }, { v: days, l: "DAYS" }].map(({ v, l }) => (
-                            <div key={l} style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: `1px solid ${cfg.color}22`, borderRadius: "10px", padding: "10px 6px", textAlign: "center" }}>
-                                <div style={{ fontSize: "1.6rem", fontWeight: 900, color: cfg.color }}>{String(v).padStart(2, "0")}</div>
-                                <div style={{ fontSize: "0.45rem", color: "#444", letterSpacing: "2px", marginTop: "3px" }}>{l}</div>
-                            </div>
+                </div>
+
+                {/* Timer Blocks */}
+                <div style={{ textAlign: "center", fontSize: "0.55rem", color: "#A0A0A0", letterSpacing: "3px", marginBottom: "12px" }}>
+                    TIME TO ADAPT YOUR BUSINESS
+                </div>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
+                    {[{ v: years, l: "YEARS" }, { v: months, l: "MONTHS" }, { v: days, l: "DAYS" }].map(({ v, l }) => (
+                        <div key={l} style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: `1px solid ${cfg.color}33`, borderRadius: "14px", padding: "16px 10px", textAlign: "center" }}>
+                            <div style={{ fontSize: "1.8rem", fontWeight: 900, color: cfg.color, lineHeight: 1 }}>{String(v).padStart(2, "0")}</div>
+                            <div style={{ fontSize: "0.55rem", color: "#555", letterSpacing: "2px", marginTop: "6px" }}>{l}</div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Two-col breakdown */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
+                    <div style={{ background: "rgba(255,109,0,0.04)", border: "1px solid rgba(255,109,0,0.12)", borderRadius: "10px", padding: "12px" }}>
+                        <div style={{ fontSize: "0.52rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "8px", fontWeight: 700 }}>🤖 AI WILL HANDLE</div>
+                        {result.topThreats.map((t, i) => (
+                            <div key={i} style={{ fontSize: "0.68rem", color: "#999", marginBottom: "4px", lineHeight: 1.4 }}>✗ {t}</div>
+                        ))}
+                    </div>
+                    <div style={{ background: "rgba(0,196,140,0.04)", border: "1px solid rgba(0,196,140,0.1)", borderRadius: "10px", padding: "12px" }}>
+                        <div style={{ fontSize: "0.52rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "8px", fontWeight: 700 }}>🧠 YOUR EDGE</div>
+                        {result.humanEdge.map((s, i) => (
+                            <div key={i} style={{ fontSize: "0.68rem", color: "#999", marginBottom: "4px", lineHeight: 1.4 }}>✓ {s}</div>
                         ))}
                     </div>
                 </div>
-            </div>
 
-            {/* Two-col breakdown */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" }}>
-                <div style={{ background: "rgba(255,109,0,0.06)", border: "1px solid rgba(255,109,0,0.15)", borderRadius: "10px", padding: "12px" }}>
-                    <div style={{ fontSize: "0.52rem", color: "#FF6D00", letterSpacing: "2px", marginBottom: "8px", fontWeight: 700 }}>🤖 AI WILL HANDLE</div>
-                    {result.topThreats.map((t, i) => (
-                        <div key={i} style={{ fontSize: "0.68rem", color: "#999", marginBottom: "4px", lineHeight: 1.4 }}>✗ {t}</div>
-                    ))}
-                </div>
-                <div style={{ background: "rgba(0,196,140,0.05)", border: "1px solid rgba(0,196,140,0.12)", borderRadius: "10px", padding: "12px" }}>
-                    <div style={{ fontSize: "0.52rem", color: "#00C48C", letterSpacing: "2px", marginBottom: "8px", fontWeight: 700 }}>🧠 YOUR EDGE</div>
-                    {result.humanEdge.map((s, i) => (
-                        <div key={i} style={{ fontSize: "0.68rem", color: "#999", marginBottom: "4px", lineHeight: 1.4 }}>✓ {s}</div>
-                    ))}
+                {/* Research */}
+                <div style={{ borderLeft: `2px solid ${cfg.color}44`, paddingLeft: "10px", paddingBottom: "4px" }}>
+                    <div style={{ fontSize: "0.58rem", color: "#666", lineHeight: 1.5 }}>📊 {result.researchBasis}</div>
                 </div>
             </div>
 
-            {/* Research */}
-            <div style={{ borderLeft: `2px solid ${cfg.color}44`, paddingLeft: "10px", marginBottom: "14px" }}>
-                <div style={{ fontSize: "0.58rem", color: "#666", lineHeight: 1.5 }}>📊 {result.researchBasis}</div>
-            </div>
-
-            {/* Footer CTA */}
-            <div style={{ textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "12px" }}>
-                <div style={{ fontSize: "0.55rem", color: "#FF6D00", letterSpacing: "2px", fontWeight: 700 }}>masterkeylabs.com · CHECK YOUR RISK FREE →</div>
+            {/* 5. Footer CTA */}
+            <div style={{ textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: "20px", paddingTop: "16px" }}>
+                <div style={{ fontSize: "0.55rem", color: "#FF6D00", letterSpacing: "2px", fontWeight: 700, textDecoration: "none" }}>MASTERKEYLABS.COM · DISCOVER YOUR FUTURE →</div>
             </div>
         </div>
     );
@@ -237,7 +293,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                 console.error('Capture failed:', err);
                 setCaptureStatus("failed");
             }
-        }, 1000);
+        }, 1500);
         return () => clearTimeout(timer);
     }, [result]);
 
