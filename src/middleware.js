@@ -27,23 +27,23 @@ export async function middleware(request) {
         }
     )
 
-    // IMPORTANT: Avoid writing any logic between createServerClient and
-    // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-    // issues with cross-site tracking.
+    // IMPORTANT: DO NOT remove this call. 
+    // This is required for refreshing session cookies securely.
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
-    // Protect /dashboard routes
+    // 1. Protection Logic: If trying to access dashboard but no user found
     if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
-        // no user, potentially respond by redirecting the user to the login page
         const url = request.nextUrl.clone()
         url.pathname = '/login'
+        // Pass the intended destination so they can return after login
+        url.searchParams.set('next', request.nextUrl.pathname)
         return NextResponse.redirect(url)
     }
 
-    // Optional: Redirect logged-in users away from /login and /signup
-    if ((request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup')) && user) {
+    // 2. Convenience Logic: If already logged in, skip login/signup pages
+    if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user) {
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)
