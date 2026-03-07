@@ -37,7 +37,7 @@ export default function LoginPage() {
                 setAuthType('email');
                 const { error } = await supabase.auth.signInWithOtp({
                     email: cleanId,
-                    options: { emailRedirectTo: `${window.location.origin}/dashboard` }
+                    options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard` }
                 });
                 providerError = error;
             }
@@ -92,7 +92,7 @@ export default function LoginPage() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/dashboard`
+                    redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
                 }
             });
             if (error) throw error;
