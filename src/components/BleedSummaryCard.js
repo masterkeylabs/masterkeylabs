@@ -34,12 +34,12 @@ export default function BleedSummaryCard({ t, locked }) {
                         <span className="text-alert-red">Capital Bleed</span>
                     </h2>
                     <p className="text-4xl md:text-7xl font-bold text-white tracking-tighter">
-                        ₹{formatIndian(totalAnnualBleed)}
+                        {formatIndian(totalAnnualBleed)}
                     </p>
                     <div className="pt-2">
                         <p className="text-neon-green font-bold text-lg md:text-xl flex items-center justify-center md:justify-start gap-2">
                             <span className="material-symbols-outlined">verified</span>
-                            Recoverable with AI: ₹{formatIndian(recoverablePotential)} / yr
+                            Recoverable with AI: {formatIndian(recoverablePotential)} / yr
                         </p>
                     </div>
                 </div>

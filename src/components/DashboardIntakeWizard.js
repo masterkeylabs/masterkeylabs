@@ -28,30 +28,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Secure Fetch Helper: Uses authenticated session token to enforce RLS
-    const rawFetch = async (table, method, body = null, query = '') => {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/${table}${query}`;
-        const headers = {
-            'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-            'Authorization': session?.access_token ? `Bearer ${session.access_token}` : `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation,resolution=merge-duplicates'
-        };
-        const options = {
-            method,
-            headers,
-            body: body ? JSON.stringify(body) : null
-        };
-        const res = await fetch(url, options);
-        if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.message || 'Network response was not ok');
-        }
-        return await res.json();
-    };
-
     const { user, fetchBusinessProfile } = useAuth();
     const [step, setStep] = useState(initialStep);
     const [activeId, setActiveId] = useState(business?.id || null);
@@ -181,14 +157,6 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
 
-        let connectionTimedOut = false;
-        const timeoutId = setTimeout(() => {
-            connectionTimedOut = true;
-            setError("The synchronization request is taking longer than expected (120s+). Your database might be under a lock. Please refresh and try again.");
-            setIsSaving(false);
-            console.error('Authorization Timeout: Request exceeded 120 seconds. This is often a browser-side deadlock.');
-        }, 120000);
-
         try {
             const payload = {
                 entity_name: formM0.entityName,
@@ -196,63 +164,51 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 phone: formM0.whatsapp,
                 email: formM0.email,
                 user_id: user?.id || null,
-                classification: `dashboard_wizard::v2_raw_bypass`
+                classification: `dashboard_wizard::v2_ssr_aligned`
             };
 
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            console.log('--- Auth Flow Log: Step 1 (Started RAW Bypass) ---');
             if (!payload.email) throw new Error("Email registry entry required.");
 
             let finalBizId = bizId;
 
-            // 1. Search for existing profile (Split query for maximum safety via RAW fetch)
+            // 1. Search for existing profile if bizId is missing
             if (!finalBizId) {
-                console.log('--- Auth Flow Log: Step 2 (Searching Email RAW) ---', payload.email);
-                const resultsByEmail = await rawFetch('businesses', 'GET', null, `?email=eq.${encodeURIComponent(payload.email)}&select=id`);
+                const { data: resultsByEmail } = await supabase
+                    .from('businesses')
+                    .select('id')
+                    .ilike('email', payload.email)
+                    .maybeSingle();
 
-                if (resultsByEmail && resultsByEmail.length > 0) {
-                    finalBizId = resultsByEmail[0].id;
-                    console.log('--- Auth Flow Log: Step 3 (Found by Email RAW) ---', finalBizId);
+                if (resultsByEmail) {
+                    finalBizId = resultsByEmail.id;
                 } else if (payload.phone) {
-                    console.log('--- Auth Flow Log: Step 3b (Searching Phone RAW) ---', payload.phone);
-                    const resultsByPhone = await rawFetch('businesses', 'GET', null, `?phone=eq.${encodeURIComponent(payload.phone)}&select=id`);
-                    if (resultsByPhone && resultsByPhone.length > 0) {
-                        finalBizId = resultsByPhone[0].id;
-                        console.log('--- Auth Flow Log: Step 4 (Found by Phone RAW) ---', finalBizId);
+                    const last10 = payload.phone.replace(/\D/g, '').slice(-10);
+                    const { data: resultsByPhone } = await supabase
+                        .from('businesses')
+                        .select('id')
+                        .ilike('phone', `%${last10}%`)
+                        .maybeSingle();
+                    if (resultsByPhone) {
+                        finalBizId = resultsByPhone.id;
                     }
                 }
             }
 
-            console.log('--- Auth Flow Log: Step 5 (Committing Upsert RAW) ---', finalBizId || 'NEW');
-
-            // 2. Perform Upsert via RAW fetch
-            let upsertResult;
-            if (finalBizId) {
-                // Update existing
-                const results = await rawFetch('businesses', 'PATCH', {
+            // 2. Perform Upsert
+            const { data: upsertResult, error: upsertError } = await supabase
+                .from('businesses')
+                .upsert({
+                    ...(finalBizId ? { id: finalBizId } : {}),
                     ...payload,
                     updated_at: new Date().toISOString()
-                }, `?id=eq.${finalBizId}`);
-                upsertResult = results[0];
-            } else {
-                // Insert new
-                const results = await rawFetch('businesses', 'POST', {
-                    ...payload,
-                    updated_at: new Date().toISOString()
-                });
-                upsertResult = results[0];
-            }
+                }, { onConflict: 'email' })
+                .select()
+                .single();
 
-            console.log('--- Auth Flow Log: Step 6 (COMPLETE RAW) ---', {
-                returnedId: upsertResult?.id,
-                fallbackId: finalBizId,
-                foundResult: !!upsertResult
-            });
-
-            if (connectionTimedOut) return;
-            if (!upsertResult && !finalBizId) throw new Error("Synchronization established but record returned null.");
+            if (upsertError) throw upsertError;
 
             finalBizId = upsertResult?.id || finalBizId;
             setActiveId(finalBizId);
@@ -264,22 +220,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             if (onComplete) onComplete();
 
-            // If in profile mode, we wait a moment for DB commitment before reload
             if (mode === 'profile') {
-                console.log('--- Auth Flow Log: Step 7 (Settle & Reload) ---');
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000); // 1 second settle time
+                }, 1000);
             } else {
                 setStep(1);
             }
         } catch (err) {
-            if (!connectionTimedOut) {
-                setError(err.message || "An unexpected error occurred during authorization.");
-                console.error('Authorization Fault:', err);
-            }
+            setError(err.message || "An unexpected error occurred during authorization.");
+            console.error('Authorization Fault:', err);
         } finally {
-            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -290,16 +241,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
 
-        let connectionTimedOut = false;
-        const timeoutId = setTimeout(() => {
-            connectionTimedOut = true;
-            setError("The synchronization request is taking longer than expected (120s+). Your database might be under a lock. Please refresh and try again.");
-            setIsSaving(false);
-            console.error('Module 01 Sync Timeout: Request exceeded 120 seconds.');
-        }, 120000);
-
         try {
-            console.log('--- Module 01 Submit: Starting Calculation ---');
             const staff = parseNumericalRange(formM1.staffSalary);
             const ops = parseNumericalRange(formM1.opsOverheads);
             const marketing = parseNumericalRange(formM1.marketingBudget);
@@ -334,28 +276,27 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 01 Submit: Upserting results RAW ---', activeId);
-            await rawFetch('loss_audit_results', 'POST', payload, `?on_conflict=business_id`);
+            const { error: syncError } = await supabase
+                .from('loss_audit_results')
+                .upsert(payload, { onConflict: 'business_id' });
 
-            if (connectionTimedOut) return;
+            if (syncError) throw syncError;
 
-            console.log('--- Module 01 Submit: Updating metadata RAW ---');
-            await rawFetch('businesses', 'PATCH', {
-                annual_revenue: revenue,
-                employee_count: parseInt(formM1.employeeCount) || 0,
-                has_crm: formM1.hasCRM,
-                has_erp: formM1.hasERP
-            }, `?id=eq.${activeId}`);
+            await supabase
+                .from('businesses')
+                .update({
+                    annual_revenue: revenue,
+                    employee_count: parseInt(formM1.employeeCount) || 0,
+                    has_crm: formM1.hasCRM,
+                    has_erp: formM1.hasERP
+                })
+                .eq('id', activeId);
 
-            console.log('--- Module 01 Submit: SUCCESS ---');
             setStep(2);
         } catch (err) {
-            if (!connectionTimedOut) {
-                setError(err.message);
-                console.error('Module 01 Fault:', err);
-            }
+            setError(err.message);
+            console.error('Module 01 Fault:', err);
         } finally {
-            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -366,15 +307,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
 
-        let connectionTimedOut = false;
-        const timeoutId = setTimeout(() => {
-            connectionTimedOut = true;
-            setError("Request timeout. Please refresh.");
-            setIsSaving(false);
-        }, 120000);
-
         try {
-            console.log('--- Module 02 Submit: Starting RAW ---');
             const dailyLeads = parseNumericalRange(formM2.dailyInquiries);
             const avgValue = parseNumericalRange(formM2.avgTransactionValue);
             if (avgValue <= 0) throw new Error("Average transaction value is required.");
@@ -396,16 +329,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 02 Submit: Upserting results RAW ---');
-            await rawFetch('night_loss_results', 'POST', payload, `?on_conflict=business_id`);
+            const { error: syncError } = await supabase
+                .from('night_loss_results')
+                .upsert(payload, { onConflict: 'business_id' });
 
-            if (connectionTimedOut) return;
-            console.log('--- Module 02 Submit: SUCCESS RAW ---');
+            if (syncError) throw syncError;
             setStep(3);
         } catch (err) {
-            if (!connectionTimedOut) setError(err.message);
+            setError(err.message);
         } finally {
-            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -416,15 +348,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
 
-        let connectionTimedOut = false;
-        const timeoutId = setTimeout(() => {
-            connectionTimedOut = true;
-            setError("Request timeout. Please refresh.");
-            setIsSaving(false);
-        }, 120000);
-
         try {
-            console.log('--- Module 03 Submit: Starting RAW ---');
             if (!formM3.city) throw new Error("City is required.");
             const avgVal = parseNumericalRange(formM2.avgTransactionValue);
             const calc = calculateVisibility(formM3.signals, formM3.city, avgVal);
@@ -444,16 +368,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 03 Submit: Upserting results RAW ---');
-            await rawFetch('visibility_results', 'POST', payload, `?on_conflict=business_id`);
+            const { error: syncError } = await supabase
+                .from('visibility_results')
+                .upsert(payload, { onConflict: 'business_id' });
 
-            if (connectionTimedOut) return;
-            console.log('--- Module 03 Submit: SUCCESS RAW ---');
+            if (syncError) throw syncError;
             setStep(4);
         } catch (err) {
-            if (!connectionTimedOut) setError(err.message);
+            setError(err.message);
         } finally {
-            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };
@@ -464,15 +387,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setIsSaving(true);
         setError(null);
 
-        let connectionTimedOut = false;
-        const timeoutId = setTimeout(() => {
-            connectionTimedOut = true;
-            setError("Request timeout. Please refresh.");
-            setIsSaving(false);
-        }, 120000);
-
         try {
-            console.log('--- Module 04 Submit: Starting RAW ---');
             const empCount = parseNumericalRange(formM1.employeeCount || 25);
             const calc = calculateAIThreat(formM4.industry, {
                 isOmnichannel: formM4.isOmnichannel,
@@ -498,25 +413,24 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            console.log('--- Module 04 Submit: Upserting results RAW ---');
-            await rawFetch('ai_threat_results', 'POST', payload, `?on_conflict=business_id`);
+            const { error: syncError } = await supabase
+                .from('ai_threat_results')
+                .upsert(payload, { onConflict: 'business_id' });
 
-            // GLOBAL SYNC: Save industry to businesses table
-            console.log('--- Module 04 Submit: Global Industry Sync RAW ---');
-            await rawFetch('businesses', 'PATCH', {
-                vertical: formM4.industry,
-                employee_count: empCount
-            }, `?id=eq.${activeId}`);
+            if (syncError) throw syncError;
 
-            if (connectionTimedOut) return;
+            await supabase
+                .from('businesses')
+                .update({
+                    vertical: formM4.industry,
+                    employee_count: empCount
+                })
+                .eq('id', activeId);
 
-            console.log('--- Module 04 Submit: FULL SEQUENCE COMPLETE RAW ---');
             if (onComplete) onComplete();
-            // window.location.reload(); // Removed: Handled by DashboardGrid unlocking sequence
         } catch (err) {
-            if (!connectionTimedOut) setError(err.message);
+            setError(err.message);
         } finally {
-            clearTimeout(timeoutId);
             setIsSaving(false);
         }
     };

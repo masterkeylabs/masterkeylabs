@@ -14,10 +14,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         let isMounted = true;
 
-        const safetyTimeout = setTimeout(() => {
-            if (isMounted) setLoading(false);
-        }, 5000);
-
         const getSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
@@ -26,50 +22,41 @@ export const AuthProvider = ({ children }) => {
                 setUser(session?.user ?? null);
                 if (session?.user) {
                     await fetchBusinessProfile(session.user.id);
+                } else {
+                    // Restore localStorage fallback (Bug-Free flow)
+                    const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
+                    if (localBizId) {
+                        const { data } = await supabase.from('businesses').select('*').eq('id', localBizId).maybeSingle();
+                        if (data && isMounted) setBusiness(data);
+                    }
                 }
             } catch (error) {
-                console.error('Error getting session:', error);
+                console.error('Session retrieval error:', error);
             } finally {
-                if (isMounted) {
-                    setLoading(false);
-                    clearTimeout(safetyTimeout);
-                }
+                if (isMounted) setLoading(false);
             }
         };
 
         getSession();
 
         const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            try {
-                const currentUser = session?.user ?? null;
-                setUser(currentUser);
-                if (currentUser) {
-                    await fetchBusinessProfile(currentUser.id);
-                } else {
-                    setBusiness(null);
-                }
-            } catch (err) {
-                console.error('Auth state change error:', err);
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                    clearTimeout(safetyTimeout);
-                }
+            const currentUser = session?.user ?? null;
+            setUser(currentUser);
+            if (currentUser) {
+                await fetchBusinessProfile(currentUser.id);
             }
+            if (isMounted) setLoading(false);
         });
 
         return () => {
             isMounted = false;
-            clearTimeout(safetyTimeout);
-            if (authListener?.subscription) {
-                authListener.subscription.unsubscribe();
-            }
+            if (authListener?.subscription) authListener.subscription.unsubscribe();
         };
     }, []);
 
     const fetchBusinessProfile = async (userId) => {
         try {
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('businesses')
                 .select('*')
                 .eq('user_id', userId)
@@ -79,17 +66,16 @@ export const AuthProvider = ({ children }) => {
 
             if (data) {
                 setBusiness(data);
-            } else {
-                setBusiness(null);
+                localStorage.setItem('masterkey_business_id', data.id);
             }
         } catch (error) {
-            console.error('Error fetching business profile:', error.message);
-            setBusiness(null);
+            console.error('Error fetching business profile:', error);
         }
     };
 
     const signOut = async () => {
         await supabase.auth.signOut();
+        localStorage.removeItem('masterkey_business_id');
         router.push('/');
     };
 
