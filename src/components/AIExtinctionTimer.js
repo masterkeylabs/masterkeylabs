@@ -287,7 +287,8 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const cardRef = useRef(null);
     const shareCardRef = useRef(null);
 
-    const [previewImg, setPreviewImg] = useState(null);
+    const [previewBlob, setPreviewBlob] = useState(null);
+    const [previewImgUrl, setPreviewImgUrl] = useState(null);
     const [shareNotice, setShareNotice] = useState(""); // Feedback like "Copied!" 
 
     const cfg = result ? (THREAT_CONFIG[result.threatLevel] || THREAT_CONFIG.MODERATE) : null;
@@ -298,23 +299,28 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     // Auto-capture the hidden flat share card after result renders
     useEffect(() => {
         if (!result) return;
-        setPreviewImg(null);
+        setPreviewBlob(null);
+        if (previewImgUrl) { URL.revokeObjectURL(previewImgUrl); setPreviewImgUrl(null); }
         setCaptureStatus("capturing");
+
         const timer = setTimeout(async () => {
-            const el = shareCardRef.current;
+            const el = document.getElementById('share-card-target');
             if (!el) { setCaptureStatus("failed"); return; }
             try {
-                const html2canvas = (await import('html2canvas')).default;
-                const canvas = await html2canvas(el, {
-                    backgroundColor: "#000",
-                    scale: 3, // Premium high-res
-                    useCORS: true,
-                    allowTaint: true,
-                    logging: false,
-                    foreignObjectRendering: false,
+                const { toBlob } = await import('html-to-image');
+                const blob = await toBlob(el, {
+                    pixelRatio: 3,
+                    backgroundColor: "#000000",
+                    cacheBust: true,
                 });
-                setPreviewImg(canvas.toDataURL('image/png'));
-                setCaptureStatus("done");
+
+                if (blob) {
+                    setPreviewBlob(blob);
+                    setPreviewImgUrl(URL.createObjectURL(blob));
+                    setCaptureStatus("done");
+                } else {
+                    setCaptureStatus("failed");
+                }
             } catch (err) {
                 console.error('Capture failed:', err);
                 setCaptureStatus("failed");
@@ -323,9 +329,9 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
         return () => clearTimeout(timer);
     }, [result]);
 
-    // Share handler — always opens the platform; downloads image if available
+    // Share handler — natively shares if supported, opens social link if desktop
     const shareImage = async (platform) => {
-        const siteUrl = 'https://masterkeylabs.com';
+        const siteUrl = 'https://masterkeylabs.in';
         const shareText = `🚨 My AI Risk Score from MasterkeyOS Extinction Timer → ${siteUrl}`;
         const encodedText = encodeURIComponent(shareText);
         const encodedUrl = encodeURIComponent(siteUrl);
@@ -338,41 +344,47 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             instagram: `https://www.instagram.com/`,
         };
 
-        if (previewImg && previewImg !== 'failed') {
+        if (previewBlob && captureStatus === 'done') {
             try {
-                const res = await fetch(previewImg);
-                const blob = await res.blob();
-                const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
+                const file = new File([previewBlob], 'MasterKeyLabs-Risk.png', { type: 'image/png' });
 
-                // 1. Mobile native share (most reliable for images)
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                const shareData = {
+                    files: [file],
+                    title: 'My AI Risk Score',
+                    text: shareText,
+                    url: siteUrl
+                };
+
+                // iOS Workaround: Only share the file if text/url causes it to fail
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const finalShareData = isIOS ? { files: [file] } : shareData;
+
+                if (navigator.canShare && navigator.canShare(finalShareData)) {
                     try {
-                        await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
-                        setShareNotice("Sharing...");
+                        await navigator.share(finalShareData);
+                        setShareNotice("Opened Share Menu");
                         setTimeout(() => setShareNotice(""), 3000);
-                        return;
-                    } catch (e) { /* user cancelled or not supported */ }
+                        return; // Prevent fallback
+                    } catch (e) { console.error("Native share aborted/failed:", e); }
                 }
 
-                // 2. Clipboard API (for Desktop/Web fallbacks)
+                // Desktop Fallbacks:
+                // Try clipboard first
                 if (navigator.clipboard && window.ClipboardItem) {
                     try {
-                        const item = new ClipboardItem({ [blob.type]: blob });
+                        const item = new ClipboardItem({ [previewBlob.type]: previewBlob });
                         await navigator.clipboard.write([item]);
                         setShareNotice("Image Copied! Paste it in the post.");
                         setTimeout(() => setShareNotice(""), 4000);
-                    } catch (e) {
-                        console.error('Clipboard failed:', e);
-                    }
+                    } catch (e) { console.error('Clipboard failed', e); }
+                } else {
+                    // Force download if clipboard isn't supported
+                    const link = document.createElement('a');
+                    link.download = 'AI-Risk-Report.png';
+                    link.href = URL.createObjectURL(previewBlob);
+                    link.click();
+                    URL.revokeObjectURL(link.href);
                 }
-
-                // 3. Desktop fallback: auto-download image
-                const objUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = objUrl;
-                a.download = 'ai-risk-score.png';
-                a.click();
-                URL.revokeObjectURL(objUrl);
 
             } catch (e) { console.error('Share logic failed:', e); }
         }
@@ -795,11 +807,11 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 </div>
                             )}
 
-                            {captureStatus === "done" && previewImg && (
+                            {captureStatus === "done" && previewImgUrl && (
                                 <div style={{ marginBottom: "12px", borderRadius: "12px", overflow: "hidden", border: `1px solid ${cfg.color}33` }}>
                                     <img
                                         className="ext-preview-img"
-                                        src={previewImg}
+                                        src={previewImgUrl}
                                         alt="Your AI Risk Score"
                                         style={{ width: "100%", display: "block", borderRadius: "12px", maxHeight: "300px", objectFit: "cover" }}
                                     />
