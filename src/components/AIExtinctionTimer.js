@@ -263,6 +263,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     const shareCardRef = useRef(null);
 
     const [previewImg, setPreviewImg] = useState(null);
+    const [shareNotice, setShareNotice] = useState(""); // Feedback like "Copied!" 
 
     const cfg = result ? (THREAT_CONFIG[result.threatLevel] || THREAT_CONFIG.MODERATE) : null;
     const years = result ? Math.floor(result.yearsRemaining) : 0;
@@ -318,22 +319,37 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                 const blob = await res.blob();
                 const file = new File([blob], 'ai-risk-score.png', { type: 'image/png' });
 
-                // Mobile native share
+                // 1. Mobile native share (most reliable for images)
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({ title: 'My AI Risk Score', text: shareText, files: [file] });
+                        setShareNotice("Sharing...");
+                        setTimeout(() => setShareNotice(""), 3000);
                         return;
-                    } catch (e) { /* cancelled or not supported */ }
+                    } catch (e) { /* user cancelled or not supported */ }
                 }
 
-                // Desktop: auto-download image
+                // 2. Clipboard API (for Desktop/Web fallbacks)
+                if (navigator.clipboard && window.ClipboardItem) {
+                    try {
+                        const item = new ClipboardItem({ [blob.type]: blob });
+                        await navigator.clipboard.write([item]);
+                        setShareNotice("Image Copied! Paste it in the post.");
+                        setTimeout(() => setShareNotice(""), 4000);
+                    } catch (e) {
+                        console.error('Clipboard failed:', e);
+                    }
+                }
+
+                // 3. Desktop fallback: auto-download image
                 const objUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = objUrl;
                 a.download = 'ai-risk-score.png';
                 a.click();
                 URL.revokeObjectURL(objUrl);
-            } catch (e) { /* silent */ }
+
+            } catch (e) { console.error('Share logic failed:', e); }
         }
 
         setTimeout(() => window.open(platformUrls[platform], '_blank'), 400);
@@ -781,12 +797,12 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 ))}
                             </div>
 
-                            <p style={{ textAlign: "center", color: "#555", fontSize: "0.58rem", marginTop: "8px", lineHeight: 1.5 }}>
-                                {captureStatus === "done"
+                            <p style={{ textAlign: "center", color: shareNotice ? "#FF6D00" : "#555", fontSize: "0.58rem", marginTop: "8px", lineHeight: 1.5, fontWeight: shareNotice ? 800 : 400, transition: "color 0.3s" }}>
+                                {shareNotice || (captureStatus === "done"
                                     ? "Image auto-saved when sharing · tap to open platform"
                                     : captureStatus === "failed"
                                         ? "Tap any platform to share your score"
-                                        : "Generating share image..."}
+                                        : "Generating share image...")}
                             </p>
                         </div>
                     </div>
