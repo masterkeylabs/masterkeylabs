@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 
 const MODELS = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
 ];
 
 export async function POST(req) {
@@ -26,36 +28,60 @@ export async function POST(req) {
         });
 
         // Try each model in order until one succeeds
+        let lastError = null;
         for (const modelUrl of MODELS) {
-            const response = await fetch(`${modelUrl}?key=${process.env.GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body,
-            });
+            try {
+                const response = await fetch(`${modelUrl}?key=${process.env.GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body,
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (response.ok) {
-                return NextResponse.json(data);
+                if (response.ok && data.candidates) {
+                    return NextResponse.json(data);
+                }
+
+                lastError = data;
+
+                // If quota exceeded or model not found, try next model
+                const errCode = data?.error?.code;
+                const errStatus = data?.error?.status;
+                const errMsg = (data?.error?.message || '').toLowerCase();
+
+                const isQuotaOrUnusable =
+                    errCode === 429 ||
+                    errStatus === 'RESOURCE_EXHAUSTED' ||
+                    errCode === 404 ||
+                    errStatus === 'NOT_FOUND' ||
+                    errStatus === 'UNAVAILABLE' ||
+                    errMsg.includes('quota') ||
+                    errMsg.includes('exhausted') ||
+                    errMsg.includes('capacity') ||
+                    errMsg.includes('overloaded');
+
+                if (isQuotaOrUnusable) {
+                    console.warn(`Model ${modelUrl} failed/quota reached, trying next...`);
+                    continue;
+                }
+
+                // Other error — return it immediately and let the frontend retry
+                console.error('Gemini API Error:', data);
+                return NextResponse.json({ error: data.error?.message || 'AI API error' }, { status: response.status || 500 });
+
+            } catch (fetchErr) {
+                console.warn(`Fetch to ${modelUrl} failed:`, fetchErr.message);
+                lastError = fetchErr;
+                continue; // Try next model on network error
             }
-
-            // If quota exceeded or model not found, try next model
-            const errCode = data?.error?.code;
-            const errStatus = data?.error?.status;
-            if (errCode === 429 || errStatus === 'RESOURCE_EXHAUSTED' || errCode === 404 || errStatus === 'NOT_FOUND') {
-                console.warn(`Model ${modelUrl} failed (${errCode}), trying next...`);
-                continue;
-            }
-
-            // Other error — return it immediately
-            console.error('Gemini API Error:', data);
-            return NextResponse.json({ error: data.error?.message || 'AI API error' }, { status: response.status });
         }
 
         // All models exhausted
+        console.error('All Gemini models exhausted. Last error:', lastError);
         return NextResponse.json({
-            error: 'AI service is temporarily at capacity. Please try again in 30 seconds.'
-        }, { status: 503 });
+            error: 'AI service is temporarily at capacity (Model Quota Reached). Please wait a moment and try again.'
+        }, { status: 429 });
 
     } catch (error) {
         console.error('API Route Error:', error);
