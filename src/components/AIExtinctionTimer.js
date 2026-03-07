@@ -112,35 +112,35 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
     if (!result || !cfg) return null;
     return (
         <div style={{
-            width: "500px",
-            background: "#080809",
-            border: `1px solid rgba(255,255,255,0.05)`,
-            borderRadius: "24px",
-            padding: "36px",
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-            color: "#F0F0F0",
+            width: "550px",
+            background: "#000",
+            border: "1px solid rgba(255,255,255,0.03)",
+            borderRadius: "0", // Flat for capture
+            padding: "48px 40px",
+            fontFamily: "'Inter', -apple-system, sans-serif",
+            color: "#fff",
             position: "relative",
             overflow: "hidden"
         }}>
             {/* 1. Brand Header */}
-            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+            <div style={{ textAlign: "center", marginBottom: "32px" }}>
                 <div style={{
                     display: "inline-flex", alignItems: "center", gap: "8px",
-                    fontSize: "0.65rem", letterSpacing: "3.5px", color: "#FF6D00",
-                    fontWeight: 700, marginBottom: "14px"
+                    fontSize: "0.6rem", letterSpacing: "4px", color: "#FF6D00",
+                    fontWeight: 800, marginBottom: "16px", textTransform: "uppercase"
                 }}>
-                    <span>●</span> AI DISPLACEMENT ANALYSIS
+                    <span style={{ fontSize: "0.5rem" }}>◆</span> AI DISPLACEMENT ANALYSIS
                 </div>
                 <h1 style={{
-                    fontSize: "2rem",
-                    fontWeight: 900, color: "#F0F0F0",
-                    margin: "0 0 10px", lineHeight: 1.1,
-                    letterSpacing: "-0.5px",
+                    fontSize: "3rem",
+                    fontWeight: 900, color: "#fff",
+                    margin: "0 0 12px", lineHeight: 1.05,
+                    letterSpacing: "-1.5px",
                 }}>
                     Will AI Replace<br />
-                    <span style={{ color: "#FF6D00" }}>Your Business?</span>
+                    <span style={{ color: "#FF6000" }}>Your Business?</span>
                 </h1>
-                <p style={{ color: "#A0A0A0", fontSize: "0.85rem", margin: 0, lineHeight: 1.6 }}>
+                <p style={{ color: "#888", fontSize: "0.95rem", margin: 0, lineHeight: 1.6, fontWeight: 500 }}>
                     Enter your job title or business type below.<br />
                     Get your AI extinction timeline in seconds.
                 </p>
@@ -149,111 +149,123 @@ function ShareCard({ result, cfg, jobTitle, years, months, days }) {
             {/* 2. Mock Input Box */}
             <div style={{
                 width: "100%",
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,109,0,0.2)",
+                background: "#0D0D0E",
+                border: "1px solid rgba(255,255,255,0.08)",
                 borderRadius: "16px",
-                padding: "16px 20px",
+                padding: "20px 24px",
                 color: "#fff",
-                fontSize: "0.95rem",
-                fontWeight: 600,
-                marginBottom: "12px",
+                fontSize: "1.1rem",
+                fontWeight: 700,
+                marginBottom: "16px",
             }}>
-                {jobTitle || "software developer"}
+                {jobTitle || "developer"}
             </div>
 
             {/* 3. Mock Primary Button */}
             <div style={{
                 width: "100%",
-                padding: "16px",
-                background: "linear-gradient(135deg, #E65100, #FF6D00)",
+                padding: "20px",
+                background: "linear-gradient(135deg, #FF6000, #FF8000)",
                 borderRadius: "16px",
                 color: "#fff",
-                fontWeight: 800,
-                fontSize: "0.85rem",
+                fontWeight: 900,
+                fontSize: "1rem",
                 textAlign: "center",
-                boxShadow: "0 8px 30px rgba(255,109,0,0.4)",
-                marginBottom: "36px",
+                boxShadow: "0 10px 40px rgba(255,96,0,0.35)",
+                marginBottom: "48px",
+                letterSpacing: "0.5px"
             }}>
                 Calculate My AI Risk →
             </div>
 
-            {/* 4. Result Card (The Meat) */}
+            {/* 4. Result Card (matches main UI) */}
             <div style={{
-                background: `radial-gradient(ellipse at top, ${cfg.glow} 0%, transparent 80%), rgba(255,255,255,0.02)`,
-                border: `1px solid ${cfg.color}33`,
-                borderRadius: "24px",
-                padding: "24px",
-                marginBottom: "24px"
+                background: "rgba(10,10,11,0.8)",
+                border: `1px solid ${cfg.color}25`,
+                borderRadius: "28px",
+                padding: "32px",
+                position: "relative"
             }}>
                 {/* Risk Score Badge */}
-                <div style={{ textAlign: "center", marginBottom: "16px" }}>
-                    <span style={{
-                        display: "inline-block", background: cfg.color, color: "#000",
-                        fontSize: "0.6rem", fontWeight: 900, letterSpacing: "3px",
-                        padding: "6px 20px", borderRadius: "99px",
+                <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                    <div style={{
+                        display: "inline-flex", alignItems: "center", gap: "10px",
+                        background: `${cfg.color}15`, border: `1px solid ${cfg.color}33`,
+                        color: cfg.color, fontSize: "0.65rem", fontWeight: 900,
+                        letterSpacing: "3px", padding: "8px 24px", borderRadius: "99px",
+                        textTransform: "uppercase"
                     }}>
-                        {cfg.emoji} {cfg.label}
-                    </span>
+                        <span style={{ color: cfg.color }}>●</span> {cfg.label}
+                    </div>
                 </div>
 
-                {/* Verdict */}
-                <div style={{ fontSize: "0.9rem", color: "#C0C0C0", fontStyle: "italic", textAlign: "center", marginBottom: "24px", lineHeight: 1.6, padding: "0 10px" }}>
+                {/* Verdict (Italicized) */}
+                <div style={{
+                    fontSize: "1.1rem", color: "#E0E0E0", fontStyle: "italic",
+                    textAlign: "center", marginBottom: "36px", lineHeight: 1.6,
+                    padding: "0 10px", fontWeight: 500
+                }}>
                     "{result.verdict}"
                 </div>
 
                 {/* Automation Exposure Progress Bar */}
-                <div style={{ marginBottom: "28px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                        <span style={{ fontSize: "0.65rem", color: "#444", letterSpacing: "2.5px" }}>AUTOMATION EXPOSURE</span>
-                        <span style={{ fontSize: "1.1rem", fontWeight: 900, color: cfg.color }}>{result.riskScore}%</span>
+                <div style={{ marginBottom: "40px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "14px" }}>
+                        <span style={{ fontSize: "0.75rem", color: "#555", letterSpacing: "3px", fontWeight: 700 }}>AUTOMATION EXPOSURE</span>
+                        <span style={{ fontSize: "1.4em", fontWeight: 900, color: cfg.color }}>{result.riskScore}%</span>
                     </div>
-                    <div style={{ height: "6px", background: "rgba(255,255,255,0.06)", borderRadius: "99px", overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${result.riskScore}%`, background: `linear-gradient(90deg, ${cfg.color}66, ${cfg.color})`, borderRadius: "99px", boxShadow: `0 0 15px ${cfg.color}44` }} />
+                    <div style={{ height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "99px", overflow: "hidden" }}>
+                        <div style={{
+                            height: "100%", width: `${result.riskScore}%`,
+                            background: `linear-gradient(90deg, ${cfg.color}44, ${cfg.color})`,
+                            borderRadius: "99px", boxShadow: `0 0 20px ${cfg.color}33`
+                        }} />
                     </div>
                 </div>
 
                 {/* Survival Timer Blocks */}
-                <div style={{ textAlign: "center", fontSize: "0.6rem", color: "#A0A0A0", letterSpacing: "3px", marginBottom: "14px", fontWeight: 700 }}>
+                <div style={{ textAlign: "center", fontSize: "0.75rem", color: "#555", letterSpacing: "5px", marginBottom: "20px", fontWeight: 800 }}>
                     TIME TO ADAPT YOUR BUSINESS
                 </div>
-                <div style={{ display: "flex", gap: "10px", marginBottom: "24px" }}>
+                <div style={{ display: "flex", gap: "16px", marginBottom: "36px" }}>
                     {[{ v: years, l: "YEARS" }, { v: months, l: "MONTHS" }, { v: days, l: "DAYS" }].map(({ v, l }) => (
-                        <div key={l} style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: `1px solid ${cfg.color}15`, borderRadius: "16px", padding: "18px 10px", textAlign: "center" }}>
-                            <div style={{ fontSize: "2rem", fontWeight: 900, color: cfg.color, lineHeight: 1 }}>{String(v).padStart(2, "0")}</div>
-                            <div style={{ fontSize: "0.58rem", color: "#555", letterSpacing: "2.5px", marginTop: "8px" }}>{l}</div>
+                        <div key={l} style={{
+                            flex: 1, background: "rgba(255,255,255,0.015)",
+                            border: `1px solid ${cfg.color}15`, borderRadius: "24px",
+                            padding: "28px 10px", textAlign: "center",
+                            boxShadow: `0 10px 30px ${cfg.color}08`
+                        }}>
+                            <div style={{ fontSize: "3.2rem", fontWeight: 900, color: cfg.color, lineHeight: 1 }}>{String(v).padStart(2, "0")}</div>
+                            <div style={{ fontSize: "0.65rem", color: "#444", letterSpacing: "3px", marginTop: "14px", fontWeight: 800 }}>{l}</div>
                         </div>
                     ))}
                 </div>
 
                 {/* Detailed Breakdown Tags */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "20px" }}>
-                    <div style={{ background: "rgba(255,109,0,0.05)", border: "1px solid rgba(255,109,0,0.15)", borderRadius: "14px", padding: "14px" }}>
-                        <div style={{ fontSize: "0.55rem", color: "#FF6D00", letterSpacing: "2.5px", marginBottom: "10px", fontWeight: 700 }}>🤖 AI WILL HANDLE</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "36px" }}>
+                    <div style={{ background: `${cfg.color}05`, border: `1px solid ${cfg.color}15`, borderRadius: "24px", padding: "24px" }}>
+                        <div style={{ fontSize: "0.65rem", color: cfg.color, letterSpacing: "3px", marginBottom: "20px", fontWeight: 800, display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span>🤖</span> AI WILL HANDLE
+                        </div>
                         {result.topThreats.map((t, i) => (
-                            <div key={i} style={{ fontSize: "0.72rem", color: "#A0A0A0", marginBottom: "6px", lineHeight: 1.4 }}>✗ {t}</div>
+                            <div key={i} style={{ fontSize: "0.85rem", color: "#A0A0A0", marginBottom: "10px", lineHeight: 1.5, fontWeight: 500 }}>✗ {t}</div>
                         ))}
                     </div>
-                    <div style={{ background: "rgba(0,196,140,0.04)", border: "1px solid rgba(0,196,140,0.12)", borderRadius: "14px", padding: "14px" }}>
-                        <div style={{ fontSize: "0.55rem", color: "#00C48C", letterSpacing: "2.5px", marginBottom: "10px", fontWeight: 700 }}>🧠 YOUR EDGE</div>
+                    <div style={{ background: "rgba(0,196,140,0.03)", border: "1px solid rgba(0,196,140,0.12)", borderRadius: "24px", padding: "24px" }}>
+                        <div style={{ fontSize: "0.65rem", color: "#00C48C", letterSpacing: "3px", marginBottom: "20px", fontWeight: 800, display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span>🧠</span> YOUR EDGE
+                        </div>
                         {result.humanEdge.map((s, i) => (
-                            <div key={i} style={{ fontSize: "0.72rem", color: "#A0A0A0", marginBottom: "6px", lineHeight: 1.4 }}>✓ {s}</div>
+                            <div key={i} style={{ fontSize: "0.85rem", color: "#A0A0A0", marginBottom: "10px", lineHeight: 1.5, fontWeight: 500 }}>✓ {s}</div>
                         ))}
                     </div>
                 </div>
 
                 {/* Scientific Basis Stat */}
-                <div style={{ borderLeft: `3px solid ${cfg.color}44`, paddingLeft: "14px", paddingBottom: "4px" }}>
-                    <div style={{ fontSize: "0.62rem", color: "#666", lineHeight: 1.6, fontStyle: "italic" }}>📊 {result.researchBasis}</div>
-                </div>
-            </div>
-
-            {/* 5. Share Overlay / Disclaimer (matching user screenshot) */}
-            <div style={{ textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "24px" }}>
-                <div style={{ fontSize: "0.58rem", color: "#FF6D00", letterSpacing: "3px", fontWeight: 800, marginBottom: "8px", textTransform: "uppercase" }}>
-                    ⚡ SHARE YOUR RISK SCORE
-                </div>
-                <div style={{ fontSize: "0.7rem", color: "#A0A0A0", fontWeight: 600 }}>
-                    masterkeylabs.com · FREE ANALYSIS →
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "24px" }}>
+                    <div style={{ fontSize: "0.78rem", color: "#666", lineHeight: 1.6, fontWeight: 500, display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span style={{ filter: "grayscale(1) opacity(0.5)" }}>📖</span> {result.researchBasis}
+                    </div>
                 </div>
             </div>
         </div>
@@ -291,8 +303,8 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             try {
                 const html2canvas = (await import('html2canvas')).default;
                 const canvas = await html2canvas(el, {
-                    backgroundColor: '#0d0d0f',
-                    scale: 2,
+                    backgroundColor: "#000",
+                    scale: 3, // Premium high-res
                     useCORS: true,
                     allowTaint: true,
                     logging: false,
@@ -744,23 +756,24 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                         {/* ─── SOCIAL SHARE ─── */}
                         <div style={{ marginTop: "18px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "16px", position: "relative" }}>
-                            {/* NEW: Prominent share prompt label */}
+                            {/* NEW: Prominent share prompt label (Popup Style) */}
                             <div style={{
                                 position: "absolute",
-                                top: "-10px",
+                                top: "-14px",
                                 left: "50%",
                                 transform: "translateX(-50%)",
-                                background: "linear-gradient(135deg, #1A1A1B, #000)",
-                                border: "1px solid rgba(255,109,0,0.3)",
-                                padding: "4px 14px",
+                                background: "#FF6D00",
+                                padding: "6px 20px",
                                 borderRadius: "99px",
-                                fontSize: "0.58rem",
-                                color: "#FF6D00",
-                                fontWeight: 800,
+                                fontSize: "0.65rem",
+                                color: "#000",
+                                fontWeight: 900,
                                 letterSpacing: "1.5px",
                                 textTransform: "uppercase",
                                 zIndex: 10,
-                                boxShadow: "0 4px 15px rgba(0,0,0,0.5)"
+                                boxShadow: "0 10px 25px rgba(255,109,0,0.4)",
+                                border: "2px solid #000",
+                                whiteSpace: "nowrap"
                             }}>
                                 Share this on Social Media
                             </div>
@@ -841,27 +854,29 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             </div>
 
             {/* ─── HIDDEN FLAT SHARE CARD (captured by html2canvas) ─── */}
-            {result && cfg && (
-                <div
-                    ref={shareCardRef}
-                    style={{
-                        position: "fixed",
-                        top: "-9999px",
-                        left: "-9999px",
-                        zIndex: -1,
-                        pointerEvents: "none",
-                    }}
-                >
-                    <ShareCard
-                        result={result}
-                        cfg={cfg}
-                        jobTitle={input}
-                        years={years}
-                        months={months}
-                        days={days}
-                    />
-                </div>
-            )}
-        </div>
+            {
+                result && cfg && (
+                    <div
+                        ref={shareCardRef}
+                        style={{
+                            position: "fixed",
+                            top: "-9999px",
+                            left: "-9999px",
+                            zIndex: -1,
+                            pointerEvents: "none",
+                        }}
+                    >
+                        <ShareCard
+                            result={result}
+                            cfg={cfg}
+                            jobTitle={input}
+                            years={years}
+                            months={months}
+                            days={days}
+                        />
+                    </div>
+                )
+            }
+        </div >
     );
 }
