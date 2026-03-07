@@ -110,6 +110,7 @@ export default function DashboardFallback() {
 
                                 await supabase.from('visibility_results').insert([{
                                     business_id: newBizId,
+                                    city: formData.location || '',
                                     missed_customers: results.missedCustomers || 0,
                                     created_at: new Date().toISOString()
                                 }]);

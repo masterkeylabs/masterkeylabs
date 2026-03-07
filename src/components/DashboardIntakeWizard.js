@@ -77,7 +77,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         entityName: business?.entity_name && business.entity_name !== 'Initialize System' ? business.entity_name : '',
         ownerName: business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || '',
         whatsapp: business?.phone || '',
-        email: business?.email || '',
+        email: business?.email || user?.email || '',
     });
     const [formM1, setFormM1] = useState({
         staffSalary: existingData?.lossAudit?.staff_salary || '',
@@ -119,6 +119,52 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         marketPosition: existingData?.aiThreat?.features?.marketPosition || 'established',
         isOmnichannel: existingData?.aiThreat?.is_omnichannel || false
     });
+
+    // --- DATA SYNC & RECOVERY EFFECT ---
+    // Specifically ensures email, names, and audit data are recovered from Auth or Temp Storage
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const tempVal = localStorage.getItem('masterkey_temp_form');
+            let parsedTemp = null;
+            if (tempVal) {
+                try { parsedTemp = JSON.parse(tempVal); } catch (e) { console.warn('Temp form parse fail'); }
+            }
+
+            // A. Sync Identity (Step 0)
+            setFormM0(prev => ({
+                ...prev,
+                entityName: prev.entityName || (business?.entity_name !== 'Initialize System' ? business?.entity_name : '') || parsedTemp?.businessName || '',
+                ownerName: prev.ownerName || business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || parsedTemp?.contactName || '',
+                whatsapp: prev.whatsapp || business?.phone || parsedTemp?.whatsapp || '',
+                email: prev.email || business?.email || user?.email || parsedTemp?.email || ''
+            }));
+
+            // B. Sync Financials (Step 1)
+            setFormM1(prev => ({
+                ...prev,
+                marketingBudget: prev.marketingBudget || existingData?.lossAudit?.marketing_budget || parsedTemp?.marketingSpend || '',
+                opsOverheads: prev.opsOverheads || existingData?.lossAudit?.ops_overheads || parsedTemp?.opsSpend || '',
+                annualRevenue: prev.annualRevenue || business?.annual_revenue || (parsedTemp?.revenueBracket ? parseFloat(parsedTemp.revenueBracket.replace(/[^0-9.]/g, '')) * 100000 : '') || '',
+                employeeCount: prev.employeeCount || business?.employee_count || parsedTemp?.employees || '',
+                hasCRM: prev.hasCRM || business?.has_crm || false,
+                hasERP: prev.hasERP || business?.has_erp || false
+            }));
+
+            // C. Sync City (Step 3)
+            if (!formM3.city && (existingData?.missedCustomers?.city || parsedTemp?.location)) {
+                setFormM3(prev => ({
+                    ...prev,
+                    city: existingData?.missedCustomers?.city || parsedTemp?.location || ''
+                }));
+            }
+
+            // D. Sync Industry
+            if (parsedTemp?.vertical && (!formM4.industry || formM4.industry === 'retail')) {
+                setFormM4(prev => ({ ...prev, industry: parsedTemp.vertical }));
+            }
+        }
+    }, [user, business, existingData]);
+    // ^ Monitors all data sources to ensure form is filled as soon as they load.
 
     // Keep M2/M3 avg value synced if empty
     useEffect(() => {
