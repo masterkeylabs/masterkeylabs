@@ -5,25 +5,26 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/lib/AuthContext';
 
 export default function SignupPage() {
-    const [phone, setPhone] = useState('');
     const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [otp, setOtp] = useState('');
+    const [isOtpSent, setIsOtpSent] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { user } = useAuth();
+    const [successMsg, setSuccessMsg] = useState(null);
     const router = useRouter();
 
-    const [email, setEmail] = useState('');
-
-    const handleSignup = async (e) => {
+    const handleSendOtp = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setSuccessMsg(null);
 
         try {
-            // ── Duplicate Check ──────────────────────────────────────
+            // Duplicate Check
             const cleanPhone = phone.replace(/\D/g, '');
             const last10 = cleanPhone.slice(-10);
 
@@ -33,42 +34,70 @@ export default function SignupPage() {
             ]);
 
             if (phoneDupe && phoneDupe.length > 0) {
-                setError('📵 This mobile number is already registered.');
-                setLoading(false);
-                return;
+                throw new Error('📵 This mobile number is already registered.');
             }
             if (emailDupe && emailDupe.length > 0) {
-                setError('📧 This email is already registered.');
-                setLoading(false);
-                return;
+                throw new Error('📧 This email is already registered.');
             }
-            // ──────────────────────────────────────────────────────────────
 
-            // Create business record directly
-            const { data: newBiz, error: insertError } = await supabase
+            // Send Verification OTP
+            const { error: otpError } = await supabase.auth.signInWithOtp({
+                email: email.trim(),
+                options: {
+                    data: { full_name: fullName, phone: phone },
+                    emailRedirectTo: `${window.location.origin}/dashboard`
+                }
+            });
+
+            if (otpError) throw otpError;
+
+            setIsOtpSent(true);
+            setSuccessMsg('✅ Verification sent. Check your secure email.');
+        } catch (err) {
+            setError(err.message || 'Failed to initialize terminal registration. Try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try {
+            const { data, error: verifyError } = await supabase.auth.verifyOtp({
+                email: email.trim(),
+                token: otp,
+                type: 'email'
+            });
+
+            if (verifyError) throw verifyError;
+
+            const user = data?.user || data?.session?.user;
+            if (!user) throw new Error('Verification completed but session failed inside Auth client.');
+
+            // Securely create business record linked to verified user ID
+            const { error: insertError } = await supabase
                 .from('businesses')
                 .insert({
                     entity_name: 'Initialize System',
                     owner_name: fullName,
-                    email: email,
-                    phone: phone,
+                    email: email.trim(),
+                    phone: phone.trim(),
                     classification: 'direct_signup',
-                    user_id: user?.id || null
-                })
-                .select()
-                .single();
+                    user_id: user.id
+                });
 
-            if (insertError) throw insertError;
+            // Ignore duplicate constraint if they somehow refreshed/retrigged it
+            if (insertError && insertError.code !== '23505') {
+                console.error("Profile Link Error:", insertError);
+            }
 
-            // Store session identifiers
-            localStorage.setItem('masterkey_business_id', newBiz.id);
-            localStorage.setItem('masterkey_user_name', fullName);
-            localStorage.setItem('masterkey_user_phone', phone);
-
-            // Immediate redirect to dashboard
-            router.push(`/dashboard?id=${newBiz.id}`);
+            // Redirect securely
+            router.push(`/dashboard`);
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Invalid or expired Authorization Code.');
         } finally {
             setLoading(false);
         }
@@ -114,7 +143,16 @@ export default function SignupPage() {
                 <div className="glass p-8 rounded-[2rem] border-white/5 shadow-2xl relative overflow-hidden">
                     <div className="scanline"></div>
 
-                    <form onSubmit={handleSignup} className="space-y-4">
+                    <form onSubmit={isOtpSent ? handleVerifyOtp : handleSendOtp} className="space-y-4 relative z-10">
+                        <div className="text-center mb-4">
+                            <div className={`w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-3 border ${isOtpSent ? 'border-ios-blue/30 text-ios-blue' : 'border-white/10 text-white/40'}`}>
+                                <span className="material-symbols-outlined text-2xl">{isOtpSent ? 'mark_email_read' : 'how_to_reg'}</span>
+                            </div>
+                            <p className="text-white/60 text-xs font-medium uppercase tracking-[0.2em]">
+                                {isOtpSent ? 'Verify Authorization' : 'New Operator Identity'}
+                            </p>
+                        </div>
+
                         {error && (
                             <motion.div
                                 initial={{ opacity: 0, x: -10 }}
@@ -126,41 +164,87 @@ export default function SignupPage() {
                             </motion.div>
                         )}
 
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1">Operator Name</label>
-                            <input
-                                type="text"
-                                required
-                                className="ios-input w-full"
-                                placeholder="Full Name"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                            />
-                        </div>
+                        {successMsg && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="bg-green-500/10 border border-green-500/20 text-green-500 text-[11px] p-3 rounded-xl flex items-center gap-2"
+                            >
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                {successMsg}
+                            </motion.div>
+                        )}
 
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1">Secure Email</label>
-                            <input
-                                type="email"
-                                required
-                                className="ios-input w-full"
-                                placeholder="operator@protocol.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
+                        <AnimatePresence mode="popLayout">
+                            {!isOtpSent ? (
+                                <motion.div
+                                    key="form"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="space-y-4"
+                                >
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1">Operator Name</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            className="ios-input w-full"
+                                            placeholder="Full Name"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                        />
+                                    </div>
 
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1">Terminal ID (Phone)</label>
-                            <input
-                                type="tel"
-                                required
-                                className="ios-input w-full"
-                                placeholder="+91 XXXXX XXXXX"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                            />
-                        </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1">Secure Email</label>
+                                        <input
+                                            type="email"
+                                            required
+                                            className="ios-input w-full"
+                                            placeholder="operator@protocol.com"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1">Terminal ID (Phone)</label>
+                                        <input
+                                            type="tel"
+                                            required
+                                            className="ios-input w-full"
+                                            placeholder="+91 XXXXX XXXXX"
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                        />
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="otp"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    className="space-y-1.5 pt-2"
+                                >
+                                    <label className="text-[10px] text-white/30 uppercase tracking-widest font-black ml-1 text-center block">Enter Authorization Code</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="ios-input w-full text-center tracking-[1em] font-mono text-2xl py-6"
+                                        placeholder="000000"
+                                        maxLength={6}
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                                        autoFocus
+                                    />
+                                    <p className="text-[10px] text-white/40 text-center mt-3 px-4 leading-relaxed">
+                                        We sent a 6-digit code and a Magic Link to <strong className="text-white/80">{email}</strong>.
+                                    </p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <button
                             disabled={loading}
@@ -171,8 +255,8 @@ export default function SignupPage() {
                                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                             ) : (
                                 <>
-                                    <span>SYNCHRONIZE & ENTER</span>
-                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">bolt</span>
+                                    <span>{isOtpSent ? 'VERIFY & ENTER DIRECTORY' : 'SYNCHRONIZE & ENTER'}</span>
+                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">{isOtpSent ? 'arrow_forward' : 'bolt'}</span>
                                 </>
                             )}
                         </button>
@@ -199,6 +283,11 @@ export default function SignupPage() {
                     </button>
 
                     <div className="mt-8 pt-6 border-t border-white/5 flex flex-col items-center gap-4">
+                        {isOtpSent && (
+                            <button onClick={() => { setIsOtpSent(false); setOtp(''); setSuccessMsg(null); setError(null); }} className="text-[11px] text-white/30 uppercase tracking-widest font-bold hover:text-white transition-colors">
+                                Wrong contact info? <span className="underline underline-offset-4 ml-1">GO BACK</span>
+                            </button>
+                        )}
                         <p className="text-[11px] text-white/20 uppercase tracking-widest font-bold">
                             Registered operator? <Link href="/login" className="text-ios-blue hover:text-ios-blue/80 transition-colors underline underline-offset-4 ml-1">LOG IN</Link>
                         </p>
