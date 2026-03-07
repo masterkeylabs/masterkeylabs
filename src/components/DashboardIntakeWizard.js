@@ -817,7 +817,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
                                         Active Digital Signals
                                     </label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {[
                                             { id: 'hasGoogleMyBusiness', label: 'Google Business Profile' },
                                             { id: 'hasWebsite', label: 'Active Website' },
@@ -865,12 +865,12 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 {!business?.vertical && (
-                                    <div className="space-y-3 col-span-2 border-b border-white/5 pb-8 mb-2">
-                                        <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 mb-4">
-                                            <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                            Industry Sector Orientation
+                                    <div className="space-y-3 col-span-1 md:col-span-2 border-b border-white/5 pb-8 mb-2">
+                                        <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 mb-4 flex-wrap">
+                                            <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
+                                            <span className="break-words">Industry Sector Orientation</span>
                                         </label>
                                         <select
                                             required
@@ -882,15 +882,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                                 <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
                                             ))}
                                         </select>
-                                        <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">Critical for AI risk benchmark calibration.</p>
+                                        <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2 break-words">Critical for AI risk benchmark calibration.</p>
                                     </div>
                                 )}
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Physical Moat (Omnichannel)
+                                <div className="space-y-3 min-w-0">
+                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
+                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
+                                        <span className="break-words">Physical Moat (Omnichannel)</span>
                                     </label>
+
                                     <div
                                         onClick={() => setFormM4(prev => ({ ...prev, isOmnichannel: !prev.isOmnichannel }))}
                                         className={`p-5 rounded-2xl border cursor-pointer transition-all flex items-center gap-4 group ${formM4.isOmnichannel ? 'bg-ios-cyan/10 border-ios-cyan/50 shadow-[0_0_15px_rgba(0,210,255,0.1)]' : 'bg-black/30 border-white/10 hover:border-white/20'}`}
@@ -898,16 +899,17 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                         <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${formM4.isOmnichannel ? 'bg-ios-cyan border-ios-cyan' : 'border-white/20 group-hover:border-white/40'}`}>
                                             {formM4.isOmnichannel && <span className="material-symbols-outlined text-[16px] text-black font-bold">check</span>}
                                         </div>
-                                        <p className={`font-black text-[11px] uppercase tracking-wider ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>Physical Presence / Retail Moat</p>
+                                        <p className={`font-black text-[11px] uppercase tracking-wider break-words ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>Physical Presence / Retail Moat</p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        AI Adoption Level
+                                <div className="space-y-3 min-w-0">
+                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
+                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
+                                        <span className="break-words">AI Adoption Level</span>
                                     </label>
-                                    <div className="relative group">
+                                    <div className="relative group w-full">
+
                                         <select
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg transition-all"
                                             value={formM4.aiAdoptionLevel}
@@ -924,12 +926,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Market AI Dynamics
+                                <div className="space-y-3 min-w-0">
+                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
+                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
+                                        <span className="break-words">Market AI Dynamics</span>
                                     </label>
-                                    <div className="relative group">
+                                    <div className="relative group w-full">
+
                                         <select
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg transition-all"
                                             value={formM4.competitorAdoption}
@@ -945,12 +948,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Process Complexity
+                                <div className="space-y-3 min-w-0">
+                                    <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
+                                        <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
+                                        <span className="break-words">Process Complexity</span>
                                     </label>
-                                    <div className="relative group">
+                                    <div className="relative group w-full">
+
                                         <select
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none appearance-none cursor-pointer text-lg transition-all"
                                             value={formM4.operationalComplexity}
