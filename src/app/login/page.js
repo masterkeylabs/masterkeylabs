@@ -7,14 +7,53 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LoginPage() {
-    const [phone, setPhone] = useState('');
+    const [identifier, setIdentifier] = useState('');
+    const [otp, setOtp] = useState('');
+    const [isOtpSent, setIsOtpSent] = useState(false);
+    const [authType, setAuthType] = useState('email');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [successMsg, setSuccessMsg] = useState(null);
     const router = useRouter();
 
-    const [identifier, setIdentifier] = useState('');
+    const handleSendOtp = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setSuccessMsg(null);
 
-    const handleLogin = async (e) => {
+        try {
+            const cleanId = identifier.trim();
+            const cleanPhone = cleanId.replace(/\D/g, '');
+            const isPhone = cleanPhone.length >= 10 && cleanId.match(/^[\d\+\-\s]+$/);
+
+            let providerError;
+            if (isPhone) {
+                setAuthType('sms');
+                const formattedPhone = cleanPhone.startsWith('91') || cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+91${cleanPhone.slice(-10)}`;
+                const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
+                providerError = error;
+            } else {
+                setAuthType('email');
+                const { error } = await supabase.auth.signInWithOtp({
+                    email: cleanId,
+                    options: { emailRedirectTo: `${window.location.origin}/dashboard` }
+                });
+                providerError = error;
+            }
+
+            if (providerError) throw providerError;
+
+            setIsOtpSent(true);
+            setSuccessMsg(isPhone ? '✅ Secure OTP sent via SMS.' : '✅ Magic Link & OTP sent. Check your inbox or enter code below.');
+        } catch (err) {
+            setError(err.message || 'Failed to send verification.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
@@ -22,34 +61,25 @@ export default function LoginPage() {
         try {
             const cleanId = identifier.trim();
             const cleanPhone = cleanId.replace(/\D/g, '');
-            const last10 = cleanPhone.length >= 10 ? cleanPhone.slice(-10) : null;
+            const formattedPhone = cleanPhone.startsWith('91') || cleanPhone.startsWith('1') ? `+${cleanPhone}` : `+91${cleanPhone.slice(-10)}`;
 
-            // Search by email OR phone
-            let query = supabase.from('businesses').select('id, owner_name, phone');
+            const { data, error: verifyError } = await supabase.auth.verifyOtp({
+                email: authType === 'email' ? cleanId : undefined,
+                phone: authType === 'sms' ? formattedPhone : undefined,
+                token: otp,
+                type: authType // 'sms' or 'token' (email)
+            });
 
-            if (last10 && cleanId.match(/^\d+$/)) {
-                query = query.ilike('phone', `%${last10}%`);
+            if (verifyError) throw verifyError;
+
+            if (data?.session) {
+                // Logged in successfully. Route protection will handle business check.
+                router.push('/dashboard');
             } else {
-                query = query.ilike('email', cleanId);
+                throw new Error('Verification failed. Invalid token.');
             }
-
-            const { data, error: searchError } = await query.maybeSingle();
-
-            if (searchError) throw searchError;
-
-            if (!data) {
-                throw new Error('📵 Access Denied. No matching operator profile found.');
-            }
-
-            // Store session identifiers
-            localStorage.setItem('masterkey_business_id', data.id);
-            localStorage.setItem('masterkey_user_name', data.owner_name);
-            localStorage.setItem('masterkey_user_phone', data.phone);
-
-            // Immediate redirect to dashboard
-            router.push(`/dashboard?id=${data.id}`);
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Invalid or expired OTP.');
         } finally {
             setLoading(false);
         }
@@ -94,12 +124,22 @@ export default function LoginPage() {
                 <div className="glass p-8 rounded-[2rem] border-white/5 shadow-2xl relative overflow-hidden">
                     <div className="scanline"></div>
 
-                    <form onSubmit={handleLogin} className="space-y-6">
+                    <form onSubmit={isOtpSent ? handleVerifyOtp : handleSendOtp} className="space-y-6">
                         <div className="text-center mb-4">
-                            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
-                                <span className="material-symbols-outlined text-white/40 text-3xl">vpn_key</span>
+                            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10 relative overflow-hidden">
+                                <AnimatePresence mode="wait">
+                                    <motion.span
+                                        key={isOtpSent ? 'lock' : 'key'}
+                                        initial={{ opacity: 0, scale: 0.5 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.5 }}
+                                        className="material-symbols-outlined text-white/40 text-3xl absolute"
+                                    >
+                                        {isOtpSent ? 'lock_open' : 'vpn_key'}
+                                    </motion.span>
+                                </AnimatePresence>
                             </div>
-                            <p className="text-white/60 text-sm">Terminal Access Sequence</p>
+                            <p className="text-white/60 text-sm">{isOtpSent ? 'Two-Factor Protocol' : 'Terminal Access Sequence'}</p>
                         </div>
 
                         {error && (
@@ -113,17 +153,54 @@ export default function LoginPage() {
                             </motion.div>
                         )}
 
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black ml-1">Email or Mobile Number</label>
-                            <input
-                                type="text"
-                                required
-                                className="ios-input w-full"
-                                placeholder="operator@protocol.com"
-                                value={identifier}
-                                onChange={(e) => setIdentifier(e.target.value)}
-                            />
-                        </div>
+                        {successMsg && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="bg-green-500/10 border border-green-500/20 text-green-500 text-[11px] p-3 rounded-xl flex items-center gap-2"
+                            >
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                {successMsg}
+                            </motion.div>
+                        )}
+
+                        {!isOtpSent ? (
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black ml-1">Email or Mobile Number</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="ios-input w-full transition-all focus:border-ios-blue/50"
+                                    placeholder="operator@protocol.com"
+                                    value={identifier}
+                                    onChange={(e) => setIdentifier(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+                        ) : (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-1.5"
+                            >
+                                <label className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-black ml-1">Secure OTP Code</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="ios-input w-full text-center tracking-[1em] font-mono text-xl transition-all focus:border-ios-blue/50"
+                                    placeholder="000000"
+                                    maxLength={6}
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                                    autoFocus
+                                />
+                                {authType === 'email' && (
+                                    <p className="text-[10px] text-white/30 text-center mt-2 px-4 leading-relaxed">
+                                        You can also click the Magic Link sent to your email to log in instantly.
+                                    </p>
+                                )}
+                            </motion.div>
+                        )}
 
                         <button
                             disabled={loading}
@@ -134,8 +211,10 @@ export default function LoginPage() {
                                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                             ) : (
                                 <>
-                                    <span>DECRYPT & ENTER</span>
-                                    <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">login</span>
+                                    <span>{isOtpSent ? 'VERIFY DECRYPTION' : 'AUTHENTICATE SYSTEM'}</span>
+                                    <span className={`material-symbols-outlined text-sm transition-transform ${isOtpSent ? 'group-hover:translate-x-1' : 'group-hover:scale-110'}`}>
+                                        {isOtpSent ? 'arrow_forward' : 'login'}
+                                    </span>
                                 </>
                             )}
                         </button>
@@ -161,7 +240,12 @@ export default function LoginPage() {
                         <span className="text-sm font-bold tracking-tight text-white/90">CONTINUE WITH GOOGLE</span>
                     </button>
 
-                    <div className="mt-8 pt-6 border-t border-white/5 text-center">
+                    <div className="mt-8 pt-6 border-t border-white/5 text-center flex flex-col items-center gap-4">
+                        {isOtpSent && (
+                            <button onClick={() => { setIsOtpSent(false); setOtp(''); setSuccessMsg(null); setError(null); }} className="text-[11px] text-white/30 uppercase tracking-widest font-bold hover:text-white transition-colors">
+                                Wrong contact info? <span className="underline underline-offset-4 ml-1">GO BACK</span>
+                            </button>
+                        )}
                         <Link href="/signup" className="text-[11px] text-white/20 uppercase tracking-widest font-bold hover:text-white transition-colors">
                             Need authorization? <span className="text-ios-blue underline underline-offset-4 ml-1">REGISTER TERMINAL</span>
                         </Link>
