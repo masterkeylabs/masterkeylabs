@@ -14,10 +14,12 @@ export default function DashboardFallback() {
     useEffect(() => {
         const recoverByLocalStorage = async () => {
             if (loading || business?.id) return;
-            const localBizId = localStorage.getItem('masterkey_business_id');
             if (localBizId) {
                 const { data } = await supabase.from('businesses').select('*').eq('id', localBizId).maybeSingle();
-                if (data) window.location.reload();
+                if (data) {
+                    // Use router.replace to add the ID to the URL without a hard reload loop
+                    router.replace(`/dashboard?id=${localBizId}`);
+                }
             }
         };
         recoverByLocalStorage();
