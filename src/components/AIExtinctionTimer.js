@@ -404,8 +404,9 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
     const analyze = async () => {
         const trimmed = input.trim();
-        if (!trimmed) { inputRef.current?.focus(); return; }
-        setLoading(true); setResult(null); setError(""); setPreviewImg(null); setCaptureStatus("idle");
+        if (!trimmed) return;
+
+        setLoading(true); setResult(null); setError(""); setPreviewImgUrl(null); setCaptureStatus("idle");
 
         const MAX_RETRIES = 3;
         const RETRY_DELAYS = [5000, 10000, 15000];
