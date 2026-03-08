@@ -57,7 +57,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     // --- FORM STATES ---
     const [formM0, setFormM0] = useState({
         entityName: business?.entity_name && business.entity_name !== 'Initialize System' ? business.entity_name : '',
-        ownerName: business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || '',
+        ownerName: business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || '',
         whatsapp: business?.phone || '',
         email: business?.email || user?.email || '',
     });
@@ -116,7 +116,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             setFormM0(prev => ({
                 ...prev,
                 entityName: prev.entityName || (business?.entity_name !== 'Initialize System' ? business?.entity_name : '') || parsedTemp?.businessName || '',
-                ownerName: prev.ownerName || business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || parsedTemp?.contactName || '',
+                ownerName: prev.ownerName || business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || parsedTemp?.contactName || '',
                 whatsapp: prev.whatsapp || business?.phone || parsedTemp?.whatsapp || '',
                 email: prev.email || business?.email || user?.email || parsedTemp?.email || ''
             }));
