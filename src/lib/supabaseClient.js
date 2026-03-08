@@ -9,6 +9,11 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        storage: typeof window !== 'undefined' ? window.localStorage : undefined
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        // Bypass Navigator Lock Manager to prevent 10s timeout errors in some browsers
+        lock: {
+            acquire: async () => ({}),
+            release: async () => { }
+        }
     }
 });
