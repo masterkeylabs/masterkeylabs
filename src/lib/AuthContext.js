@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
                         if (manualSession?.user) {
                             console.log('--- AuthProvider: Rescue success! ---', manualSession.user.email);
                             setUser(manualSession.user);
-                            await fetchBusinessProfile(manualSession.user.id);
+                            await fetchBusinessProfile(manualSession.user);
 
                             // Clean up hash to prevent re-processing
                             window.history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
                 if (session?.user) {
                     setUser(session.user);
                     if (typeof window !== 'undefined') localStorage.setItem('masterkey_returning_user', 'true');
-                    await fetchBusinessProfile(session.user.id);
+                    await fetchBusinessProfile(session.user);
                 } else {
                     setUser(null);
                     // Restore localStorage fallback (Bug-Free flow)
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
             setUser(currentUser);
             if (currentUser) {
                 if (typeof window !== 'undefined') localStorage.setItem('masterkey_returning_user', 'true');
-                await fetchBusinessProfile(currentUser.id);
+                await fetchBusinessProfile(currentUser);
             }
             if (isMounted) setLoading(false);
         });
@@ -100,15 +100,38 @@ export const AuthProvider = ({ children }) => {
         };
     }, []);
 
-    const fetchBusinessProfile = async (userId) => {
+    const fetchBusinessProfile = async (userObj) => {
+        if (!userObj) return;
+        const userId = userObj.id;
+
         try {
-            const { data } = await supabase
+            // 1. Primary Look: Linked user_id
+            let { data } = await supabase
                 .from('businesses')
                 .select('*')
                 .eq('user_id', userId)
-                .order('created_at', { ascending: false })
-                .limit(1)
                 .maybeSingle();
+
+            // 2. Secondary Lookup: Match by Verified Email (Auto-Link)
+            if (!data && userObj.email) {
+                console.log('--- AuthProvider: Finding business by email to link ---', userObj.email);
+                const { data: emailMatch } = await supabase
+                    .from('businesses')
+                    .select('*')
+                    .ilike('email', userObj.email)
+                    .maybeSingle();
+
+                if (emailMatch) {
+                    console.log('--- AuthProvider: Auto-linking profile to verified user ---');
+                    const { data: linkedData } = await supabase
+                        .from('businesses')
+                        .update({ user_id: userId })
+                        .eq('id', emailMatch.id)
+                        .select()
+                        .single();
+                    data = linkedData;
+                }
+            }
 
             if (data) {
                 setBusiness(data);
