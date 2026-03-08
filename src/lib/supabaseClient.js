@@ -11,9 +11,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         detectSessionInUrl: true,
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
         // Bypass Navigator Lock Manager to prevent 10s timeout errors in some browsers
-        lock: {
-            acquire: async () => ({}),
-            release: async () => { }
+        // Bypass Navigator Lock Manager via function strategy (Fixes both 10s timeout and TypeError)
+        lock: async (name, callback) => {
+            return await callback();
         }
     }
 });
