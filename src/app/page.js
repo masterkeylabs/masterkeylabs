@@ -10,9 +10,9 @@ import ThemeToggle from '@/components/ThemeToggle';
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
     const { user, business, loading: authLoading } = useAuth();
-    // localId removed
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const loading = authLoading;
-    const hasSession = !!business;
+    const hasSession = !!user; // Use user existence for session check
 
     const effectiveId = business?.id || null;
     const [auditHref, setAuditHref] = useState('/signup');
@@ -25,14 +25,53 @@ export default function Home() {
     useEffect(() => {
         if (loading || !mounted) return;
 
-        if (user || effectiveId) {
-            setAuditHref(effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard');
-        } else if (typeof window !== 'undefined' && localStorage.getItem('masterkey_returning_user')) {
-            setAuditHref('/login');
+        if (user) {
+            setAuditHref(business?.id ? `/dashboard?id=${business.id}` : '/dashboard');
         } else {
             setAuditHref('/signup');
         }
-    }, [user, effectiveId, loading]);
+    }, [user, business, loading, mounted]);
+
+    const handleStartFullAudit = () => {
+        if (user) {
+            router.push(auditHref);
+        } else {
+            setShowAuthModal(true);
+        }
+    };
+
+    // --- AUTH CHOICE MODAL COMPONENT ---
+    const AuthChoiceModal = () => (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
+            <div className="glass max-w-[420px] w-full p-8 rounded-[2.5rem] border-white/10 shadow-2xl relative">
+                <button onClick={() => setShowAuthModal(false)} className="absolute top-6 right-6 text-white/40 hover:text-white">
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+
+                <div className="flex flex-col items-center text-center space-y-6">
+                    <div className="w-16 h-16 bg-ios-blue/10 rounded-2xl flex items-center justify-center border border-ios-blue/20">
+                        <span className="material-symbols-outlined text-ios-blue text-3xl">verified_user</span>
+                    </div>
+
+                    <div className="space-y-2">
+                        <h2 className="text-2xl font-bold text-white tracking-tight">Access Protocol Required</h2>
+                        <p className="text-white/40 text-sm leading-relaxed">To synchronize your diagnosis and view your full report, please authenticate your terminal.</p>
+                    </div>
+
+                    <div className="w-full space-y-3 pt-4">
+                        <Link href="/login" onClick={() => setShowAuthModal(false)} className="w-full py-4 ios-button-primary flex items-center justify-center gap-2">
+                            LOG IN <span className="text-[10px] opacity-50 font-medium">(RETURNING USER)</span>
+                        </Link>
+                        <Link href="/signup" onClick={() => setShowAuthModal(false)} className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center gap-2 text-white font-bold transition-all">
+                            REGISTER <span className="text-[10px] opacity-50 font-medium">(NEW USER)</span>
+                        </Link>
+                    </div>
+
+                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-black pt-4">MasterKey Labs :: Security Node V2.0</p>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
@@ -58,10 +97,12 @@ export default function Home() {
 
                         <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
 
+                        {showAuthModal && <AuthChoiceModal />}
+
                         {!mounted || loading ? (
                             <div className="w-16 h-6 bg-white/5 animate-pulse rounded-full mx-2"></div>
                         ) : hasSession ? (
-                            <Link href={auditHref} className="px-4 py-1.5 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
+                            <Link href="/dashboard" className="px-4 py-1.5 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
                                 <span className="material-symbols-outlined text-[14px]">dashboard</span>
                                 {t.nav.dashboard.toUpperCase()}
                             </Link>
@@ -94,7 +135,7 @@ export default function Home() {
                         {mounted && (
                             <AIExtinctionTimer
                                 guestMode={!user}
-                                onGetStarted={() => window.location.href = auditHref}
+                                onGetStarted={handleStartFullAudit}
                             />
                         )}
                     </div>
@@ -117,10 +158,10 @@ export default function Home() {
 
                         <div className="mt-8">
                             {mounted && (
-                                <Link href={auditHref} className="px-10 py-5 bg-gradient-to-br from-ios-blue to-[#0099FF] text-black font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110 active:scale-95 shadow-[0_20px_50px_rgba(0,229,255,0.3)] flex items-center gap-3 group">
+                                <button onClick={handleStartFullAudit} className="px-10 py-5 bg-gradient-to-br from-ios-blue to-[#0099FF] text-black font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110 active:scale-95 shadow-[0_20px_50px_rgba(0,229,255,0.3)] flex items-center gap-3 group">
                                     <span className="text-sm uppercase tracking-widest">Start Full Audit</span>
                                     <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                </Link>
+                                </button>
                             )}
                         </div>
 

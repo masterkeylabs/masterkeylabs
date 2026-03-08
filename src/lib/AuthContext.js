@@ -143,9 +143,24 @@ export const AuthProvider = ({ children }) => {
     };
 
     const signOut = async () => {
-        await supabase.auth.signOut();
-        localStorage.removeItem('masterkey_business_id');
-        router.push('/');
+        try {
+            await supabase.auth.signOut();
+            // Clear ALL MasterKey related storage
+            localStorage.removeItem('masterkey_business_id');
+            localStorage.removeItem('masterkey_returning_user');
+            localStorage.removeItem('masterkey_temp_form');
+            localStorage.removeItem('masterkey_temp_results');
+
+            setUser(null);
+            setBusiness(null);
+
+            console.log('--- AuthContext: User Signed Out ---');
+            router.push('/');
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Fallback redirect
+            window.location.href = '/';
+        }
     };
 
     return (
