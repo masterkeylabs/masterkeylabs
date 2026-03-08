@@ -36,6 +36,12 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        console.log('--- DashboardIntakeWizard: Mounted ---', {
+            mode,
+            step,
+            businessId: business?.id,
+            userId: user?.id
+        });
         setMounted(true);
     }, []);
 
@@ -170,47 +176,41 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             let bizId = activeId;
             if (bizId === 'null' || bizId === 'undefined' || !bizId) bizId = null;
 
-            if (!payload.email) throw new Error("Email registry entry required.");
-
             let finalBizId = bizId;
 
-            // 1. Search for existing profile if bizId is missing
-            if (!finalBizId) {
-                const { data: resultsByEmail } = await supabase
-                    .from('businesses')
-                    .select('id')
-                    .ilike('email', payload.email)
-                    .maybeSingle();
+            const rpcPayload = {
+                ...payload,
+                // RPC-specific fields
+                vertical: formM4.industry || 'retail', // formM4 has the industry
+                annual_revenue: parseFloat(formM1.annualRevenue) || 0,
+                employee_count: parseInt(formM1.employeeCount) || 0,
+                has_crm: formM1.hasCRM || false,
+                has_erp: formM1.hasERP || false,
+                digital_footprint: formM2.businessType || 'b2c'
+            };
 
-                if (resultsByEmail) {
-                    finalBizId = resultsByEmail.id;
-                } else if (payload.phone) {
-                    const last10 = payload.phone.replace(/\D/g, '').slice(-10);
-                    const { data: resultsByPhone } = await supabase
-                        .from('businesses')
-                        .select('id')
-                        .ilike('phone', `%${last10}%`)
-                        .maybeSingle();
-                    if (resultsByPhone) {
-                        finalBizId = resultsByPhone.id;
-                    }
-                }
+            console.log('--- Wizard: RPC Debug ---');
+            console.log('Payload:', JSON.stringify(rpcPayload, null, 2));
+            console.log('Target ID:', bizId);
+
+            const { data: rpcResult, error: rpcError } = await supabase.rpc('initialize_business_profile', {
+                p_payload: rpcPayload,
+                p_active_id: bizId
+            });
+
+            if (rpcError) {
+                console.error('--- RPC EXECUTION ERROR ---');
+                console.error(JSON.stringify(rpcError, null, 2));
+                // High-visibility alert to catch the exact message in the screenshot
+                window.alert(`RPC FAULT: ${rpcError.message}\nCode: ${rpcError.code}\nHint: ${rpcError.hint}`);
+                throw rpcError;
+            }
+            if (rpcResult && rpcResult.error) {
+                window.alert(`RPC LOGIC ERROR: ${rpcResult.error}`);
+                throw new Error(rpcResult.error);
             }
 
-            // 2. Perform Upsert
-            const { data: upsertResult, error: upsertError } = await supabase
-                .from('businesses')
-                .upsert({
-                    ...(finalBizId ? { id: finalBizId } : {}),
-                    ...payload,
-                    updated_at: new Date().toISOString()
-                }, { onConflict: 'email' })
-                .select()
-                .single();
-
-            if (upsertError) throw upsertError;
-
-            finalBizId = upsertResult?.id || finalBizId;
+            finalBizId = rpcResult?.id || rpcResult;
             setActiveId(finalBizId);
 
             if (fetchBusinessProfile) {
@@ -227,8 +227,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 setStep(1);
             }
         } catch (err) {
+            console.error('--- Wizard handleM0Submit Fault ---');
+            console.error('Error Object (Stringified):', JSON.stringify(err, null, 2));
+            console.error('Error Message:', err.message);
+            console.error('Error Details:', err.details);
+            console.error('Error Hint:', err.hint);
+            console.error('Error Code:', err.code);
+
             setError(err.message || "An unexpected error occurred during authorization.");
-            console.error('Authorization Fault:', err);
+            console.error('Authorization Fault Full Trace:', err);
         } finally {
             setIsSaving(false);
         }
@@ -445,7 +452,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     if (!mounted) return null;
 
     return (
-        <div className="fixed inset-0 top-0 left-0 w-full h-full z-[150] flex items-center justify-center p-2 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
+        <div suppressHydrationWarning className="fixed inset-0 top-0 left-0 w-full h-full z-[150] flex items-center justify-center p-2 md:p-12 bg-black/60 backdrop-blur-xl animate-fade-in overflow-y-auto custom-scrollbar">
             <div className="w-full max-w-4xl bg-black/80 border border-white/10 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl flex flex-col max-h-[95vh] md:max-h-[85vh] overflow-hidden relative border-glow shadow-glow-blue">
 
                 {/* Visual Accent */}
@@ -562,7 +569,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     type="submit"
                                     className="group relative w-full py-5 bg-white text-black font-black uppercase tracking-[0.3em] text-sm rounded-2xl overflow-hidden hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-50"
                                 >
-                                    <div className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                                    <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
                                         {isSaving ? 'Synchronizing...' : 'Synchronize & Initialize'}
                                     </span>
@@ -659,7 +666,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     type="submit"
                                     className="group relative px-12 py-4 bg-white text-black font-black uppercase tracking-[0.3em] text-xs rounded-xl overflow-hidden hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-50"
                                 >
-                                    <div className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                                    <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
                                         {isSaving ? 'Calculating...' : 'Next Protocol'}
                                     </span>
@@ -739,7 +746,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     type="submit"
                                     className="group relative px-12 py-4 bg-white text-black font-black uppercase tracking-[0.3em] text-xs rounded-xl overflow-hidden hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-50"
                                 >
-                                    <div className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                                    <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
                                         {isSaving ? 'Calculating...' : 'Next Protocol'}
                                     </span>
@@ -809,7 +816,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     type="submit"
                                     className="group relative px-12 py-4 bg-white text-black font-black uppercase tracking-[0.3em] text-xs rounded-xl overflow-hidden hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-50"
                                 >
-                                    <div className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                                    <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
                                         {isSaving ? 'Calculating...' : 'Next Protocol'}
                                     </span>

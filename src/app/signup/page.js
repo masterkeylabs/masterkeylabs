@@ -1,18 +1,29 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function SignupPage() {
+    const { user, loading: authLoading } = useAuth();
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const router = useRouter();
+
+    // Auto-redirect if already logged in
+    useEffect(() => {
+        if (!authLoading && user) {
+            console.log('--- Signup Page: User detected, redirecting to dashboard ---');
+            const localBizId = localStorage.getItem('masterkey_business_id');
+            router.push(localBizId ? `/dashboard?id=${localBizId}` : '/dashboard');
+        }
+    }, [user, authLoading, router]);
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -50,6 +61,7 @@ export default function SignupPage() {
 
             if (data) {
                 localStorage.setItem('masterkey_business_id', data.id);
+                localStorage.setItem('masterkey_returning_user', 'true');
                 router.push(`/dashboard?id=${data.id}`);
             }
         } catch (err) {

@@ -15,9 +15,24 @@ export default function Home() {
     const hasSession = !!business;
 
     const effectiveId = business?.id || null;
+    const [auditHref, setAuditHref] = useState('/signup');
 
-    // STRICT FLOW: If logged in OR have a session ID, go to dashboard. Otherwise go to signup.
-    const dashboardHref = (user || effectiveId) ? (effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard') : '/signup';
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (loading || !mounted) return;
+
+        if (user || effectiveId) {
+            setAuditHref(effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard');
+        } else if (typeof window !== 'undefined' && localStorage.getItem('masterkey_returning_user')) {
+            setAuditHref('/login');
+        } else {
+            setAuditHref('/signup');
+        }
+    }, [user, effectiveId, loading]);
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
@@ -43,10 +58,10 @@ export default function Home() {
 
                         <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
 
-                        {loading ? (
+                        {!mounted || loading ? (
                             <div className="w-16 h-6 bg-white/5 animate-pulse rounded-full mx-2"></div>
                         ) : hasSession ? (
-                            <Link href={dashboardHref} className="px-4 py-1.5 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
+                            <Link href={auditHref} className="px-4 py-1.5 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
                                 <span className="material-symbols-outlined text-[14px]">dashboard</span>
                                 {t.nav.dashboard.toUpperCase()}
                             </Link>
@@ -76,10 +91,12 @@ export default function Home() {
 
                     {/* AI Extinction Timer — shown first, above the hook */}
                     <div className="mb-10 w-full max-w-4xl mx-auto px-4 animate-fade-in opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                        <AIExtinctionTimer
-                            guestMode={!user}
-                            onGetStarted={() => window.location.href = dashboardHref}
-                        />
+                        {mounted && (
+                            <AIExtinctionTimer
+                                guestMode={!user}
+                                onGetStarted={() => window.location.href = auditHref}
+                            />
+                        )}
                     </div>
 
                     {/* Hook & Copy */}
@@ -97,6 +114,15 @@ export default function Home() {
                         <p className="text-white/50 text-base md:text-xl font-normal max-w-xl mt-4 leading-relaxed">
                             {t.hero.sub}
                         </p>
+
+                        <div className="mt-8">
+                            {mounted && (
+                                <Link href={auditHref} className="px-10 py-5 bg-gradient-to-br from-ios-blue to-[#0099FF] text-black font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110 active:scale-95 shadow-[0_20px_50px_rgba(0,229,255,0.3)] flex items-center gap-3 group">
+                                    <span className="text-sm uppercase tracking-widest">Start Full Audit</span>
+                                    <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                </Link>
+                            )}
+                        </div>
 
                         {/* CTA below the hook removed to avoid conflict with AI Timer (Fix #2) */}
                     </div>

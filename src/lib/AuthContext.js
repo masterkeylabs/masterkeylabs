@@ -12,17 +12,62 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter();
 
     useEffect(() => {
+        console.log('--- AuthProvider: Initializing ---');
         let isMounted = true;
 
         const getSession = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession();
+                // Check if we have a hash session first (fallback for deep links)
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    console.error('--- AuthProvider: Session check error ---', error);
+                }
+
                 if (!isMounted) return;
 
-                setUser(session?.user ?? null);
+                console.log('--- AuthProvider: Session Check ---', session?.user?.email || 'No Session');
+
+                // If no session but hash exists, try manual parsing (Rescue Mode)
+                if (!session && typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+                    console.log('--- AuthProvider: Detected access_token in hash, attempting manual rescue ---');
+
+                    const hash = window.location.hash.substring(1); // remove #
+                    const params = new URLSearchParams(hash);
+                    const accessToken = params.get('access_token');
+                    const refreshToken = params.get('refresh_token');
+
+                    if (accessToken) {
+                        console.log('--- AuthProvider: Forcing session sync with token ---');
+                        const { data: { session: manualSession }, error: manualError } = await supabase.auth.setSession({
+                            access_token: accessToken,
+                            refresh_token: refreshToken || ''
+                        });
+
+                        if (manualError) {
+                            console.error('--- AuthProvider: Manual setSession error ---', manualError);
+                        }
+
+                        if (manualSession?.user) {
+                            console.log('--- AuthProvider: Rescue success! ---', manualSession.user.email);
+                            setUser(manualSession.user);
+                            await fetchBusinessProfile(manualSession.user.id);
+
+                            // Clean up hash to prevent re-processing
+                            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                            return;
+                        }
+                    } else {
+                        console.warn('--- AuthProvider: Hash present but access_token not found ---');
+                    }
+                }
+
                 if (session?.user) {
+                    setUser(session.user);
+                    if (typeof window !== 'undefined') localStorage.setItem('masterkey_returning_user', 'true');
                     await fetchBusinessProfile(session.user.id);
                 } else {
+                    setUser(null);
                     // Restore localStorage fallback (Bug-Free flow)
                     const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
                     if (localBizId) {
@@ -43,6 +88,7 @@ export const AuthProvider = ({ children }) => {
             const currentUser = session?.user ?? null;
             setUser(currentUser);
             if (currentUser) {
+                if (typeof window !== 'undefined') localStorage.setItem('masterkey_returning_user', 'true');
                 await fetchBusinessProfile(currentUser.id);
             }
             if (isMounted) setLoading(false);

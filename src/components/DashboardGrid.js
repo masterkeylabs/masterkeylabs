@@ -22,6 +22,12 @@ export default function DashboardGrid({ business, computedData }) {
     const [isUnlocking, setIsUnlocking] = useState(false);
     const setAuditData = useDiagnosticStore((state) => state.setAuditData);
 
+    console.log('--- DashboardGrid: Render ---', {
+        businessId: business?.id,
+        businessName: business?.entity_name,
+        hasComputedData: !!computedData
+    });
+
     useEffect(() => {
         if (computedData) {
             setAuditData(computedData);

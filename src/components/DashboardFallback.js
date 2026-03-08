@@ -11,20 +11,35 @@ export default function DashboardFallback() {
     const { business, loading, user, fetchBusinessProfile } = useAuth();
     const { t } = useLanguage();
 
+    console.log('--- DashboardFallback: State ---', {
+        isLoading: loading,
+        hasBusinessId: business?.id,
+        hasUserId: user?.id,
+        businessName: business?.entity_name
+    });
+
     useEffect(() => {
         const recoverByLocalStorage = async () => {
-            if (loading || business?.id) return;
+            if (loading) return;
+
+            // If we have a business via context, redirect to the ID-specific URL
+            if (business?.id) {
+                console.log('--- DashboardFallback: Business detected, redirecting to ID ---', business.id);
+                router.replace(`/dashboard?id=${business.id}`);
+                return;
+            }
+
             const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
             if (localBizId) {
+                console.log('--- DashboardFallback: Recovering by localBizId ---', localBizId);
                 const { data } = await supabase.from('businesses').select('*').eq('id', localBizId).maybeSingle();
                 if (data) {
-                    // Use router.replace to add the ID to the URL without a hard reload loop
                     router.replace(`/dashboard?id=${localBizId}`);
                 }
             }
         };
         recoverByLocalStorage();
-    }, [loading, business]);
+    }, [loading, business, router]);
 
     if (loading) {
         return (
@@ -35,21 +50,20 @@ export default function DashboardFallback() {
         );
     }
 
-    if (!business?.id) {
-        const dummyData = {
-            lossAudit: { saving_target: 0 },
-            nightLoss: { monthly_loss: 0 },
-            missedCustomers: { missed_customers: 0 },
-            aiThreat: { score: 0 }
-        };
-        const placeholderBusiness = {
-            entity_name: 'Initialize System',
-            owner_name: user?.user_metadata?.full_name || '',
-            email: user?.email || '',
-            id: null
-        };
-        return <DashboardGrid business={placeholderBusiness} computedData={dummyData} />;
-    }
+    const dummyData = {
+        lossAudit: { saving_target: 0 },
+        nightLoss: { monthly_loss: 0 },
+        missedCustomers: { missed_customers: 0 },
+        aiThreat: { score: 0 }
+    };
 
-    return null;
+    const placeholderBusiness = business?.id ? business : {
+        entity_name: 'Initialize System',
+        owner_name: user?.user_metadata?.full_name || '',
+        email: user?.email || '',
+        id: null
+    };
+
+    console.log('--- DashboardFallback: Rendering Grid Catch-all ---', { isPlaceholder: !business?.id });
+    return <DashboardGrid business={placeholderBusiness} computedData={dummyData} />;
 }

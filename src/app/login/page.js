@@ -1,16 +1,38 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {
+    const { user, loading: authLoading } = useAuth();
     const [identifier, setIdentifier] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const router = useRouter();
+
+    // Auto-redirect if already logged in
+    useEffect(() => {
+        console.log('--- Login Page: Auth State Update ---', { userEmail: user?.email, authLoading });
+        if (!authLoading && user) {
+            console.log('--- Login Page: User detected, redirecting to dashboard ---');
+            const localBizId = localStorage.getItem('masterkey_business_id');
+            router.push(localBizId ? `/dashboard?id=${localBizId}` : '/dashboard');
+        }
+    }, [user, authLoading, router]);
+
+    // Check for error in URL
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorParam = urlParams.get('error');
+        if (errorParam) {
+            console.warn('--- Login Page: Auth Error via URL ---', errorParam);
+            setError(`Authentication security check failed (Code: ${errorParam}). Please try again.`);
+        }
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
