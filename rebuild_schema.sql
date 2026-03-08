@@ -29,6 +29,11 @@ CREATE TABLE public.businesses (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Performance Optimization: Indexes for Search
+CREATE INDEX IF NOT EXISTS idx_businesses_email ON public.businesses (LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_businesses_phone ON public.businesses (phone);
+CREATE INDEX IF NOT EXISTS idx_businesses_user_id ON public.businesses (user_id);
+
 -- 2. OPERATIONAL WASTE (LOSS AUDIT) RESULTS
 CREATE TABLE public.loss_audit_results (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -259,6 +264,7 @@ BEGIN
             employee_count = COALESCE((p_payload->>'employee_count')::INTEGER, employee_count),
             has_crm = COALESCE((p_payload->>'has_crm')::BOOLEAN, has_crm),
             has_erp = COALESCE((p_payload->>'has_erp')::BOOLEAN, has_erp),
+            digital_footprint = COALESCE(p_payload->>'digital_footprint', digital_footprint),
             user_id = COALESCE((p_payload->>'user_id')::UUID, user_id),
             updated_at = now()
         WHERE id = v_id_to_use
@@ -267,7 +273,7 @@ BEGIN
         INSERT INTO public.businesses (
             entity_name, owner_name, phone, email, vertical,
             annual_revenue, employee_count, has_crm, has_erp, user_id, 
-            classification
+            classification, digital_footprint
         ) VALUES (
             p_payload->>'entity_name', p_payload->>'owner_name', v_phone, v_email, 
             p_payload->>'vertical', 
@@ -276,7 +282,8 @@ BEGIN
             COALESCE((p_payload->>'has_crm')::BOOLEAN, FALSE),
             COALESCE((p_payload->>'has_erp')::BOOLEAN, FALSE),
             (p_payload->>'user_id')::UUID,
-            p_payload->>'classification'
+            p_payload->>'classification',
+            p_payload->>'digital_footprint'
         )
         RETURNING * INTO v_record;
     END IF;
