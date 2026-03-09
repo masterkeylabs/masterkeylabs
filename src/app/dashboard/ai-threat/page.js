@@ -45,6 +45,7 @@ function AIThreatContent() {
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [searchIndex, setSearchIndex] = useState(0);
 
     // Load existing results or pre-populate
@@ -115,36 +116,44 @@ function AIThreatContent() {
 
         if (businessId) {
             setSaving(true);
-            const payload = {
-                business_id: businessId,
-                score: Math.round(calc.riskPct),
-                years_left: Math.round(calc.yearsLeft),
-                threat_level: calc.threatLevel,
-                timeline_desc: calc.displayLabel,
-                final_horizon: calc.finalHorizon,
-                industry: form.industry,
-                is_omnichannel: form.isOmnichannel,
-                has_crm: form.hasCRM,
-                has_erp: form.hasERP,
-                employee_count: empCount,
-                created_at: new Date().toISOString()
-            };
+            try {
+                const payload = {
+                    business_id: businessId,
+                    score: Math.round(calc.riskPct),
+                    years_left: Math.round(calc.yearsLeft),
+                    threat_level: calc.threatLevel,
+                    timeline_desc: calc.displayLabel,
+                    final_horizon: calc.finalHorizon,
+                    industry: form.industry,
+                    is_omnichannel: form.isOmnichannel,
+                    has_crm: form.hasCRM,
+                    has_erp: form.hasERP,
+                    employee_count: empCount,
+                    created_at: new Date().toISOString()
+                };
 
-            const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
+                const { error: saveErr } = await supabase.from('ai_threat_results').upsert(payload, { onConflict: 'business_id' });
 
-            // Global Sync
-            await supabase.from('businesses').update({
-                vertical: form.industry,
-                employee_count: empCount
-            }).eq('id', businessId);
+                // Global Sync
+                await supabase.from('businesses').update({
+                    vertical: form.industry,
+                    employee_count: empCount
+                }).eq('id', businessId);
 
-            if (saveErr) {
-                console.error('Save Error:', saveErr);
-                alert(`Sync Failed: ${saveErr.message} `);
-            } else {
-                router.push(`/ dashboard ? id = ${businessId} `);
+                if (saveErr) {
+                    console.error('Save Error:', saveErr);
+                    alert(`Sync Failed: ${saveErr.message} `);
+                } else {
+                    console.log('--- AI Threat Audit: Sync Success ---');
+                    setShowSuccess(true);
+                    setTimeout(() => setShowSuccess(false), 3000);
+                }
+            } catch (err) {
+                console.error('Unexpected AI Threat Error:', err);
+                alert('An unexpected error occurred while saving. Please try again.');
+            } finally {
+                setSaving(false);
             }
-            setSaving(false);
         }
     };
 
@@ -233,6 +242,13 @@ function AIThreatContent() {
                                 )}
                             </span>
                         </button>
+
+                        {showSuccess && (
+                            <div className="flex items-center gap-2 text-neon-green text-[11px] font-bold uppercase tracking-widest mt-4 justify-center animate-fade-in">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                {t.dashboard.rescue.booking.btn.success || 'Update Saved Successfully'}
+                            </div>
+                        )}
                         <style jsx>{`
                             @keyframes scan {
                                 0% { background-position: -100% 0; }

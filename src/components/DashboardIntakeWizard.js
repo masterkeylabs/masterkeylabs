@@ -55,34 +55,35 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     }, [mode]);
 
     // --- FORM STATES ---
+    // Initialize with EMPTY values to prevent Hydration Mismatch.
+    // The useEffect below will sync values from business/user/localStorage after mount.
     const [formM0, setFormM0] = useState({
-        entityName: business?.entity_name && business.entity_name !== 'Initialize System' ? business.entity_name : '',
-        ownerName: business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || '',
-        whatsapp: business?.phone || '',
-        email: business?.email || user?.email || '',
+        entityName: '',
+        ownerName: '',
+        whatsapp: '',
+        email: '',
     });
     const [formM1, setFormM1] = useState({
-        staffSalary: existingData?.lossAudit?.staff_salary || '',
-        marketingBudget: existingData?.lossAudit?.marketing_budget || '',
-        opsOverheads: existingData?.lossAudit?.ops_overheads || '',
-        manualHours: existingData?.lossAudit?.manual_hours || 3,
-        // Industry/Vertical removed from Step 1:
-        annualRevenue: business?.annual_revenue || '',
-        employeeCount: business?.employee_count || '',
-        hasCRM: business?.has_crm || false,
-        hasERP: business?.has_erp || false,
+        staffSalary: '',
+        marketingBudget: '',
+        opsOverheads: '',
+        manualHours: 3,
+        annualRevenue: '',
+        employeeCount: '',
+        hasCRM: false,
+        hasERP: false,
     });
 
     const [formM2, setFormM2] = useState({
-        dailyInquiries: existingData?.nightLoss?.daily_inquiries || 50,
-        closingTime: existingData?.nightLoss?.closing_time || '6pm',
-        avgTransactionValue: existingData?.nightLoss?.profit_per_sale || formM1.opsOverheads || '',
-        businessType: existingData?.nightLoss?.response_time || 'b2c'
+        dailyInquiries: 50,
+        closingTime: '6pm',
+        avgTransactionValue: '',
+        businessType: 'b2c'
     });
 
     const [formM3, setFormM3] = useState({
-        city: existingData?.missedCustomers?.city || '',
-        signals: existingData?.missedCustomers?.signals || {
+        city: '',
+        signals: {
             hasGoogleMyBusiness: false,
             hasWebsite: false,
             hasWhatsApp: false,
@@ -94,16 +95,15 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     });
 
     const [formM4, setFormM4] = useState({
-        industry: business?.vertical || 'retail', // Moved here
-        aiAdoptionLevel: existingData?.aiThreat?.features?.aiAdoptionLevel || 'none',
-        competitorAdoption: existingData?.aiThreat?.features?.competitorAdoption || 'low',
-        operationalComplexity: existingData?.aiThreat?.features?.operationalComplexity || 'medium',
-        marketPosition: existingData?.aiThreat?.features?.marketPosition || 'established',
-        isOmnichannel: existingData?.aiThreat?.is_omnichannel || false
+        industry: 'retail',
+        aiAdoptionLevel: 'none',
+        competitorAdoption: 'low',
+        operationalComplexity: 'medium',
+        marketPosition: 'established',
+        isOmnichannel: false
     });
 
     // --- DATA SYNC & RECOVERY EFFECT ---
-    // Specifically ensures email, names, and audit data are recovered from Auth or Temp Storage
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const tempVal = localStorage.getItem('masterkey_temp_form');
@@ -112,14 +112,21 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 try { parsedTemp = JSON.parse(tempVal); } catch (e) { console.warn('Temp form parse fail'); }
             }
 
-            // A. Sync Identity (Step 0)
-            setFormM0(prev => ({
-                ...prev,
-                entityName: prev.entityName || (business?.entity_name !== 'Initialize System' ? business?.entity_name : '') || parsedTemp?.businessName || '',
-                ownerName: prev.ownerName || business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || parsedTemp?.contactName || '',
-                whatsapp: prev.whatsapp || business?.phone || parsedTemp?.whatsapp || '',
-                email: prev.email || business?.email || user?.email || parsedTemp?.email || ''
-            }));
+            // A. Sync Identity (Step 0) - Only update if currently empty to avoid overwriting user input
+            setFormM0(prev => {
+                const owner = business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || user?.user_metadata?.given_name || parsedTemp?.contactName || '';
+                const email = business?.email || user?.email || user?.user_metadata?.email || parsedTemp?.email || '';
+                const phone = business?.phone || user?.user_metadata?.phone || user?.phone || parsedTemp?.whatsapp || '';
+                const title = (business?.entity_name && business.entity_name !== 'Initialize System') ? business.entity_name : (parsedTemp?.businessName || '');
+
+                return {
+                    ...prev,
+                    ownerName: prev.ownerName || owner || '',
+                    email: prev.email || email || '',
+                    whatsapp: prev.whatsapp || phone || '',
+                    entityName: prev.entityName || title || ''
+                };
+            });
 
             // B. Sync Financials (Step 1)
             setFormM1(prev => ({

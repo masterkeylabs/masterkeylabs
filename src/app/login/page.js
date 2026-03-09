@@ -9,30 +9,19 @@ import { motion } from 'framer-motion';
 
 export default function LoginPage() {
     const { user, loading: authLoading } = useAuth();
-    const [identifier, setIdentifier] = useState('');
+    const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [emailSent, setEmailSent] = useState(false);
     const router = useRouter();
 
     // Auto-redirect if already logged in
     useEffect(() => {
-        console.log('--- Login Page: Auth State Update ---', { userEmail: user?.email, authLoading });
         if (!authLoading && user) {
             console.log('--- Login Page: User detected, redirecting to dashboard ---');
-            const localBizId = localStorage.getItem('masterkey_business_id');
-            router.push(localBizId ? `/dashboard?id=${localBizId}` : '/dashboard');
+            router.push('/dashboard');
         }
     }, [user, authLoading, router]);
-
-    // Check for error in URL
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const errorParam = urlParams.get('error');
-        if (errorParam) {
-            console.warn('--- Login Page: Auth Error via URL ---', errorParam);
-            setError(`Authentication security check failed (Code: ${errorParam}). Please try again.`);
-        }
-    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -40,38 +29,29 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            const cleanId = identifier.trim();
-
-            // Direct database lookup (Fast Access)
+            // Check if user exists in businesses table first (Access Control)
             const { data, error: queryError } = await supabase
                 .from('businesses')
                 .select('id')
-                .ilike('email', cleanId)
+                .ilike('email', email.trim())
                 .maybeSingle();
 
             if (queryError) throw queryError;
 
-            let finalData = data;
+            if (!data) {
+                throw new Error('No active terminal found for this email. Please register first.');
+            }
 
-            if (!finalData) {
-                const cleanPhone = cleanId.replace(/\D/g, '').slice(-10);
-                if (cleanPhone.length >= 10) {
-                    const { data: phoneData } = await supabase
-                        .from('businesses')
-                        .select('id')
-                        .ilike('phone', `%${cleanPhone}%`)
-                        .maybeSingle();
-                    finalData = phoneData;
+            // Trigger Magic Link
+            const { error: otpError } = await supabase.auth.signInWithOtp({
+                email: email.trim(),
+                options: {
+                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
                 }
-            }
+            });
 
-            if (finalData) {
-                // localStorage session management (Instant)
-                localStorage.setItem('masterkey_business_id', finalData.id);
-                router.push(`/dashboard?id=${finalData.id}`);
-            } else {
-                throw new Error('Credential mismatch. No active terminal found.');
-            }
+            if (otpError) throw otpError;
+            setEmailSent(true);
         } catch (err) {
             setError(err.message || 'Authentication sequence failed.');
         } finally {
@@ -84,7 +64,12 @@ export default function LoginPage() {
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
-                options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` }
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+                    queryParams: {
+                        prompt: 'select_account'
+                    }
+                }
             });
             if (error) throw error;
         } catch (err) {
@@ -92,6 +77,26 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
+
+    if (emailSent) {
+        return (
+            <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 text-center">
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass p-10 rounded-[2.5rem] max-w-[420px] border-white/5 shadow-2xl">
+                    <div className="w-20 h-20 bg-ios-blue/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-ios-blue/20">
+                        <span className="material-symbols-outlined text-ios-blue text-4xl animate-pulse">broadcast_on_personal</span>
+                    </div>
+                    <h2 className="text-3xl font-bold mb-4 tracking-tight">Transmission Sent</h2>
+                    <p className="text-white/40 leading-relaxed mb-8">
+                        A secure access link is on its way to <span className="text-white font-bold">{email}</span>.
+                        Sync your device by clicking the link in the message.
+                    </p>
+                    <button onClick={() => setEmailSent(false)} className="text-ios-blue text-xs font-black uppercase tracking-widest hover:brightness-125 transition-all">
+                        Retry with different ID
+                    </button>
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -119,7 +124,10 @@ export default function LoginPage() {
 
                         {error && <div className="bg-red-500/10 text-red-500 text-xs p-3 rounded-xl border border-red-500/20">{error}</div>}
 
-                        <input type="text" required className="ios-input w-full" placeholder="Email or Mobile Number" value={identifier} onChange={(e) => setIdentifier(e.target.value)} autoFocus />
+                        <div className="space-y-1">
+                            <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Registered Email</label>
+                            <input type="email" required className="ios-input w-full" placeholder="operator@protocol.com" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
+                        </div>
 
                         <button disabled={loading} type="submit" className="w-full py-4 ios-button-primary flex items-center justify-center gap-2">
                             {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : 'AUTHENTICATE SYSTEM'}
@@ -132,7 +140,7 @@ export default function LoginPage() {
                         <div className="h-[1px] flex-1 bg-white/5"></div>
                     </div>
 
-                    <button onClick={handleGoogleLogin} disabled={loading} className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center gap-3">
+                    <button onClick={handleGoogleLogin} disabled={loading} className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center gap-3 transition-colors">
                         <span className="text-sm font-bold tracking-tight text-white/90 uppercase">Continue with Google</span>
                     </button>
 

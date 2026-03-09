@@ -20,6 +20,7 @@ export default function DashboardGrid({ business, computedData }) {
     const { lang, setLang, t } = useLanguage();
     const [showAuditWizard, setShowAuditWizard] = useState(false);
     const [isUnlocking, setIsUnlocking] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const setAuditData = useDiagnosticStore((state) => state.setAuditData);
 
     console.log('--- DashboardGrid: Render ---', {
@@ -29,6 +30,7 @@ export default function DashboardGrid({ business, computedData }) {
     });
 
     useEffect(() => {
+        setMounted(true);
         if (computedData) {
             setAuditData(computedData);
         }
@@ -99,6 +101,12 @@ export default function DashboardGrid({ business, computedData }) {
 
             {/* Global Flash Effect */}
             <div className="absolute inset-0 bg-white animate-flash opacity-0 pointer-events-none"></div>
+        </div>
+    );
+
+    if (!mounted) return (
+        <div className="bg-background-dark min-h-screen flex items-center justify-center">
+            <div className="w-12 h-12 border-4 border-ios-blue border-t-transparent rounded-full animate-spin"></div>
         </div>
     );
 

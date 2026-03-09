@@ -6,11 +6,12 @@ import { useLanguage } from '@/lib/LanguageContext';
 import { useAuth } from '@/lib/AuthContext';
 import AIExtinctionTimer from '@/components/AIExtinctionTimer';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
     const { user, business, loading: authLoading } = useAuth();
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    const router = useRouter();
     const loading = authLoading;
     const hasSession = !!user; // Use user existence for session check
 
@@ -36,42 +37,9 @@ export default function Home() {
         if (user) {
             router.push(auditHref);
         } else {
-            setShowAuthModal(true);
+            router.push('/signup');
         }
     };
-
-    // --- AUTH CHOICE MODAL COMPONENT ---
-    const AuthChoiceModal = () => (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md animate-fade-in">
-            <div className="glass max-w-[420px] w-full p-8 rounded-[2.5rem] border-white/10 shadow-2xl relative">
-                <button onClick={() => setShowAuthModal(false)} className="absolute top-6 right-6 text-white/40 hover:text-white">
-                    <span className="material-symbols-outlined">close</span>
-                </button>
-
-                <div className="flex flex-col items-center text-center space-y-6">
-                    <div className="w-16 h-16 bg-ios-blue/10 rounded-2xl flex items-center justify-center border border-ios-blue/20">
-                        <span className="material-symbols-outlined text-ios-blue text-3xl">verified_user</span>
-                    </div>
-
-                    <div className="space-y-2">
-                        <h2 className="text-2xl font-bold text-white tracking-tight">Access Protocol Required</h2>
-                        <p className="text-white/40 text-sm leading-relaxed">To synchronize your diagnosis and view your full report, please authenticate your terminal.</p>
-                    </div>
-
-                    <div className="w-full space-y-3 pt-4">
-                        <Link href="/login" onClick={() => setShowAuthModal(false)} className="w-full py-4 ios-button-primary flex items-center justify-center gap-2">
-                            LOG IN <span className="text-[10px] opacity-50 font-medium">(RETURNING USER)</span>
-                        </Link>
-                        <Link href="/signup" onClick={() => setShowAuthModal(false)} className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center gap-2 text-white font-bold transition-all">
-                            REGISTER <span className="text-[10px] opacity-50 font-medium">(NEW USER)</span>
-                        </Link>
-                    </div>
-
-                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-black pt-4">MasterKey Labs :: Security Node V2.0</p>
-                </div>
-            </div>
-        </div>
-    );
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
@@ -96,8 +64,6 @@ export default function Home() {
                         <ThemeToggle className="mx-1" />
 
                         <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-
-                        {showAuthModal && <AuthChoiceModal />}
 
                         {!mounted || loading ? (
                             <div className="w-16 h-6 bg-white/5 animate-pulse rounded-full mx-2"></div>

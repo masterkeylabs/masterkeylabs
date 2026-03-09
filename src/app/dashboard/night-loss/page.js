@@ -38,6 +38,7 @@ function NightLossContent() {
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [searchIndex, setSearchIndex] = useState(0);
 
     useEffect(() => {
@@ -102,29 +103,37 @@ function NightLossContent() {
 
         if (businessId) {
             setSaving(true);
-            const payload = {
-                business_id: businessId,
-                daily_inquiries: Math.round(dailyLeads),
-                closing_time: form.closingTime,
-                profit_per_sale: avgValue,
-                response_time: form.businessType,
-                monthly_days: 30,
-                night_inquiries: calc.nightInquiries,
-                current_revenue: calc.currentRevenue,
-                potential_revenue: calc.potentialRevenue,
-                monthly_loss: calc.monthlyLoss,
-                annual_loss: calc.annualLoss,
-                created_at: new Date().toISOString()
-            };
+            try {
+                const payload = {
+                    business_id: businessId,
+                    daily_inquiries: Math.round(dailyLeads),
+                    closing_time: form.closingTime,
+                    profit_per_sale: avgValue,
+                    response_time: form.businessType,
+                    monthly_days: 30,
+                    night_inquiries: calc.nightInquiries,
+                    current_revenue: calc.currentRevenue,
+                    potential_revenue: calc.potentialRevenue,
+                    monthly_loss: calc.monthlyLoss,
+                    annual_loss: calc.annualLoss,
+                    created_at: new Date().toISOString()
+                };
 
-            const { error: saveErr } = await supabase.from('night_loss_results').upsert(payload, { onConflict: 'business_id' });
-            if (saveErr) {
-                console.error('Save Error:', saveErr);
-                alert(`Sync Failed: ${saveErr.message}`);
-            } else {
-                router.push(`/dashboard/visibility?id=${businessId}`);
+                const { error: saveErr } = await supabase.from('night_loss_results').upsert(payload, { onConflict: 'business_id' });
+                if (saveErr) {
+                    console.error('Save Error:', saveErr);
+                    alert(`Sync Failed: ${saveErr.message}`);
+                } else {
+                    console.log('--- Night Loss Audit: Sync Success ---');
+                    setShowSuccess(true);
+                    setTimeout(() => setShowSuccess(false), 3000);
+                }
+            } catch (err) {
+                console.error('Unexpected Night Loss Error:', err);
+                alert('An unexpected error occurred while saving. Please try again.');
+            } finally {
+                setSaving(false);
             }
-            setSaving(false);
         }
     };
 
@@ -231,6 +240,13 @@ function NightLossContent() {
                                 )}
                             </span>
                         </button>
+
+                        {showSuccess && (
+                            <div className="flex items-center gap-2 text-neon-green text-[11px] font-bold uppercase tracking-widest mt-4 justify-center animate-fade-in">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                {t.dashboard.rescue.booking.btn.success || 'Update Saved Successfully'}
+                            </div>
+                        )}
                         <style jsx>{`
                             @keyframes scan {
                                 0% { background-position: -100% 0; }

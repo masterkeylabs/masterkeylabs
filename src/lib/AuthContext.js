@@ -12,109 +12,81 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter();
 
     useEffect(() => {
-        console.log('--- AuthProvider: Initializing ---');
+        console.log('--- AuthProvider: Initializing native session check ---');
         let isMounted = true;
 
-        const getSession = async () => {
+        const initializeAuth = async () => {
             try {
-                // Check if we have a hash session first (fallback for deep links)
+                // Get initial session
                 const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) throw error;
 
-                if (error) {
-                    console.error('--- AuthProvider: Session check error ---', error);
-                }
-
-                if (!isMounted) return;
-
-                console.log('--- AuthProvider: Session Check ---', session?.user?.email || 'No Session');
-
-                // If no session but hash exists, try manual parsing (Rescue Mode)
-                if (!session && typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
-                    console.log('--- AuthProvider: Detected access_token in hash, attempting manual rescue ---');
-
-                    const hash = window.location.hash.substring(1); // remove #
-                    const params = new URLSearchParams(hash);
-                    const accessToken = params.get('access_token');
-                    const refreshToken = params.get('refresh_token');
-
-                    if (accessToken) {
-                        console.log('--- AuthProvider: Forcing session sync with token ---');
-                        const { data: { session: manualSession }, error: manualError } = await supabase.auth.setSession({
-                            access_token: accessToken,
-                            refresh_token: refreshToken || ''
-                        });
-
-                        if (manualError) {
-                            console.error('--- AuthProvider: Manual setSession error ---', manualError);
-                        }
-
-                        if (manualSession?.user) {
-                            console.log('--- AuthProvider: Rescue success! ---', manualSession.user.email);
-                            setUser(manualSession.user);
-                            await fetchBusinessProfile(manualSession.user);
-
-                            // Clean up hash to prevent re-processing
-                            window.history.replaceState(null, '', window.location.pathname + window.location.search);
-                            return;
-                        }
+                if (isMounted) {
+                    const currentUser = session?.user ?? null;
+                    setUser(currentUser);
+                    if (currentUser) {
+                        await fetchBusinessProfile(currentUser);
                     } else {
-                        console.warn('--- AuthProvider: Hash present but access_token not found ---');
+                        // Safe fallback for guests (legacy cleanup)
+                        setBusiness(null);
+                        if (typeof window !== 'undefined') {
+                            localStorage.removeItem('masterkey_business_id');
+                        }
                     }
                 }
-
-                if (session?.user) {
-                    setUser(session.user);
-                    if (typeof window !== 'undefined') localStorage.setItem('masterkey_returning_user', 'true');
-                    await fetchBusinessProfile(session.user);
-                } else {
-                    setUser(null);
-                    // Restore localStorage fallback (Bug-Free flow)
-                    const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
-                    if (localBizId) {
-                        const { data } = await supabase.from('businesses').select('*').eq('id', localBizId).maybeSingle();
-                        if (data && isMounted) setBusiness(data);
-                    }
-                }
-            } catch (error) {
-                console.error('Session retrieval error:', error);
+            } catch (err) {
+                console.error('--- AuthProvider: Init Error ---', err);
             } finally {
                 if (isMounted) setLoading(false);
             }
         };
 
-        getSession();
+        initializeAuth();
 
-        const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        // Listen for all auth events (Login, SignOut, Password Recovery, etc.)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(`--- Auth Event: ${event} ---`, session?.user?.email);
+
+            if (!isMounted) return;
+
             const currentUser = session?.user ?? null;
             setUser(currentUser);
-            if (currentUser) {
-                if (typeof window !== 'undefined') localStorage.setItem('masterkey_returning_user', 'true');
-                await fetchBusinessProfile(currentUser);
+
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+                if (currentUser) await fetchBusinessProfile(currentUser);
+            } else if (event === 'SIGNED_OUT') {
+                setUser(null);
+                setBusiness(null);
+                if (typeof window !== 'undefined') {
+                    localStorage.removeItem('masterkey_business_id');
+                    localStorage.removeItem('masterkey_returning_user');
+                }
+                router.push('/');
             }
-            if (isMounted) setLoading(false);
+
+            setLoading(false);
         });
 
         return () => {
             isMounted = false;
-            if (authListener?.subscription) authListener.subscription.unsubscribe();
+            subscription.unsubscribe();
         };
-    }, []);
+    }, [router]);
 
     const fetchBusinessProfile = async (userObj) => {
         if (!userObj) return;
-        const userId = userObj.id;
 
         try {
-            // 1. Primary Look: Linked user_id
+            // Priority 1: Direct link by user_id
             let { data } = await supabase
                 .from('businesses')
                 .select('*')
-                .eq('user_id', userId)
+                .eq('user_id', userObj.id)
                 .maybeSingle();
 
-            // 2. Secondary Lookup: Match by Verified Email (Auto-Link)
+            // Priority 2: Auto-connect by email match (Recovery)
             if (!data && userObj.email) {
-                console.log('--- AuthProvider: Finding business by email to link ---', userObj.email);
+                console.log('--- AuthProvider: Auto-connecting verified user to profile ---', userObj.email);
                 const { data: emailMatch } = await supabase
                     .from('businesses')
                     .select('*')
@@ -122,23 +94,27 @@ export const AuthProvider = ({ children }) => {
                     .maybeSingle();
 
                 if (emailMatch) {
-                    console.log('--- AuthProvider: Auto-linking profile to verified user ---');
-                    const { data: linkedData } = await supabase
+                    // This is the CRITICAL STEP: link the auth user to the existing business data
+                    const { data: linked } = await supabase
                         .from('businesses')
-                        .update({ user_id: userId })
+                        .update({ user_id: userObj.id })
                         .eq('id', emailMatch.id)
                         .select()
                         .single();
-                    data = linkedData;
+                    data = linked;
                 }
             }
 
             if (data) {
                 setBusiness(data);
-                localStorage.setItem('masterkey_business_id', data.id);
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('masterkey_business_id', data.id);
+                }
             }
-        } catch (error) {
-            console.error('Error fetching business profile:', error);
+        } catch (err) {
+            console.error('--- AuthProvider: Profile lookup failed ---', err);
+        } finally {
+            setLoading(false);
         }
     };
 

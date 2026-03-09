@@ -9,9 +9,5 @@ export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey, {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        // Bypass Navigator Lock Manager via function strategy (Fixes both 10s timeout and TypeError)
-        lock: async (name, callback) => {
-            return await callback();
-        }
     }
 });

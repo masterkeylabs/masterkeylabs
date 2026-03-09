@@ -43,6 +43,7 @@ function LossAuditContent() {
     });
     const [results, setResults] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [searchIndex, setSearchIndex] = useState(0);
 
     // Load existing results
@@ -126,41 +127,48 @@ function LossAuditContent() {
 
         if (businessId) {
             setSaving(true);
+            try {
+                // Save full payload to match public.loss_audit_results schema
+                const fullPayload = {
+                    business_id: businessId,
+                    staff_salary: staff,
+                    marketing_budget: marketing,
+                    ops_overheads: ops,
+                    annual_revenue: parseInt(form.annualRevenue) || 0,
+                    industry: form.industry,
+                    manual_hours: Math.round(hours),
+                    has_crm: form.hasCRM,
+                    has_erp: form.hasERP,
+                    staff_waste: calc.staffWaste,
+                    marketing_waste: calc.marketingWaste,
+                    ops_waste: calc.opsWaste,
+                    coordination_drag: calc.coordinationDrag,
+                    total_burn: calc.totalBurn,
+                    annual_burn: calc.annualBurn,
+                    saving_target: calc.savingTarget,
+                    five_year_cost: calc.fiveYearCost,
+                    created_at: new Date().toISOString()
+                };
 
-            // Save full payload to match public.loss_audit_results schema
-            const fullPayload = {
-                business_id: businessId,
-                staff_salary: staff,
-                marketing_budget: marketing,
-                ops_overheads: ops,
-                annual_revenue: parseInt(form.annualRevenue) || 0,
-                industry: form.industry,
-                manual_hours: Math.round(hours),
-                has_crm: form.hasCRM,
-                has_erp: form.hasERP,
-                staff_waste: calc.staffWaste,
-                marketing_waste: calc.marketingWaste,
-                ops_waste: calc.opsWaste,
-                coordination_drag: calc.coordinationDrag,
-                total_burn: calc.totalBurn,
-                annual_burn: calc.annualBurn,
-                saving_target: calc.savingTarget,
-                five_year_cost: calc.fiveYearCost,
-                created_at: new Date().toISOString()
-            };
+                const { error: saveErr } = await supabase.from('loss_audit_results').upsert(fullPayload, { onConflict: 'business_id' });
 
-            const { error: saveErr } = await supabase.from('loss_audit_results').upsert(fullPayload, { onConflict: 'business_id' });
+                // Also update global business vertical
+                await supabase.from('businesses').update({ vertical: form.industry }).eq('id', businessId);
 
-            // Also update global business vertical
-            await supabase.from('businesses').update({ vertical: form.industry }).eq('id', businessId);
-
-            if (saveErr) {
-                console.error('Save Error:', saveErr);
-                alert(`Sync Failed: ${saveErr.message}`);
-            } else {
-                router.push(`/dashboard/night-loss?id=${businessId}`);
+                if (saveErr) {
+                    console.error('Save Error:', saveErr);
+                    alert(`Sync Failed: ${saveErr.message}`);
+                } else {
+                    console.log('--- Loss Audit: Sync Success ---');
+                    setShowSuccess(true);
+                    setTimeout(() => setShowSuccess(false), 3000);
+                }
+            } catch (err) {
+                console.error('Unexpected Audit Error:', err);
+                alert('An unexpected error occurred while saving. Please try again.');
+            } finally {
+                setSaving(false);
             }
-            setSaving(false);
         }
     };
 
@@ -286,6 +294,13 @@ function LossAuditContent() {
                                 )}
                             </span>
                         </button>
+
+                        {showSuccess && (
+                            <div className="flex items-center gap-2 text-neon-green text-[11px] font-bold uppercase tracking-widest mt-4 justify-center animate-fade-in">
+                                <span className="material-symbols-outlined text-sm">check_circle</span>
+                                {t.dashboard.rescue.booking.btn.success || 'Update Saved Successfully'}
+                            </div>
+                        )}
                         <style jsx>{`
                             @keyframes scan {
                                 0% { background-position: -100% 0; }

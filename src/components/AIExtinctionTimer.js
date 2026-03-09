@@ -331,7 +331,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
     // Share handler — natively shares if supported, opens social link if desktop
     const shareImage = async (platform) => {
-        const siteUrl = 'https://masterkeylabs.in';
+        const siteUrl = 'https://masterkeylabs.ai';
         const shareText = `🚨 My AI Risk Score from MasterkeyOS Extinction Timer → ${siteUrl}`;
         const encodedText = encodeURIComponent(shareText);
         const encodedUrl = encodeURIComponent(siteUrl);
