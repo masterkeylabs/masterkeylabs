@@ -88,7 +88,7 @@ export default function Home() {
 
                 <div className="flex flex-col items-center text-center px-6 mt-8">
                     <div className="mb-0 mt-[10px] scale-75 md:scale-100 flex justify-center w-full">
-                        <Image src="/logo-new.png" alt="MasterKey Labs Logo" width={1200} height={300} className="h-64 md:h-96 w-auto object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
+                        <Image src="/logo-new.png" alt="MasterKey Labs Logo" width={1200} height={300} className="h-24 sm:h-32 md:h-64 lg:h-96 w-auto object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
                     </div>
                 </div>
             </header>
@@ -114,7 +114,7 @@ export default function Home() {
                         <div className="ios-badge-cyan">
                             {t.badge}
                         </div>
-                        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.1] text-white tracking-tight text-balance">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.1] text-white tracking-tight text-balance">
                             {t.hero.title1} <br className="hidden md:block" />
                             <span className="text-ios-blue">{t.hero.title2}</span>.
                         </h1>

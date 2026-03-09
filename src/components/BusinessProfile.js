@@ -56,26 +56,26 @@ export default function BusinessProfile({ business, t, lang }) {
     };
 
     const content = (
-        <div className="system-card bg-white/[0.02] border border-white/5 p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all duration-300 hover:bg-white/[0.04] hover:border-white/20 relative overflow-hidden cursor-pointer">
+        <div className="system-card bg-white/[0.02] border border-white/5 p-5 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all duration-300 hover:bg-white/[0.04] hover:border-white/20 relative overflow-hidden cursor-pointer">
             {/* Edit Icon on Hover Container */}
             <div className="absolute top-4 right-4 text-white/0 group-hover:text-ios-blue transition-colors duration-300 pointer-events-none">
                 <span className="material-symbols-outlined text-xl">edit</span>
             </div>
 
-            <div>
+            <div className="w-full md:w-auto">
                 <h3 className="text-[10px] text-ios-blue uppercase tracking-[0.2em] font-bold mb-2">{profileT.title}</h3>
-                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight group-hover:text-ios-blue transition-colors duration-300">{business.entity_name}</h2>
-                <p className="text-white/50 text-sm mt-1">{profileT.managedBy} {business.owner_name || 'System'}</p>
+                <h2 className="text-xl md:text-3xl font-bold text-white tracking-tight group-hover:text-ios-blue transition-colors duration-300 truncate">{business.entity_name}</h2>
+                <p className="text-white/50 text-xs md:text-sm mt-1">{profileT.managedBy} {business.owner_name || 'System'}</p>
             </div>
 
-            <div className="flex flex-wrap gap-4 md:gap-8 pr-6">
-                <div className="flex flex-col gap-1">
+            <div className="flex flex-wrap md:flex-nowrap gap-4 md:gap-8 w-full md:w-auto">
+                <div className="flex flex-col gap-1 min-w-[140px] max-w-full">
                     <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Email</span>
-                    <span className="text-sm font-semibold text-white/90">{business.email || '—'}</span>
+                    <span className="text-xs md:text-sm font-semibold text-white/90 break-all">{business.email || '—'}</span>
                 </div>
-                <div className="flex flex-col gap-1">
-                    <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">{profileT.contact}</span>
-                    <span className="text-sm font-semibold text-white/90">{business.phone || '—'}</span>
+                <div className="flex flex-col gap-1 min-w-[120px]">
+                    <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold whitespace-nowrap">{profileT.contact}</span>
+                    <span className="text-xs md:text-sm font-semibold text-white/90 whitespace-nowrap">{business.phone || '—'}</span>
                 </div>
             </div>
         </div>

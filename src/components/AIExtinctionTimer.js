@@ -69,13 +69,13 @@ function useAnimatedValue(target, duration = 1400) {
 function TimerBlock({ value, label, color }) {
     const animated = useAnimatedValue(value, 1200);
     return (
-        <div style={{
+        <div className="ext-timer-block" style={{
             flex: 1, background: "rgba(255,255,255,0.03)",
             border: `1px solid ${color}33`, borderRadius: "14px",
             padding: "18px 10px", textAlign: "center",
         }}>
-            <div style={{
-                fontSize: "2.4rem", fontWeight: 900, color,
+            <div className="ext-timer-num" style={{
+                fontSize: "clamp(1.8rem, 5vw, 2.4rem)", fontWeight: 900, color,
                 lineHeight: 1, fontVariantNumeric: "tabular-nums",
                 textShadow: `0 0 20px ${color}66`,
             }}>
@@ -898,7 +898,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 textTransform: "uppercase",
                                 letterSpacing: "1.5px"
                             }}>
-                                {result.riskScore > 70 ? '🚨 IMMEDIATE ACTION REQUIRED' : '💡 OPTIMIZATION REQUIRED'}
+                                {result.riskScore > 70 ? (t.extinctionTimer.priorityAction || '🚨 IMMEDIATE ACTION REQUIRED') : (t.extinctionTimer.optimizationAction || '💡 OPTIMIZATION REQUIRED')}
                             </div>
 
                             <h3 style={{
@@ -909,8 +909,8 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 lineHeight: 1.3,
                                 letterSpacing: "-0.5px"
                             }}>
-                                AI is coming for {input.toLowerCase() || 'your role'}.<br />
-                                Don't just watch — adapt.
+                                {t.extinctionTimer.resultTitle || `AI is coming for ${input.toLowerCase() || 'your role'}.`}<br />
+                                {t.extinctionTimer.resultSub || "Don't just watch — adapt."}
                             </h3>
                             <p style={{
                                 color: "#A0A0A0",
@@ -920,7 +920,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 maxWidth: "280px",
                                 margin: "0 auto 24px"
                             }}>
-                                Our system detected high friction in your workflow. See exactly where you are losing revenue.
+                                {t.extinctionTimer.extinctionSub || "Our system detected high friction in your workflow. See exactly where you are losing revenue."}
                             </p>
 
                             <button
@@ -950,11 +950,11 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                     e.currentTarget.style.filter = "brightness(1)";
                                 }}
                             >
-                                See your Profit Leaks — 4 min Audit →
+                                {t.extinctionTimer.seeLeaksBtn || "See your Profit Leaks — 4 min Audit →"}
                             </button>
 
                             <a
-                                href="https://wa.me/91XXXXXXXXXX?text=Hi! I just did the AI Extinction Audit for my business. I want to discuss how to protect my business from AI threats."
+                                href={t?.fab?.waMessage ? `https://wa.me/91XXXXXXXXXX?text=${encodeURIComponent(t.fab.waMessage.replace('{businessName}', input || 'Business').replace('{threatZone}', result.threatLevel).replace('{lossText}', 'high risk'))}` : "#"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
@@ -975,7 +975,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.342 2.518.938 3.565l-.994 3.634 3.717-.974c1.011.552 2.169.869 3.407.87 3.181 0 5.767-2.586 5.768-5.766 0-3.181-2.587-5.766-5.768-5.766zM12.031 3c4.935 0 8.938 4.003 8.938 8.938s-4.003 8.938-8.938 8.938c-1.572 0-3.045-.407-4.326-1.118l-5.705 1.494 1.521-5.558c-.808-1.353-1.278-2.937-1.278-4.631 0-4.935 4.003-8.938 8.938-8.938z" />
                                 </svg>
-                                or chat with us on WhatsApp →
+                                {t.extinctionTimer.whatsappSecondary || "or chat with us on WhatsApp →"}
                             </a>
                         </div>
                     </div>
