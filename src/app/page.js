@@ -88,7 +88,7 @@ export default function Home() {
 
                 <div className="flex flex-col items-center text-center px-6 mt-8">
                     <div className="mb-0 mt-[10px] scale-75 md:scale-100 flex justify-center w-full">
-                        <Image src="/logo-new.png" alt="MasterKey Labs Logo" width={600} height={150} className="h-32 md:h-48 w-auto object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
+                        <Image src="/logo-new.png" alt="MasterKey Labs Logo" width={1200} height={300} className="h-64 md:h-96 w-auto object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
                     </div>
                 </div>
             </header>
