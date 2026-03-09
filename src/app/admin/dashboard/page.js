@@ -16,6 +16,7 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState({ total: 0, critical: 0, totalWaste: 0 });
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [mounted, setMounted] = useState(false);
 
     const COLORS = ['#00e5ff', '#ff3d00', '#ffd600', '#00e676', '#d500f9', '#3d5afe', '#ff9100'];
 
@@ -25,6 +26,7 @@ export default function AdminDashboard() {
     };
 
     useEffect(() => {
+        setMounted(true);
         const session = localStorage.getItem('admin_session');
         if (!session) {
             router.push('/admin/login');
@@ -198,26 +200,28 @@ export default function AdminDashboard() {
                             Market Composition
                         </h3>
                         <div className="h-72 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={industryData}
-                                        innerRadius={60}
-                                        outerRadius={90}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                    >
-                                        {industryData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                        itemStyle={{ color: '#fff', fontSize: '10px', textTransform: 'uppercase', fontWeight: 900 }}
-                                    />
-                                    <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
-                                </PieChart>
-                            </ResponsiveContainer>
+                            {mounted && (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={industryData}
+                                            innerRadius={60}
+                                            outerRadius={90}
+                                            paddingAngle={5}
+                                            dataKey="value"
+                                        >
+                                            {industryData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                            itemStyle={{ color: '#fff', fontSize: '10px', textTransform: 'uppercase', fontWeight: 900 }}
+                                        />
+                                        <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            )}
                         </div>
                     </div>
 
@@ -228,21 +232,23 @@ export default function AdminDashboard() {
                             Threat Landscape
                         </h3>
                         <div className="h-72 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={threatLandscape}>
-                                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={8} tickLine={false} axisLine={false} />
-                                    <YAxis hide />
-                                    <Tooltip
-                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                        contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                    />
-                                    <Bar dataKey="value" radius={[10, 10, 0, 0]}>
-                                        {threatLandscape.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
+                            {mounted && (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={threatLandscape}>
+                                        <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={8} tickLine={false} axisLine={false} />
+                                        <YAxis hide />
+                                        <Tooltip
+                                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                            contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                        />
+                                        <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                                            {threatLandscape.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            )}
                         </div>
                     </div>
 
@@ -253,22 +259,24 @@ export default function AdminDashboard() {
                             Detected Capital Waste Trend (₹K)
                         </h3>
                         <div className="h-64 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={economicTrend}>
-                                    <defs>
-                                        <linearGradient id="colorBurn" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <XAxis dataKey="date" stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                    />
-                                    <Area type="monotone" dataKey="burn" stroke="#00e5ff" fillOpacity={1} fill="url(#colorBurn)" strokeWidth={3} />
-                                </AreaChart>
-                            </ResponsiveContainer>
+                            {mounted && (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={economicTrend}>
+                                        <defs>
+                                            <linearGradient id="colorBurn" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3} />
+                                                <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <XAxis dataKey="date" stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
+                                        <YAxis stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                        />
+                                        <Area type="monotone" dataKey="burn" stroke="#00e5ff" fillOpacity={1} fill="url(#colorBurn)" strokeWidth={3} />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            )}
                         </div>
                     </div>
                 </div>

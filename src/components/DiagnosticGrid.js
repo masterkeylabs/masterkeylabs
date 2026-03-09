@@ -56,7 +56,6 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
         );
     };
 
-    if (!data) return null;
 
     return (
         <div className="space-y-8 relative">

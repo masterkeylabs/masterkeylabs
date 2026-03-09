@@ -1760,246 +1760,247 @@ export const translations = {
                 },
                 backToDashboard: "Dashboard par wapas jayein",
             },
-            nav: {
-                dashboard: "Dashboard",
-                login: "Login",
-                signup: "Sign Up",
-                home: "Home"
+        },
+        nav: {
+            dashboard: "Dashboard",
+            login: "Login",
+            signup: "Sign Up",
+            home: "Home"
+        },
+        header: {
+            command: "Command Center",
+            sync: "System Sync Active hai",
+            home: "Home"
+        },
+        lossAudit: {
+            title: "Loss Audit",
+            subTitle: "Check karein aapka business har mahine kitni punji (capital) waste kar raha hai.",
+            formHeader: "Apni Monthly Costs Bhariye",
+            industryLabel: "Industry Sector",
+            staffSalaryLabel: "Staff Salary (Monthly)",
+            marketingBudgetLabel: "Marketing Budget",
+            opsOverheadLabel: "Operations & Overheads",
+            revenueLabel: "Estimated Annual Revenue",
+            revenueSub: "Coordination Drag ki calculation ke liye. Agar range hai toh midpoint use karein (e.g. ₹25L–₹1Cr → ₹62.5L).",
+            advancedHeader: "Advanced Diagnostic Metrics",
+            manualHoursLabel: "Har din ke manual kaam ke ghante (per employee)",
+            manualHoursSub: "Spreadsheets, manual data entry aur baar-baar follow-ups mein lagne wala time.",
+            crmReadyLabel: "CRM Ready",
+            crmSub: "Sales Hub use kar rahe hain",
+            erpLabel: "ERP/Inventory",
+            erpSub: "Automated Ops",
+            btnText: "Loss Audit Calibrate Karein",
+            syncingText: "Synchronizing...",
+            burnHeadline: "Aapka Nuksan ho raha hai",
+            perMonth: "/month",
+            annualBurnLine: "Matlab har saal {amount} ka loss",
+            breakdownTitle: "Nuksan ka Breakdown",
+            payrollWaste: "Payroll Waste",
+            overheadWaste: "Overhead Waste",
+            marketingWaste: "Marketing Waste",
+            coordinationDrag: "Coordination Drag",
+            recoverableTitle: "Recoverable Savings",
+            inactionTitle: "5-Year Cost of Inaction",
+            source: "SOURCE: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
+            emptyState: "Breakdown dekhne ke liye apni costs bhariye"
+        },
+        nightLoss: {
+            title: "Night Loss Calculator",
+            subTitle: "Aap jab so rahe hote hain, toh kitna revenue lose karte hain?",
+            formHeader: "Aapke Business Hours",
+            dailyInquiriesLabel: "Average Daily Inquiries / Leads",
+            closingTimeLabel: "Business Closing Time",
+            avgTransactionLabel: "Avg Transaction Value (₹)",
+            avgTransactionSub: "⚠ Required — iske bina audit ₹ figure nahi dikha sakta.",
+            businessTypeLabel: "Business Type",
+            btnText: "Night Loss Calculate Karein",
+            savingText: "Saving...",
+            loseHeadline: "Aap har raat lose kar rahe hain",
+            perMonth: "/month",
+            annualLossLine: "Annual Loss: {amount}",
+            breakdownTitle: "After-Hours Activity",
+            leadsLabel: "After-Hours Leads: {count} / month",
+            conversionsLabel: "Lost Conversions: ~{count} / month ({gap}% conversion gap)",
+            nextDayRevenue: "Next-Day Reply Revenue",
+            aiRevenue: "AI Instant Reply Revenue",
+            hourlyLossText: "Har ghante {amount} ka nuksan",
+            hourlyLossSub: "Closing time se lekar agli subah tak",
+            source: "SOURCE: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
+            emptyState: "Apne business hours configure karein nuksan dekhne ke liye",
+            closingTimes: {
+                "6pm": { label: "6:00 PM", desc: "Standard Closing" },
+                "8pm": { label: "8:00 PM", desc: "Late Evening" },
+                "10pm": { label: "10:00 PM", desc: "Night Operations" }
             },
-            header: {
-                command: "Command Center",
-                sync: "System Sync Active hai",
-                home: "Home"
+            businessTypes: {
+                retail: { label: "Retail / Shop", desc: "Physical storefront" },
+                service: { label: "Service / Agency", desc: "Lead-based business" },
+                b2b: { label: "B2B / Manufacturing", desc: "Large ticket contracts" }
+            }
+        },
+        visibility: {
+            title: "Market Invisibility Audit",
+            subTitle: "Aap abhi kitne high-intent customers ko competitors se lose kar rahe hain?",
+            formHeader: "Search & Visibility Metrics",
+            cityLabel: "Primary Market (City)",
+            searchTermLabel: "Primary Search Term",
+            monthlyVolumeLabel: "Monthly Search Volume",
+            monthlyVolumeSub: "{city} mein har mahine \"{term}\" search karne wale log.",
+            competitorIndexLabel: "Competitors ki Visibility",
+            competitorSub: "Search results mein competitors kitne strong dikh rahe hain?",
+            btnText: "Market Visibility Analyze Karein",
+            scanningText: "Market Scan ho raha hai...",
+            missedHeadline: "Missed Opportunity",
+            potentialLeads: "Potential Leads: {count} / month",
+            highIntent: "Lost High-Intent Customers",
+            marketScore: "Market Signal Score",
+            industryAvg: "Industry Avg",
+            lostRevenue: "Estimated Monthly Lost Revenue",
+            lostRevenueSub: "{city} market ke customer LTV ke hisaab se.",
+            source: "SOURCE: SEMRush India Search Data (2023) | Google Trends Regional Index (2023) | Local Search Association Consumer Survey (2022)",
+            emptyState: "Gap dekhne ke liye apni search visibility analyze karein",
+            signals: {
+                hasGoogleMyBusiness: "Google Business Profile (complete)",
+                hasWebsite: "Mobile-optimised Website",
+                hasWhatsApp: "WhatsApp Business (active)",
+                activeSocialMedia: "Active Social Media (2+ platforms)",
+                seoOptimized: "Local SEO (keyword optimised)",
+                hasCRM: "CRM / Lead Management Tool",
+                runsAds: "Paid Ads (Google / Meta active)"
             },
-            lossAudit: {
-                title: "Loss Audit",
-                subTitle: "Check karein aapka business har mahine kitni punji (capital) waste kar raha hai.",
-                formHeader: "Apni Monthly Costs Bhariye",
-                industryLabel: "Industry Sector",
-                staffSalaryLabel: "Staff Salary (Monthly)",
-                marketingBudgetLabel: "Marketing Budget",
-                opsOverheadLabel: "Operations & Overheads",
-                revenueLabel: "Estimated Annual Revenue",
-                revenueSub: "Coordination Drag ki calculation ke liye. Agar range hai toh midpoint use karein (e.g. ₹25L–₹1Cr → ₹62.5L).",
-                advancedHeader: "Advanced Diagnostic Metrics",
-                manualHoursLabel: "Har din ke manual kaam ke ghante (per employee)",
-                manualHoursSub: "Spreadsheets, manual data entry aur baar-baar follow-ups mein lagne wala time.",
-                crmReadyLabel: "CRM Ready",
-                crmSub: "Sales Hub use kar rahe hain",
-                erpLabel: "ERP/Inventory",
-                erpSub: "Automated Ops",
-                btnText: "Loss Audit Calibrate Karein",
-                syncingText: "Synchronizing...",
-                burnHeadline: "Aapka Nuksan ho raha hai",
-                perMonth: "/month",
-                annualBurnLine: "Matlab har saal {amount} ka loss",
-                breakdownTitle: "Nuksan ka Breakdown",
-                payrollWaste: "Payroll Waste",
-                overheadWaste: "Overhead Waste",
-                marketingWaste: "Marketing Waste",
-                coordinationDrag: "Coordination Drag",
-                recoverableTitle: "Recoverable Savings",
-                inactionTitle: "5-Year Cost of Inaction",
-                source: "SOURCE: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
-                emptyState: "Breakdown dekhne ke liye apni costs bhariye"
+            gapsHeader: "Gap Analysis ({count} signals missing)",
+            conversionRate: "6% conversion rate",
+            placeholders: {
+                citySelect: "— Select city —",
+                cityInput: "City name enter karein...",
+                revenue: "₹ 1,500"
+            }
+        },
+        common: {
+            market_context: "aapka market",
+            revenueLabel: "Estimated Annual Revenue",
+            employeeCountLabel: "Employees ki count (Operational Scale)",
+            industries: {
+                it_services: "IT / BPO Services",
+                ecommerce: "E-commerce Business",
+                finance: "Finance / Banking",
+                travel: "Travel & Tourism",
+                data_entry: "Data Entry / BPO",
+                retail: "Retail Business",
+                manufacturing: "Manufacturing Unit",
+                logistics: "Logistics & Supply",
+                education: "Education & Coaching",
+                real_estate: "Real Estate",
+                construction: "Construction",
+                hospitality: "Hospitality / Hotel",
+                fb: "Media & Content",
+                healthcare: "Healthcare / Medical",
+                legal: "Legal Services",
+                services: "Skilled Trades",
+                b2b: "Agriculture"
             },
-            nightLoss: {
-                title: "Night Loss Calculator",
-                subTitle: "Aap jab so rahe hote hain, toh kitna revenue lose karte hain?",
-                formHeader: "Aapke Business Hours",
-                dailyInquiriesLabel: "Average Daily Inquiries / Leads",
-                closingTimeLabel: "Business Closing Time",
-                avgTransactionLabel: "Avg Transaction Value (₹)",
-                avgTransactionSub: "⚠ Required — iske bina audit ₹ figure nahi dikha sakta.",
-                businessTypeLabel: "Business Type",
-                btnText: "Night Loss Calculate Karein",
-                savingText: "Saving...",
-                loseHeadline: "Aap har raat lose kar rahe hain",
-                perMonth: "/month",
-                annualLossLine: "Annual Loss: {amount}",
-                breakdownTitle: "After-Hours Activity",
-                leadsLabel: "After-Hours Leads: {count} / month",
-                conversionsLabel: "Lost Conversions: ~{count} / month ({gap}% conversion gap)",
-                nextDayRevenue: "Next-Day Reply Revenue",
-                aiRevenue: "AI Instant Reply Revenue",
-                hourlyLossText: "Har ghante {amount} ka nuksan",
-                hourlyLossSub: "Closing time se lekar agli subah tak",
-                source: "SOURCE: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
-                emptyState: "Apne business hours configure karein nuksan dekhne ke liye",
-                closingTimes: {
-                    "6pm": { label: "6:00 PM", desc: "Standard Closing" },
-                    "8pm": { label: "8:00 PM", desc: "Late Evening" },
-                    "10pm": { label: "10:00 PM", desc: "Night Operations" }
-                },
-                businessTypes: {
-                    retail: { label: "Retail / Shop", desc: "Physical storefront" },
-                    service: { label: "Service / Agency", desc: "Lead-based business" },
-                    b2b: { label: "B2B / Manufacturing", desc: "Large ticket contracts" }
-                }
+            statuses: {
+                DOMINANT: "Dominant",
+                VISIBLE: "Visible",
+                OKAY: "Mid-Level",
+                GHOST: "Ghost",
+                INVISIBLE: "Invisible"
+            }
+        },
+        aiThreat: {
+            title: "Extinction Horizon (AI Threat)",
+            subTitle: "Generative AI ke era mein apne business ki survival timeline calculate karein.",
+            formHeader: "Survival Protocol Inputs",
+            industryLabel: "Industry Sector",
+            manualTasksLabel: "% Tasks jo Manual/Repetitive hain",
+            manualTasksSub: "Data entry, basic writing, repetitive tasks etc.",
+            customerInteractionLabel: "Customer Interaction Type",
+            btnText: "Threat Analysis Run Karein",
+            runningText: "Calculate ho raha hai...",
+            ttlHeadline: "Market Relevance TTL",
+            months: "Mahine (Months)",
+            threatLevel: "Survival Complexity",
+            threatSub: "High complexity matlab replace hone ka zyada risk.",
+            baseMonths: "Base Months",
+            modifiers: "Resilience Modifiers",
+            riskAssessment: "AI Threat & Risk Assessment",
+            automationPotential: "Automation Potential",
+            replacabilityScale: "Replacability Scale",
+            low: "Kam (Low)",
+            med: "Medium",
+            high: "Zyada (High)",
+            source: "SOURCE: Goldman Sachs \"The Potentially Large Effects of AI on Economic Growth\" (2023) | World Economic Forum \"Future of Jobs\" Report (2023) | OpenAI \"GPTs are GPTs\" Impact Study (2023)",
+            emptyState: "Apna horizon dekhne ke liye threat analysis run karein",
+            factors: {
+                isOmnichannel: { label: "Omnichannel Presence", desc: "Physical + Digital platforms", bonus: "+12 months" },
+                hasCRM: { label: "CRM Active", desc: "Customer data infrastructure", bonus: "+6 months" },
+                hasERP: { label: "ERP Active", desc: "Operational resilience", bonus: "+6 months" }
             },
-            visibility: {
-                title: "Market Invisibility Audit",
-                subTitle: "Aap abhi kitne high-intent customers ko competitors se lose kar rahe hain?",
-                formHeader: "Search & Visibility Metrics",
-                cityLabel: "Primary Market (City)",
-                searchTermLabel: "Primary Search Term",
-                monthlyVolumeLabel: "Monthly Search Volume",
-                monthlyVolumeSub: "{city} mein har mahine \"{term}\" search karne wale log.",
-                competitorIndexLabel: "Competitors ki Visibility",
-                competitorSub: "Search results mein competitors kitne strong dikh rahe hain?",
-                btnText: "Market Visibility Analyze Karein",
-                scanningText: "Market Scan ho raha hai...",
-                missedHeadline: "Missed Opportunity",
-                potentialLeads: "Potential Leads: {count} / month",
-                highIntent: "Lost High-Intent Customers",
-                marketScore: "Market Signal Score",
-                industryAvg: "Industry Avg",
-                lostRevenue: "Estimated Monthly Lost Revenue",
-                lostRevenueSub: "{city} market ke customer LTV ke hisaab se.",
-                source: "SOURCE: SEMRush India Search Data (2023) | Google Trends Regional Index (2023) | Local Search Association Consumer Survey (2022)",
-                emptyState: "Gap dekhne ke liye apni search visibility analyze karein",
-                signals: {
-                    hasGoogleMyBusiness: "Google Business Profile (complete)",
-                    hasWebsite: "Mobile-optimised Website",
-                    hasWhatsApp: "WhatsApp Business (active)",
-                    activeSocialMedia: "Active Social Media (2+ platforms)",
-                    seoOptimized: "Local SEO (keyword optimised)",
-                    hasCRM: "CRM / Lead Management Tool",
-                    runsAds: "Paid Ads (Google / Meta active)"
-                },
-                gapsHeader: "Gap Analysis ({count} signals missing)",
-                conversionRate: "6% conversion rate",
-                placeholders: {
-                    citySelect: "— Select city —",
-                    cityInput: "City name enter karein...",
-                    revenue: "₹ 1,500"
-                }
+            employeeRanges: {
+                micro: { label: "< 10", desc: "Micro (+6 mo)" },
+                small: { label: "10–49", desc: "Small (neutral)" },
+                medium: { label: "50–200", desc: "Medium (−6 mo)" },
+                large: { label: "200+", desc: "Large (−12 mo)" }
             },
-            common: {
-                market_context: "aapka market",
-                revenueLabel: "Estimated Annual Revenue",
-                employeeCountLabel: "Employees ki count (Operational Scale)",
-                industries: {
-                    it_services: "IT / BPO Services",
-                    ecommerce: "E-commerce Business",
-                    finance: "Finance / Banking",
-                    travel: "Travel & Tourism",
-                    data_entry: "Data Entry / BPO",
-                    retail: "Retail Business",
-                    manufacturing: "Manufacturing Unit",
-                    logistics: "Logistics & Supply",
-                    education: "Education & Coaching",
-                    real_estate: "Real Estate",
-                    construction: "Construction",
-                    hospitality: "Hospitality / Hotel",
-                    fb: "Media & Content",
-                    healthcare: "Healthcare / Medical",
-                    legal: "Legal Services",
-                    services: "Skilled Trades",
-                    b2b: "Agriculture"
-                },
-                statuses: {
-                    DOMINANT: "Dominant",
-                    VISIBLE: "Visible",
-                    OKAY: "Mid-Level",
-                    GHOST: "Ghost",
-                    INVISIBLE: "Invisible"
-                }
+            statusLabels: {
+                critical: "CRITICAL WINDOW — Act immediately",
+                watch: "WATCH CLOSELY — Plan needed",
+                manageable: "MANAGEABLE RUNWAY — Start planning",
+                monitor: "LONG RUNWAY — Keep monitoring"
+            }
+        },
+        sidebar: {
+            status: "System Status",
+            analytics: "Deep Analytics",
+            protocols: "Active Protocols",
+            growth: "Growth Engine",
+            map: "Strategic Map",
+            active: "Secure Mode Active",
+            logout: "Logout",
+            signup: "Signup / Login"
+        },
+        cta: {
+            main: "Future AI-First Business ka hai.",
+            sub: "Piche mat rahiye."
+        },
+        services: {
+            title: "Internal Systems & Growth Protocols",
+            sub: "Hamara modular approach ensure karta hai ki aapka dhanda AI era ke liye ready hai.",
+            p1: {
+                title: "Brand & Identity Design",
+                sub: "Market Strategy, Product Interface, Authority Assets"
             },
-            aiThreat: {
-                title: "Extinction Horizon (AI Threat)",
-                subTitle: "Generative AI ke era mein apne business ki survival timeline calculate karein.",
-                formHeader: "Survival Protocol Inputs",
-                industryLabel: "Industry Sector",
-                manualTasksLabel: "% Tasks jo Manual/Repetitive hain",
-                manualTasksSub: "Data entry, basic writing, repetitive tasks etc.",
-                customerInteractionLabel: "Customer Interaction Type",
-                btnText: "Threat Analysis Run Karein",
-                runningText: "Calculate ho raha hai...",
-                ttlHeadline: "Market Relevance TTL",
-                months: "Mahine (Months)",
-                threatLevel: "Survival Complexity",
-                threatSub: "High complexity matlab replace hone ka zyada risk.",
-                baseMonths: "Base Months",
-                modifiers: "Resilience Modifiers",
-                riskAssessment: "AI Threat & Risk Assessment",
-                automationPotential: "Automation Potential",
-                replacabilityScale: "Replacability Scale",
-                low: "Kam (Low)",
-                med: "Medium",
-                high: "Zyada (High)",
-                source: "SOURCE: Goldman Sachs \"The Potentially Large Effects of AI on Economic Growth\" (2023) | World Economic Forum \"Future of Jobs\" Report (2023) | OpenAI \"GPTs are GPTs\" Impact Study (2023)",
-                emptyState: "Apna horizon dekhne ke liye threat analysis run karein",
-                factors: {
-                    isOmnichannel: { label: "Omnichannel Presence", desc: "Physical + Digital platforms", bonus: "+12 months" },
-                    hasCRM: { label: "CRM Active", desc: "Customer data infrastructure", bonus: "+6 months" },
-                    hasERP: { label: "ERP Active", desc: "Operational resilience", bonus: "+6 months" }
-                },
-                employeeRanges: {
-                    micro: { label: "< 10", desc: "Micro (+6 mo)" },
-                    small: { label: "10–49", desc: "Small (neutral)" },
-                    medium: { label: "50–200", desc: "Medium (−6 mo)" },
-                    large: { label: "200+", desc: "Large (−12 mo)" }
-                },
-                statusLabels: {
-                    critical: "CRITICAL WINDOW — Act immediately",
-                    watch: "WATCH CLOSELY — Plan needed",
-                    manageable: "MANAGEABLE RUNWAY — Start planning",
-                    monitor: "LONG RUNWAY — Keep monitoring"
-                }
+            p2: {
+                title: "Systems & Automation",
+                sub: "Custom CRM Solutions, Workflow Optimization"
             },
-            sidebar: {
-                status: "System Status",
-                analytics: "Deep Analytics",
-                protocols: "Active Protocols",
-                growth: "Growth Engine",
-                map: "Strategic Map",
-                active: "Secure Mode Active",
-                logout: "Logout",
-                signup: "Signup / Login"
+            p3: {
+                title: "Leads & Growth",
+                sub: "Precision Targeting, Automated Funnels"
             },
-            cta: {
-                main: "Future AI-First Business ka hai.",
-                sub: "Piche mat rahiye."
-            },
-            services: {
-                title: "Internal Systems & Growth Protocols",
-                sub: "Hamara modular approach ensure karta hai ki aapka dhanda AI era ke liye ready hai.",
-                p1: {
-                    title: "Brand & Identity Design",
-                    sub: "Market Strategy, Product Interface, Authority Assets"
-                },
-                p2: {
-                    title: "Systems & Automation",
-                    sub: "Custom CRM Solutions, Workflow Optimization"
-                },
-                p3: {
-                    title: "Leads & Growth",
-                    sub: "Precision Targeting, Automated Funnels"
-                },
-                p4: {
-                    title: "Strategy & Intelligence",
-                    sub: "Global Market Tactics, Resilience Protocols",
-                    f1: "Technology Roadmap",
-                    f2: "Global Expansion"
-                }
-            },
-            auth: {
-                title: "System Access",
-                sub: "Full report ke liye credentials access karein",
-                btn: "Synchronize",
-                notice: "Notice",
-                goDashboard: "Dashboard par jayein",
-                entity: "Entity",
-                principal: "Principal",
-                email: "Email",
-                contact: "Contact",
-                placeholder: {
-                    business: "Business Name",
-                    name: "Full Name",
-                    email: "email@company.com",
-                    phone: "Phone Number"
-                }
+            p4: {
+                title: "Strategy & Intelligence",
+                sub: "Global Market Tactics, Resilience Protocols",
+                f1: "Technology Roadmap",
+                f2: "Global Expansion"
+            }
+        },
+        auth: {
+            title: "System Access",
+            sub: "Full report ke liye credentials access karein",
+            btn: "Synchronize",
+            notice: "Notice",
+            goDashboard: "Dashboard par jayein",
+            entity: "Entity",
+            principal: "Principal",
+            email: "Email",
+            contact: "Contact",
+            placeholder: {
+                business: "Business Name",
+                name: "Full Name",
+                email: "email@company.com",
+                phone: "Phone Number"
             }
         }
-    };
+    }
+};

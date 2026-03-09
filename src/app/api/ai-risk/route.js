@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabaseServer';
 
 const MODELS = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
@@ -10,6 +11,13 @@ const MODELS = [
 
 export async function POST(req) {
     try {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized: Authentication required to use AI services.' }, { status: 401 });
+        }
+
         const { prompt, systemPrompt } = await req.json();
 
         if (!process.env.GEMINI_API_KEY) {
