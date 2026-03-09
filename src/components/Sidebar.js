@@ -44,7 +44,7 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
                 <div className="p-8 flex items-center justify-between">
                     <div className="flex items-center gap-3 mb-2">
                         <Link href="/">
-                            <img src="/logo-new.png" alt="MasterKey Labs" style={{ height: '48px', width: 'auto', cursor: 'pointer' }} />
+                            <img src="/logo-new.png" alt="MasterKey Labs" style={{ height: '64px', width: 'auto', cursor: 'pointer' }} />
                         </Link>
                     </div>
                     {setSidebarOpen && (
