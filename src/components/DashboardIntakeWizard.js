@@ -40,10 +40,19 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             mode,
             step,
             businessId: business?.id,
-            userId: user?.id
+            userId: user?.id,
+            activeId
         });
         setMounted(true);
     }, []);
+
+    // Ensure activeId stays in sync if business prop loads late
+    useEffect(() => {
+        if (business?.id && !activeId) {
+            console.log('--- Wizard: Syncing activeId from business prop ---', business.id);
+            setActiveId(business.id);
+        }
+    }, [business?.id, activeId]);
 
     // Initial state setup based on mode
     useEffect(() => {
@@ -251,16 +260,26 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
     // Step 1: Loss Audit
     const handleM1Submit = async (e) => {
         e.preventDefault();
+        console.log('--- Wizard Step 1: Submission Started ---');
+
+        if (!activeId) {
+            console.error('--- Wizard Step 1 Error: No Active Business ID ---');
+            setError("Session error: Business ID missing. Please refresh the page.");
+            return;
+        }
+
         setIsSaving(true);
         setError(null);
 
         try {
+            console.log('--- Wizard Step 1: Parsing values ---');
             const staff = parseNumericalRange(formM1.staffSalary);
             const ops = parseNumericalRange(formM1.opsOverheads);
             const marketing = parseNumericalRange(formM1.marketingBudget);
             const revenue = parseFloat(formM1.annualRevenue) || 0;
             const hours = parseHoursRange(formM1.manualHours);
 
+            console.log('--- Wizard Step 1: Calculating results ---');
             const calc = calculateLossAudit(staff, ops, marketing, {
                 manualHoursPerDay: hours,
                 hasCRM: formM1.hasCRM,
@@ -268,6 +287,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 annualRevenue: revenue
             });
 
+            console.log('--- Wizard Step 1: Preparing payload ---', { activeId });
             const payload = {
                 business_id: activeId,
                 staff_salary: staff,
@@ -289,13 +309,19 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
+            console.log('--- Wizard Step 1: Starting Upsert ---');
             const { error: syncError } = await supabase
                 .from('loss_audit_results')
                 .upsert(payload, { onConflict: 'business_id' });
 
-            if (syncError) throw syncError;
+            if (syncError) {
+                console.error('--- Wizard Step 1: Upsert Error ---', syncError);
+                throw syncError;
+            }
+            console.log('--- Wizard Step 1: Upsert Success ---');
 
-            await supabase
+            console.log('--- Wizard Step 1: Starting Business Update ---');
+            const { error: bizError } = await supabase
                 .from('businesses')
                 .update({
                     annual_revenue: revenue,
@@ -305,11 +331,19 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 })
                 .eq('id', activeId);
 
+            if (bizError) {
+                console.error('--- Wizard Step 1: Business Update Error ---', bizError);
+                throw bizError;
+            }
+            console.log('--- Wizard Step 1: Business Update Success ---');
+
+            console.log('--- Wizard Step 1: Moving to Step 2 ---');
             setStep(2);
         } catch (err) {
-            setError(err.message);
-            console.error('Module 01 Fault:', err);
+            console.error('--- Wizard Step 1: Final Catch ---', err);
+            setError(err.message || 'An unexpected error occurred during calculation.');
         } finally {
+            console.log('--- Wizard Step 1: Finally - Setting isSaving to false ---');
             setIsSaving(false);
         }
     };

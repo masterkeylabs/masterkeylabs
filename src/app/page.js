@@ -87,8 +87,8 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col items-center text-center px-6 mt-8">
-                    <div className="mb-0 mt-[-20px] scale-75 md:scale-100 flex justify-center w-full">
-                        <Image src="/logo-stacked.png" alt="MasterKey Labs Logo" width={256} height={256} className="h-48 md:h-64 object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
+                    <div className="mb-0 mt-[10px] scale-75 md:scale-100 flex justify-center w-full">
+                        <Image src="/logo-new.png" alt="MasterKey Labs Logo" width={400} height={100} className="h-24 md:h-32 w-auto object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
                     </div>
                 </div>
             </header>
@@ -198,7 +198,7 @@ export default function Home() {
                 <footer className="border-t border-white/5 pt-20 pb-24 bg-black/40 mt-0">
                     <div className="container mx-auto px-6 flex flex-col items-center text-center">
                         <div className="mb-10 opacity-80 flex items-center justify-center">
-                            <Image src="/logo-text.png" alt="MasterKey Labs" width={320} height={64} className="h-16 md:h-24 w-auto object-contain brightness-110" />
+                            <Image src="/logo-new.png" alt="MasterKey Labs" width={320} height={80} className="h-12 md:h-16 w-auto object-contain brightness-110" />
                         </div>
                         <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-12">
                             <span className="text-white/30 uppercase text-[10px] font-bold tracking-[0.2em]">{t.footer.systems}</span>

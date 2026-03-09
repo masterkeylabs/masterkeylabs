@@ -31,7 +31,7 @@ export default function FeatureLayout({ children, title, subtitle, backHref }) {
                     >
                         <span className="material-symbols-outlined">menu</span>
                     </button>
-                    <Image src="/logo.png" alt="Logo" width={100} height={24} style={{ width: 'auto' }} className="h-6 w-auto brightness-0 invert object-contain" />
+                    <Image src="/logo-new.png" alt="Logo" width={100} height={24} style={{ width: 'auto' }} className="h-6 w-auto object-contain" />
 
                     {/* Small Lang Toggle for Mobile */}
                     <div className="flex bg-white/5 rounded-full p-0.5 border border-white/10">
