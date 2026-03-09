@@ -42,21 +42,24 @@ export default function DashboardGrid({ business, computedData }) {
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
 
     const handleWizardComplete = () => {
+        // Just close the wizard. The store has already been updated step-by-step
+        // so the UI will be reactive without a reload.
+        setShowAuditWizard(false);
+
         if (!auditsIncomplete) {
-            // Already complete, just close and force reload to fetch fresh data
-            setShowAuditWizard(false);
-            window.location.reload();
+            console.log('--- Wizard: Audit already complete, closing seamless ---');
             return;
         }
 
-        // Trigger the high-tech unlocking animation
+        // Trigger the high-tech unlocking animation only for first-time completion
         setIsUnlocking(true);
-        setShowAuditWizard(false);
 
-        // After animation completes, we reload or just settle
+        // After animation completes, we settle
         setTimeout(() => {
             setIsUnlocking(false);
-            window.location.reload(); // Force refresh to get all locked states updated server-side
+            // Optional: We could still reload here if we want to ensure server state sync,
+            // but for a premium feel, let's keep it reactive.
+            // window.location.reload(); 
         }, 4000); // 4 seconds of glory
     };
 
@@ -148,7 +151,6 @@ export default function DashboardGrid({ business, computedData }) {
                         {/* Highlighting the 4 deterministic calculations using the DiagnosticGrid */}
                         <section className="animate-fade-in opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                             <DiagnosticGrid
-                                data={computedData}
                                 business={business}
                                 t={t}
                                 locked={auditsIncomplete}

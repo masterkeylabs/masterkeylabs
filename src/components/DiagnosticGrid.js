@@ -1,9 +1,10 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 
-export default function DiagnosticGrid({ data, business, t, locked, onStartAudit }) {
-    const { lossAudit, nightLoss, missedCustomers, aiThreat } = data || {};
+export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
+    const { lossAudit, nightLoss, missedCustomers, aiThreat } = useDiagnosticStore();
     const [exporting, setExporting] = useState(false);
     const ts = t.dashboard.auditSummary;
 

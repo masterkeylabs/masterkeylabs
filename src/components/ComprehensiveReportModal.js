@@ -97,25 +97,36 @@ export default function ComprehensiveReportInline({ businessName, computedData }
     };
 
     const {
-        opsWaste,
-        staffWaste,
-        marketingWaste,
-        nightLossRevenue,
-        missedCustomers,
-        extinctionHorizon,
+        lossAudit,
+        nightLoss,
+        missedCustomers: missedCustomersData,
+        aiThreat,
         totalAnnualBleed,
+        opsWaste: opsWasteStore,
+        staffWaste: staffWasteStore,
+        marketingWaste: marketingWasteStore,
+        nightLossRevenue: nightLossRevenueStore,
+        extinctionHorizon: extinctionHorizonStore,
     } = useDiagnosticStore();
+
+    // Mapping for internal compatibility
+    const opsWaste = opsWasteStore || lossAudit?.saving_target || 0;
+    const staffWaste = staffWasteStore || lossAudit?.staff_waste || 0;
+    const marketingWaste = marketingWasteStore || lossAudit?.marketing_waste || 0;
+    const nightLossRevenue = nightLossRevenueStore || nightLoss?.monthly_loss || 0;
+    const missedCustomers = missedCustomersData?.missed_customers || 0;
+    const extinctionHorizon = aiThreat?.score || 0;
 
     const annualOpsWaste = opsWaste * 12;
     const annualNightLoss = nightLossRevenue * 12;
-    const annualVisibilityLoss = missedCustomers * 1500 * 12; // Assuming 1500 INR/customer value
+    const annualVisibilityLoss = missedCustomers * (missedCustomersData?.avg_transaction_value || 1500) * 12;
     const recoverablePotential = totalAnnualBleed * 0.5;
 
     // Extract raw granular data for detailed section
-    const lossAuditData = computedData?.lossAudit || {};
-    const nightLossData = computedData?.nightLoss || {};
-    const visibilityData = computedData?.missedCustomers || {};
-    const aiThreatData = computedData?.aiThreat || {};
+    const lossAuditData = lossAudit || {};
+    const nightLossData = nightLoss || {};
+    const visibilityData = missedCustomersData || {};
+    const aiThreatData = aiThreat || {};
 
     const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ₹${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
     const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`; // Using a placeholder number for the example, please update if needed

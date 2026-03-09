@@ -13,6 +13,7 @@ import {
     parseHoursRange
 } from '@/lib/calculations';
 import { formatIndian } from '@/utils/formatIndian';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 
 import {
     RangeSelector,
@@ -337,6 +338,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             }
             console.log('--- Wizard Step 1: Business Update Success ---');
 
+            // --- SYNC TO STORE ---
+            useDiagnosticStore.getState().updateLossAudit(payload);
+
             console.log('--- Wizard Step 1: Moving to Step 2 ---');
             setStep(2);
         } catch (err) {
@@ -381,6 +385,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 .upsert(payload, { onConflict: 'business_id' });
 
             if (syncError) throw syncError;
+
+            // --- SYNC TO STORE ---
+            useDiagnosticStore.getState().updateNightLoss(payload);
+
             setStep(3);
         } catch (err) {
             setError(err.message);
@@ -420,6 +428,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 .upsert(payload, { onConflict: 'business_id' });
 
             if (syncError) throw syncError;
+
+            // --- SYNC TO STORE ---
+            useDiagnosticStore.getState().updateMissedCustomers(payload);
+
             setStep(4);
         } catch (err) {
             setError(err.message);
@@ -473,6 +485,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                     employee_count: empCount
                 })
                 .eq('id', activeId);
+
+            // --- SYNC TO STORE ---
+            useDiagnosticStore.getState().updateAIThreat(payload);
 
             if (onComplete) onComplete();
         } catch (err) {

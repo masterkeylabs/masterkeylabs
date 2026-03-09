@@ -1,41 +1,54 @@
 import { create } from 'zustand';
 
-export const useDiagnosticStore = create((set) => ({
-    staffWaste: 0,
-    opsWaste: 0,
-    marketingWaste: 0,
-    nightLossRevenue: 0,
-    missedCustomers: 0,
-    extinctionHorizon: 0,
+export const useDiagnosticStore = create((set, get) => ({
+    lossAudit: null,
+    nightLoss: null,
+    missedCustomers: null,
+    aiThreat: null,
     totalAnnualBleed: 0,
 
-    setAuditData: (data) => set((state) => {
-        const { lossAudit, nightLoss, missedCustomers, aiThreat } = data;
+    // Initial hydration/reset
+    setAuditData: (data) => {
+        const { lossAudit, nightLoss, missedCustomers, aiThreat } = data || {};
+        set({
+            lossAudit,
+            nightLoss,
+            missedCustomers,
+            aiThreat
+        });
+        get().calculateTotalBleed();
+    },
 
-        const staffWaste = lossAudit?.staff_waste || 0;
-        const marketingWaste = lossAudit?.marketing_waste || 0;
-        const opsWaste = lossAudit?.saving_target || 0; // Total operational waste
+    // Granular updates
+    updateLossAudit: (data) => {
+        set({ lossAudit: { ...get().lossAudit, ...data } });
+        get().calculateTotalBleed();
+    },
+    updateNightLoss: (data) => {
+        set({ nightLoss: { ...get().nightLoss, ...data } });
+        get().calculateTotalBleed();
+    },
+    updateMissedCustomers: (data) => {
+        set({ missedCustomers: { ...get().missedCustomers, ...data } });
+        get().calculateTotalBleed();
+    },
+    updateAIThreat: (data) => {
+        set({ aiThreat: { ...get().aiThreat, ...data } });
+        get().calculateTotalBleed();
+    },
 
-        // Night loss is typically monthly in DB, we need annual for total bleed
-        const nightLossRevenue = nightLoss?.monthly_loss || 0;
-        const annualNightLoss = nightLossRevenue * 12;
+    calculateTotalBleed: () => {
+        const state = get();
 
-        // Visibility loss = missed customers * avg customer value (approx 1500 INR if not provided)
-        const visibilityLoss = (missedCustomers?.missed_customers || 0) * 1500;
-        const annualVisibilityLoss = visibilityLoss * 12;
+        const opsWeight = state.lossAudit?.saving_target || 0;
+        const nightWeight = (state.nightLoss?.monthly_loss || 0) * 12;
 
-        const annualOpsWaste = opsWaste * 12;
+        // Visibility loss calculation logic (sync with Dashboard results)
+        const missedCount = state.missedCustomers?.missed_customers || 0;
+        const avgVal = state.missedCustomers?.avg_transaction_value || 1500;
+        const visibilityWeight = missedCount * avgVal * 12;
 
-        const totalAnnualBleed = annualOpsWaste + annualNightLoss + annualVisibilityLoss;
-
-        return {
-            staffWaste,
-            opsWaste,
-            marketingWaste,
-            nightLossRevenue,
-            missedCustomers: missedCustomers?.missed_customers || 0,
-            extinctionHorizon: aiThreat?.score || 30, // TTL in months
-            totalAnnualBleed
-        };
-    }),
+        const total = (opsWeight * 12) + nightWeight + visibilityWeight;
+        set({ totalAnnualBleed: total });
+    }
 }));
