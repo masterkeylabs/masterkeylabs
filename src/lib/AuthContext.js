@@ -17,12 +17,14 @@ export const AuthProvider = ({ children }) => {
 
         const initializeAuth = async () => {
             try {
-                // Get initial session
-                const { data: { session }, error } = await supabase.auth.getSession();
-                if (error) throw error;
+                // Use getUser() instead of getSession() to force a server-side verification
+                // This ensures that if a user was deleted from the DB, the client-side session is invalidated.
+                const { data: { user: currentUser }, error } = await supabase.auth.getUser();
+                if (error && error.name !== 'AuthSessionMissingError') {
+                    console.warn('--- AuthProvider: Session verification failed ---', error.message);
+                }
 
                 if (isMounted) {
-                    const currentUser = session?.user ?? null;
                     setUser(currentUser);
                     if (currentUser) {
                         await fetchBusinessProfile(currentUser);
