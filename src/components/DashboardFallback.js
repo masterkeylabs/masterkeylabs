@@ -19,8 +19,16 @@ export default function DashboardFallback() {
     });
 
     useEffect(() => {
-        const recoverByLocalStorage = async () => {
+        const recoverAndVerify = async () => {
             if (loading) return;
+
+            // If fully loaded and no business profile, but we have a user session:
+            // This is the case where a user just signed up via Google but hasn't created a business yet.
+            if (!business?.id && user) {
+                console.warn('--- DashboardFallback: Authenticated but no business. Redirecting to signup ---');
+                router.replace('/signup');
+                return;
+            }
 
             // If we have a business via context, redirect to the ID-specific URL
             if (business?.id) {
@@ -38,8 +46,8 @@ export default function DashboardFallback() {
                 }
             }
         };
-        recoverByLocalStorage();
-    }, [loading, business, router]);
+        recoverAndVerify();
+    }, [loading, business, user, router]);
 
     if (loading) {
         return (

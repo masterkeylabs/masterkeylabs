@@ -76,46 +76,63 @@ export const AuthProvider = ({ children }) => {
     }, [router]);
 
     const fetchBusinessProfile = async (userObj) => {
-        if (!userObj) return;
+        if (!userObj) {
+            console.log('--- AuthProvider: No user object for profile fetch ---');
+            setLoading(false);
+            return;
+        }
 
+        console.log('--- AuthProvider: Starting profile lookup for ---', userObj.email);
         try {
             // Priority 1: Direct link by user_id
-            let { data } = await supabase
+            console.log('--- AuthProvider: Checking for business by user_id ---', userObj.id);
+            let { data, error: idError } = await supabase
                 .from('businesses')
                 .select('*')
                 .eq('user_id', userObj.id)
                 .maybeSingle();
 
+            if (idError) console.error('--- AuthProvider: user_id lookup error ---', idError);
+
             // Priority 2: Auto-connect by email match (Recovery)
             if (!data && userObj.email) {
-                console.log('--- AuthProvider: Auto-connecting verified user to profile ---', userObj.email);
-                const { data: emailMatch } = await supabase
+                console.log('--- AuthProvider: No direct record, checking by email ---', userObj.email);
+                const { data: emailMatch, error: emailMatchError } = await supabase
                     .from('businesses')
                     .select('*')
                     .ilike('email', userObj.email)
                     .maybeSingle();
 
+                if (emailMatchError) console.error('--- AuthProvider: email lookup error ---', emailMatchError);
+
                 if (emailMatch) {
-                    // This is the CRITICAL STEP: link the auth user to the existing business data
-                    const { data: linked } = await supabase
+                    console.log('--- AuthProvider: Found email match, linking... ---', emailMatch.id);
+                    const { data: linked, error: linkError } = await supabase
                         .from('businesses')
                         .update({ user_id: userObj.id })
                         .eq('id', emailMatch.id)
                         .select()
                         .single();
+
+                    if (linkError) console.error('--- AuthProvider: Linking error ---', linkError);
                     data = linked;
                 }
             }
 
             if (data) {
+                console.log('--- AuthProvider: Profile found/linked ---', data.entity_name);
                 setBusiness(data);
                 if (typeof window !== 'undefined') {
                     localStorage.setItem('masterkey_business_id', data.id);
                 }
+            } else {
+                console.log('--- AuthProvider: No business profile found for user ---');
+                setBusiness(null);
             }
         } catch (err) {
-            console.error('--- AuthProvider: Profile lookup failed ---', err);
+            console.error('--- AuthProvider: Profile lookup exception ---', err);
         } finally {
+            console.log('--- AuthProvider: Finalizing loading state ---');
             setLoading(false);
         }
     };
