@@ -133,15 +133,22 @@ export function calculateLossAudit(staff, ops, marketing, options = {}) {
     const { manualHoursPerDay = 3, hasCRM = false, hasERP = false, annualRevenue = 0 } = options;
     const rev = Math.max(0, Number(annualRevenue) || 0);
 
+    // ── 1. INDUSTRY MODIFIER ──────────────────────────────────────────
+    // Different sectors have different baseline operonal efficiencies.
+    // Higher "risk" industries (IT/BPO, E-commerce) have higher automatable waste.
+    const normalizedIndustry = (typeof options.industry === 'string' ? options.industry : (options.industry?.value || '')).toLowerCase().trim();
+    const industryObj = BUSINESS_VERTICALS.find(v => v.value === normalizedIndustry) || { risk: 72 }; // Default to MED-HIGH baseline
+    const industryRiskFactor = industryObj.risk / 85; // Scales waste benchmark based on sector complexity
+
     // ── 1A. Payroll Waste ──────────────────────────────────────────────
     // Baseline: 15% of time on automatable tasks (NASSCOM SMB Ops Index 2023)
-    let payrollWasteRate = 0.15;
+    let payrollWasteRate = 0.15 * industryRiskFactor;
 
     // MODIFIER: Manual work hours (user input or default) - Daily thresholds
-    if (manualHoursPerDay > 6) payrollWasteRate = 0.28;
-    else if (manualHoursPerDay >= 4) payrollWasteRate = 0.22;
-    else if (manualHoursPerDay >= 1) payrollWasteRate = 0.15; // default/baseline
-    else payrollWasteRate = 0.09;
+    if (manualHoursPerDay > 6) payrollWasteRate = payrollWasteRate * 1.86; // 0.28 / 0.15 approx
+    else if (manualHoursPerDay >= 4) payrollWasteRate = payrollWasteRate * 1.46; // 0.22 / 0.15 approx
+    else if (manualHoursPerDay >= 1) payrollWasteRate = payrollWasteRate; // baseline
+    else payrollWasteRate = payrollWasteRate * 0.6; // 0.09 / 0.15 approx
 
     // MODIFIER: ERP present (Gartner ERP ROI Report, 2023)
     // ERP reduces manual labour requirement by 45% on average for SMBs
@@ -151,7 +158,7 @@ export function calculateLossAudit(staff, ops, marketing, options = {}) {
 
     // ── 1B. Overhead Waste ─────────────────────────────────────────────
     // 15% of operational overheads lost to inefficient systems (Deloitte SMB Ops Benchmark)
-    let overheadWasteRate = 0.15;
+    let overheadWasteRate = 0.15 * industryRiskFactor;
 
     // MODIFIER: ERP present
     // Deloitte: ERP cuts overhead inefficiency by 40% for SMBs

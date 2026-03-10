@@ -74,6 +74,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         email: '',
     });
     const [formM1, setFormM1] = useState({
+        vertical: business?.vertical || 'retail',
         staffSalary: '',
         marketingBudget: '',
         opsOverheads: '',
@@ -122,7 +123,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 try { parsedTemp = JSON.parse(tempVal); } catch (e) { console.warn('Temp form parse fail'); }
             }
 
-            // A. Sync Identity (Step 0) - Only update if currently empty to avoid overwriting user input
+            // A. Sync Identity (Step 0)
             setFormM0(prev => {
                 const owner = business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || user?.user_metadata?.given_name || parsedTemp?.contactName || '';
                 const email = business?.email || user?.email || user?.user_metadata?.email || parsedTemp?.email || '';
@@ -141,6 +142,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             // B. Sync Financials (Step 1)
             setFormM1(prev => ({
                 ...prev,
+                vertical: prev.vertical || business?.vertical || parsedTemp?.vertical || 'retail',
                 marketingBudget: prev.marketingBudget || existingData?.lossAudit?.marketing_budget || parsedTemp?.marketingSpend || '',
                 opsOverheads: prev.opsOverheads || existingData?.lossAudit?.ops_overheads || parsedTemp?.opsSpend || '',
                 annualRevenue: prev.annualRevenue || business?.annual_revenue || (parsedTemp?.revenueBracket ? parseFloat(parsedTemp.revenueBracket.replace(/[^0-9.]/g, '')) * 100000 : '') || '',
@@ -198,7 +200,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const rpcPayload = {
                 ...payload,
                 // RPC-specific fields
-                vertical: formM4.industry || 'retail', // formM4 has the industry
+                vertical: business?.vertical || 'retail', // Default for init, will update in Step 1
                 annual_revenue: parseFloat(formM1.annualRevenue) || 0,
                 employee_count: parseInt(formM1.employeeCount) || 0,
                 has_crm: formM1.hasCRM || false,
@@ -295,7 +297,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 ops_overheads: ops,
                 marketing_budget: marketing,
                 annual_revenue: revenue,
-                industry: business?.vertical || formM4.industry || 'retail',
+                industry: formM1.vertical,
                 manual_hours: Math.round(hours),
                 has_crm: formM1.hasCRM,
                 has_erp: formM1.hasERP,
@@ -325,6 +327,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const { error: bizError } = await supabase
                 .from('businesses')
                 .update({
+                    vertical: formM1.vertical,
                     annual_revenue: revenue,
                     employee_count: parseInt(formM1.employeeCount) || 0,
                     has_crm: formM1.hasCRM,
@@ -645,6 +648,24 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                             </div>
 
                             <div className="grid grid-cols-1 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
+                                <div className="space-y-3">
+                                    <label className="text-[10px] text-ios-cyan uppercase tracking-widest block mb-2 font-bold ml-1">Industry Sector</label>
+                                    <select
+                                        required
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
+                                        value={formM1.vertical}
+                                        onChange={e => {
+                                            setFormM1({ ...formM1, vertical: e.target.value });
+                                            setFormM4(prev => ({ ...prev, industry: e.target.value }));
+                                        }}
+                                    >
+                                        {BUSINESS_VERTICALS.map(v => (
+                                            <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
+                                        ))}
+                                    </select>
+                                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">Critical for waste benchmark calibration.</p>
+                                </div>
+
                                 <RangeSelector
                                     label="Monthly Payroll / Staff Cost"
                                     options={PAYROLL_OPTIONS}
@@ -891,25 +912,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
-                                {!business?.vertical && (
-                                    <div className="space-y-3 col-span-1 md:col-span-2 border-b border-white/5 pb-8 mb-2">
-                                        <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 mb-4 flex-wrap">
-                                            <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                            <span className="break-words">Industry Sector Orientation</span>
-                                        </label>
-                                        <select
-                                            required
-                                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
-                                            value={formM4.industry}
-                                            onChange={e => setFormM4({ ...formM4, industry: e.target.value })}
-                                        >
-                                            {BUSINESS_VERTICALS.map(v => (
-                                                <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
-                                            ))}
-                                        </select>
-                                        <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2 break-words">Critical for AI risk benchmark calibration.</p>
-                                    </div>
-                                )}
+                                {/* Industry Section moved to Step 0 for better context */}
 
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">

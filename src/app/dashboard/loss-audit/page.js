@@ -90,7 +90,8 @@ function LossAuditContent() {
                         manualHoursPerDay: hours,
                         hasCRM: auditData.has_crm || false,
                         hasERP: auditData.has_erp || false,
-                        annualRevenue: parseFloat(auditData.annual_revenue) || 0
+                        annualRevenue: parseFloat(auditData.annual_revenue) || 0,
+                        industry: currentIndustry
                     });
                     setResults(calc);
                 }
@@ -121,7 +122,8 @@ function LossAuditContent() {
             manualHoursPerDay: hours,
             hasCRM: form.hasCRM,
             hasERP: form.hasERP,
-            annualRevenue: parseFloat(form.annualRevenue) || 0
+            annualRevenue: parseFloat(form.annualRevenue) || 0,
+            industry: form.industry
         });
         setResults(calc);
 
