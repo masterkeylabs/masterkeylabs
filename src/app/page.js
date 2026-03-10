@@ -13,7 +13,7 @@ export default function Home() {
     const { user, business, loading: authLoading } = useAuth();
     const router = useRouter();
     const loading = authLoading;
-    const hasSession = !!user; // Use user existence for session check
+    const hasSession = !!user && !!business; // Require both user and business profile for dashboard access
 
     const effectiveId = business?.id || null;
     const [auditHref, setAuditHref] = useState('/signup');
