@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from './supabaseClient';
 import { useRouter } from 'next/navigation';
 
@@ -11,14 +11,24 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    const fetchingRef = useRef(null);
+
     useEffect(() => {
         console.log('--- AuthProvider: Initializing native session check ---');
         let isMounted = true;
 
+        // --- SAFETY TIMEOUT ---
+        // If the database is slow or a connection hangs, this forces the app
+        // to finish its loading state after 10 seconds.
+        const safetyTimer = setTimeout(() => {
+            if (loading && isMounted) {
+                console.warn('--- AuthProvider: SAFETY TIMEOUT TRIGGERED ---');
+                setLoading(false);
+            }
+        }, 10000);
+
         const initializeAuth = async () => {
             try {
-                // Use getUser() instead of getSession() to force a server-side verification
-                // This ensures that if a user was deleted from the DB, the client-side session is invalidated.
                 const { data: { user: currentUser }, error } = await supabase.auth.getUser();
                 if (error && error.name !== 'AuthSessionMissingError') {
                     console.warn('--- AuthProvider: Session verification failed ---', error.message);
@@ -29,7 +39,6 @@ export const AuthProvider = ({ children }) => {
                     if (currentUser) {
                         await fetchBusinessProfile(currentUser);
                     } else {
-                        // Safe fallback for guests (legacy cleanup)
                         setBusiness(null);
                         if (typeof window !== 'undefined') {
                             localStorage.removeItem('masterkey_business_id');
@@ -39,16 +48,18 @@ export const AuthProvider = ({ children }) => {
             } catch (err) {
                 console.error('--- AuthProvider: Init Error ---', err);
             } finally {
-                if (isMounted) setLoading(false);
+                if (isMounted) {
+                    // Final check: if we have a business_id in localStorage but no business state yet,
+                    // it means we are still fetching. 
+                    setLoading(false);
+                }
             }
         };
 
         initializeAuth();
 
-        // Listen for all auth events (Login, SignOut, Password Recovery, etc.)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             console.log(`--- Auth Event: ${event} ---`, session?.user?.email);
-
             if (!isMounted) return;
 
             const currentUser = session?.user ?? null;
@@ -65,74 +76,69 @@ export const AuthProvider = ({ children }) => {
                 }
                 router.push('/');
             }
-
             setLoading(false);
         });
 
         return () => {
             isMounted = false;
+            clearTimeout(safetyTimer);
             subscription.unsubscribe();
         };
     }, [router]);
 
     const fetchBusinessProfile = async (userObj) => {
         if (!userObj) {
-            console.log('--- AuthProvider: No user object for profile fetch ---');
             setLoading(false);
             return;
         }
 
+        // --- DEDUPLICATION ---
+        // Prevent multiple simultaneous lookups for the same user
+        if (fetchingRef.current === userObj.id) {
+            console.log('--- AuthProvider: Profile fetch already in progress for ---', userObj.id);
+            return;
+        }
+
+        fetchingRef.current = userObj.id;
         console.log('--- AuthProvider: Starting profile lookup for ---', userObj.email);
+
         try {
-            // Priority 1: Direct link by user_id
-            console.log('--- AuthProvider: Checking for business by user_id ---', userObj.id);
-            let { data, error: idError } = await supabase
+            // OPTIMIZED: Unified search by user_id OR email in one round-trip
+            // Using ilike for 'email' to be case-insensitive, eq for 'user_id'
+            const { data: matchedBusiness, error: lookupError } = await supabase
                 .from('businesses')
                 .select('*')
-                .eq('user_id', userObj.id)
+                .or(`user_id.eq.${userObj.id}${userObj.email ? `,email.ilike.${userObj.email}` : ''}`)
                 .maybeSingle();
 
-            if (idError) console.error('--- AuthProvider: user_id lookup error ---', idError);
-
-            // Priority 2: Auto-connect by email match (Recovery)
-            if (!data && userObj.email) {
-                console.log('--- AuthProvider: No direct record, checking by email ---', userObj.email);
-                const { data: emailMatch, error: emailMatchError } = await supabase
-                    .from('businesses')
-                    .select('*')
-                    .ilike('email', userObj.email)
-                    .maybeSingle();
-
-                if (emailMatchError) console.error('--- AuthProvider: email lookup error ---', emailMatchError);
-
-                if (emailMatch) {
-                    console.log('--- AuthProvider: Found email match, linking... ---', emailMatch.id);
-                    const { data: linked, error: linkError } = await supabase
-                        .from('businesses')
-                        .update({ user_id: userObj.id })
-                        .eq('id', emailMatch.id)
-                        .select()
-                        .single();
-
-                    if (linkError) console.error('--- AuthProvider: Linking error ---', linkError);
-                    data = linked;
-                }
+            if (lookupError) {
+                console.error('--- AuthProvider: Unified lookup error ---', lookupError.message);
             }
 
-            if (data) {
-                console.log('--- AuthProvider: Profile found/linked ---', data.entity_name);
-                setBusiness(data);
+            if (matchedBusiness) {
+                // AUTO-LINK: If we found by email but user_id is missing, link it in the background
+                if (matchedBusiness.email?.toLowerCase() === userObj.email?.toLowerCase() && !matchedBusiness.user_id) {
+                    console.log('--- AuthProvider: Auto-linking profile ---', matchedBusiness.id);
+                    supabase
+                        .from('businesses')
+                        .update({ user_id: userObj.id })
+                        .eq('id', matchedBusiness.id)
+                        .then(({ error: linkError }) => {
+                            if (linkError) console.error('--- AuthProvider: Background link error ---', linkError.message);
+                        });
+                }
+
+                setBusiness(matchedBusiness);
                 if (typeof window !== 'undefined') {
-                    localStorage.setItem('masterkey_business_id', data.id);
+                    localStorage.setItem('masterkey_business_id', matchedBusiness.id);
                 }
             } else {
-                console.log('--- AuthProvider: No business profile found for user ---');
                 setBusiness(null);
             }
         } catch (err) {
             console.error('--- AuthProvider: Profile lookup exception ---', err);
         } finally {
-            console.log('--- AuthProvider: Finalizing loading state ---');
+            fetchingRef.current = null;
             setLoading(false);
         }
     };
