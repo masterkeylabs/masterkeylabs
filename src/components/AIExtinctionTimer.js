@@ -389,7 +389,9 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             } catch (e) { console.error('Share logic failed:', e); }
         }
 
-        setTimeout(() => window.open(platformUrls[platform], '_blank'), 400);
+        if (platform && platformUrls[platform]) {
+            setTimeout(() => window.open(platformUrls[platform], '_blank'), 400);
+        }
     };
 
     useEffect(() => {
@@ -769,27 +771,33 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                         {/* ─── SOCIAL SHARE ─── */}
                         <div style={{ marginTop: "18px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "16px", position: "relative" }}>
-                            {/* NEW: Prominent share prompt label (Popup Style) */}
-                            <div style={{
-                                position: "absolute",
-                                top: "-14px",
-                                left: "50%",
-                                transform: "translateX(-50%)",
-                                background: "#FF6D00",
-                                padding: "6px 20px",
-                                borderRadius: "99px",
-                                fontSize: "0.65rem",
-                                color: "#000",
-                                fontWeight: 900,
-                                letterSpacing: "1.5px",
-                                textTransform: "uppercase",
-                                zIndex: 10,
-                                boxShadow: "0 10px 25px rgba(255,109,0,0.4)",
-                                border: "2px solid #000",
-                                whiteSpace: "nowrap"
-                            }}>
-                                Share this on Social Media
-                            </div>
+                            <button
+                                onClick={() => shareImage(null)} // Trigger general native share
+                                style={{
+                                    display: "block",
+                                    width: "100%",
+                                    background: "#FF6D00",
+                                    padding: "12px 20px",
+                                    borderRadius: "99px",
+                                    fontSize: "0.75rem",
+                                    color: "#000",
+                                    fontWeight: 900,
+                                    letterSpacing: "1.5px",
+                                    textTransform: "uppercase",
+                                    zIndex: 10,
+                                    boxShadow: "0 10px 25px rgba(255,109,0,0.4)",
+                                    border: "2px solid #000",
+                                    whiteSpace: "nowrap",
+                                    cursor: "pointer",
+                                    transition: "transform 0.2s, filter 0.2s",
+                                    marginTop: "-14px",
+                                    marginBottom: "10px"
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.filter = "brightness(1.1)"; }}
+                                onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.filter = "brightness(1)"; }}
+                            >
+                                {t.extinctionTimer.sharePrompt || "Share this on Social Media"}
+                            </button>
 
                             <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#444", letterSpacing: "2px", fontWeight: 700, marginBottom: "12px", textTransform: "uppercase", marginTop: "10px" }}>
                                 ⚡ Export Your Analysis
@@ -805,16 +813,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 </div>
                             )}
 
-                            {captureStatus === "done" && previewImgUrl && (
-                                <div style={{ marginBottom: "12px", borderRadius: "12px", overflow: "hidden", border: `1px solid ${cfg.color}33` }}>
-                                    <img
-                                        className="ext-preview-img"
-                                        src={previewImgUrl}
-                                        alt="Your AI Risk Score"
-                                        style={{ width: "100%", display: "block", borderRadius: "12px", maxHeight: "300px", objectFit: "cover" }}
-                                    />
-                                </div>
-                            )}
+                            {/* Image preview hidden per requirement */}
 
                             {/* Platform buttons — ALWAYS clickable */}
                             <div className="ext-share-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "6px" }}>
