@@ -11,7 +11,7 @@ function ProfileEditContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const queryId = searchParams.get('id');
-    const effectiveId = businessId || queryId;
+    const effectiveId = business?.id || queryId;
 
     const [lang, setLang] = useState('en');
     const t = translations[lang];
@@ -118,7 +118,7 @@ function ProfileEditContent() {
                     .from('businesses')
                     .select('id, entity_name')
                     .eq('phone', formData.whatsapp)
-                    .neq('id', businessId || '00000000-0000-0000-0000-000000000000') // Exclude current record
+                    .neq('id', effectiveId || '00000000-0000-0000-0000-000000000000') // Exclude current record
                     .maybeSingle();
 
                 if (phoneErr) console.warn('Phone check error:', phoneErr);
@@ -220,7 +220,7 @@ function ProfileEditContent() {
         <FeatureLayout
             title="Edit Business Profile"
             subtitle="Update your core identity and operational metrics"
-            backHref={businessId ? `/dashboard?id=${businessId}` : '/dashboard'}
+            backHref={effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard'}
             t={t}
         >
             <div className="max-w-3xl mx-auto">
@@ -261,7 +261,7 @@ function ProfileEditContent() {
                         <div className="pt-6 border-t border-white/5 flex gap-4">
                             <button
                                 type="button"
-                                onClick={() => router.push(businessId ? `/dashboard?id=${businessId}` : '/dashboard')}
+                                onClick={() => router.push(effectiveId ? `/dashboard?id=${effectiveId}` : '/dashboard')}
                                 className="px-6 py-4 rounded-xl border border-white/10 text-white/60 hover:text-white hover:bg-white/5 transition-all text-sm font-bold uppercase tracking-widest"
                             >
                                 Cancel
