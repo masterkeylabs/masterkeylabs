@@ -126,19 +126,25 @@ function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
         }}>
             {/* 1. Brand Header */}
             <div style={{ textAlign: "center", marginBottom: "40px" }}>
-                {/* Logo Branding - Centered & Prominent */}
+                {/* Logo Branding - Centered & Large */}
                 <div style={{
-                    marginBottom: "32px",
+                    marginBottom: "40px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     width: "100%",
-                    filter: "drop-shadow(0 0 20px rgba(255,109,0,0.2))"
+                    filter: "drop-shadow(0 0 30px rgba(255,109,0,0.25))"
                 }}>
                     <img
                         src="/logo-new.png"
                         alt="MasterKey Labs"
-                        style={{ height: "120px", width: "auto", opacity: 0.95, filter: "brightness(1.2)" }}
+                        style={{
+                            height: "240px",
+                            width: "auto",
+                            opacity: 1,
+                            filter: "brightness(1.2)",
+                            imageRendering: "-webkit-optimize-contrast", // Enhance sharpness for capture
+                        }}
                     />
                 </div>
 
