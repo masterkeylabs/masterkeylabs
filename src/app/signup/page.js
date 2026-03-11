@@ -45,11 +45,13 @@ export default function SignupPage() {
             const last10 = cleanPhone.slice(-10);
 
             const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
-                supabase.from('businesses').select('id').ilike('phone', `%${last10}%`).limit(1),
-                supabase.from('businesses').select('id').ilike('email', email.trim()).limit(1),
+                supabase.from('businesses').select('id, classification').ilike('phone', `%${last10}%`).limit(1),
+                supabase.from('businesses').select('id, classification').ilike('email', email.trim()).limit(1),
             ]);
 
-            if ((phoneDupe && phoneDupe.length > 0) || (emailDupe && emailDupe.length > 0)) {
+            const existingRecord = (phoneDupe?.[0] || emailDupe?.[0]);
+
+            if (existingRecord && existingRecord.classification !== 'magic_link_onboarding') {
                 setError(<>
                     This Email or Terminal ID is already registered.
                     <Link href="/login" className="underline ml-1">Log in instead?</Link>
@@ -58,19 +60,22 @@ export default function SignupPage() {
                 return;
             }
 
-            // 2. Pre-create the business record (Classification: pending_verification)
-            // This ensures when they click the magic link, we already have their name/phone
-            const { error: insertError } = await supabase
-                .from('businesses')
-                .insert({
-                    entity_name: 'Initialize System',
-                    owner_name: fullName,
-                    email: email.trim(),
-                    phone: phone.trim(),
-                    classification: 'magic_link_onboarding'
-                });
-
-            if (insertError) throw insertError;
+            // 2. Pre-create or update business record
+            if (existingRecord) {
+                console.log('--- Signup: Using existing pending record ---', existingRecord.id);
+                // We just proceed to step 3 which resends the OTP
+            } else {
+                const { error: insertError } = await supabase
+                    .from('businesses')
+                    .insert({
+                        entity_name: 'Initialize System',
+                        owner_name: fullName,
+                        email: email.trim(),
+                        phone: phone.trim(),
+                        classification: 'magic_link_onboarding'
+                    });
+                if (insertError) throw insertError;
+            }
 
             // 3. Trigger Magic Link
             const { error: otpError } = await supabase.auth.signInWithOtp({

@@ -23,10 +23,10 @@ export default function DashboardFallback() {
             if (loading) return;
 
             // If fully loaded and no business profile, but we have a user session:
-            // This is the case where a user just signed up via Google but hasn't created a business yet.
+            // REMOVED REDIRECT: DashboardGrid is now designed to handle 'Initialize System'
+            // placeholder with an internal wizard. This prevents the redirection loop.
             if (!business?.id && user) {
-                console.warn('--- DashboardFallback: Authenticated but no business. Redirecting to signup ---');
-                router.replace('/signup');
+                console.log('--- DashboardFallback: No business profile, proceeding with placeholder ---');
                 return;
             }
 

@@ -21,9 +21,11 @@ export const AuthProvider = ({ children }) => {
         // If the database is slow or a connection hangs, this forces the app
         // to finish its loading state after 10 seconds.
         const safetyTimer = setTimeout(() => {
-            if (loading && isMounted) {
+            if (loading && isMounted && !fetchingRef.current) {
                 console.warn('--- AuthProvider: SAFETY TIMEOUT TRIGGERED ---');
                 setLoading(false);
+            } else if (loading && isMounted && fetchingRef.current) {
+                console.log('--- AuthProvider: Safety timer ignored, fetch still active ---');
             }
         }, 10000);
 
