@@ -435,28 +435,25 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                 if (data.error) {
                     const msg = data.error.message || data.error || '';
-                    if (typeof msg === 'string' && (msg.includes('API key') || msg.includes('GEMINI_API_KEY'))) {
-                        setError("GEMINI_API_KEY is missing or invalid in .env.local");
+                    if (typeof msg === 'string' && (msg.includes('API key') || msg.includes('DEEPSEEK_API_KEY'))) {
+                        setError("DEEPSEEK_API_KEY is missing or invalid in production environment.");
                         break;
                     }
                     if (isQuotaErr(msg) && attempt < MAX_RETRIES) {
                         const secs = Math.ceil(RETRY_DELAYS[attempt] / 1000);
                         for (let s = secs; s > 0; s--) {
-                            setError(`⏳ High demand — retrying in ${s}s (attempt ${attempt + 1}/${MAX_RETRIES})...`);
+                            setError(`⏳ DeepSeek High demand — retrying in ${s}s (attempt ${attempt + 1}/${MAX_RETRIES})...`);
                             await new Promise(r => setTimeout(r, 1000));
                         }
                         setError("");
                         continue;
                     }
-                    if (isQuotaErr(msg)) {
-                        setError("Our AI engine is under high demand. Please wait a moment and try again.");
-                        break;
-                    }
                     setError(typeof msg === 'string' ? msg : "Analysis failed — please try again.");
                     break;
                 }
 
-                const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                // Parse standard OpenAI/DeepSeek response structure
+                const raw = data.choices?.[0]?.message?.content || "";
                 setResult(JSON.parse(raw.trim()));
                 setError("");
                 break;
