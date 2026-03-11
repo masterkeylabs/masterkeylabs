@@ -183,6 +183,22 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         setError(null);
 
         try {
+            // --- DUPLICATE PHONE CHECK ---
+            if (formM0.whatsapp) {
+                const { data: existingPhone, error: phoneErr } = await supabase
+                    .from('businesses')
+                    .select('id, entity_name')
+                    .eq('phone', formM0.whatsapp)
+                    .neq('id', activeId || '00000000-0000-0000-0000-000000000000')
+                    .maybeSingle();
+
+                if (phoneErr) console.warn('Phone check error:', phoneErr);
+                if (existingPhone) {
+                    throw new Error(`This mobile number is already associated with another business: "${existingPhone.entity_name}". Please use a unique number.`);
+                }
+            }
+            // -----------------------------
+
             const payload = {
                 entity_name: formM0.entityName,
                 owner_name: formM0.ownerName,

@@ -111,6 +111,22 @@ function ProfileEditContent() {
 
         setSaving(true);
         try {
+            // --- DUPLICATE PHONE CHECK ---
+            if (formData.whatsapp) {
+                const { data: existingPhone, error: phoneErr } = await supabase
+                    .from('businesses')
+                    .select('id, entity_name')
+                    .eq('phone', formData.whatsapp)
+                    .neq('id', businessId || '00000000-0000-0000-0000-000000000000') // Exclude current record
+                    .maybeSingle();
+
+                if (phoneErr) console.warn('Phone check error:', phoneErr);
+                if (existingPhone) {
+                    throw new Error(`This mobile number is already associated with another business: "${existingPhone.entity_name}". Please use a unique number.`);
+                }
+            }
+            // -----------------------------
+
             const bizPayload = {
                 entity_name: formData.businessName,
                 owner_name: formData.contactName,
