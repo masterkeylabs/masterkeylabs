@@ -30,11 +30,15 @@ export const AuthProvider = ({ children }) => {
         }, 10000);
 
         const initializeAuth = async () => {
+            console.log('--- AuthProvider: Running initializeAuth ---');
             try {
                 const { data: { user: currentUser }, error } = await supabase.auth.getUser();
+
                 if (error && error.name !== 'AuthSessionMissingError') {
-                    console.warn('--- AuthProvider: Session verification failed ---', error.message);
+                    console.warn('--- AuthProvider: getUser error ---', error.message);
                 }
+
+                console.log('--- AuthProvider: currentUser ---', currentUser?.email || 'none');
 
                 if (isMounted) {
                     setUser(currentUser);
@@ -51,8 +55,7 @@ export const AuthProvider = ({ children }) => {
                 console.error('--- AuthProvider: Init Error ---', err);
             } finally {
                 if (isMounted) {
-                    // Final check: if we have a business_id in localStorage but no business state yet,
-                    // it means we are still fetching. 
+                    console.log('--- AuthProvider: Init complete, setting loading false ---');
                     setLoading(false);
                 }
             }
@@ -61,14 +64,22 @@ export const AuthProvider = ({ children }) => {
         initializeAuth();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(`--- Auth Event: ${event} ---`, session?.user?.email);
+            console.log(`--- Auth Event Trace: ${event} ---`, session?.user?.email || 'no-user');
             if (!isMounted) return;
 
             const currentUser = session?.user ?? null;
+
+            if (event === 'INITIAL_SESSION' && !currentUser) {
+                console.log('--- AuthProvider: No initial session found ---');
+            }
+
             setUser(currentUser);
 
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-                if (currentUser) await fetchBusinessProfile(currentUser);
+                if (currentUser) {
+                    console.log('--- AuthProvider: Profile lookup triggered by event ---', event);
+                    await fetchBusinessProfile(currentUser);
+                }
             } else if (event === 'SIGNED_OUT') {
                 setUser(null);
                 setBusiness(null);
@@ -78,7 +89,11 @@ export const AuthProvider = ({ children }) => {
                 }
                 router.push('/');
             }
-            setLoading(false);
+
+            // Critical: Only stop loading if we aren't currently fetching a business profile
+            if (!fetchingRef.current) {
+                setLoading(false);
+            }
         });
 
         return () => {
