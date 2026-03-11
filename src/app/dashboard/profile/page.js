@@ -151,8 +151,9 @@ function ProfileEditContent() {
             if (rpcErr) throw rpcErr;
             if (result && result.error) throw new Error(result.error);
 
+            let finalBusinessId = effectiveId;
             if (result) {
-                finalBusinessId = result.id;
+                finalBusinessId = result.id || result;
             }
 
             // ── Update loss_audit_results (non-blocking) ───────────────────
