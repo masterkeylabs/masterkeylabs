@@ -126,6 +126,15 @@ function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
         }}>
             {/* 1. Brand Header */}
             <div style={{ textAlign: "center", marginBottom: "32px" }}>
+                {/* Logo Branding */}
+                <div style={{ marginBottom: "20px" }}>
+                    <img
+                        src="/logo-new.png"
+                        alt="MasterKey Labs"
+                        style={{ height: "60px", width: "auto", opacity: 0.9, filter: "brightness(1.2)" }}
+                    />
+                </div>
+
                 <div style={{
                     display: "inline-flex", alignItems: "center", gap: "8px",
                     fontSize: "0.6rem", letterSpacing: "4px", color: "#FF6D00",
@@ -263,10 +272,25 @@ function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
                     </div>
                 </div>
 
-                {/* Scientific Basis Stat */}
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "24px" }}>
+                {/* Scientific Basis Stat & Website Branding */}
+                <div style={{
+                    borderTop: "1px solid rgba(255,255,255,0.06)",
+                    paddingTop: "24px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                }}>
                     <div style={{ fontSize: "0.78rem", color: "#666", lineHeight: 1.6, fontWeight: 500, display: "flex", alignItems: "center", gap: "10px" }}>
                         <span style={{ filter: "grayscale(1) opacity(0.5)" }}>📖</span> {result.researchBasis}
+                    </div>
+                    <div style={{
+                        fontSize: "0.85rem",
+                        color: "#FF6D00",
+                        fontWeight: 900,
+                        letterSpacing: "1px",
+                        opacity: 0.8
+                    }}>
+                        www.masterkeylabs.ai
                     </div>
                 </div>
             </div>
