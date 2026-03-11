@@ -125,33 +125,38 @@ function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
             overflow: "hidden"
         }}>
             {/* 1. Brand Header */}
-            <div style={{ textAlign: "center", marginBottom: "32px" }}>
-                {/* Logo Branding */}
-                <div style={{ marginBottom: "20px" }}>
+            <div style={{ textAlign: "center", marginBottom: "40px" }}>
+                {/* Logo Branding - Centered & Prominent */}
+                <div style={{
+                    marginBottom: "28px",
+                    display: "flex",
+                    justifyContent: "center",
+                    filter: "drop-shadow(0 0 15px rgba(0,229,255,0.2))"
+                }}>
                     <img
                         src="/logo-new.png"
                         alt="MasterKey Labs"
-                        style={{ height: "60px", width: "auto", opacity: 0.9, filter: "brightness(1.2)" }}
+                        style={{ height: "70px", width: "auto", opacity: 0.95, filter: "brightness(1.2)" }}
                     />
                 </div>
 
                 <div style={{
                     display: "inline-flex", alignItems: "center", gap: "8px",
-                    fontSize: "0.6rem", letterSpacing: "4px", color: "#FF6D00",
-                    fontWeight: 800, marginBottom: "16px", textTransform: "uppercase"
+                    fontSize: "0.65rem", letterSpacing: "5px", color: "#FF6D00",
+                    fontWeight: 800, marginBottom: "18px", textTransform: "uppercase"
                 }}>
-                    <span style={{ fontSize: "0.5rem" }}>◆</span> {t.extinctionTimer.analysisBadge}
+                    <span style={{ fontSize: "0.5rem" }}>●</span> {t.extinctionTimer.analysisBadge}
                 </div>
                 <h1 style={{
-                    fontSize: "3rem",
+                    fontSize: "3.2rem",
                     fontWeight: 900, color: "#fff",
-                    margin: "0 0 12px", lineHeight: 1.05,
-                    letterSpacing: "-1.5px",
+                    margin: "0 0 14px", lineHeight: 1,
+                    letterSpacing: "-2px",
                 }}>
                     {t.extinctionTimer.title1}<br />
-                    <span style={{ color: "#FF6000" }}>{t.extinctionTimer.title2}</span>
+                    <span style={{ color: "#FF6D00" }}>{t.extinctionTimer.title2}</span>
                 </h1>
-                <p style={{ color: "#888", fontSize: "0.95rem", margin: 0, lineHeight: 1.6, fontWeight: 500 }}>
+                <p style={{ color: "#777", fontSize: "1rem", margin: 0, lineHeight: 1.6, fontWeight: 500, letterSpacing: "0.2px" }}>
                     {t.extinctionTimer.sub.split('.')[0]}.<br />
                     {t.extinctionTimer.sub.split('.')[1]}
                 </p>
@@ -272,25 +277,34 @@ function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
                     </div>
                 </div>
 
-                {/* Scientific Basis Stat & Website Branding */}
+                {/* Scientific Basis Stat & Website Branding - Centered Footer */}
                 <div style={{
                     borderTop: "1px solid rgba(255,255,255,0.06)",
                     paddingTop: "24px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
+                    textAlign: "center"
                 }}>
-                    <div style={{ fontSize: "0.78rem", color: "#666", lineHeight: 1.6, fontWeight: 500, display: "flex", alignItems: "center", gap: "10px" }}>
-                        <span style={{ filter: "grayscale(1) opacity(0.5)" }}>📖</span> {result.researchBasis}
-                    </div>
                     <div style={{
-                        fontSize: "0.85rem",
+                        fontSize: "1rem",
                         color: "#FF6D00",
                         fontWeight: 900,
-                        letterSpacing: "1px",
-                        opacity: 0.8
+                        letterSpacing: "2px",
+                        marginBottom: "12px",
+                        textTransform: "lowercase"
                     }}>
                         www.masterkeylabs.ai
+                    </div>
+                    <div style={{
+                        fontSize: "0.7rem",
+                        color: "#444",
+                        lineHeight: 1.6,
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        letterSpacing: "0.5px"
+                    }}>
+                        <span>📖</span> {result.researchBasis}
                     </div>
                 </div>
             </div>
@@ -333,7 +347,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             try {
                 const { toBlob } = await import('html-to-image');
                 const blob = await toBlob(el, {
-                    pixelRatio: 3,
+                    pixelRatio: 4, // Boost quality for high-res social sharing
                     backgroundColor: "#000000",
                     cacheBust: true,
                 });
@@ -356,7 +370,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
     // Share handler — natively shares if supported, opens social link if desktop
     const shareImage = async (platform) => {
         const siteUrl = 'https://masterkeylabs.ai';
-        const shareText = `🚨 My AI Risk Score from MasterkeyOS Extinction Timer → ${siteUrl}`;
+        const shareText = ""; // Removed companion text per requirement
         const encodedText = encodeURIComponent(shareText);
         const encodedUrl = encodeURIComponent(siteUrl);
 
