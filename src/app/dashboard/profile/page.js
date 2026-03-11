@@ -10,7 +10,8 @@ function ProfileEditContent() {
     const { business, user } = useAuth();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const businessId = business?.id;
+    const queryId = searchParams.get('id');
+    const effectiveId = businessId || queryId;
 
     const [lang, setLang] = useState('en');
     const t = translations[lang];
@@ -33,7 +34,7 @@ function ProfileEditContent() {
     });
 
     useEffect(() => {
-        if (!businessId) {
+        if (!effectiveId) {
             setLoading(false);
             return;
         }
@@ -43,7 +44,7 @@ function ProfileEditContent() {
                 const { data, error } = await supabase
                     .from('businesses')
                     .select('*')
-                    .eq('id', businessId)
+                    .eq('id', effectiveId)
                     .single();
 
                 if (error) throw error;
@@ -68,7 +69,7 @@ function ProfileEditContent() {
                     const { data: auditData } = await supabase
                         .from('loss_audit_results')
                         .select('marketing_budget, ops_overheads')
-                        .eq('business_id', businessId)
+                        .eq('business_id', effectiveId)
                         .order('created_at', { ascending: false })
                         .limit(1)
                         .maybeSingle();
@@ -94,7 +95,7 @@ function ProfileEditContent() {
         };
 
         fetchProfile();
-    }, [businessId]);
+    }, [effectiveId]);
 
     const handleChange = (e) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -144,7 +145,7 @@ function ProfileEditContent() {
             console.log('--- Profile Update (RPC-V2) ---');
             const { data: result, error: rpcErr } = await supabase.rpc('initialize_business_profile', {
                 p_payload: bizPayload,
-                p_active_id: businessId || null
+                p_active_id: effectiveId || null
             });
 
             if (rpcErr) throw rpcErr;
@@ -237,20 +238,20 @@ function ProfileEditContent() {
                             <h3 className="text-[10px] text-ios-blue uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">Business Identity</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Business Name</label>
+                                    <label className="text-[10px] text-ios-blue uppercase tracking-widest block mb-2 font-bold ml-1">Business Name (Editable)</label>
                                     <input type="text" name="businessName" value={formData.businessName} onChange={handleChange} required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-ios-blue transition-all" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Manager/Owner Name</label>
+                                    <label className="text-[10px] text-ios-blue uppercase tracking-widest block mb-2 font-bold ml-1">Manager/Owner Name (Editable)</label>
                                     <input type="text" name="contactName" value={formData.contactName} onChange={handleChange} required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-ios-blue transition-all" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">WhatsApp Number</label>
-                                    <input type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-ios-blue transition-all" />
+                                    <label className="text-[10px] text-white/20 uppercase tracking-widest block mb-2 font-bold ml-1">WhatsApp Number (Locked)</label>
+                                    <input type="tel" name="whatsapp" value={formData.whatsapp} readOnly className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 text-white/40 cursor-not-allowed outline-none" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Email Address</label>
-                                    <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-ios-blue transition-all" />
+                                    <label className="text-[10px] text-white/20 uppercase tracking-widest block mb-2 font-bold ml-1">Email Address (Locked)</label>
+                                    <input type="email" name="email" value={formData.email} readOnly className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 text-white/40 cursor-not-allowed outline-none" />
                                 </div>
                             </div>
                         </div>
