@@ -86,7 +86,7 @@ function TimerBlock({ value, label, color }) {
     );
 }
 
-function RiskBar({ score, color }) {
+function RiskBar({ score, color, t }) {
     const [w, setW] = useState(0);
     useEffect(() => { const t = setTimeout(() => setW(score), 200); return () => clearTimeout(t); }, [score]);
     const animated = useAnimatedValue(score);
@@ -701,7 +701,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             "{result.verdict}"
                         </p>
 
-                        <RiskBar score={result.riskScore} color={cfg.color} />
+                        <RiskBar score={result.riskScore} color={cfg.color} t={t} />
 
                         {/* Timer */}
                         <div style={{ marginTop: "22px" }}>
