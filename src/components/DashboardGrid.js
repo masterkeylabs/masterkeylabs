@@ -15,7 +15,7 @@ import { translations } from '@/lib/translations';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useDiagnosticStore } from '@/store/diagnosticStore';
 
-export default function DashboardGrid({ business, computedData }) {
+export default function DashboardGrid({ business, computedData: initialComputedData }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { lang, setLang, t } = useLanguage();
     const [showAuditWizard, setShowAuditWizard] = useState(false);
@@ -23,20 +23,27 @@ export default function DashboardGrid({ business, computedData }) {
     const [mounted, setMounted] = useState(false);
     const setAuditData = useDiagnosticStore((state) => state.setAuditData);
 
+    // SELECT REACTIVE DATA FROM STORE
+    const lossAudit = useDiagnosticStore((state) => state.lossAudit);
+    const nightLoss = useDiagnosticStore((state) => state.nightLoss);
+    const missedCustomers = useDiagnosticStore((state) => state.missedCustomers);
+    const aiThreat = useDiagnosticStore((state) => state.aiThreat);
+
+    const computedData = { lossAudit, nightLoss, missedCustomers, aiThreat };
+
     console.log('--- DashboardGrid: Render ---', {
         businessId: business?.id,
         businessName: business?.entity_name,
-        hasComputedData: !!computedData
+        hasAuditData: !!lossAudit
     });
 
     useEffect(() => {
         setMounted(true);
-        if (computedData) {
-            setAuditData(computedData);
+        if (initialComputedData && !lossAudit) {
+            console.log('--- DashboardGrid: Hydrating store from server data ---');
+            setAuditData(initialComputedData);
         }
-    }, [computedData, setAuditData]);
-
-    const { lossAudit, nightLoss, missedCustomers, aiThreat } = computedData || {};
+    }, [initialComputedData, setAuditData, lossAudit]);
 
     const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
