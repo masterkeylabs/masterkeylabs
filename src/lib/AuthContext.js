@@ -167,18 +167,31 @@ export const AuthProvider = ({ children }) => {
     };
 
     const signOut = async () => {
+        console.log('--- AuthContext: Starting SignOut sequence ---');
         try {
-            await supabase.auth.signOut();
-            // Clear ALL MasterKey related storage
-            localStorage.removeItem('masterkey_business_id');
-            localStorage.removeItem('masterkey_returning_user');
-            localStorage.removeItem('masterkey_temp_form');
-            localStorage.removeItem('masterkey_temp_results');
+            // Priority 1: Clear local state and storage FIRST to make it feel instant
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('masterkey_business_id');
+                localStorage.removeItem('masterkey_returning_user');
+                localStorage.removeItem('masterkey_temp_form');
+                localStorage.removeItem('masterkey_temp_results');
+                localStorage.removeItem('masterkey-auth-token'); // Clear supabase persistence
+            }
 
             setUser(null);
             setBusiness(null);
 
-            console.log('--- AuthContext: User Signed Out ---');
+            // Priority 2: Attempt Supabase Signout with a hard timeout
+            // If Supabase is blocked (e.g. in India) or hangs, we don't want the UI stuck.
+            const supabaseSignOut = supabase.auth.signOut();
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => {
+                console.warn('--- AuthContext: Supabase signOut timed out, forcing redirect ---');
+                resolve({ error: null });
+            }, 3000));
+
+            await Promise.race([supabaseSignOut, timeoutPromise]);
+
+            console.log('--- AuthContext: Logout sequence complete ---');
             router.push('/');
         } catch (error) {
             console.error('Logout error:', error);
