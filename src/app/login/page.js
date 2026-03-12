@@ -29,19 +29,6 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            // Check if user exists in businesses table first (Access Control)
-            const { data, error: queryError } = await supabase
-                .from('businesses')
-                .select('id')
-                .ilike('email', email.trim())
-                .maybeSingle();
-
-            if (queryError) throw queryError;
-
-            if (!data) {
-                throw new Error('No active terminal found for this email. Please register first.');
-            }
-
             // Sign in with Password
             const { error: signInError } = await supabase.auth.signInWithPassword({
                 email: email.trim(),

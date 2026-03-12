@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }) => {
                         await fetchBusinessProfile(currentUser);
                     } else {
                         setBusiness(null);
+                        setLoading(false); // Force finish loading for guest users
                         if (typeof window !== 'undefined') {
                             localStorage.removeItem('masterkey_business_id');
                         }
@@ -53,10 +54,10 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (err) {
                 console.error('--- AuthProvider: Init Error ---', err);
+                if (isMounted) setLoading(false);
             } finally {
                 if (isMounted) {
-                    console.log('--- AuthProvider: Init complete, setting loading false ---');
-                    setLoading(false);
+                    console.log('--- AuthProvider: Init complete sequence finished ---');
                 }
             }
         };

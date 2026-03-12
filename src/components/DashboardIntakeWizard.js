@@ -559,6 +559,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 {error && (
                     <div className="mx-10 mt-6 bg-red-500/10 border border-red-500/20 px-6 py-3 rounded-xl text-red-500 text-[10px] font-black uppercase tracking-[0.2em] text-center animate-bounce-in shrink-0">
                         CRITICAL FAULT: {error}
+                        {error.toLowerCase().includes('fetch') && (
+                            <div className="mt-2 text-[8px] text-white/40 font-bold lowercase tracking-normal bg-red-500/5 p-2 rounded-lg">
+                                Connection blocked in your region? Try Google DNS (8.8.8.8) or a VPN.
+                            </div>
+                        )}
                     </div>
                 )}
 
