@@ -125,11 +125,12 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
     const annualVisibilityLoss = missedCustomers * (missedCustomersData?.avg_transaction_value || 1500) * 12;
     const recoverablePotential = totalAnnualBleed * 0.5;
 
-    // Extract raw granular data for detailed section
     const lossAuditData = lossAudit || {};
     const nightLossData = nightLoss || {};
     const visibilityData = missedCustomersData || {};
     const aiThreatData = aiThreat || {};
+
+    const computedData = { lossAudit, nightLoss, missedCustomers, aiThreat };
 
     const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ₹${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
     const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`;
