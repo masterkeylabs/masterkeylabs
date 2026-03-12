@@ -75,37 +75,42 @@ export default function SignupPage() {
             if (signupError) throw signupError;
 
             // 3. Pre-create or update business record
-            if (!existingRecord) {
-                const { error: insertError } = await supabase
-                    .from('businesses')
-                    .insert({
-                        user_id: authData.user?.id,
-                        entity_name: 'Initialize System',
-                        owner_name: fullName,
-                        email: email.trim(),
-                        phone: phone.trim(),
-                        classification: 'direct_onboarding'
-                    });
-                if (insertError) {
-                    console.error('--- Signup: Business record creation failed ---', insertError);
-                    // We don't throw here because the user is already created in Auth
+            // Even if authData.session is null, we have authData.user
+            if (authData.user) {
+                if (!existingRecord) {
+                    const { error: insertError } = await supabase
+                        .from('businesses')
+                        .insert({
+                            user_id: authData.user.id,
+                            entity_name: 'Initialize System',
+                            owner_name: fullName,
+                            email: email.trim(),
+                            phone: phone.trim(),
+                            classification: 'direct_onboarding'
+                        });
+                    if (insertError) console.warn('--- Signup: Business creation error (non-fatal) ---', insertError.message);
+                } else {
+                    // Link existing pending record
+                    await supabase
+                        .from('businesses')
+                        .update({
+                            user_id: authData.user.id,
+                            classification: 'direct_onboarding'
+                        })
+                        .eq('id', existingRecord.id);
                 }
-            } else if (authData.user) {
-                // Link existing pending record
-                await supabase
-                    .from('businesses')
-                    .update({
-                        user_id: authData.user.id,
-                        classification: 'direct_onboarding'
-                    })
-                    .eq('id', existingRecord.id);
             }
 
-            // If session is active, AuthContext will handle redirect. 
-            // If email confirmation is ON, authData.session will be null.
+            // 4. Handle Redirection / Messaging
             if (!authData.session) {
-                setError('Registration successful! Please check your email for a verification link to activate your terminal.');
+                // This only happens if "Confirm Email" is ON in Supabase Dashboard
+                setError(<>
+                    <span className="font-bold block mb-1">Registration successful!</span>
+                    Supabase is still requesting email verification. Please click the link in your mailbox to activate your terminal,
+                    or <span className="font-bold underline">disable "Confirm Email"</span> in your Supabase Dashboard settings to skip this step.
+                </>);
             } else {
+                console.log('--- Signup: Session present, redirecting ---');
                 router.push('/dashboard');
             }
         } catch (err) {

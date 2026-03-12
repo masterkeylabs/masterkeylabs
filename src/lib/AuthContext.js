@@ -109,54 +109,57 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
-        // --- DEDUPLICATION ---
-        // Prevent multiple simultaneous lookups for the same user
         if (fetchingRef.current === userObj.id) {
-            console.log('--- AuthProvider: Profile fetch already in progress for ---', userObj.id);
             return;
         }
 
         fetchingRef.current = userObj.id;
-        console.log('--- AuthProvider: Starting profile lookup for ---', userObj.email);
+        console.log('--- AuthProvider: Starting lookup for ---', userObj.email);
 
         try {
-            // OPTIMIZED: Unified search by user_id OR email in one round-trip
-            // Using ilike for 'email' to be case-insensitive, eq for 'user_id'
-            const { data: matchedBusiness, error: lookupError } = await supabase
+            // Priority 1: Match by user_id
+            let { data: profile, error: idError } = await supabase
                 .from('businesses')
                 .select('*')
-                .or(`user_id.eq.${userObj.id}${userObj.email ? `,email.ilike.${userObj.email}` : ''}`)
+                .eq('user_id', userObj.id)
                 .maybeSingle();
 
-            if (lookupError) {
-                console.error('--- AuthProvider: Unified lookup error ---', lookupError.message);
+            if (idError) console.warn('--- AuthProvider: user_id lookup error ---', idError.message);
+
+            // Priority 2: Fallback to email if user_id not found
+            if (!profile && userObj.email) {
+                console.log('--- AuthProvider: Fallback lookup by email ---', userObj.email);
+                const { data: emailProfile, error: emailError } = await supabase
+                    .from('businesses')
+                    .select('*')
+                    .ilike('email', userObj.email.trim())
+                    .maybeSingle();
+
+                if (emailError) console.warn('--- AuthProvider: email lookup error ---', emailError.message);
+                profile = emailProfile;
             }
 
-            if (matchedBusiness) {
-                // AUTO-LINK: If we found by email but user_id is missing, link it in the background
-                if (matchedBusiness.email?.toLowerCase() === userObj.email?.toLowerCase() && !matchedBusiness.user_id) {
-                    console.log('--- AuthProvider: Auto-linking profile ---', matchedBusiness.id);
-                    supabase
-                        .from('businesses')
-                        .update({ user_id: userObj.id })
-                        .eq('id', matchedBusiness.id)
-                        .then(({ error: linkError }) => {
-                            if (linkError) console.error('--- AuthProvider: Background link error ---', linkError.message);
-                        });
+            if (profile) {
+                console.log('--- AuthProvider: Profile found ---', profile.id);
+                // Link user_id if missing
+                if (!profile.user_id) {
+                    console.log('--- AuthProvider: Auto-linking user_id ---');
+                    await supabase.from('businesses').update({ user_id: userObj.id }).eq('id', profile.id);
                 }
-
-                setBusiness(matchedBusiness);
+                setBusiness(profile);
                 if (typeof window !== 'undefined') {
-                    localStorage.setItem('masterkey_business_id', matchedBusiness.id);
+                    localStorage.setItem('masterkey_business_id', profile.id);
                 }
             } else {
+                console.log('--- AuthProvider: No profile found for user ---');
                 setBusiness(null);
             }
         } catch (err) {
-            console.error('--- AuthProvider: Profile lookup exception ---', err);
+            console.error('--- AuthProvider: Lookup exception ---', err);
         } finally {
             fetchingRef.current = null;
             setLoading(false);
+            console.log('--- AuthProvider: Lookup finished ---');
         }
     };
 
