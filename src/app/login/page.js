@@ -10,9 +10,9 @@ import { motion } from 'framer-motion';
 export default function LoginPage() {
     const { user, loading: authLoading } = useAuth();
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [emailSent, setEmailSent] = useState(false);
     const router = useRouter();
 
     // Auto-redirect if already logged in
@@ -42,16 +42,15 @@ export default function LoginPage() {
                 throw new Error('No active terminal found for this email. Please register first.');
             }
 
-            // Trigger Magic Link
-            const { error: otpError } = await supabase.auth.signInWithOtp({
+            // Sign in with Password
+            const { error: signInError } = await supabase.auth.signInWithPassword({
                 email: email.trim(),
-                options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
-                }
+                password: password,
             });
 
-            if (otpError) throw otpError;
-            setEmailSent(true);
+            if (signInError) throw signInError;
+
+            router.push('/dashboard');
         } catch (err) {
             setError(err.message || 'Authentication sequence failed.');
         } finally {
@@ -77,26 +76,6 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
-
-    if (emailSent) {
-        return (
-            <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 text-center">
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass p-10 rounded-[2.5rem] max-w-[420px] border-white/5 shadow-2xl">
-                    <div className="w-20 h-20 bg-ios-blue/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-ios-blue/20">
-                        <span className="material-symbols-outlined text-ios-blue text-4xl animate-pulse">broadcast_on_personal</span>
-                    </div>
-                    <h2 className="text-3xl font-bold mb-4 tracking-tight">Transmission Sent</h2>
-                    <p className="text-white/40 leading-relaxed mb-8">
-                        A secure access link is on its way to <span className="text-white font-bold">{email}</span>.
-                        Sync your device by clicking the link in the message.
-                    </p>
-                    <button onClick={() => setEmailSent(false)} className="text-ios-blue text-xs font-black uppercase tracking-widest hover:brightness-125 transition-all">
-                        Retry with different ID
-                    </button>
-                </motion.div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -127,6 +106,11 @@ export default function LoginPage() {
                         <div className="space-y-1">
                             <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Registered Email</label>
                             <input type="email" required className="ios-input w-full" placeholder="operator@protocol.com" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Access Password</label>
+                            <input type="password" required className="ios-input w-full" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>
 
                         <button disabled={loading} type="submit" className="w-full py-4 ios-button-primary flex items-center justify-center gap-2">

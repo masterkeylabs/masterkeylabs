@@ -12,9 +12,9 @@ export default function SignupPage() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [emailSent, setEmailSent] = useState(false);
     const router = useRouter();
 
     // Auto-redirect if already fully registered
@@ -60,28 +60,11 @@ export default function SignupPage() {
                 return;
             }
 
-            // 2. Pre-create or update business record
-            if (existingRecord) {
-                console.log('--- Signup: Using existing pending record ---', existingRecord.id);
-                // We just proceed to step 3 which resends the OTP
-            } else {
-                const { error: insertError } = await supabase
-                    .from('businesses')
-                    .insert({
-                        entity_name: 'Initialize System',
-                        owner_name: fullName,
-                        email: email.trim(),
-                        phone: phone.trim(),
-                        classification: 'magic_link_onboarding'
-                    });
-                if (insertError) throw insertError;
-            }
-
-            // 3. Trigger Magic Link
-            const { error: otpError } = await supabase.auth.signInWithOtp({
+            // 2. Auth Signup
+            const { data: authData, error: signupError } = await supabase.auth.signUp({
                 email: email.trim(),
+                password: password,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
                     data: {
                         full_name: fullName,
                         phone: phone.trim()
@@ -89,9 +72,42 @@ export default function SignupPage() {
                 }
             });
 
-            if (otpError) throw otpError;
+            if (signupError) throw signupError;
 
-            setEmailSent(true);
+            // 3. Pre-create or update business record
+            if (!existingRecord) {
+                const { error: insertError } = await supabase
+                    .from('businesses')
+                    .insert({
+                        user_id: authData.user?.id,
+                        entity_name: 'Initialize System',
+                        owner_name: fullName,
+                        email: email.trim(),
+                        phone: phone.trim(),
+                        classification: 'direct_onboarding'
+                    });
+                if (insertError) {
+                    console.error('--- Signup: Business record creation failed ---', insertError);
+                    // We don't throw here because the user is already created in Auth
+                }
+            } else if (authData.user) {
+                // Link existing pending record
+                await supabase
+                    .from('businesses')
+                    .update({
+                        user_id: authData.user.id,
+                        classification: 'direct_onboarding'
+                    })
+                    .eq('id', existingRecord.id);
+            }
+
+            // If session is active, AuthContext will handle redirect. 
+            // If email confirmation is ON, authData.session will be null.
+            if (!authData.session) {
+                setError('Registration successful! Please check your email for a verification link to activate your terminal.');
+            } else {
+                router.push('/dashboard');
+            }
         } catch (err) {
             setError(err.message || 'Registration sequence failed.');
         } finally {
@@ -117,26 +133,6 @@ export default function SignupPage() {
             setLoading(false);
         }
     };
-
-    if (emailSent) {
-        return (
-            <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 text-center">
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass p-10 rounded-[2.5rem] max-w-[420px] border-white/5 shadow-2xl">
-                    <div className="w-20 h-20 bg-ios-blue/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-ios-blue/20">
-                        <span className="material-symbols-outlined text-ios-blue text-4xl animate-pulse">mark_email_unread</span>
-                    </div>
-                    <h2 className="text-3xl font-bold mb-4 tracking-tight">Check Your Terminal</h2>
-                    <p className="text-white/40 leading-relaxed mb-8">
-                        A secure access link has been transmitted to <span className="text-white font-bold">{email}</span>.
-                        Click the link to verify your identity and enter the dashboard.
-                    </p>
-                    <button onClick={() => setEmailSent(false)} className="text-ios-blue text-xs font-black uppercase tracking-widest hover:brightness-125 transition-all">
-                        Change Email Address
-                    </button>
-                </motion.div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -167,11 +163,15 @@ export default function SignupPage() {
                             <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Terminal ID (Phone)</label>
                             <input type="tel" required className="ios-input w-full" placeholder="+91 XXXXX XXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
                         </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Access Password</label>
+                            <input type="password" required className="ios-input w-full" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} />
+                        </div>
 
-                        {error && <div className="bg-red-500/10 text-red-500 text-xs p-3 rounded-xl border border-red-500/20">{error}</div>}
+                        {error && <div className={`text-xs p-3 rounded-xl border ${error.includes('successful') ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>{error}</div>}
 
                         <button disabled={loading} type="submit" className="w-full py-4 mt-4 ios-button-primary flex items-center justify-center gap-2">
-                            {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : 'TRANSMIT SECURE LINK'}
+                            {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : 'ACTIVATE TERMINAL'}
                         </button>
                     </form>
 
