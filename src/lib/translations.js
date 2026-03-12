@@ -345,7 +345,7 @@ export const translations = {
         extinctionTimer: {
             analysisBadge: "AI DISPLACEMENT ANALYSIS",
             title1: "Will AI Replace",
-            title2: "Your Business?",
+            title2: "You?",
             sub: "Enter your job title or business type below. Get your AI extinction timeline in seconds.",
             placeholder: "e.g. accountant · HR manager · law firm · marketing agency",
             calculateBtn: "Calculate My AI Risk →",
@@ -1018,8 +1018,8 @@ export const translations = {
         },
         extinctionTimer: {
             analysisBadge: "AI विस्थापन विश्लेषण (DI-ANALYSIS)",
-            title1: "क्या AI आपके",
-            title2: "व्यवसाय को बदल देगा?",
+            title1: "क्या AI",
+            title2: "आपको बदल देगा?",
             sub: "नीचे अपना जॉब टाइटल या बिजनेस टाइप दर्ज करें। कुछ ही सेकंड में अपनी AI एक्सटिंक्टशन टाइमलाइन जानें।",
             placeholder: "जैसे: अकाउंटेंट · एचआर मैनेजर · वकील · मार्केटिंग एजेंसी",
             calculateBtn: "मेरा AI रिस्क कैलकुलेट करें →",
@@ -1539,8 +1539,8 @@ export const translations = {
         },
         extinctionTimer: {
             analysisBadge: "AI DISPLACEMENT ANALYSIS",
-            title1: "Kya AI aapke",
-            title2: "Business ko replace karega?",
+            title1: "Kya AI",
+            title2: "Aapko replace karega?",
             sub: "Niche apna job title ya business type enter karein. Kuch seconds mein apni AI extinction timeline check karein.",
             placeholder: "e.g. accountant · HR manager · law firm · marketing agency",
             calculateBtn: "Mera AI Risk Calculate karein →",
