@@ -11,7 +11,6 @@ export default function SignupPage() {
     const { user, business, loading: authLoading } = useAuth();
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -40,77 +39,30 @@ export default function SignupPage() {
         setError(null);
 
         try {
-            // 1. Check for profile existence first (Duplicate Check)
-            const cleanPhone = phone.replace(/\D/g, '');
-            const last10 = cleanPhone.slice(-10);
-
-            const [{ data: phoneDupe }, { data: emailDupe }] = await Promise.all([
-                supabase.from('businesses').select('id, classification').ilike('phone', `%${last10}%`).limit(1),
-                supabase.from('businesses').select('id, classification').ilike('email', email.trim()).limit(1),
-            ]);
-
-            const existingRecord = (phoneDupe?.[0] || emailDupe?.[0]);
-
-            if (existingRecord && existingRecord.classification !== 'magic_link_onboarding') {
-                setError(<>
-                    This Email or Terminal ID is already registered.
-                    <Link href="/login" className="underline ml-1">Log in instead?</Link>
-                </>);
-                setLoading(false);
-                return;
-            }
-
-            // 2. Auth Signup
+            // 1. Auth Signup - Simplified
+            // We removed custom duplicate checks because Supabase handles email duplication naturally,
+            // and the Dashboard Wizard handles business/phone duplication during the onboarding phase.
             const { data: authData, error: signupError } = await supabase.auth.signUp({
                 email: email.trim(),
                 password: password,
                 options: {
                     data: {
-                        full_name: fullName,
-                        phone: phone.trim()
+                        full_name: fullName
                     }
                 }
             });
 
             if (signupError) throw signupError;
 
-            // 3. Pre-create or update business record
-            // Even if authData.session is null, we have authData.user
-            if (authData.user) {
-                if (!existingRecord) {
-                    const { error: insertError } = await supabase
-                        .from('businesses')
-                        .insert({
-                            user_id: authData.user.id,
-                            entity_name: 'Initialize System',
-                            owner_name: fullName,
-                            email: email.trim(),
-                            phone: phone.trim(),
-                            classification: 'direct_onboarding'
-                        });
-                    if (insertError) console.warn('--- Signup: Business creation error (non-fatal) ---', insertError.message);
-                } else {
-                    // Link existing pending record
-                    await supabase
-                        .from('businesses')
-                        .update({
-                            user_id: authData.user.id,
-                            classification: 'direct_onboarding'
-                        })
-                        .eq('id', existingRecord.id);
-                }
-            }
-
-            // 4. Handle Redirection / Messaging
+            // 2. Handle Redirection / Messaging
             if (!authData.session) {
-                // This only happens if "Confirm Email" is ON in Supabase Dashboard
                 setError(<>
                     <span className="font-bold block mb-1">Registration successful!</span>
                     Supabase is still requesting email verification. Please click the link in your mailbox to activate your terminal,
                     or <span className="font-bold underline">disable "Confirm Email"</span> in your Supabase Dashboard settings to skip this step.
                 </>);
             } else {
-                console.log('--- Signup: Session present, redirecting ---');
+                console.log('--- Signup: Session present, redirecting to dashboard ---');
                 router.push('/dashboard');
             }
         } catch (err) {
@@ -163,10 +115,6 @@ export default function SignupPage() {
                         <div className="space-y-1">
                             <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">System Email</label>
                             <input type="email" required className="ios-input w-full" placeholder="operator@protocol.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Terminal ID (Phone)</label>
-                            <input type="tel" required className="ios-input w-full" placeholder="+91 XXXXX XXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
                         </div>
                         <div className="space-y-1">
                             <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Access Password</label>
