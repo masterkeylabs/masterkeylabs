@@ -18,16 +18,18 @@ export const AuthProvider = ({ children }) => {
         let isMounted = true;
 
         // --- SAFETY TIMEOUT ---
-        // If the database is slow or a connection hangs, this forces the app
-        // to finish its loading state after 10 seconds.
+        // Force-clear loading after 12s, even if a fetch is technically "active"
+        // (to handle hung network requests that never resolve)
         const safetyTimer = setTimeout(() => {
-            if (loading && isMounted && !fetchingRef.current) {
-                console.warn('--- AuthProvider: SAFETY TIMEOUT TRIGGERED ---');
+            if (loading && isMounted) {
+                console.warn('--- AuthProvider: SAFETY TIMEOUT TRIGGERED (Forced Clear) ---');
+                if (fetchingRef.current) {
+                    console.warn(`--- AuthProvider: Clearing stuck fetch for ID: ${fetchingRef.current} ---`);
+                    fetchingRef.current = null;
+                }
                 setLoading(false);
-            } else if (loading && isMounted && fetchingRef.current) {
-                console.log('--- AuthProvider: Safety timer ignored, fetch still active ---');
             }
-        }, 10000);
+        }, 12000);
 
         const initializeAuth = async () => {
             console.log('--- AuthProvider: Running initializeAuth ---');

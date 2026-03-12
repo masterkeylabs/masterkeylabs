@@ -248,8 +248,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             finalBizId = rpcResult?.id || rpcResult;
             setActiveId(finalBizId);
 
-            if (fetchBusinessProfile) {
-                await fetchBusinessProfile(user?.id);
+            if (fetchBusinessProfile && user) {
+                await fetchBusinessProfile(user);
             }
             router.replace(`/dashboard`, { scroll: false });
 

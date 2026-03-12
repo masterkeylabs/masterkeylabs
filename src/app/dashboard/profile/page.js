@@ -41,13 +41,23 @@ function ProfileEditContent() {
 
         const fetchProfile = async () => {
             try {
-                const { data, error } = await supabase
-                    .from('businesses')
-                    .select('*')
-                    .eq('id', effectiveId)
-                    .single();
+                // Add a fetch timeout to prevent hanging on unstable network
+                const fetchPromise = (async () => {
+                    const { data, error } = await supabase
+                        .from('businesses')
+                        .select('*')
+                        .eq('id', effectiveId)
+                        .single();
 
-                if (error) throw error;
+                    if (error) throw error;
+                    return data;
+                })();
+
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Profile fetch timed out')), 10000)
+                );
+
+                const data = await Promise.race([fetchPromise, timeoutPromise]);
 
                 if (data) {
                     // Reverse classification string "vertical::revenueBracket"
@@ -66,6 +76,7 @@ function ProfileEditContent() {
                     }
 
                     // Attempt to fetch loss audit to prepopulate marketing/ops spend
+                    // (Note: This is also susceptible to hanging, but we'll prioritize the core profile)
                     const { data: auditData } = await supabase
                         .from('loss_audit_results')
                         .select('marketing_budget, ops_overheads')
@@ -89,6 +100,9 @@ function ProfileEditContent() {
                 }
             } catch (err) {
                 console.error("Error fetching profile:", err);
+                if (err.message === 'Profile fetch timed out') {
+                    setMessage({ type: 'error', text: 'Network is slow. Profile data may not be fully loaded.' });
+                }
             } finally {
                 setLoading(false);
             }
