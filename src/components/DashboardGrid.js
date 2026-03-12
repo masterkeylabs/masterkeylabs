@@ -166,8 +166,12 @@ export default function DashboardGrid({ business, computedData: initialComputedD
                         </section>
 
                         {/* Automatically Generated Comprehensive Audit Report */}
-                        <section id="comprehensive-report" className={`${auditsIncomplete ? 'blur-md pointer-events-none opacity-50 transition-all duration-700' : ''}`}>
-                            <ComprehensiveReportModal businessName={business?.entity_name} computedData={computedData} t={t} />
+                        <section id="comprehensive-report">
+                            <ComprehensiveReportModal
+                                businessName={business?.entity_name}
+                                locked={auditsIncomplete}
+                                t={t}
+                            />
                         </section>
 
 

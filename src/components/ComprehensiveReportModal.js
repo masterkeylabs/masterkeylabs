@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 import { useDiagnosticStore } from '@/store/diagnosticStore';
 import { formatIndian } from '@/utils/formatIndian';
 
-export default function ComprehensiveReportInline({ businessName, computedData }) {
+export default function ComprehensiveReportInline({ businessName, locked }) {
     const reportRef = useRef();
     const [isGenerating, setIsGenerating] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
@@ -62,12 +62,15 @@ export default function ComprehensiveReportInline({ businessName, computedData }
     };
 
     const handleGenerateReport = async () => {
-        // Enforce all modules completion check
-        const { opsWaste, nightLossRevenue, missedCustomers, extinctionHorizon } = useDiagnosticStore.getState();
+        if (locked) {
+            showNotify('Audit Terminal is Locked. Please complete all 4 modules to unlock the Comprehensive Report.', 'error');
+            return;
+        }
 
-        // Assuming if these values are missing/0, the audit hasn't been completed. 
-        // extinctionHorizon defaults to 0 if not calculated in some setups, or a specific string.
-        if (!opsWaste || !nightLossRevenue || !missedCustomers || !extinctionHorizon) {
+        // Enforce all modules completion check using the actual stored objects
+        const { lossAudit, nightLoss, missedCustomers, aiThreat } = useDiagnosticStore.getState();
+
+        if (!lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at) {
             showNotify('Please complete all 4 audit modules (Operational Waste, Night Loss, Visibility, AI Threat) before generating the final report.', 'error');
             return;
         }
@@ -129,34 +132,46 @@ export default function ComprehensiveReportInline({ businessName, computedData }
     const aiThreatData = aiThreat || {};
 
     const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ₹${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
-    const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`; // Using a placeholder number for the example, please update if needed
+    const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`;
 
     return (
         <section className="animate-fade-in opacity-0 w-full mt-4" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
             {/* The Dashboard Generator Card */}
-            <div className="relative w-full bg-[#0a0a0d] border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-ios-cyan via-ios-blue to-ios-purple opacity-50 z-20"></div>
+            <div className={`relative w-full border rounded-3xl shadow-2xl overflow-hidden transition-all duration-700 ${locked ? 'bg-black/40 border-white/5 grayscale pointer-events-none' : 'bg-[#0a0a0d] border-white/10'}`}>
+                <div className={`absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-ios-cyan via-ios-blue to-ios-purple opacity-50 z-20 ${locked ? 'grayscale' : ''}`}></div>
 
                 <div className="p-8 md:p-10 flex flex-col lg:flex-row justify-between items-center gap-8 relative z-10">
                     <div className="flex flex-col gap-2 text-center lg:text-left">
                         <div className="flex items-center gap-2 justify-center lg:justify-start">
-                            <span className="material-symbols-outlined text-ios-cyan text-sm">verified_user</span>
-                            <span className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.2em]">Diagnostic Terminal</span>
+                            <span className="material-symbols-outlined text-ios-cyan text-sm">{locked ? 'lock' : 'verified_user'}</span>
+                            <span className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.2em]">{locked ? 'Terminal Locked' : 'Diagnostic Terminal'}</span>
                         </div>
                         <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase">Audit Report Generator</h3>
-                        <p className="text-sm text-white/40 max-w-lg leading-relaxed">Compile all critical leakages and transformation roadmaps into a singular, board-ready audit document.</p>
+                        <p className="text-sm text-white/40 max-w-lg leading-relaxed">
+                            {locked
+                                ? 'Complete the Operational Audit Sequence to generate your board-ready transformation roadmap.'
+                                : 'Compile all critical leakages and transformation roadmaps into a singular, board-ready audit document.'
+                            }
+                        </p>
                     </div>
 
                     <div className="flex items-center justify-center w-full md:w-auto">
                         <button
                             onClick={handleGenerateReport}
-                            disabled={isGenerating}
-                            className={`flex items-center gap-3 px-12 h-[60px] rounded-2xl transition-all active:scale-95 shadow-2xl ${isGenerating
-                                ? 'bg-ios-cyan/20 text-ios-cyan cursor-wait'
-                                : 'bg-ios-cyan text-black hover:bg-ios-cyan/90 font-black'
+                            disabled={isGenerating || locked}
+                            className={`flex items-center gap-3 px-12 h-[60px] rounded-2xl transition-all active:scale-95 shadow-2xl ${locked
+                                ? 'bg-white/5 text-white/20 border border-white/5 cursor-not-allowed'
+                                : isGenerating
+                                    ? 'bg-ios-cyan/20 text-ios-cyan cursor-wait'
+                                    : 'bg-ios-cyan text-black hover:bg-ios-cyan/90 font-black'
                                 }`}
                         >
-                            {isGenerating ? (
+                            {locked ? (
+                                <>
+                                    <span className="material-symbols-outlined text-lg">lock_clock</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Locked by Protocol</span>
+                                </>
+                            ) : isGenerating ? (
                                 <>
                                     <span className="material-symbols-outlined text-base animate-spin">sync</span>
                                     <span className="text-[10px] uppercase tracking-[0.2em]">Processing Payload...</span>
