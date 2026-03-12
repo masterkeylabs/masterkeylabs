@@ -10,6 +10,6 @@ export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey, {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         storageKey: 'masterkey-auth-token', // Explicit storage key
-        lockType: 'null' // Disable Locking to prevent Navigator LockManager timeouts
+        lockType: null // Disable Locking to prevent Navigator LockManager timeouts
     }
 });
