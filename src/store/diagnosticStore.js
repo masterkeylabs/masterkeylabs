@@ -42,6 +42,16 @@ export const useDiagnosticStore = create((set, get) => ({
     updateCity: (city) => {
         set({ city });
     },
+    resetStore: () => {
+        set({
+            lossAudit: null,
+            nightLoss: null,
+            missedCustomers: null,
+            aiThreat: null,
+            city: '',
+            totalAnnualBleed: 0
+        });
+    },
 
     calculateTotalBleed: () => {
         const state = get();

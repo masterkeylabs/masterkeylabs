@@ -39,6 +39,18 @@ export default function DashboardGrid({ business, computedData: initialComputedD
 
     useEffect(() => {
         setMounted(true);
+
+        // Verification: Does the stored data belong to THIS business?
+        // If not, we must clear it to avoid leakage
+        const storedBusinessId = lossAudit?.business_id || nightLoss?.business_id || missedCustomers?.business_id || aiThreat?.business_id;
+        const potentialLeak = storedBusinessId && business?.id && storedBusinessId !== business.id;
+
+        if (potentialLeak) {
+            console.warn('--- DashboardGrid: State leakage detected, clearing store ---');
+            useDiagnosticStore.getState().resetStore();
+            return;
+        }
+
         // Hydrate store from server data if store is empty or partially empty
         const isStoreEmpty = !lossAudit && !nightLoss && !missedCustomers && !aiThreat;
         const isPartial = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
@@ -47,7 +59,7 @@ export default function DashboardGrid({ business, computedData: initialComputedD
             console.log('--- DashboardGrid: Syncing store from server data ---');
             setAuditData(initialComputedData);
         }
-    }, [initialComputedData, setAuditData, lossAudit, nightLoss, missedCustomers, aiThreat]);
+    }, [initialComputedData, setAuditData, lossAudit, nightLoss, missedCustomers, aiThreat, business?.id]);
 
     const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';

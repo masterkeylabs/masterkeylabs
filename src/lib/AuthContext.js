@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from './supabaseClient';
 import { useRouter } from 'next/navigation';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 
 const AuthContext = createContext({});
 
@@ -81,11 +82,14 @@ export const AuthProvider = ({ children }) => {
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
                 if (currentUser) {
                     console.log('--- AuthProvider: Profile lookup triggered by event ---', event);
+                    // Force store reset on sign-in before fetching new profile
+                    useDiagnosticStore.getState().resetStore();
                     // CRITICAL: We do NOT await here. Awaiting inside the listener can block 
                     // the main Auth promise and cause deadlocks during signup.
                     fetchBusinessProfile(currentUser);
                 }
             } else if (event === 'SIGNED_OUT') {
+                useDiagnosticStore.getState().resetStore();
                 setUser(null);
                 setBusiness(null);
                 if (typeof window !== 'undefined') {
