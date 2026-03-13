@@ -140,7 +140,7 @@ function VisibilityContent() {
                     // Sync with global store
                     useDiagnosticStore.getState().updateMissedCustomers(payload);
                     useDiagnosticStore.getState().updateCity(payload.city);
-                    
+
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
                 }
