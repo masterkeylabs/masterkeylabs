@@ -6,9 +6,11 @@ import { calculateLossAudit, formatINR, formatINRFull, BUSINESS_VERTICALS, parse
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 import {
     RangeSelector,
     REVENUE_OPTIONS,
+
     PAYROLL_OPTIONS,
     MANUAL_HOURS_OPTIONS
 } from '@/components/RangeSelector';
@@ -162,6 +164,9 @@ function LossAuditContent() {
                     alert(`Sync Failed: ${saveErr.message}`);
                 } else {
                     console.log('--- Loss Audit: Sync Success ---');
+                    // Sync with global store
+                    useDiagnosticStore.getState().updateLossAudit(fullPayload);
+                    
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
                 }

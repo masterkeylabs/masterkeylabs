@@ -6,7 +6,9 @@ import { calculateVisibility, VISIBILITY_SIGNALS, formatINR, formatINRFull, pars
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 import { RangeSelector, TXN_VALUE_OPTIONS } from '@/components/RangeSelector';
+
 import { FINAL_COUNTRIES, GET_CITIES } from '@/lib/countries';
 
 const STATUS_COLORS = {
@@ -132,6 +134,9 @@ function VisibilityContent() {
                     alert(`Sync Failed: ${saveErr.message}`);
                 } else {
                     console.log('--- Visibility Audit: Sync Success ---');
+                    // Sync with global store
+                    useDiagnosticStore.getState().updateMissedCustomers(payload);
+                    
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
                 }

@@ -6,7 +6,9 @@ import { calculateAIThreat, BUSINESS_VERTICALS, parseNumericalRange } from '@/li
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 import { RangeSelector, EMPLOYEE_OPTIONS, MANUAL_HOURS_OPTIONS } from '@/components/RangeSelector';
+
 
 import { Suspense } from 'react';
 
@@ -145,6 +147,9 @@ function AIThreatContent() {
                     alert(`Sync Failed: ${saveErr.message} `);
                 } else {
                     console.log('--- AI Threat Audit: Sync Success ---');
+                    // Sync with global store
+                    useDiagnosticStore.getState().updateAIThreat(payload);
+                    
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
                 }

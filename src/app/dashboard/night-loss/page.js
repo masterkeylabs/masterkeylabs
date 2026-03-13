@@ -6,8 +6,10 @@ import { calculateNightLoss, formatINR, formatINRFull, parseNumericalRange } fro
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useDiagnosticStore } from '@/store/diagnosticStore';
 import {
     RangeSelector,
+
     DAILY_LEADS_OPTIONS,
     TXN_VALUE_OPTIONS
 } from '@/components/RangeSelector';
@@ -125,6 +127,9 @@ function NightLossContent() {
                     alert(`Sync Failed: ${saveErr.message}`);
                 } else {
                     console.log('--- Night Loss Audit: Sync Success ---');
+                    // Sync with global store
+                    useDiagnosticStore.getState().updateNightLoss(payload);
+                    
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
                 }
