@@ -5,16 +5,19 @@ export const useDiagnosticStore = create((set, get) => ({
     nightLoss: null,
     missedCustomers: null,
     aiThreat: null,
+    city: '',
     totalAnnualBleed: 0,
 
     // Initial hydration/reset
     setAuditData: (data) => {
         const { lossAudit, nightLoss, missedCustomers, aiThreat } = data || {};
+        const loadedCity = missedCustomers?.city || '';
         set({
             lossAudit,
             nightLoss,
             missedCustomers,
-            aiThreat
+            aiThreat,
+            city: loadedCity || get().city
         });
         get().calculateTotalBleed();
     },
@@ -35,6 +38,9 @@ export const useDiagnosticStore = create((set, get) => ({
     updateAIThreat: (data) => {
         set({ aiThreat: { ...get().aiThreat, ...data } });
         get().calculateTotalBleed();
+    },
+    updateCity: (city) => {
+        set({ city });
     },
 
     calculateTotalBleed: () => {

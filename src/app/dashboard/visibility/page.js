@@ -40,7 +40,7 @@ function VisibilityContent() {
     const [answers, setAnswers] = useState(
         Object.fromEntries(VISIBILITY_SIGNALS.map(s => [s.id, false]))
     );
-    const [city, setCity] = useState('');
+    const [city, setCity] = useState(useDiagnosticStore.getState().city || '');
     const [country, setCountry] = useState('India');
     const [avgTransactionValue, setAvgTransactionValue] = useState('');
     const [results, setResults] = useState(null);
@@ -76,6 +76,9 @@ function VisibilityContent() {
                     avgNum
                 );
                 setResults(calc);
+                if (data.city) {
+                    useDiagnosticStore.getState().updateCity(data.city);
+                }
             } else {
                 // 2. Fetch fallback from other modules or business profile
                 const { data: lossData } = await supabase
@@ -136,6 +139,7 @@ function VisibilityContent() {
                     console.log('--- Visibility Audit: Sync Success ---');
                     // Sync with global store
                     useDiagnosticStore.getState().updateMissedCustomers(payload);
+                    useDiagnosticStore.getState().updateCity(payload.city);
                     
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
@@ -196,26 +200,14 @@ function VisibilityContent() {
                         </div>
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.visibility.cityLabel}</label>
-                            {cityList.length > 0 ? (
-                                <select
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer"
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                >
-                                    <option value="" className="bg-[#050505]">{t.visibility.placeholders.citySelect}</option>
-                                    {cityList.map(c => (
-                                        <option key={c} value={c} className="bg-[#050505]">{c}</option>
-                                    ))}
-                                </select>
-                            ) : (
-                                <input
-                                    type="text"
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all"
-                                    placeholder={t.visibility.placeholders.cityInput}
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                />
-                            )}
+                            <input
+                                required
+                                type="text"
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-all uppercase placeholder:text-white/10"
+                                placeholder={t.visibility.placeholders.cityInput || "e.g. MUMBAI"}
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                            />
                         </div>
                     </div>
 

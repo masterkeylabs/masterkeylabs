@@ -450,6 +450,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             // --- SYNC TO STORE ---
             useDiagnosticStore.getState().updateMissedCustomers(payload);
+            useDiagnosticStore.getState().updateCity(payload.city);
 
             setStep(4);
         } catch (err) {
