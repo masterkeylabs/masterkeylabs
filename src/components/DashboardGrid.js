@@ -39,11 +39,15 @@ export default function DashboardGrid({ business, computedData: initialComputedD
 
     useEffect(() => {
         setMounted(true);
-        if (initialComputedData && !lossAudit) {
-            console.log('--- DashboardGrid: Hydrating store from server data ---');
+        // Hydrate store from server data if store is empty or partially empty
+        const isStoreEmpty = !lossAudit && !nightLoss && !missedCustomers && !aiThreat;
+        const isPartial = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
+
+        if (initialComputedData && (isStoreEmpty || isPartial)) {
+            console.log('--- DashboardGrid: Syncing store from server data ---');
             setAuditData(initialComputedData);
         }
-    }, [initialComputedData, setAuditData, lossAudit]);
+    }, [initialComputedData, setAuditData, lossAudit, nightLoss, missedCustomers, aiThreat]);
 
     const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
