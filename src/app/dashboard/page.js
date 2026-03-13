@@ -42,10 +42,10 @@ export default async function DashboardPage({ searchParams }) {
     ]);
 
     const auditResults = {
-        lossAudit: lossRes.data || { saving_target: 0 },
-        nightLoss: nightRes.data || { monthly_loss: 0 },
-        missedCustomers: visRes.data || { missed_customers: 0 },
-        aiThreat: threatRes.data || { score: 0 }
+        lossAudit: lossRes.data || null,
+        nightLoss: nightRes.data || null,
+        missedCustomers: visRes.data || null,
+        aiThreat: threatRes.data || null
     };
 
     return <DashboardGrid business={business} computedData={auditResults} />;

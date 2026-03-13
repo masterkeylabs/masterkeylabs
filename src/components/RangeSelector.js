@@ -64,6 +64,15 @@ export const PAYROLL_OPTIONS = [
     { label: '> 50L', value: 7500000 }
 ];
 
+export const MARKETING_OPTIONS = [
+    { label: 'None / Zero', value: 0 },
+    { label: '< 1L', value: 50000 },
+    { label: '1L-5L', value: 300000 },
+    { label: '5L-15L', value: 1000000 },
+    { label: '15L-50L', value: 3250000 },
+    { label: '> 50L', value: 7500000 }
+];
+
 export const MANUAL_HOURS_OPTIONS = [
     { label: '0-1', value: 0.5 },
     { label: '1-4', value: 2.5 },

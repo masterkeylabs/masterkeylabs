@@ -82,8 +82,6 @@ export const AuthProvider = ({ children }) => {
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
                 if (currentUser) {
                     console.log('--- AuthProvider: Profile lookup triggered by event ---', event);
-                    // Force store reset on sign-in before fetching new profile
-                    useDiagnosticStore.getState().resetStore();
                     // CRITICAL: We do NOT await here. Awaiting inside the listener can block 
                     // the main Auth promise and cause deadlocks during signup.
                     fetchBusinessProfile(currentUser);
@@ -112,13 +110,13 @@ export const AuthProvider = ({ children }) => {
         };
     }, [router]);
 
-    const fetchBusinessProfile = async (userObj) => {
+    const fetchBusinessProfile = async (userObj, force = false) => {
         if (!userObj) {
             setLoading(false);
             return;
         }
 
-        if (fetchingRef.current === userObj.id) {
+        if (!force && fetchingRef.current === userObj.id) {
             return;
         }
 

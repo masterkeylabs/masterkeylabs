@@ -20,6 +20,7 @@ import {
     REVENUE_OPTIONS,
     EMPLOYEE_OPTIONS,
     PAYROLL_OPTIONS,
+    MARKETING_OPTIONS,
     MANUAL_HOURS_OPTIONS,
     DAILY_LEADS_OPTIONS,
     TXN_VALUE_OPTIONS
@@ -249,7 +250,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             setActiveId(finalBizId);
 
             if (fetchBusinessProfile && user) {
-                await fetchBusinessProfile(user);
+                console.log('--- Wizard: Forcing AuthContext profile refresh ---');
+                await fetchBusinessProfile(user, true); // Use the new 'force' flag
             }
             router.replace(`/dashboard`, { scroll: false });
 
@@ -697,7 +699,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
                                 <RangeSelector
                                     label="Monthly Marketing / Ad Spend"
-                                    options={PAYROLL_OPTIONS} // Reusing financial ranges
+                                    options={MARKETING_OPTIONS} 
                                     value={formM1.marketingBudget}
                                     onChange={val => setFormM1({ ...formM1, marketingBudget: val })}
                                 />

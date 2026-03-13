@@ -14,8 +14,12 @@ import { translations } from '@/lib/translations';
 
 import { useLanguage } from '@/lib/LanguageContext';
 import { useDiagnosticStore } from '@/store/diagnosticStore';
+import { useAuth } from '@/lib/AuthContext';
 
-export default function DashboardGrid({ business, computedData: initialComputedData }) {
+export default function DashboardGrid({ business: serverBusiness, computedData: initialComputedData }) {
+    const { business: clientBusiness, loading: authLoading } = useAuth();
+    const business = clientBusiness || serverBusiness;
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { lang, setLang, t } = useLanguage();
     const [showAuditWizard, setShowAuditWizard] = useState(false);
@@ -40,50 +44,66 @@ export default function DashboardGrid({ business, computedData: initialComputedD
     useEffect(() => {
         setMounted(true);
 
-        // Verification: Does the stored data belong to THIS business?
-        // If not, we must clear it to avoid leakage
-        const storedBusinessId = lossAudit?.business_id || nightLoss?.business_id || missedCustomers?.business_id || aiThreat?.business_id;
-        const potentialLeak = storedBusinessId && business?.id && storedBusinessId !== business.id;
+        // --- HYDRATION LOGIC ---
+        // Only hydrate if the store is empty AND server has real data
+        const isStoreTrulyEmpty = !lossAudit && !nightLoss && !missedCustomers && !aiThreat;
+        const serverHasData = initialComputedData?.lossAudit?.created_at || initialComputedData?.nightLoss?.created_at || initialComputedData?.aiThreat?.created_at;
 
-        if (potentialLeak) {
-            console.warn('--- DashboardGrid: State leakage detected, clearing store ---');
-            useDiagnosticStore.getState().resetStore();
-            return;
-        }
-
-        // Hydrate store from server data if store is empty or partially empty
-        const isStoreEmpty = !lossAudit && !nightLoss && !missedCustomers && !aiThreat;
-        const isPartial = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
-
-        if (initialComputedData && (isStoreEmpty || isPartial)) {
-            console.log('--- DashboardGrid: Syncing store from server data ---');
+        if (serverHasData && isStoreTrulyEmpty) {
+            console.log('--- DashboardGrid: Hydrating store from server data ---');
             setAuditData(initialComputedData);
         }
-    }, [initialComputedData, setAuditData, lossAudit, nightLoss, missedCustomers, aiThreat, business?.id]);
+    }, [initialComputedData, setAuditData, business?.id]);
 
-    const auditsIncomplete = !lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at;
+    if (!mounted || authLoading) return (
+        <div className="bg-background-dark min-h-screen flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-ios-blue border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-white/40 text-xs font-mono tracking-widest uppercase">Initializing Vault...</p>
+            </div>
+        </div>
+    );
+
+    const auditsIncomplete = !lossAudit || !nightLoss || !missedCustomers || !aiThreat;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
 
+    console.log('--- Live Dashboard Status ---', {
+        id: business?.id,
+        name: business?.entity_name,
+        profileIncomplete,
+        auditsIncomplete,
+        audits: {
+            loss: !!lossAudit,
+            night: !!nightLoss,
+            vis: !!missedCustomers,
+            ai: !!aiThreat
+        },
+        showAuditWizard
+    });
+
     const handleWizardComplete = () => {
-        // Just close the wizard. The store has already been updated step-by-step
-        // so the UI will be reactive without a reload.
+        console.log('--- Wizard: Received onComplete signal ---');
+        // Close the wizard modal immediately
         setShowAuditWizard(false);
 
-        if (!auditsIncomplete) {
-            console.log('--- Wizard: Audit already complete, closing seamless ---');
-            return;
+        // Check if we are now complete (wait a tiny bit for store to settle if needed, but it should be instant)
+        // We use the LATEST store values directly rather than the constant from render to avoid closure issues
+        const currentStore = useDiagnosticStore.getState();
+        const auditsDone = currentStore.lossAudit && currentStore.nightLoss && currentStore.missedCustomers && currentStore.aiThreat;
+        const profileDone = business?.id && business?.entity_name && business.entity_name !== 'Initialize System';
+
+        if (auditsDone && profileDone) {
+            console.log('--- Wizard: Full system completion detected! ---');
+            setIsUnlocking(true);
+            
+            // Premium transition: show animation, then refresh to lock it in and ensure 
+            // all server-side reports (PDFs, etc) are generated and synced.
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000); 
+        } else {
+            console.log('--- Wizard: Partial completion or profile-only sync, staying in dashboard view ---');
         }
-
-        // Trigger the high-tech unlocking animation only for first-time completion
-        setIsUnlocking(true);
-
-        // After animation completes, we settle
-        setTimeout(() => {
-            setIsUnlocking(false);
-            // Optional: We could still reload here if we want to ensure server state sync,
-            // but for a premium feel, let's keep it reactive.
-            // window.location.reload(); 
-        }, 4000); // 4 seconds of glory
     };
 
     // --- RENDER UNLOCKING OVERLAY ---
