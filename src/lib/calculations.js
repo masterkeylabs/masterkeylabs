@@ -286,32 +286,11 @@ export function calculateNightLoss(dailyInquiries, closingTime, avgTransactionVa
 }
 
 /**
- * VISIBILITY — FORMULA SPECIFICATION
- * Two parts: (a) a 100-point scoring system, and (b) converting the invisibility
- * score into a ₹ loss using city search volume benchmarks.
- *
- * 3A. Revised 100-Point Scoring System (anchored to Google's own data):
- *     Google Business Profile: 25, Mobile Website: 20, WhatsApp Business: 15,
- *     Active Social Media: 15, Local SEO: 15, CRM: 5, Paid Ads: 5 = 100
- *
- * 3B. City Search Volume Benchmarks:
- *     Metro: 40,000 | Tier-1: 18,000 | Tier-2: 7,000 | Tier-3/Other: 2,500
- *
- * 3C. Complete Formula:
- *     Step 1: visibility_score = sum of checked signals (100 pts max)
- *     Step 2: invisibility_rate = (100 - visibility_score) / 100
- *     Step 3: missed_searches = city_monthly_searches × invisibility_rate
- *     Step 4: monthly_missed_customers = missed_searches × 0.06 (search_to_customer_rate)
- *     Step 5: monthly_visibility_loss = monthly_missed_customers × avg_transaction_value
- *
- * @param {object|array} signals - Checked signals (object of booleans or array of ids)
- * @param {string} city    - City name for tier lookup
- * @param {number} avgTransactionValue - Avg transaction/sale value (₹)
- * @returns {object} Visibility breakdown
+ * VISIBILITY AUDIT CONFIGURATION
+ * Decoupled data from logic to allow for easy tuning without redeploying code.
  */
-export function calculateVisibility(signals, city = '', avgTransactionValue = 0) {
-    const avgValue = Math.max(0, Number(avgTransactionValue) || 0);
-    const signalWeights = {
+export const VISIBILITY_CONFIG = {
+    WEIGHTS: {
         hasGoogleMyBusiness: 25,
         hasWebsite: 20,
         hasWhatsApp: 15,
@@ -319,54 +298,68 @@ export function calculateVisibility(signals, city = '', avgTransactionValue = 0)
         seoOptimized: 15,
         hasCRM: 5,
         runsAds: 5
-    };
+    },
+    CITY_BENCHMARKS: {
+        METRO: { names: ['mumbai', 'delhi', 'bengaluru', 'bangalore', 'hyderabad', 'chennai', 'kolkata'], searches: 40000 },
+        TIER1: { names: ['pune', 'ahmedabad', 'jaipur', 'surat', 'lucknow', 'kanpur'], searches: 18000 },
+        TIER2: { names: ['nagpur', 'indore', 'bhopal', 'coimbatore', 'vadodara', 'kochi'], searches: 7000 },
+        DEFAULT: 2500
+    },
+    CONVERSION_RATES: {
+        LOCAL_SEARCH: 0.06 // 6% of local searches convert to high-intent leads
+    }
+};
 
-    // ── STEP 1: Score the business (100 pts max) ───────────────────────
-    let totalScore = 0;
-    const gaps = [];
+/**
+ * VISIBILITY — FORMULA SPECIFICATION
+ * Decoupled, functional implementation of the visibility audit.
+ */
+export function calculateVisibility(signals, city = '', avgTransactionValue = 0) {
+    const avgValue = Math.round(Number(avgTransactionValue) || 0);
     const activeSignals = Array.isArray(signals) ? signals : Object.keys(signals).filter(k => signals[k]);
 
-    Object.keys(signalWeights).forEach(id => {
-        if (activeSignals.includes(id)) {
-            totalScore += signalWeights[id];
-        } else {
-            gaps.push({ id, label: id.replace(/([A-Z])/g, ' $1').trim(), points: signalWeights[id] });
-        }
-    });
+    // 1. Validation Logic
+    const validationError = !city ? 'CITY_REQUIRED' : (avgValue < 0 ? 'INVALID_VALUE' : null);
+    if (validationError) {
+        return { percent: 0, status: 'INVALID', error: validationError, missedCustomers: 0, monthlyLoss: 0 };
+    }
+
+    // 2. Data-Driven Scoring (Functional)
+    const totalScore = Object.entries(VISIBILITY_CONFIG.WEIGHTS).reduce((acc, [signalId, weight]) => {
+        return activeSignals.includes(signalId) ? acc + weight : acc;
+    }, 0);
 
     const percent = Math.min(100, totalScore);
+    const invisibilityRate = (100 - percent) / 100;
+
+    // 3. City Tier Resolution
+    const cityLower = city.toLowerCase().trim();
+    let cityMonthlySearches = VISIBILITY_CONFIG.CITY_BENCHMARKS.DEFAULT;
+
+    if (VISIBILITY_CONFIG.CITY_BENCHMARKS.METRO.names.includes(cityLower)) {
+        cityMonthlySearches = VISIBILITY_CONFIG.CITY_BENCHMARKS.METRO.searches;
+    } else if (VISIBILITY_CONFIG.CITY_BENCHMARKS.TIER1.names.includes(cityLower)) {
+        cityMonthlySearches = VISIBILITY_CONFIG.CITY_BENCHMARKS.TIER1.searches;
+    } else if (VISIBILITY_CONFIG.CITY_BENCHMARKS.TIER2.names.includes(cityLower)) {
+        cityMonthlySearches = VISIBILITY_CONFIG.CITY_BENCHMARKS.TIER2.searches;
+    }
+
+    // 4. Conversion Math
+    const missedSearches = Math.round(cityMonthlySearches * invisibilityRate);
+    const monthlyMissedCustomers = Math.round(missedSearches * VISIBILITY_CONFIG.CONVERSION_RATES.LOCAL_SEARCH);
+    const monthlyVisibilityLoss = Math.round(monthlyMissedCustomers * avgValue);
+
+    // 5. Gap Analysis
+    const gaps = Object.entries(VISIBILITY_CONFIG.WEIGHTS)
+        .filter(([id]) => !activeSignals.includes(id))
+        .map(([id, points]) => ({ id, label: id.replace(/([A-Z])/g, ' $1').trim(), points }));
+
+    // Status Determination
     let status = 'INVISIBLE';
     if (percent >= 90) status = 'DOMINANT';
     else if (percent >= 70) status = 'VISIBLE';
     else if (percent >= 50) status = 'OKAY';
     else if (percent >= 30) status = 'GHOST';
-
-    // ── STEP 2: Invisibility rate ──────────────────────────────────────
-    const invisibilityRate = (100 - percent) / 100;
-
-    // ── STEP 3: Missed searches per month ──────────────────────────────
-    // City tier search volume benchmarks
-    // Source: Google Keyword Planner (2024) | TRAI Internet Subscriber Report Q3 2023
-    const METRO_CITIES = ['mumbai', 'delhi', 'bengaluru', 'bangalore', 'hyderabad', 'chennai', 'kolkata'];
-    const TIER1_CITIES = ['pune', 'ahmedabad', 'jaipur', 'surat', 'lucknow', 'kanpur'];
-    const TIER2_CITIES = ['nagpur', 'indore', 'bhopal', 'coimbatore', 'vadodara', 'kochi'];
-
-    const cityLower = (city || '').toLowerCase().trim();
-    let cityMonthlySearches = 2500; // Tier-3/Other floor
-    if (METRO_CITIES.includes(cityLower)) cityMonthlySearches = 40000;
-    else if (TIER1_CITIES.includes(cityLower)) cityMonthlySearches = 18000;
-    else if (TIER2_CITIES.includes(cityLower)) cityMonthlySearches = 7000;
-
-    const missedSearches = Math.round(cityMonthlySearches * invisibilityRate);
-
-    // ── STEP 4: Convert searches to customers ──────────────────────────
-    // Google "Think with Google" (2023): 6% of local searches convert
-    const searchToCustomerRate = 0.06;
-    const monthlyMissedCustomers = Math.round(missedSearches * searchToCustomerRate);
-
-    // ── STEP 5: Revenue loss ───────────────────────────────────────────
-    const monthlyVisibilityLoss = Math.round(monthlyMissedCustomers * avgValue);
-    const annualVisibilityLoss = monthlyVisibilityLoss * 12;
 
     return {
         percent,
@@ -376,7 +369,7 @@ export function calculateVisibility(signals, city = '', avgTransactionValue = 0)
         missedSearches,
         missedCustomers: monthlyMissedCustomers,
         monthlyLoss: monthlyVisibilityLoss,
-        annualLoss: annualVisibilityLoss,
+        annualLoss: monthlyVisibilityLoss * 12,
         gaps
     };
 }
@@ -518,11 +511,11 @@ export function calculateExportOpportunity(localPrice, monthlyQty, category, des
 }
 
 export const VISIBILITY_SIGNALS = [
-    { id: 'hasGoogleMyBusiness', label: 'Google Business Profile (verified + complete)', weight: 25, points: 25 },
-    { id: 'hasWebsite', label: 'Mobile-optimised Website', weight: 20, points: 20 },
-    { id: 'hasWhatsApp', label: 'WhatsApp Business (active)', weight: 15, points: 15 },
-    { id: 'activeSocialMedia', label: 'Active Social Media (2+ platforms)', weight: 15, points: 15 },
-    { id: 'seoOptimized', label: 'Local SEO (keyword optimised)', weight: 15, points: 15 },
-    { id: 'hasCRM', label: 'CRM / Lead Management Tool', weight: 5, points: 5 },
-    { id: 'runsAds', label: 'Paid Ads (Google / Meta active)', weight: 5, points: 5 },
+    { id: 'hasGoogleMyBusiness', label: 'Google Business Profile (verified + complete)', points: VISIBILITY_CONFIG.WEIGHTS.hasGoogleMyBusiness },
+    { id: 'hasWebsite', label: 'Mobile-optimised Website', points: VISIBILITY_CONFIG.WEIGHTS.hasWebsite },
+    { id: 'hasWhatsApp', label: 'WhatsApp Business (active)', points: VISIBILITY_CONFIG.WEIGHTS.hasWhatsApp },
+    { id: 'activeSocialMedia', label: 'Active Social Media (2+ platforms)', points: VISIBILITY_CONFIG.WEIGHTS.activeSocialMedia },
+    { id: 'seoOptimized', label: 'Local SEO (keyword optimised)', points: VISIBILITY_CONFIG.WEIGHTS.seoOptimized },
+    { id: 'hasCRM', label: 'CRM / Lead Management Tool', points: VISIBILITY_CONFIG.WEIGHTS.hasCRM },
+    { id: 'runsAds', label: 'Paid Ads (Google / Meta active)', points: VISIBILITY_CONFIG.WEIGHTS.runsAds },
 ];
