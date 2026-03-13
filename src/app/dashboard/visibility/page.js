@@ -212,7 +212,7 @@ function VisibilityContent() {
                     </div>
 
                     <RangeSelector
-                        label={t.lossAudit.opsOverheadLabel}
+                        label={t.nightLoss.avgTransactionLabel}
                         options={TXN_VALUE_OPTIONS}
                         value={parseFloat(avgTransactionValue) || ''}
                         onChange={val => setAvgTransactionValue(val.toString())}
