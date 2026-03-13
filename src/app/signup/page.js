@@ -37,11 +37,10 @@ export default function SignupPage() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        console.log('--- Signup: Starting manual signup sequence for ---', email);
 
         try {
             // 1. Auth Signup - Simplified
-            // We removed custom duplicate checks because Supabase handles email duplication naturally,
-            // and the Dashboard Wizard handles business/phone duplication during the onboarding phase.
             const { data: authData, error: signupError } = await supabase.auth.signUp({
                 email: email.trim(),
                 password: password,
@@ -52,22 +51,30 @@ export default function SignupPage() {
                 }
             });
 
-            if (signupError) throw signupError;
+            if (signupError) {
+                console.error('--- Signup: Supabase error ---', signupError.message);
+                throw signupError;
+            }
+
+            console.log('--- Signup: Auth response received ---', { hasSession: !!authData.session });
 
             // 2. Handle Redirection / Messaging
             if (!authData.session) {
+                console.log('--- Signup: Email verification required ---');
                 setError(<>
                     <span className="font-bold block mb-1">Registration successful!</span>
                     Supabase is still requesting email verification. Please click the link in your mailbox to activate your terminal,
                     or <span className="font-bold underline">disable "Confirm Email"</span> in your Supabase Dashboard settings to skip this step.
                 </>);
             } else {
-                console.log('--- Signup: Session present, redirecting to dashboard ---');
+                console.log('--- Signup: Success, redirecting ---');
                 router.push('/dashboard');
             }
         } catch (err) {
+            console.error('--- Signup: Catch block triggered ---', err);
             setError(err.message || 'Registration sequence failed.');
         } finally {
+            console.log('--- Signup: Sequence finished ---');
             setLoading(false);
         }
     };

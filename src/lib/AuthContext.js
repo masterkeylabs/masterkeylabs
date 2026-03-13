@@ -81,7 +81,9 @@ export const AuthProvider = ({ children }) => {
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
                 if (currentUser) {
                     console.log('--- AuthProvider: Profile lookup triggered by event ---', event);
-                    await fetchBusinessProfile(currentUser);
+                    // CRITICAL: We do NOT await here. Awaiting inside the listener can block 
+                    // the main Auth promise and cause deadlocks during signup.
+                    fetchBusinessProfile(currentUser);
                 }
             } else if (event === 'SIGNED_OUT') {
                 setUser(null);
@@ -93,7 +95,7 @@ export const AuthProvider = ({ children }) => {
                 router.push('/');
             }
 
-            // Critical: Only stop loading if we aren't currently fetching a business profile
+            // If we aren't fetching a profile, we can stop loading
             if (!fetchingRef.current) {
                 setLoading(false);
             }
@@ -119,42 +121,69 @@ export const AuthProvider = ({ children }) => {
         fetchingRef.current = userObj.id;
         console.log('--- AuthProvider: Starting lookup for ---', userObj.email);
 
+        const timeoutLimit = 10000; // 10 second hard limit for DB loopups
+
         try {
             // Priority 1: Match by user_id
-            let { data: profile, error: idError } = await supabase
-                .from('businesses')
-                .select('*')
-                .eq('user_id', userObj.id)
-                .maybeSingle();
+            const lookupById = async () => {
+                const { data, error } = await supabase
+                    .from('businesses')
+                    .select('*')
+                    .eq('user_id', userObj.id)
+                    .maybeSingle();
+                if (error) throw error;
+                return data;
+            };
 
-            if (idError) console.warn('--- AuthProvider: user_id lookup error ---', idError.message);
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('DATABASE_TIMEOUT')), timeoutLimit)
+            );
+
+            let profile = await Promise.race([lookupById(), timeoutPromise]).catch(err => {
+                if (err.message === 'DATABASE_TIMEOUT') {
+                    console.warn('--- AuthProvider: ID lookup timed out ---');
+                } else {
+                    console.warn('--- AuthProvider: id lookup error ---', err.message);
+                }
+                return null;
+            });
 
             // Priority 2: Fallback to email if user_id not found
             if (!profile && userObj.email) {
                 console.log('--- AuthProvider: Fallback lookup by email ---', userObj.email);
-                const { data: emailProfile, error: emailError } = await supabase
-                    .from('businesses')
-                    .select('*')
-                    .ilike('email', userObj.email.trim())
-                    .maybeSingle();
+                
+                const lookupByEmail = async () => {
+                    const { data, error } = await supabase
+                        .from('businesses')
+                        .select('*')
+                        .ilike('email', userObj.email.trim())
+                        .maybeSingle();
+                    if (error) throw error;
+                    return data;
+                };
 
-                if (emailError) console.warn('--- AuthProvider: email lookup error ---', emailError.message);
-                profile = emailProfile;
+                profile = await Promise.race([lookupByEmail(), timeoutPromise]).catch(err => {
+                    if (err.message === 'DATABASE_TIMEOUT') {
+                        console.warn('--- AuthProvider: Email lookup timed out ---');
+                    } else {
+                        console.warn('--- AuthProvider: email lookup error ---', err.message);
+                    }
+                    return null;
+                });
             }
 
             if (profile) {
                 console.log('--- AuthProvider: Profile found ---', profile.id);
-                // Link user_id if missing
+                // Link user_id if missing (Fire and forget, don't block)
                 if (!profile.user_id) {
-                    console.log('--- AuthProvider: Auto-linking user_id ---');
-                    await supabase.from('businesses').update({ user_id: userObj.id }).eq('id', profile.id);
+                    supabase.from('businesses').update({ user_id: userObj.id }).eq('id', profile.id).then();
                 }
                 setBusiness(profile);
                 if (typeof window !== 'undefined') {
                     localStorage.setItem('masterkey_business_id', profile.id);
                 }
             } else {
-                console.log('--- AuthProvider: No profile found for user ---');
+                console.log('--- AuthProvider: No profile found/search timed out ---');
                 setBusiness(null);
             }
         } catch (err) {
@@ -162,7 +191,7 @@ export const AuthProvider = ({ children }) => {
         } finally {
             fetchingRef.current = null;
             setLoading(false);
-            console.log('--- AuthProvider: Lookup finished ---');
+            console.log('--- AuthProvider: Lookup sequence finished ---');
         }
     };
 
