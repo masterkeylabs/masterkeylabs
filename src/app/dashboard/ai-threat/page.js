@@ -168,7 +168,7 @@ function AIThreatContent() {
         <FeatureLayout
             title={t.aiThreat.title}
             subtitle={t.aiThreat.subTitle}
-            backHref={businessId ? `/ dashboard ? id = ${businessId} ` : '/dashboard'}
+            backHref={businessId ? `/dashboard?id=${businessId}` : '/dashboard'}
         >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                 {/* Input Form */}
