@@ -12,6 +12,7 @@ import {
     REVENUE_OPTIONS,
 
     PAYROLL_OPTIONS,
+    MARKETING_OPTIONS,
     MANUAL_HOURS_OPTIONS
 } from '@/components/RangeSelector';
 
@@ -217,7 +218,7 @@ function LossAuditContent() {
 
                         <RangeSelector
                             label={t.lossAudit.marketingBudgetLabel}
-                            options={PAYROLL_OPTIONS}
+                            options={MARKETING_OPTIONS}
                             value={form.marketingBudget}
                             onChange={val => setForm({ ...form, marketingBudget: val })}
                         />
