@@ -23,6 +23,26 @@ export default function LoginPage() {
         }
     }, [user, authLoading, router]);
 
+    const handleForgotPassword = async () => {
+        if (!email) {
+            setError("Please enter your email first to receive a reset link.");
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                redirectTo: `${window.location.origin}/auth/reset-password`,
+            });
+            if (error) throw error;
+            setError("Reset link sent! Check your inbox.");
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -95,8 +115,17 @@ export default function LoginPage() {
                             <input type="email" required className="ios-input w-full" placeholder="operator@protocol.com" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
                         </div>
 
-                        <div className="space-y-1">
-                            <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Access Password</label>
+                        <div className="space-y-1 relative">
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="text-[10px] text-white/30 font-black uppercase tracking-widest ml-1">Access Password</label>
+                                <button 
+                                    type="button" 
+                                    onClick={handleForgotPassword}
+                                    className="text-[9px] text-ios-blue hover:text-white uppercase tracking-tighter font-black transition-colors"
+                                >
+                                    Forgot Password?
+                                </button>
+                            </div>
                             <input type="password" required className="ios-input w-full" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>
 

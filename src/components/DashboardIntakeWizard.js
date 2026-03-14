@@ -32,7 +32,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
     const { user, fetchBusinessProfile } = useAuth();
     const [step, setStep] = useState(initialStep);
-    const [activeId, setActiveId] = useState(business?.id || null);
+    const [activeId, setActiveId] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [mounted, setMounted] = useState(false);
@@ -75,7 +75,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         email: '',
     });
     const [formM1, setFormM1] = useState({
-        vertical: business?.vertical || 'retail',
+        vertical: 'retail',
         staffSalary: '',
         marketingBudget: '',
         opsOverheads: '',
@@ -331,6 +331,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 coordination_drag: calc.coordinationDrag,
                 total_burn: calc.totalBurn,
                 annual_burn: calc.annualBurn,
+                annual_loss: calc.annualBurn, // Unified naming for aggregate calculations
                 saving_target: calc.savingTarget,
                 five_year_cost: calc.fiveYearCost,
                 created_at: new Date().toISOString()
