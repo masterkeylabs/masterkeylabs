@@ -21,9 +21,6 @@ export async function createClient() {
                         // The `setAll` method was called from a Server Component.
                     }
                 },
-            },
-            cookieOptions: {
-                name: 'masterkey-auth-token',
             }
         }
     )

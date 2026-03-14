@@ -45,12 +45,13 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
         setMounted(true);
 
         // --- HYDRATION LOGIC ---
-        // Only hydrate if the store is empty AND server has real data
-        const isStoreTrulyEmpty = !lossAudit && !nightLoss && !missedCustomers && !aiThreat;
-        const serverHasData = initialComputedData?.lossAudit?.created_at || initialComputedData?.nightLoss?.created_at || initialComputedData?.aiThreat?.created_at;
+        // Only hydrate if the server actually sent us data packages
+        const serverHasData = initialComputedData?.lossAudit || initialComputedData?.nightLoss || initialComputedData?.missedCustomers || initialComputedData?.aiThreat;
 
-        if (serverHasData && isStoreTrulyEmpty) {
-            console.log('--- DashboardGrid: Hydrating store from server data ---');
+        // Note: We hydrate unconditionally if serverHasData is true because window.location.href 
+        // completely wipes the Zustand store, meaning we always need to trust the server payload on mount.
+        if (serverHasData) {
+            console.log('--- DashboardGrid: Hydrating store from robust server data ---');
             setAuditData(initialComputedData);
         }
     }, [initialComputedData, setAuditData, business?.id]);
