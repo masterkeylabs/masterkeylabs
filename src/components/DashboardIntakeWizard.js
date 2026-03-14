@@ -947,7 +947,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM4Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    Final Matrix calculation. Assess AI disruption risk threshold.
+                                    Final assessment: Analyze how AI disruption affects your business survival.
                                 </p>
                             </div>
 
@@ -957,7 +957,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">Physical Moat (Omnichannel)</span>
+                                        <span className="break-words">Physical Presence</span>
                                     </label>
 
                                     <div
@@ -967,14 +967,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                         <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${formM4.isOmnichannel ? 'bg-ios-cyan border-ios-cyan' : 'border-white/20 group-hover:border-white/40'}`}>
                                             {formM4.isOmnichannel && <span className="material-symbols-outlined text-[16px] text-black font-bold">check</span>}
                                         </div>
-                                        <p className={`font-black text-[11px] uppercase tracking-wider break-words ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>Physical Presence / Retail Moat</p>
+                                        <p className={`font-black text-[11px] uppercase tracking-wider break-words ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>I have a physical store / office space</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">AI Adoption Level</span>
+                                        <span className="break-words">Current AI Usage</span>
                                     </label>
                                     <div className="relative group w-full">
 
@@ -983,10 +983,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             value={formM4.aiAdoptionLevel}
                                             onChange={e => setFormM4({ ...formM4, aiAdoptionLevel: e.target.value })}
                                         >
-                                            <option value="none" className="bg-neutral-900 text-white">Zero (Manual Only)</option>
-                                            <option value="basic" className="bg-neutral-900 text-white">Basic (Exploratory)</option>
-                                            <option value="integrated" className="bg-neutral-900 text-white">Integrated Workflows</option>
-                                            <option value="advanced" className="bg-neutral-900 text-white">Advanced Autonomous</option>
+                                            <option value="none" className="bg-neutral-900 text-white">Not using AI yet</option>
+                                            <option value="basic" className="bg-neutral-900 text-white">Using basic tools (ChatGPT)</option>
+                                            <option value="integrated" className="bg-neutral-900 text-white">AI is part of my daily work</option>
+                                            <option value="advanced" className="bg-neutral-900 text-white">AI runs my core processes</option>
                                         </select>
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                             <span className="material-symbols-outlined">expand_more</span>
@@ -997,7 +997,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">Market AI Dynamics</span>
+                                        <span className="break-words">AI in Your Market</span>
                                     </label>
                                     <div className="relative group w-full">
 
@@ -1006,9 +1006,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             value={formM4.competitorAdoption}
                                             onChange={e => setFormM4({ ...formM4, competitorAdoption: e.target.value })}
                                         >
-                                            <option value="low" className="bg-neutral-900 text-white">Low Disruption</option>
-                                            <option value="medium" className="bg-neutral-900 text-white">Emerging Threats</option>
-                                            <option value="high" className="bg-neutral-900 text-white">Aggressive Displacement</option>
+                                            <option value="low" className="bg-neutral-900 text-white">Industry is stable (No AI impact)</option>
+                                            <option value="medium" className="bg-neutral-900 text-white">Seeing new AI tools in market</option>
+                                            <option value="high" className="bg-neutral-900 text-white">AI is replacing businesses fast</option>
                                         </select>
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                             <span className="material-symbols-outlined">expand_more</span>
@@ -1019,7 +1019,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">Process Complexity</span>
+                                        <span className="break-words">Business Complexity</span>
                                     </label>
                                     <div className="relative group w-full">
 
@@ -1028,9 +1028,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             value={formM4.operationalComplexity}
                                             onChange={e => setFormM4({ ...formM4, operationalComplexity: e.target.value })}
                                         >
-                                            <option value="low" className="bg-neutral-900 text-white">Low Complexity</option>
-                                            <option value="medium" className="bg-neutral-900 text-white">High-Touch Manual</option>
-                                            <option value="high" className="bg-neutral-900 text-white">Advanced Systemic</option>
+                                            <option value="low" className="bg-neutral-900 text-white">Simple & straightforward tasks</option>
+                                            <option value="medium" className="bg-neutral-900 text-white">Tasks need heavy human effort</option>
+                                            <option value="high" className="bg-neutral-900 text-white">Tasks run on complex software</option>
                                         </select>
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                             <span className="material-symbols-outlined">expand_more</span>
