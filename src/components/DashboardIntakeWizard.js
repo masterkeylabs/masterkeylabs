@@ -125,36 +125,25 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             }
 
             // A. Sync Identity (Step 0)
+            // Re-architected: prioritize Business -> User Auth -> Local Storage -> Empty String
+            // We run this effect whenever 'user' or 'business' visibly changes to catch delayed auth hydration
+            const extractedOwner = business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || parsedTemp?.contactName || '';
+            const extractedEmail = business?.email || user?.email || user?.user_metadata?.email || parsedTemp?.email || '';
+            const extractedPhone = business?.phone || user?.phone || user?.user_metadata?.phone || parsedTemp?.whatsapp || '';
+            const extractedTitle = (business?.entity_name && business.entity_name !== 'Initialize System') ? business.entity_name : (parsedTemp?.businessName || '');
+
             setFormM0(prev => {
-                // Extract possible names and emails robustly
-                const extractedOwner = business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || parsedTemp?.contactName || '';
-                const extractedEmail = business?.email || user?.email || user?.user_metadata?.email || parsedTemp?.email || '';
-                const extractedPhone = business?.phone || user?.user_metadata?.phone || user?.phone || parsedTemp?.whatsapp || '';
-                const extractedTitle = (business?.entity_name && business.entity_name !== 'Initialize System') ? business.entity_name : (parsedTemp?.businessName || '');
-
-                // Only update if the new value is truthy AND the old value is exactly empty
-                const newOwner = (prev.ownerName === '' && extractedOwner) ? extractedOwner : prev.ownerName;
-                const newEmail = (prev.email === '' && extractedEmail) ? extractedEmail : prev.email;
-                const newPhone = (prev.whatsapp === '' && extractedPhone) ? extractedPhone : prev.whatsapp;
-                const newTitle = (prev.entityName === '' && extractedTitle) ? extractedTitle : prev.entityName;
-
-                // Stop React from re-rendering if nothing actually changed
-                if (
-                    prev.ownerName === newOwner &&
-                    prev.email === newEmail &&
-                    prev.whatsapp === newPhone &&
-                    prev.entityName === newTitle
-                ) {
-                    return prev;
-                }
-
-                return {
-                    ...prev,
-                    ownerName: newOwner || '',
-                    email: newEmail || '',
-                    whatsapp: newPhone || '',
-                    entityName: newTitle || ''
-                };
+                 // Only update if we actually have new data to prevent overriding active typing
+                 // with blank defaults during intermediate render ticks
+                 const nextForm = { ...prev };
+                 if (extractedOwner && !prev.ownerName) nextForm.ownerName = extractedOwner;
+                 if (extractedEmail && !prev.email) nextForm.email = extractedEmail;
+                 if (extractedPhone && !prev.whatsapp) nextForm.whatsapp = extractedPhone;
+                 if (extractedTitle && !prev.entityName) nextForm.entityName = extractedTitle;
+                 
+                 // Prevent infinite re-renders by returning same reference if no changes
+                 if (JSON.stringify(prev) === JSON.stringify(nextForm)) return prev;
+                 return nextForm;
             });
 
             // B. Sync Financials (Step 1)
