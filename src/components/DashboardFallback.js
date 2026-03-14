@@ -59,10 +59,10 @@ export default function DashboardFallback() {
     }
 
     const dummyData = {
-        lossAudit: { saving_target: 0 },
-        nightLoss: { monthly_loss: 0 },
-        missedCustomers: { missed_customers: 0 },
-        aiThreat: { score: 0 }
+        lossAudit: null,
+        nightLoss: null,
+        missedCustomers: null,
+        aiThreat: null
     };
 
     const placeholderBusiness = business?.id ? business : {

@@ -35,7 +35,11 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
 
     // Derived states
     const computedData = { lossAudit, nightLoss, missedCustomers, aiThreat };
-    const auditsIncomplete = !lossAudit || !nightLoss || !missedCustomers || !aiThreat;
+    const auditsIncomplete = 
+        !lossAudit || !lossAudit.id || 
+        !nightLoss || !nightLoss.id || 
+        !missedCustomers || !missedCustomers.id || 
+        !aiThreat || !aiThreat.id;
     const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
 
     useEffect(() => {
