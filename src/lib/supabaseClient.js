@@ -10,6 +10,14 @@ export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey, {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         storageKey: 'masterkey-auth-token', // Explicit storage key
-        lockType: null // Disable Locking to prevent Navigator LockManager timeouts
+        // Explicitly bypass WebLocks to prevent "Acquiring an exclusive Navigator LockManager lock timed out"
+        lock: (name, acquire) => {
+            // By executing acquire() directly without navigator.locks, we prevent cross-tab or concurrent request deadlocks.
+            // This is a safe and recommended bypass for SPAs struggling with WebLock hanging issues.
+            if (typeof acquire === 'function') {
+               return Promise.resolve().then(() => acquire());
+            }
+            return Promise.resolve();
+        }
     }
 });
