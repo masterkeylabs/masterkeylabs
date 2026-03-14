@@ -90,16 +90,21 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
         // We use the LATEST store values directly rather than the constant from render to avoid closure issues
         const currentStore = useDiagnosticStore.getState();
         const auditsDone = currentStore.lossAudit && currentStore.nightLoss && currentStore.missedCustomers && currentStore.aiThreat;
-        const profileDone = business?.id && business?.entity_name && business.entity_name !== 'Initialize System';
+        
+        // Use fallback to localStorage because closure variables 'business' might be stale on fast completions
+        const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
+        const finalBizId = business?.id || localBizId;
+        
+        const profileDone = finalBizId && business?.entity_name && business.entity_name !== 'Initialize System';
 
         if (auditsDone && profileDone) {
             console.log('--- Wizard: Full system completion detected! ---');
             setIsUnlocking(true);
             
-            // Premium transition: show animation, then refresh to lock it in and ensure 
-            // all server-side reports (PDFs, etc) are generated and synced.
+            // Premium transition: show animation, then redirect to the explicit ID path to lock it in and ensure 
+            // all server-side reports (PDFs, etc) are generated and synced flawlessly avoiding SSR auth drops.
             setTimeout(() => {
-                window.location.reload();
+                window.location.href = `/dashboard?id=${finalBizId}`;
             }, 3000); 
         } else {
             console.log('--- Wizard: Partial completion or profile-only sync, staying in dashboard view ---');
