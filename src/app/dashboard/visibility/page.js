@@ -314,15 +314,15 @@ function VisibilityContent() {
                             </div>
 
                             {/* Missed Customers + Searches */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-alert-red/10 border border-alert-red/30 rounded-xl p-5 text-center">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-alert-red/10 border border-alert-red/30 rounded-xl p-4 md:p-5 text-center">
                                     <p className="text-[10px] uppercase tracking-widest text-alert-red font-bold mb-1">{t.visibility.searchTermLabel}</p>
-                                    <p className="text-2xl font-black text-alert-red">~{(results.missedSearches ?? 0).toLocaleString('en-IN')}</p>
+                                    <p className="text-xl md:text-2xl font-black text-alert-red">~{(results.missedSearches ?? 0).toLocaleString('en-IN')}</p>
                                     <p className="text-white/30 text-[9px] mt-1">{t.visibility.monthlyVolumeLabel}: {(results.cityMonthlySearches ?? 0).toLocaleString('en-IN')}/mo</p>
                                 </div>
-                                <div className="bg-alert-orange/10 border border-alert-orange/30 rounded-xl p-5 text-center">
+                                <div className="bg-alert-orange/10 border border-alert-orange/30 rounded-xl p-4 md:p-5 text-center">
                                     <p className="text-[10px] uppercase tracking-widest text-alert-orange font-bold mb-1">{t.visibility.highIntent}</p>
-                                    <p className="text-2xl font-black text-alert-orange">~{results.missedCustomers ?? results.missed_customers}</p>
+                                    <p className="text-xl md:text-2xl font-black text-alert-orange">~{results.missedCustomers ?? results.missed_customers}</p>
                                     <p className="text-white/30 text-[9px] mt-1">{t.visibility.conversionRate}</p>
                                 </div>
                             </div>

@@ -356,14 +356,14 @@ function LossAuditContent() {
                             </div>
 
                             {/* Recoverable + 5-year */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-neon-green/10 border border-neon-green/30 rounded-xl p-6 text-center">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-neon-green/10 border border-neon-green/30 rounded-xl p-4 md:p-6 text-center">
                                     <p className="text-[10px] uppercase tracking-widest text-neon-green font-bold mb-2">{t.lossAudit.recoverableTitle}</p>
-                                    <p className="text-2xl font-black text-neon-green">{formatINRFull(results.savingTarget ?? results.saving_target)}<span className="text-sm text-neon-green/60">{t.lossAudit.perMonth}</span></p>
+                                    <p className="text-xl md:text-2xl font-black text-neon-green">{formatINRFull(results.savingTarget ?? results.saving_target)}<span className="text-xs md:text-sm text-neon-green/60">{t.lossAudit.perMonth}</span></p>
                                 </div>
-                                <div className="bg-alert-red/10 border border-alert-red/30 rounded-xl p-6 text-center">
+                                <div className="bg-alert-red/10 border border-alert-red/30 rounded-xl p-4 md:p-6 text-center">
                                     <p className="text-[10px] uppercase tracking-widest text-alert-red font-bold mb-2">{t.lossAudit.inactionTitle}</p>
-                                    <p className="text-2xl font-black text-alert-red">{formatINR(results.fiveYearCost ?? results.five_year_cost)}</p>
+                                    <p className="text-xl md:text-2xl font-black text-alert-red">{formatINR(results.fiveYearCost ?? results.five_year_cost)}</p>
                                 </div>
                             </div>
                         </>

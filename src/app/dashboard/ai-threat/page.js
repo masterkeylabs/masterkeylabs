@@ -266,31 +266,31 @@ function AIThreatContent() {
                 {/* Results */}
                 <div className="space-y-6">
                     {results ? (
-                        <>
-                            {/* Risk Score */}
-                            <div className={`bg-black border-2 ${colorStyle.border} rounded-2xl p-6 md:p-10 text-center shadow-2xl`}>
-                                <p className="text-white/50 text-xs uppercase tracking-[0.3em] mb-4">{t.aiThreat.threatLevel}</p>
-                                <p className={`text-5xl md:text-7xl font-black tracking-tighter ${colorStyle.text}`}>
-                                    {results.riskPct}<span className="text-xl md:text-2xl text-white/20">%</span>
+                        <>                            {/* Risk Score */}
+                            <div className={`bg-black border-2 ${colorStyle.border} rounded-2xl p-5 md:p-10 text-center shadow-2xl`}>
+                                <p className="text-white/50 text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] mb-3 md:mb-4">{t.aiThreat.threatLevel}</p>
+                                <p className={`text-4xl md:text-7xl font-black tracking-tighter ${colorStyle.text}`}>
+                                    {results.riskPct}<span className="text-lg md:text-2xl text-white/20">%</span>
                                 </p>
-                                <p className={`text-sm font-bold uppercase tracking-[0.2em] mt-3 ${colorStyle.text}`}>
+                                <p className={`text-[11px] md:text-sm font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] mt-2 md:mt-3 ${colorStyle.text}`}>
                                     {t.common.statuses[results.riskLevel] || results.riskBand}
                                 </p>
                             </div>
-
+ 
                             {/* Time Horizon */}
-                            <div className={`${colorStyle.bg} border ${colorStyle.border} rounded-2xl p-6 md:p-8 text-center`}>
-                                <p className="text-white/50 text-xs uppercase tracking-[0.2em] mb-3">{t.aiThreat.ttlHeadline}</p>
-                                <p className="text-4xl md:text-5xl font-black text-white tracking-tight">
-                                    {results.finalHorizon} <span className="text-lg text-white/30">{t.aiThreat.months.toLowerCase()}</span>
+                            <div className={`${colorStyle.bg} border ${colorStyle.border} rounded-2xl p-4 md:p-8 text-center`}>
+                                <p className="text-white/50 text-[10px] md:text-xs uppercase tracking-[0.15em] md:tracking-[0.2em] mb-2 md:mb-3">{t.aiThreat.ttlHeadline}</p>
+                                <p className="text-3xl md:text-5xl font-black text-white tracking-tight">
+                                    {results.finalHorizon} <span className="text-base md:text-lg text-white/30">{t.aiThreat.months.toLowerCase()}</span>
                                 </p>
-                                <p className="text-white/40 text-xs mt-1">({results.yearsLeft} years)</p>
-                                <div className={`inline-block px-4 py-2 rounded-full mt-4 ${colorStyle.bg} border ${colorStyle.border}`}>
-                                    <p className={`text-[10px] md:text-xs font-bold uppercase tracking-widest ${colorStyle.text}`}>
+                                <p className="text-white/40 text-[10px] md:text-xs mt-1">({results.yearsLeft} years)</p>
+                                <div className={`inline-block px-3 py-1.5 md:px-4 md:py-2 rounded-full mt-3 md:mt-4 ${colorStyle.bg} border ${colorStyle.border}`}>
+                                    <p className={`text-[9px] md:text-xs font-bold uppercase tracking-widest ${colorStyle.text}`}>
                                         {t.aiThreat.statusLabels[results.displayColor]}
                                     </p>
                                 </div>
                             </div>
+
 
                             {/* Modifier Breakdown */}
                             <div className="bg-carbon border border-white/10 rounded-xl p-6">

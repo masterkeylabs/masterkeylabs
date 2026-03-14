@@ -137,7 +137,7 @@ function ProfileEditContent() {
 
                 if (phoneErr) console.warn('Phone check error:', phoneErr);
                 if (existingPhone) {
-                    throw new Error(`This mobile number is already associated with another business: "${existingPhone.entity_name}". Please use a unique number.`);
+                    throw new Error(`This mobile number is already associated with another business. Please use a unique number.`);
                 }
             }
             // -----------------------------

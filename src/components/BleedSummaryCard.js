@@ -19,11 +19,11 @@ export default function BleedSummaryCard({ t, locked }) {
     };
 
     return (
-        <div className="w-full bg-black/40 border border-alert-red/30 rounded-3xl p-8 md:p-12 mb-10 overflow-hidden relative shadow-[0_0_80px_rgba(239,68,68,0.1)]">
+        <div className="w-full bg-black/40 border border-alert-red/30 rounded-3xl p-6 md:p-12 mb-10 overflow-hidden relative shadow-[0_0_80px_rgba(239,68,68,0.1)]">
             {/* Background Accents */}
             <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-alert-red/5 to-transparent pointer-events-none"></div>
             <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-alert-red/10 blur-[100px] rounded-full pointer-events-none"></div>
-
+ 
             <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
                 <div className="text-center lg:text-left space-y-4 w-full lg:w-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-alert-red/10 border border-alert-red/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
@@ -33,16 +33,16 @@ export default function BleedSummaryCard({ t, locked }) {
                         </span>
                     </div>
                     <h2
-                        className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none"
+                        className="text-2xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9] md:leading-none"
                         dangerouslySetInnerHTML={{ __html: t?.dashboard?.bleedCard?.annualBleed || "Total Annual<br />Capital Bleed" }}
                     />
-                    <p className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tighter">
+                    <p className="text-3xl md:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-none">
                         {formatIndian(totalAnnualBleed)}
                     </p>
                     <div className="pt-2">
-                        <p className="text-green-400 font-bold text-sm md:text-lg lg:text-xl flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                        <p className="text-green-400 font-bold text-xs md:text-lg lg:text-xl flex flex-wrap items-center justify-center lg:justify-start gap-x-2 gap-y-1 leading-snug">
                             <span className="material-symbols-outlined text-sm md:text-base">verified</span>
-                            {t?.dashboard?.bleedCard?.recoverable?.replace('{amount}', formatIndian(recoverablePotential)) || `Recoverable with AI: ${formatIndian(recoverablePotential)} / yr`}
+                            <span>{t?.dashboard?.bleedCard?.recoverable?.replace('{amount}', formatIndian(recoverablePotential)) || `Recoverable with AI: ${formatIndian(recoverablePotential)} / yr`}</span>
                         </p>
                     </div>
                 </div>

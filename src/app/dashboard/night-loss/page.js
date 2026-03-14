@@ -206,23 +206,22 @@ function NightLossContent() {
                             colorClass="alert-orange"
                         />
                         <div>
-                            <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.businessTypeLabel}</label>
-                            <div className="grid grid-cols-3 gap-3">
-                                {BUSINESS_TYPES.map(bt => (
-                                    <button key={bt.value} type="button"
-                                        className={`py-3 px-2 rounded-lg text-center transition-all border ${form.businessType === bt.value
-                                            ? 'bg-primary/10 border-primary/30 text-primary'
-                                            : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'}`}
-                                        onClick={() => setForm({ ...form, businessType: bt.value })}
-                                    >
-                                        <p className="font-bold text-sm">{t.nightLoss.businessTypes[bt.value]?.label || bt.label}</p>
-                                        <p className="text-[9px] opacity-60">AI: {bt.aiCvr} → Next-day: {bt.delayCvr}</p>
-                                        <p className="text-[8px] font-bold opacity-40 mt-0.5">{bt.gap}</p>
-                                    </button>
-                                ))}
-                            </div>
-
-                        </div>
+                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.nightLoss.businessTypeLabel}</label>
+                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                 {BUSINESS_TYPES.map(bt => (
+                                     <button key={bt.value} type="button"
+                                         className={`py-3 px-3 rounded-xl text-center transition-all border ${form.businessType === bt.value
+                                             ? 'bg-primary/10 border-primary/30 text-primary'
+                                             : 'bg-white/5 border-white/10 text-white/50 hover:border-white/20'}`}
+                                         onClick={() => setForm({ ...form, businessType: bt.value })}
+                                     >
+                                         <p className="font-bold text-sm">{t.nightLoss.businessTypes[bt.value]?.label || bt.label}</p>
+                                         <p className="text-[10px] md:text-[9px] opacity-60">AI: {bt.aiCvr} → Next-day: {bt.delayCvr}</p>
+                                         <p className="text-[9px] md:text-[8px] font-bold opacity-40 mt-1 md:mt-0.5">{bt.gap}</p>
+                                     </button>
+                                 ))}
+                             </div>
+                         </div>
                         <button
                             type="submit"
                             disabled={saving}
