@@ -214,7 +214,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                             className="w-full py-5 bg-ios-blue text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_0_30px_rgba(0,122,255,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3"
                         >
                             <span className="material-symbols-outlined">analytics</span>
-                            {t.dashboard.auditSummary.cards.loss.run}
+                            {t.dashboard.cards.loss.run}
                         </button>
                     </div>
                 </div>

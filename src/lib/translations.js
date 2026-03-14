@@ -1933,13 +1933,14 @@ export const translations = {
                 },
                 lockedTitle: "Aggregate Intelligence Locked",
                 lockedSub: "Charo diagnostic protocols complete karein survival score unlock karne ke liye.",
-                cards: {
-                    loss: { title: "Loss Audit", run: "Run Audit", sub: "Kharchon mein chupa waste nikaley" },
-                    night: { title: "Night Loss", run: "Calculate", sub: "After-hours lead miss hone se loss" },
-                    visibility: { title: "Digital Visibility", run: "Scan", sub: "Aapka competition aage nikal raha hai" },
-                    markets: { title: "Global Markets", run: "Explore", sub: "International markets mein zyada paisa bachega" }
-                },
-                protocolSearch: "Protocol Search",
+            },
+            cards: {
+                loss: { title: "Loss Audit", run: "Run Audit", sub: "Kharchon mein chupa waste nikaley" },
+                night: { title: "Night Loss", run: "Calculate", sub: "After-hours lead miss hone se loss" },
+                visibility: { title: "Digital Visibility", run: "Scan", sub: "Aapka competition aage nikal raha hai" },
+                markets: { title: "Global Markets", run: "Explore", sub: "International markets mein zyada paisa bachega" }
+            },
+            protocolSearch: "Protocol Search",
                 diagnosticLog: {
                     systemLog: "System Log v2.0",
                     stream: "Diagnostic Stream",
@@ -1968,7 +1969,6 @@ export const translations = {
                 },
                 backToDashboard: "Dashboard par wapas jayein",
             },
-        },
         nav: {
             dashboard: "Dashboard",
             login: "Login",
