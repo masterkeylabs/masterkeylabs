@@ -56,15 +56,12 @@ export const useDiagnosticStore = create((set, get) => ({
     calculateTotalBleed: () => {
         const state = get();
 
-        const opsWeight = state.lossAudit?.saving_target || 0;
-        const nightWeight = (state.nightLoss?.monthly_loss || 0) * 12;
+        // Use official annual_loss fields from the engines to ensure Logic Guards/Caps are respected
+        const opsWeight = state.lossAudit?.annual_loss || (state.lossAudit?.saving_target || 0) * 12;
+        const nightWeight = state.nightLoss?.annual_loss || (state.nightLoss?.monthly_loss || 0) * 12;
+        const visibilityWeight = state.missedCustomers?.annual_loss || 0;
 
-        // Visibility loss calculation logic (sync with Dashboard results)
-        const missedCount = state.missedCustomers?.missed_customers || 0;
-        const avgVal = state.missedCustomers?.avg_transaction_value || 1500;
-        const visibilityWeight = missedCount * avgVal * 12;
-
-        const total = (opsWeight * 12) + nightWeight + visibilityWeight;
+        const total = opsWeight + nightWeight + visibilityWeight;
         set({ totalAnnualBleed: total });
     }
 }));

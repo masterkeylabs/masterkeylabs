@@ -19,7 +19,10 @@ export const VISIBILITY_CONFIG = {
     },
     CONVERSION_RATES: {
         LOCAL_SEARCH: 0.06
-    }
+    },
+    // REALITY CHECK CONSTANTS
+    CAPTURE_COEFFICIENT: 0.02,   // Max market capture for a single business (2%)
+    MAX_REVENUE_MULTIPLIER: 0.4  // Visibility loss capped at 40% of annual turnover
 };
 
 /**

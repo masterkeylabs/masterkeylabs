@@ -433,7 +433,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         try {
             if (!formM3.city) throw new Error("City is required.");
             const avgVal = parseNumericalRange(formM2.avgTransactionValue);
-            const calc = calculateVisibility(formM3.signals, formM3.city, avgVal);
+            const annualRev = parseNumericalRange(formM1.annualRevenue);
+            const calc = calculateVisibility(formM3.signals, formM3.city, avgVal, annualRev);
 
             const payload = {
                 business_id: activeId,
@@ -443,6 +444,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 avg_transaction_value: avgVal,
                 percent: calc.percent,
                 status: calc.status,
+                confidence: calc.confidence,
+                is_clamped: calc.isClamped,
                 missed_customers: calc.missedCustomers,
                 missed_revenue: calc.monthlyLoss,
                 annual_loss: calc.annualLoss,

@@ -4,8 +4,9 @@ import { VISIBILITY_CONFIG } from '../config';
  * VISIBILITY — FORMULA SPECIFICATION
  * Decoupled, functional implementation of the visibility audit.
  */
-export function calculateVisibility(signals, city = '', avgTransactionValue = 0) {
+export function calculateVisibility(signals, city = '', avgTransactionValue = 0, annualRevenue = 0) {
     const avgValue = Math.round(Number(avgTransactionValue) || 0);
+    const revValue = Math.round(Number(annualRevenue) || 0);
     const activeSignals = Array.isArray(signals) ? signals : Object.keys(signals).filter(k => signals[k]);
 
     // 1. Validation Logic
@@ -34,10 +35,24 @@ export function calculateVisibility(signals, city = '', avgTransactionValue = 0)
         cityMonthlySearches = VISIBILITY_CONFIG.CITY_BENCHMARKS.TIER2.searches;
     }
 
-    // 4. Conversion Math
-    const missedSearches = Math.round(cityMonthlySearches * invisibilityRate);
+    // 4. Conversion Math with Reality Checks
+    // REALITY CHECK A: Capture Coefficient (Single business reach cap)
+    const reachableMarketMonthly = cityMonthlySearches * VISIBILITY_CONFIG.CAPTURE_COEFFICIENT;
+    const missedSearches = Math.round(reachableMarketMonthly * invisibilityRate);
+    
     const monthlyMissedCustomers = Math.round(missedSearches * VISIBILITY_CONFIG.CONVERSION_RATES.LOCAL_SEARCH);
-    const monthlyVisibilityLoss = Math.round(monthlyMissedCustomers * avgValue);
+    let monthlyVisibilityLoss = Math.round(monthlyMissedCustomers * avgValue);
+    let annualLoss = monthlyVisibilityLoss * 12;
+
+    // REALITY CHECK B: Revenue Cap (Loss cannot exceed a realistic portion of turnover)
+    let isClamped = false;
+    const maxAllowedAnnualLoss = revValue > 0 ? revValue * VISIBILITY_CONFIG.MAX_REVENUE_MULTIPLIER : Infinity;
+
+    if (annualLoss > maxAllowedAnnualLoss && revValue > 0) {
+        annualLoss = maxAllowedAnnualLoss;
+        monthlyVisibilityLoss = Math.round(annualLoss / 12);
+        isClamped = true;
+    }
 
     // 5. Gap Analysis
     const gaps = Object.entries(VISIBILITY_CONFIG.WEIGHTS)
@@ -51,15 +66,20 @@ export function calculateVisibility(signals, city = '', avgTransactionValue = 0)
     else if (percent >= 50) status = 'OKAY';
     else if (percent >= 30) status = 'GHOST';
 
+    // Confidence IQ
+    const confidence = revValue > 0 ? 'HIGH' : 'MEDIUM';
+
     return {
         percent,
         status,
+        confidence,
+        isClamped,
         invisibilityRate: Math.round(invisibilityRate * 100),
         cityMonthlySearches,
         missedSearches,
         missedCustomers: monthlyMissedCustomers,
         monthlyLoss: monthlyVisibilityLoss,
-        annualLoss: monthlyVisibilityLoss * 12,
+        annualLoss,
         gaps
     };
 }

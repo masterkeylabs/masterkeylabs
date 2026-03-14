@@ -70,10 +70,12 @@ function VisibilityContent() {
 
                 // Recalculate with parsing
                 const avgNum = parseNumericalRange(data.avg_transaction_value);
+                const annualRev = business?.annual_revenue || 0;
                 const calc = calculateVisibility(
                     { ...defaultAnswers, ...savedSignals },
                     data.city || '',
-                    avgNum
+                    avgNum,
+                    annualRev
                 );
                 setResults(calc);
                 if (data.city) {
@@ -110,7 +112,8 @@ function VisibilityContent() {
 
     const handleScan = async () => {
         const avgValue = parseNumericalRange(avgTransactionValue);
-        const calc = calculateVisibility(answers, city, avgValue);
+        const annualRev = business?.annual_revenue || 0;
+        const calc = calculateVisibility(answers, city, avgValue, annualRev);
         setResults(calc);
 
         if (businessId) {
@@ -124,6 +127,8 @@ function VisibilityContent() {
                     avg_transaction_value: avgValue,
                     percent: calc.percent,
                     status: calc.status,
+                    confidence: calc.confidence,
+                    is_clamped: calc.isClamped,
                     missed_customers: calc.missedCustomers,
                     missed_revenue: calc.monthlyLoss,
                     annual_loss: calc.annualLoss,
