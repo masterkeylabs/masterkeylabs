@@ -16,14 +16,7 @@ import {
 
 import { Suspense } from 'react';
 
-const SEARCH_STEPS = [
-    "MONITORING AFTER-HOURS TRAFFIC...",
-    "TRACING CONNECTION DECAY...",
-    "QUANTIFYING SLEEP-MODE WASTE...",
-    "ANALYZING MISSED CONVERSIONS...",
-    "CALCULATING NIGHTLY REVENUE LEAK...",
-    "FINALIZING NIGHT LOSS DATA..."
-];
+
 
 function NightLossContent() {
     const { business } = useAuth();
@@ -85,7 +78,7 @@ function NightLossContent() {
         if (!saving) return;
         setSearchIndex(0);
         const s = setInterval(() => {
-            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+            setSearchIndex(prev => (prev + 1) % (t.nightLoss.searchSteps?.length || 1));
         }, 800);
         return () => clearInterval(s);
     }, [saving]);
@@ -234,7 +227,7 @@ function NightLossContent() {
                                 {saving ? (
                                     <>
                                         <span className="animate-spin text-sm">⌛</span>
-                                        {SEARCH_STEPS[searchIndex]}
+                                        {t.nightLoss.searchSteps?.[searchIndex] || 'Processing...'}
                                     </>
                                 ) : (
                                     <>

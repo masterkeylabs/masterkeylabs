@@ -18,14 +18,7 @@ import {
 
 import { Suspense } from 'react';
 
-const SEARCH_STEPS = [
-    "INITIALIZING OPERATIONAL SCAN...",
-    "ANALYZING EXPENSE STRUCTURE...",
-    "DETECTING WORKFLOW GAPS...",
-    "CALCULATING COORDINATION DRAG...",
-    "MAPPING REVENUE LEAKS...",
-    "FINALIZING LOSS AUDIT..."
-];
+
 
 function LossAuditContent() {
     const { business } = useAuth();
@@ -109,7 +102,7 @@ function LossAuditContent() {
         if (!saving) return;
         setSearchIndex(0);
         const s = setInterval(() => {
-            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+            setSearchIndex(prev => (prev + 1) % (t.lossAudit.searchSteps?.length || 1));
         }, 800);
         return () => clearInterval(s);
     }, [saving]);
@@ -292,7 +285,7 @@ function LossAuditContent() {
                                 {saving ? (
                                     <>
                                         <span className="animate-spin text-sm">⌛</span>
-                                        {SEARCH_STEPS[searchIndex]}
+                                        {t.lossAudit.searchSteps?.[searchIndex] || 'Processing...'}
                                     </>
                                 ) : (
                                     <>

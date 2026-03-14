@@ -176,7 +176,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                             <div className="text-white/20 group-hover:text-red-500 transition-colors mb-2">
                                 <span className="material-symbols-outlined text-[20px]">open_in_new</span>
                             </div>
-                            <p className="text-[10px] font-bold text-white/20 uppercase">SURVIVAL COMPLEXITY</p>
+                            <p className="text-[10px] font-bold text-white/20 uppercase">{t.aiThreat.threatLevel}</p>
                             <p className="text-2xl font-black text-white">{aiThreat?.score || 0}%</p>
                         </div>
                     </div>
@@ -184,11 +184,11 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 text-left">
-                                <p className="text-[9px] font-bold text-white/30 uppercase mb-1">MARKET RELEVANCE TTL</p>
-                                <p className="text-lg font-bold text-white">{aiThreat?.final_horizon || (aiThreat?.years_left ? Math.round(aiThreat.years_left * 12) : 0)} <span className="text-xs text-white/40 font-medium uppercase">MONTHS</span></p>
+                                <p className="text-[9px] font-bold text-white/30 uppercase mb-1">{t.aiThreat.ttlHeadline}</p>
+                                <p className="text-lg font-bold text-white">{aiThreat?.final_horizon || (aiThreat?.years_left ? Math.round(aiThreat.years_left * 12) : 0)} <span className="text-xs text-white/40 font-medium uppercase">{t.aiThreat.months}</span></p>
                             </div>
                             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 text-left">
-                                <p className="text-[9px] font-bold text-white/30 uppercase mb-1">THREAT LEVEL</p>
+                                <p className="text-[9px] font-bold text-white/30 uppercase mb-1">{t.aiThreat.riskAssessment}</p>
                                 <p className="text-lg font-bold text-white">{aiThreat?.threat_level || 'UNKNOWN'}</p>
                             </div>
                         </div>
@@ -203,16 +203,18 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                         <div className="w-20 h-20 bg-ios-blue/10 border border-ios-blue/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
                             <span className="material-symbols-outlined text-4xl text-ios-blue animate-pulse">lock_open</span>
                         </div>
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-3">Diagnostic Locked</h3>
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-3">
+                            {t.dashboard.auditSummary.lockedTitle}
+                        </h3>
                         <p className="text-white/40 text-sm mb-8 leading-relaxed">
-                            Initialize your operational audit to unlock deep-level intelligence and profit leakage reports.
+                            {t.dashboard.auditSummary.lockedSub}
                         </p>
                         <button
                             onClick={onStartAudit}
                             className="w-full py-5 bg-ios-blue text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_0_30px_rgba(0,122,255,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3"
                         >
                             <span className="material-symbols-outlined">analytics</span>
-                            Start Performance Audit
+                            {t.dashboard.auditSummary.cards.loss.run}
                         </button>
                     </div>
                 </div>

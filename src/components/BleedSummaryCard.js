@@ -29,12 +29,12 @@ export default function BleedSummaryCard({ t, locked }) {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-alert-red/10 border border-alert-red/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                         <span className="w-1.5 h-1.5 rounded-full bg-alert-red animate-pulse"></span>
                         <span className="text-[10px] font-black text-alert-red uppercase tracking-[0.2em]">
-                            {t?.dashboard?.bleedCard?.liveBurn || "Live Burn Detected"}
+                            {t?.dashboard?.auditSummary?.bleedCard?.liveBurn}
                         </span>
                     </div>
                     <h2
                         className="text-2xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-[0.9] md:leading-none"
-                        dangerouslySetInnerHTML={{ __html: t?.dashboard?.bleedCard?.annualBleed || "Total Annual<br />Capital Bleed" }}
+                        dangerouslySetInnerHTML={{ __html: t?.dashboard?.auditSummary?.bleedCard?.annualBleed }}
                     />
                     <p className="text-3xl md:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-none">
                         {formatIndian(totalAnnualBleed)}
@@ -42,7 +42,7 @@ export default function BleedSummaryCard({ t, locked }) {
                     <div className="pt-2">
                         <p className="text-green-400 font-bold text-xs md:text-lg lg:text-xl flex flex-wrap items-center justify-center lg:justify-start gap-x-2 gap-y-1 leading-snug">
                             <span className="material-symbols-outlined text-sm md:text-base">verified</span>
-                            <span>{t?.dashboard?.bleedCard?.recoverable?.replace('{amount}', formatIndian(recoverablePotential)) || `Recoverable with AI: ${formatIndian(recoverablePotential)} / yr`}</span>
+                            <span>{t?.dashboard?.auditSummary?.bleedCard?.recoverable?.replace('{amount}', formatIndian(recoverablePotential))}</span>
                         </p>
                     </div>
                 </div>
@@ -53,7 +53,7 @@ export default function BleedSummaryCard({ t, locked }) {
                         className="w-full h-14 md:h-16 bg-white text-black font-black uppercase tracking-[0.1em] rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-200 transition-all active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)] text-xs md:text-sm"
                     >
                         <span className="material-symbols-outlined text-lg">description</span>
-                        {t?.dashboard?.bleedCard?.unlockReport || "Unlock Full Report"}
+                        {t?.dashboard?.auditSummary?.bleedCard?.unlockReport}
                     </button>
 
                     <button
@@ -61,11 +61,11 @@ export default function BleedSummaryCard({ t, locked }) {
                         className="w-full h-14 md:h-16 bg-alert-red text-white font-black uppercase tracking-[0.1em] rounded-2xl flex items-center justify-center gap-3 hover:bg-alert-red/90 transition-all active:scale-95 shadow-[0_20px_40px_rgba(239,68,68,0.2)] text-xs md:text-sm"
                     >
                         <span className="material-symbols-outlined text-lg">calendar_month</span>
-                        {t?.dashboard?.bleedCard?.bookCall || "Book a Call"}
+                        {t?.dashboard?.auditSummary?.bleedCard?.bookCall}
                     </button>
 
                     <p className="text-[9px] md:text-[10px] text-center text-white/30 uppercase tracking-widest font-medium">
-                        {t?.dashboard?.bleedCard?.secureBlueprint || "Secure your technical blueprint today."}
+                        {t?.dashboard?.auditSummary?.bleedCard?.secureBlueprint}
                     </p>
                 </div>
             </div>

@@ -21,15 +21,7 @@ const DISPLAY_COLORS = {
 
 // EMPLOYEE_RANGES removed in favor of shared EMPLOYEE_OPTIONS
 
-const SEARCH_STEPS = [
-    "INITIALIZING NEURAL ENGINE...",
-    "SCANNING DISPLACEMENT DATABASES...",
-    "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
-    "CALCULATING AUTOMATION HORIZON...",
-    "ESTIMATING SURVIVAL METRICS...",
-    "DECRYPTING EXTINCTION TIMELINE...",
-    "FINALIZING RISK PROFILE..."
-];
+
 
 function AIThreatContent() {
     const { business } = useAuth();
@@ -98,7 +90,7 @@ function AIThreatContent() {
         if (!saving) return;
         setSearchIndex(0);
         const s = setInterval(() => {
-            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+            setSearchIndex(prev => (prev + 1) % (t.aiThreat.searchSteps?.length || 1));
         }, 800);
         return () => clearInterval(s);
     }, [saving]);
@@ -237,7 +229,7 @@ function AIThreatContent() {
                                 {saving ? (
                                     <>
                                         <span className="animate-spin">⌛</span>
-                                        {SEARCH_STEPS[searchIndex]}
+                                        {t.aiThreat.searchSteps?.[searchIndex] || 'Processing...'}
                                     </>
                                 ) : (
                                     <>
@@ -298,12 +290,12 @@ function AIThreatContent() {
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between py-2 px-3 bg-white/5 rounded-lg">
                                         <span className="text-white/60">{t.aiThreat.baseMonths} ({results.riskBand})</span>
-                                        <span className="text-white font-bold">{results.baseMonths} mo</span>
+                                        <span className="text-white font-bold">{results.baseMonths} {t.aiThreat.months.toLowerCase()}</span>
                                     </div>
                                     <div className="flex justify-between py-2 px-3 bg-white/5 rounded-lg">
                                         <span className="text-white/60">{t.aiThreat.modifiers}</span>
                                         <span className={`font-bold ${results.modifier >= 0 ? 'text-neon-green' : 'text-alert-red'}`}>
-                                            {results.modifier >= 0 ? '+' : ''}{results.modifier} mo
+                                            {results.modifier >= 0 ? '+' : ''}{results.modifier} {t.aiThreat.months.toLowerCase()}
                                         </span>
                                     </div>
                                     <div className="flex justify-between py-2 px-3 bg-white/5 rounded-lg border border-white/10">

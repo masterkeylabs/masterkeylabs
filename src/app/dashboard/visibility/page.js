@@ -21,14 +21,7 @@ const STATUS_COLORS = {
 
 import { Suspense } from 'react';
 
-const SEARCH_STEPS = [
-    "CRAWLING SEARCH ENGINES...",
-    "MAPPING COMPETITOR FOOTPRINT...",
-    "DETECTING VISIBILITY GAPS...",
-    "ANALYZING MARKET SIGNALS...",
-    "QUANTIFYING MISSED OPPORTUNITY...",
-    "FINALIZING MARKET SCAN..."
-];
+
 
 function VisibilityContent() {
     const { business } = useAuth();
@@ -105,7 +98,7 @@ function VisibilityContent() {
         if (!saving) return;
         setSearchIndex(0);
         const s = setInterval(() => {
-            setSearchIndex(prev => (prev + 1) % SEARCH_STEPS.length);
+            setSearchIndex(prev => (prev + 1) % (t.visibility.searchSteps?.length || 1));
         }, 800);
         return () => clearInterval(s);
     }, [saving]);
@@ -262,7 +255,7 @@ function VisibilityContent() {
                             {saving ? (
                                 <>
                                     <span className="animate-spin text-sm">⌛</span>
-                                    {SEARCH_STEPS[searchIndex]}
+                                    {t.visibility.searchSteps?.[searchIndex] || 'Processing...'}
                                 </>
                             ) : (
                                 <>

@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 import { useDiagnosticStore } from '@/store/diagnosticStore';
 import { formatIndian } from '@/utils/formatIndian';
 
-export default function ComprehensiveReportInline({ businessName, locked }) {
+export default function ComprehensiveReportInline({ businessName, locked, t }) {
     const reportRef = useRef();
     const [isGenerating, setIsGenerating] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
@@ -63,7 +63,7 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
 
     const handleGenerateReport = async () => {
         if (locked) {
-            showNotify('Audit Terminal is Locked. Please complete all 4 modules to unlock the Comprehensive Report.', 'error');
+            showNotify(t.auditSummary.lockedTitle || 'Audit Terminal is Locked. Please complete all 4 modules to unlock the Comprehensive Report.', 'error');
             return;
         }
 
@@ -71,7 +71,7 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
         const { lossAudit, nightLoss, missedCustomers, aiThreat } = useDiagnosticStore.getState();
 
         if (!lossAudit?.created_at || !nightLoss?.created_at || !missedCustomers?.created_at || !aiThreat?.created_at) {
-            showNotify('Please complete all 4 audit modules (Operational Waste, Night Loss, Visibility, AI Threat) before generating the final report.', 'error');
+            showNotify(t.health.partial || 'Please complete all 4 audit modules (Operational Waste, Night Loss, Visibility, AI Threat) before generating the final report.', 'error');
             return;
         }
 
@@ -147,11 +147,11 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                             <span className="material-symbols-outlined text-ios-cyan text-sm">{locked ? 'lock' : 'verified_user'}</span>
                             <span className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.2em]">{locked ? 'Terminal Locked' : 'Diagnostic Terminal'}</span>
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase">Audit Report Generator</h3>
+                        <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase">{t.auditSummary.report.generatorTitle}</h3>
                         <p className="text-sm text-white/40 max-w-lg leading-relaxed">
                             {locked
-                                ? 'Complete the Operational Audit Sequence to generate your board-ready transformation roadmap.'
-                                : 'Compile all critical leakages and transformation roadmaps into a singular, board-ready audit document.'
+                                ? t.auditSummary.report.lockedSubtitle
+                                : t.auditSummary.report.unlockedSubtitle
                             }
                         </p>
                     </div>
@@ -170,17 +170,17 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                             {locked ? (
                                 <>
                                     <span className="material-symbols-outlined text-lg">lock_clock</span>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Locked by Protocol</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t.auditSummary.report.btnLocked}</span>
                                 </>
                             ) : isGenerating ? (
                                 <>
                                     <span className="material-symbols-outlined text-base animate-spin">sync</span>
-                                    <span className="text-[10px] uppercase tracking-[0.2em]">Processing Payload...</span>
+                                    <span className="text-[10px] uppercase tracking-[0.2em]">{t.auditSummary.report.btnProcessing}</span>
                                 </>
                             ) : (
                                 <>
                                     <span className="material-symbols-outlined text-lg">rocket_launch</span>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Generate & Download Report</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t.auditSummary.report.btnGenerate}</span>
                                 </>
                             )}
                         </button>
@@ -199,7 +199,7 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                     <div className="w-full flex justify-between items-end border-b border-white/10 pb-12 mb-12">
                         <img src="/logo.png" alt="MasterKey Labs" className="h-20 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
                         <div className="text-right">
-                            <h4 className="text-ios-cyan font-black tracking-widest uppercase text-xs mb-1">Diagnostic Audit Payload</h4>
+                            <h4 className="text-ios-cyan font-black tracking-widest uppercase text-xs mb-1">{t.auditSummary.report.pdfHeader}</h4>
                             <p className="text-3xl font-black text-white tracking-tighter uppercase">{businessName || 'Masterkey OS'}</p>
                             <p className="text-white/40 text-sm mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
                         </div>
@@ -208,19 +208,17 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                     {/* Section 1: Executive Summary */}
                     <div className="text-center space-y-8 w-full">
                         <div className="inline-block px-6 py-2 bg-red-500/10 border border-red-500/20 rounded-full mb-4">
-                            <span className="text-xs font-black tracking-[0.3em] text-red-500 uppercase">CRITICAL SYSTEM DISRUPTION DETECTED</span>
+                            <span className="text-xs font-black tracking-[0.3em] text-red-500 uppercase">{t.auditSummary.report.criticalBadge}</span>
                         </div>
-                        <h1 className="text-7xl font-black text-white tracking-tighter uppercase leading-none">
-                            Total Annual<br />Capital Bleed
-                        </h1>
+                        <h1 className="text-7xl font-black text-white tracking-tighter uppercase leading-none" dangerouslySetInnerHTML={{ __html: t.auditSummary.report.annualBleed }} />
                         <p className="text-[160px] font-black text-amber-500 drop-shadow-[0_0_40px_rgba(245,158,11,0.4)] tracking-tighter leading-none py-10">
                             {formatIndian(totalAnnualBleed)}
                         </p>
 
                         <div className="mt-12 p-8 bg-green-500/5 border border-green-500/20 rounded-3xl max-w-3xl mx-auto shadow-2xl">
-                            <p className="text-xs font-black text-green-500/50 uppercase tracking-[0.3em] mb-3">RECOVERABLE POTENTIAL</p>
+                            <p className="text-xs font-black text-green-500/50 uppercase tracking-[0.3em] mb-3">{t.auditSummary.report.recoverablePotential || 'RECOVERABLE POTENTIAL'}</p>
                             <p className="text-5xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)} / year</p>
-                            <p className="mt-4 text-lg text-green-400/80 italic font-medium">We can reclaim 50% of this burn by deploying autonomous operational protocols.</p>
+                            <p className="mt-4 text-lg text-green-400/80 italic font-medium">{t.auditSummary.report.recoverableLegend}</p>
                         </div>
                     </div>
 
@@ -228,38 +226,38 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                     <div className="w-full">
                         <div className="flex items-center gap-4 mb-10">
                             <span className="w-2.5 h-10 bg-ios-cyan rounded-full shadow-[0_0_15px_rgba(0,210,255,0.5)]"></span>
-                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">Diagnostic Telemetry</h3>
+                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">{t.auditSummary.report.telemetryTitle}</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-10">
                             <div className="p-10 bg-white/[0.03] border border-white/10 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6">Operational Friction</h4>
+                                <h4 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6">{t.auditSummary.report.opsFriction}</h4>
                                 <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualOpsWaste)}</p>
                                 <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    Manual fragmentation is vaporizing <span className="text-amber-500 font-black">{formatIndian(annualOpsWaste)}</span>. Includes {formatIndian(staffWaste * 12)} in payroll inefficiency.
+                                    {t.auditSummary.report.staffWaste.replace('{amount}', formatIndian(staffWaste * 12))}
                                 </p>
                             </div>
 
                             <div className="p-10 bg-white/[0.03] border border-purple-500/20 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-purple-400/60 uppercase tracking-[0.2em] mb-6">After-Hours Bleed</h4>
+                                <h4 className="text-sm font-black text-purple-400/60 uppercase tracking-[0.2em] mb-6">{t.auditSummary.report.afterHoursBleed}</h4>
                                 <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualNightLoss)}</p>
                                 <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    While systems sleep, you hemorrhage <span className="text-purple-400 font-black">{formatIndian(annualNightLoss)}</span> annually due to lack of 24/7 AI lead response.
+                                    {t.auditSummary.report.nightLossDesc.replace('{amount}', formatIndian(annualNightLoss))}
                                 </p>
                             </div>
 
                             <div className="p-10 bg-white/[0.03] border border-ios-cyan/20 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-ios-cyan/60 uppercase tracking-[0.2em] mb-6">Digital Invisibility</h4>
+                                <h4 className="text-sm font-black text-ios-cyan/60 uppercase tracking-[0.2em] mb-6">{t.auditSummary.report.digitalInvisibility}</h4>
                                 <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualVisibilityLoss)}</p>
                                 <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    An estimated <span className="text-ios-cyan font-black">{formatIndian(annualVisibilityLoss)}</span> (<span className="text-white font-black">{missedCustomers}</span> missed customers) is captured by local competitors.
+                                    {t.auditSummary.report.visibilityDesc.replace('{amount}', formatIndian(annualVisibilityLoss)).replace('{count}', missedCustomers)}
                                 </p>
                             </div>
 
                             <div className="p-10 bg-white/[0.03] border border-red-500/20 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-red-500/60 uppercase tracking-[0.2em] mb-6">AI Irrelevance Horizon</h4>
-                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{extinctionHorizon} MO</p>
+                                <h4 className="text-sm font-black text-red-500/60 uppercase tracking-[0.2em] mb-6">{t.auditSummary.report.aiThreatHorizon}</h4>
+                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{extinctionHorizon} {t.auditSummary.report.months || 'MO'}</p>
                                 <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    Window of survival: <span className="text-red-400 font-black">{extinctionHorizon} months</span> remaining before AI-native firms render your model obsolete.
+                                    {t.auditSummary.report.aiLossDesc.replace('{amount}', extinctionHorizon)}
                                 </p>
                             </div>
                         </div>
@@ -271,9 +269,9 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                             <div className="absolute top-0 right-0 w-[400px] h-full bg-amber-500/5 blur-[100px] rounded-full"></div>
                             <span className="material-symbols-outlined text-amber-500 text-6xl mt-1">warning</span>
                             <div className="relative z-10">
-                                <h4 className="text-2xl font-black text-amber-500 uppercase tracking-widest mb-4">Coordination Drag Applied</h4>
+                                <h4 className="text-2xl font-black text-amber-500 uppercase tracking-widest mb-4">{t.auditSummary.report.coordinationDragTitle}</h4>
                                 <p className="text-xl text-white/70 leading-relaxed font-medium">
-                                    Fixing inefficiencies at this scale is technically complex. Every day of delay compounds the capital dump. Immediate architectural intervention is mandatory.
+                                    {t.auditSummary.report.coordinationDragDesc}
                                 </p>
                             </div>
                         </div>
@@ -283,7 +281,7 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                     <div className="w-full pb-20">
                         <div className="flex items-center gap-4 mb-12">
                             <span className="w-2.5 h-10 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"></span>
-                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">The Survival Protocol</h3>
+                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">{t.auditSummary.report.protocolTitle}</h3>
                         </div>
                         <div className="relative pl-12">
                             <div className="absolute left-[24px] top-[40px] bottom-[40px] w-1 bg-white/10"></div>
@@ -293,8 +291,8 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                                         <span className="text-black font-black text-lg">01</span>
                                     </div>
                                     <div className="pt-1">
-                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Ecosystem Unification</h4>
-                                        <p className="text-lg text-white/40 leading-relaxed font-medium">Consolidate fragmented tools into a singular, high-availability architecture.</p>
+                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{t.auditSummary.report.protocol01Title}</h4>
+                                        <p className="text-lg text-white/40 leading-relaxed font-medium">{t.auditSummary.report.protocol01Desc}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-10">
@@ -302,8 +300,8 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                                         <span className="text-black font-black text-lg">02</span>
                                     </div>
                                     <div className="pt-1">
-                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Autonomous Orchestration</h4>
-                                        <p className="text-lg text-white/40 leading-relaxed font-medium">Deploy programmatic workflows and intelligent routing to eliminate manual cognitive load.</p>
+                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{t.auditSummary.report.protocol02Title}</h4>
+                                        <p className="text-lg text-white/40 leading-relaxed font-medium">{t.auditSummary.report.protocol02Desc}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-10">
@@ -311,8 +309,8 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                                         <span className="text-black font-black text-lg">03</span>
                                     </div>
                                     <div className="pt-1">
-                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Scale & Dominance</h4>
-                                        <p className="text-lg text-white/40 leading-relaxed font-medium">Dominate local metrics and capture 24/7 inbound traffic across all digital touchpoints.</p>
+                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{t.auditSummary.report.protocol03Title}</h4>
+                                        <p className="text-lg text-white/40 leading-relaxed font-medium">{t.auditSummary.report.protocol03Desc}</p>
                                     </div>
                                 </div>
                             </div>
@@ -330,22 +328,22 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
                             <div className="grid grid-cols-2 gap-8">
                                 {/* Module 1 Breakdown */}
                                 <div className="p-8 bg-[#111115] border border-white/10 rounded-2xl">
-                                    <h4 className="text-xs font-black text-white/50 uppercase tracking-widest mb-6">Mod 01: Operational Waste</h4>
+                                    <h4 className="text-xs font-black text-white/50 uppercase tracking-widest mb-6">{t.auditSummary.report.mod01Title}</h4>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Staff/Payroll Waste</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.staffPayroll}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{formatIndian(staffWaste)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Marketing Bleed</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.marketingBleed}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{formatIndian(marketingWaste)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Raw Ops Overheads</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.rawOps}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{formatIndian(lossAuditData.ops_overheads || 0)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
                                         </div>
                                         <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-amber-500/80">Coordination Drag Applied</span>
+                                            <span className="text-sm font-medium text-amber-500/80">{t.auditSummary.report.coordinationDragApplied}</span>
                                             <span className="text-lg font-bold text-amber-400 tracking-tight">{lossAuditData.coordination_drag || 0}x</span>
                                         </div>
                                     </div>
@@ -353,22 +351,22 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
 
                                 {/* Module 2 Breakdown */}
                                 <div className="p-8 bg-[#111115] border border-purple-500/20 rounded-2xl">
-                                    <h4 className="text-xs font-black text-purple-400/50 uppercase tracking-widest mb-6">Mod 02: Night Loss</h4>
+                                    <h4 className="text-xs font-black text-purple-400/50 uppercase tracking-widest mb-6">{t.auditSummary.report.mod02Title}</h4>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Missed Weekly Inquiries</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.missedWeeklyInquiries}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{nightLossData.inquiries || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Avg Txn / LTV Velocity</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.avgTxnVelocity}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{formatIndian(nightLossData.avg_transaction_value || 0)}</span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Est. Conversion Rate</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.estConversion}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{nightLossData.response_time === 'b2b' ? 20 : nightLossData.response_time === 'b2c' ? 25 : 23}%</span>
                                         </div>
                                         <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-purple-400/80">Monthly Revenue Hemorrhage</span>
+                                            <span className="text-sm font-medium text-purple-400/80">{t.auditSummary.report.monthlyHemorrhage}</span>
                                             <span className="text-lg font-bold text-purple-400 tracking-tight">{formatIndian(nightLossRevenue)}</span>
                                         </div>
                                     </div>
@@ -376,18 +374,18 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
 
                                 {/* Module 3 Breakdown */}
                                 <div className="p-8 bg-[#111115] border border-ios-cyan/20 rounded-2xl">
-                                    <h4 className="text-xs font-black text-ios-cyan/50 uppercase tracking-widest mb-6">Mod 03: Digital Invisibility</h4>
+                                    <h4 className="text-xs font-black text-ios-cyan/50 uppercase tracking-widest mb-6">{t.auditSummary.report.mod03Title}</h4>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Lost Local Searches</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.lostLocalSearches}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{visibilityData.missed_searches ? visibilityData.missed_searches.toLocaleString('en-IN') : 0} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">High-Intent Missed Customers</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.missedHighIntent}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{missedCustomers} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
                                         </div>
                                         <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-ios-cyan/80">Calculated Invisibility Score</span>
+                                            <span className="text-sm font-medium text-ios-cyan/80">{t.auditSummary.report.visibilityScore}</span>
                                             <span className="text-lg font-bold text-ios-cyan tracking-tight">{100 - (visibilityData.percent || 0)}%</span>
                                         </div>
                                     </div>
@@ -395,23 +393,23 @@ export default function ComprehensiveReportInline({ businessName, locked }) {
 
                                 {/* Module 4 Breakdown */}
                                 <div className="p-8 bg-[#111115] border border-red-500/20 rounded-2xl">
-                                    <h4 className="text-xs font-black text-red-500/50 uppercase tracking-widest mb-6">Mod 04: AI Threat Horizon</h4>
+                                    <h4 className="text-xs font-black text-red-500/50 uppercase tracking-widest mb-6">{t.auditSummary.report.mod04Title}</h4>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Threat Assessment Threshold</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.threatThreshold}</span>
                                             <span className="text-lg font-bold text-white tracking-tight uppercase">{aiThreatData.threat_level || 'UNKNOWN'}</span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Survival Complexity Score</span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.survivalComplexity}</span>
                                             <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.score || 0}%</span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">Calculated Time to Live</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.final_horizon || (aiThreatData.years_left ? Math.round(aiThreatData.years_left * 12) : 0)} <span className="text-[10px] text-white/30 tracking-widest">MONTHS</span></span>
+                                            <span className="text-sm font-medium text-white/60">{t.auditSummary.report.calculatedTTL}</span>
+                                            <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.final_horizon || (aiThreatData.years_left ? Math.round(aiThreatData.years_left * 12) : 0)} <span className="text-[10px] text-white/30 tracking-widest">{t.auditSummary.report.months || 'MONTHS'}</span></span>
                                         </div>
                                         <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-red-400/80">Extinction Deadline Status</span>
-                                            <span className="text-[11px] font-black tracking-[0.2em] text-red-500 uppercase">{aiThreatData.score > 70 ? 'CRITICAL EVASION REQ.' : 'MONITORING'}</span>
+                                            <span className="text-sm font-medium text-red-400/80">{t.auditSummary.report.extinctionDeadline}</span>
+                                            <span className="text-[11px] font-black tracking-[0.2em] text-red-500 uppercase">{aiThreatData.score > 70 ? (t.auditSummary.report.criticalEvasion || 'CRITICAL EVASION REQ.') : (t.auditSummary.report.monitoring || 'MONITORING')}</span>
                                         </div>
                                     </div>
                                 </div>

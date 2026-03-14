@@ -314,7 +314,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             // If the data is highly suspicious (costs >> revenue), block and warn.
             if (calc.intelligence?.isSuspicious) {
                 console.warn('--- LOGIC GUARD TRIGGERED: SUSPICIOUS REALITY ---');
-                setError(t?.audit?.errors?.insufficientRevenue || "DATA INCONSISTENCY: Reported monthly costs significantly exceed annual revenue. Please verify your inputs before proceeding.");
+                setError(t?.lossAudit?.errors?.insufficientRevenue || "DATA INCONSISTENCY: Reported monthly costs significantly exceed annual revenue. Please verify your inputs before proceeding.");
                 setIsSaving(false);
                 return;
             }
@@ -379,7 +379,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             setStep(2);
         } catch (err) {
             console.error('--- Wizard Step 1: Final Catch ---', err);
-            setError(err.message || 'An unexpected error occurred during calculation.');
+            setError(err.message || t?.common?.errorDefault || 'An unexpected error occurred during calculation.');
         } finally {
             console.log('--- Wizard Step 1: Finally - Setting isSaving to false ---');
             setIsSaving(false);
@@ -535,13 +535,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
         }
     };
 
-    const STEP_TITLES = [
-        "System Initialization [V2.1-RPC]",
-        "Module 01: Operational Waste",
-        "Module 02: Night Loss Leakage",
-        "Module 03: Digital Invisibility",
-        "Module 04: Extinction Horizon"
-    ];
+    const STEP_TITLES = t.wizard.stepTitles;
 
     if (!mounted) return null;
 
@@ -556,10 +550,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 <div className="px-6 py-6 md:px-10 md:py-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01] shrink-0">
                     <div className="space-y-1">
                         <p className="text-[10px] uppercase font-black tracking-[0.4em] text-ios-cyan/60">
-                            {mode === 'profile' ? 'Profile Setup' : `Audit Sequence: Step ${step} of 4`}
+                            {mode === 'profile' ? (t.wizard.step0.badge || 'Profile Setup') : `${t.common?.auditSequence || 'Audit Sequence'}: ${t.common?.step || 'Step'} ${step} ${t.common?.of || 'of'} 4`}
                         </p>
                         <h2 className="text-2xl font-black text-white uppercase tracking-tight">
-                            {mode === 'profile' ? 'Initialize Business' : STEP_TITLES[step]}
+                            {mode === 'profile' ? (t.wizard.step0.title || 'Initialize Business') : STEP_TITLES[step]}
                         </h2>
                     </div>
                     {/* Progress Bar Mini */}
@@ -577,10 +571,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 {/* Error Banner */}
                 {error && (
                     <div className="mx-10 mt-6 bg-red-500/10 border border-red-500/20 px-6 py-3 rounded-xl text-red-500 text-[10px] font-black uppercase tracking-[0.2em] text-center animate-bounce-in shrink-0">
-                        CRITICAL FAULT: {error}
+                        {t.common?.criticalFault || 'CRITICAL FAULT'}: {error}
                         {error.toLowerCase().includes('fetch') && (
                             <div className="mt-2 text-[8px] text-white/40 font-bold lowercase tracking-normal bg-red-500/5 p-2 rounded-lg">
-                                Connection blocked in your region? Try Google DNS (8.8.8.8) or a VPN.
+                                {t.common?.connectionBlocked || 'Connection blocked in your region? Try Google DNS (8.8.8.8) or a VPN.'}
                             </div>
                         )}
                     </div>
@@ -602,22 +596,22 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Identity Profiling</h3>
+                                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">{t.wizard.step0.title || 'Identity Profiling'}</h3>
                                     <p className="text-white/40 text-sm leading-relaxed max-w-sm mx-auto">
-                                        Initialize your enterprise protocol. Provide the core entity details to unlock deep-level diagnostics.
+                                        {t.wizard.step0.sub || 'Initialize your enterprise protocol. Provide the core entity details to unlock deep-level diagnostics.'}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="space-y-6 md:space-y-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
-                                <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">Business Identity</h3>
+                                <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold mb-4 border-b border-white/5 pb-2">{t.wizard.step0.badge || 'Business Identity'}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3">
-                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Business Name</label>
+                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">{t.auth.placeholder.business || 'Business Name'}</label>
                                         <input
                                             required
                                             type="text"
-                                            placeholder="Enter Legal Business Name"
+                                            placeholder={t.auth.placeholder.business || "Enter Legal Business Name"}
                                             className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/10 text-lg font-medium"
                                             value={formM0.entityName}
                                             onChange={e => setFormM0({ ...formM0, entityName: e.target.value })}
@@ -625,11 +619,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Manager/Owner Name</label>
+                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">{t.auth.placeholder.name || 'Manager/Owner Name'}</label>
                                         <input
                                             required
                                             type="text"
-                                            placeholder="Enter Name"
+                                            placeholder={t.auth.placeholder.name || "Enter Name"}
                                             className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/10 text-lg font-medium"
                                             value={formM0.ownerName}
                                             onChange={e => setFormM0({ ...formM0, ownerName: e.target.value })}
@@ -637,11 +631,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">WhatsApp Number</label>
+                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">{t.auth.placeholder.phone || 'WhatsApp Number'}</label>
                                         <input
                                             required
                                             type="tel"
-                                            placeholder="Enter WhatsApp"
+                                            placeholder={t.auth.placeholder.phone || "Enter WhatsApp"}
                                             className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/10 text-lg font-medium"
                                             value={formM0.whatsapp}
                                             onChange={e => setFormM0({ ...formM0, whatsapp: e.target.value })}
@@ -649,11 +643,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">Email Address</label>
+                                        <label className="text-[10px] text-white/40 uppercase tracking-widest block mb-2 font-bold ml-1">{t.auth.placeholder.email || 'Email Address'}</label>
                                         <input
                                             required
                                             type="email"
-                                            placeholder="Enter Email"
+                                            placeholder={t.auth.placeholder.email || "Enter Email"}
                                             className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/10 text-lg font-medium"
                                             value={formM0.email}
                                             onChange={e => setFormM0({ ...formM0, email: e.target.value })}
@@ -670,10 +664,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                        {isSaving ? 'Synchronizing...' : 'Synchronize & Initialize'}
+                                    {isSaving ? (t.wizard.step4.running || 'Synchronizing...') : (t.wizard.step0.btn || 'Synchronize & Initialize')}
                                     </span>
                                 </button>
-                                <p className="text-center text-[9px] text-white/20 uppercase tracking-[0.2em] mt-4">Secure Initialization Protocol Active</p>
+                                <p className="text-center text-[9px] text-white/20 uppercase tracking-[0.2em] mt-4">{t.wizard.step0.secureActive || 'Secure Initialization Protocol Active'}</p>
                             </div>
                         </form>
                     )}
@@ -683,13 +677,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM1Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    Input your estimated monthly overheads to calculate operational inefficiency friction.
+                                    {t.lossAudit.subTitle || 'Input your estimated monthly overheads to calculate operational inefficiency friction.'}
                                 </p>
                             </div>
 
                             <div className="grid grid-cols-1 gap-8 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <div className="space-y-3">
-                                    <label className="text-[10px] text-ios-cyan uppercase tracking-widest block mb-2 font-bold ml-1">Industry Sector</label>
+                                    <label className="text-[10px] text-ios-cyan uppercase tracking-widest block mb-2 font-bold ml-1">{t.lossAudit.industryLabel || 'Industry Sector'}</label>
                                     <select
                                         required
                                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all text-lg font-medium"
@@ -700,28 +694,28 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                         }}
                                     >
                                         {BUSINESS_VERTICALS.map(v => (
-                                            <option key={v.value} value={v.value} className="bg-neutral-900">{v.label}</option>
+                                            <option key={v.value} value={v.value} className="bg-neutral-900">{t.common.industries[v.value] || v.label}</option>
                                         ))}
                                     </select>
-                                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">Critical for waste benchmark calibration.</p>
+                                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">{t.wizard.step1.industryBenchmark || 'Critical for waste benchmark calibration.'}</p>
                                 </div>
 
                                 <RangeSelector
-                                    label="Monthly Payroll / Staff Cost"
+                                    label={t.lossAudit.staffSalaryLabel || "Monthly Payroll / Staff Cost"}
                                     options={PAYROLL_OPTIONS}
                                     value={formM1.staffSalary}
                                     onChange={val => setFormM1({ ...formM1, staffSalary: val })}
                                 />
 
                                 <RangeSelector
-                                    label="Monthly Marketing / Ad Spend"
+                                    label={t.lossAudit.marketingBudgetLabel || "Monthly Marketing / Ad Spend"}
                                     options={MARKETING_OPTIONS} 
                                     value={formM1.marketingBudget}
                                     onChange={val => setFormM1({ ...formM1, marketingBudget: val })}
                                 />
 
                                 <RangeSelector
-                                    label="Other Operational Overheads"
+                                    label={t.lossAudit.opsOverheadLabel || "Other Operational Overheads"}
                                     options={PAYROLL_OPTIONS} // Reusing financial ranges
                                     value={formM1.opsOverheads}
                                     onChange={val => setFormM1({ ...formM1, opsOverheads: val })}
@@ -738,11 +732,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 {/* Moved from Initialization to Contextual Operational Waste section */}
                                 {(!business?.employee_count || !business?.has_crm || !business?.vertical || !business?.annual_revenue) && (
                                     <div className="space-y-8 pt-4 border-t border-white/5">
-                                        <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold">Business & Operational Context</h3>
+                                        <h3 className="text-[10px] text-ios-cyan uppercase tracking-[0.2em] font-bold">{t.wizard.step1.bizContext || 'Business & Operational Context'}</h3>
 
                                         {!business?.annual_revenue && (
                                             <RangeSelector
-                                                label={t?.common?.revenueLabel || 'Estimated Annual Revenue'}
+                                                label={t?.lossAudit?.revenueLabel || 'Estimated Annual Revenue'}
                                                 options={REVENUE_OPTIONS}
                                                 value={formM1.annualRevenue}
                                                 onChange={val => setFormM1({ ...formM1, annualRevenue: val })}
@@ -751,7 +745,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
                                         {!business?.employee_count && (
                                             <RangeSelector
-                                                label={t?.common?.employeeCountLabel || 'Number of Employees (Operational Scale)'}
+                                                label={t?.wizard?.step2?.employees || 'Number of Employees (Operational Scale)'}
                                                 options={EMPLOYEE_OPTIONS}
                                                 value={formM1.employeeCount}
                                                 onChange={val => setFormM1({ ...formM1, employeeCount: val })}
@@ -763,14 +757,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                                 className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM1.hasCRM ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
                                             >
                                                 <span className="material-symbols-outlined">{formM1.hasCRM ? 'check_circle' : 'circle'}</span>
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses CRM</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">{t.wizard.step1.usesCRM || 'Uses CRM'}</span>
                                             </div>
                                             <div
                                                 onClick={() => setFormM1(prev => ({ ...prev, hasERP: !prev.hasERP }))}
                                                 className={`flex-1 p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-center gap-3 ${formM1.hasERP ? 'bg-ios-cyan/10 border-ios-cyan text-ios-cyan' : 'bg-black/40 border-white/10 text-white/40'}`}
                                             >
                                                 <span className="material-symbols-outlined">{formM1.hasERP ? 'check_circle' : 'circle'}</span>
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Uses ERP/Systems</span>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">{t.wizard.step1.usesERP || 'Uses ERP/Systems'}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -785,7 +779,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                        {isSaving ? 'Calculating...' : 'Next Protocol'}
+                                        {isSaving ? (t.common?.calculating || 'Calculating...') : (t.common?.next || 'Next Protocol')}
                                     </span>
                                 </button>
                             </div>
@@ -797,13 +791,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM2Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    Determine revenue hemorrhage caused by after-hours unresponsiveness.
+                                    {t.nightLoss.subTitle || 'Determine revenue hemorrhage caused by after-hours unresponsiveness.'}
                                 </p>
                             </div>
 
                             <div className="space-y-10 bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem]">
                                 <RangeSelector
-                                    label="Daily New Inquiries / Leads Intensity"
+                                    label={t.nightLoss.dailyInquiriesLabel || "Daily New Inquiries / Leads Intensity"}
                                     options={DAILY_LEADS_OPTIONS}
                                     value={formM2.dailyInquiries}
                                     onChange={val => setFormM2({ ...formM2, dailyInquiries: val })}
@@ -812,7 +806,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Closing Time Sequence
+                                        {t.nightLoss.closingTimeLabel || 'Closing Time Sequence'}
                                     </label>
                                     <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
                                         {['12pm', '6pm', '8pm', '10pm', '24x7'].map(time => (
@@ -821,14 +815,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                                 onClick={() => setFormM2({ ...formM2, closingTime: time })}
                                                 className={`py-4 rounded-xl border cursor-pointer border-white/10 transition-all text-center group ${formM2.closingTime === time ? 'bg-ios-cyan/20 border-ios-cyan text-ios-cyan shadow-[0_0_15px_rgba(0,210,255,0.2)]' : 'bg-black/30 text-white/40 hover:border-white/20'}`}
                                             >
-                                                <p className="font-black uppercase tracking-widest text-[10px]">{time === '24x7' ? '24/7' : time}</p>
+                                                <p className="font-black uppercase tracking-widest text-[10px]">{t.nightLoss.closingTimes?.[time]?.label || (time === '24x7' ? '24/7' : time)}</p>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
                                 <RangeSelector
-                                    label="Average Transaction / Ticket Value"
+                                    label={t.nightLoss.avgTransactionLabel || "Average Transaction / Ticket Value"}
                                     options={TXN_VALUE_OPTIONS}
                                     value={formM2.avgTransactionValue}
                                     onChange={val => setFormM2({ ...formM2, avgTransactionValue: val })}
@@ -837,13 +831,13 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Conversion Profile
+                                        {t.nightLoss.businessTypeLabel || 'Conversion Profile'}
                                     </label>
                                     <div className="flex gap-4">
                                         {[
-                                            { id: 'b2b', label: 'B2B/Mfg' },
-                                            { id: 'b2c', label: 'B2C Retail' },
-                                            { id: 'both', label: 'Hybrid' }
+                                            { id: 'b2b', label: t.nightLoss.businessTypes?.b2b?.label || 'B2B/Mfg' },
+                                            { id: 'b2c', label: t.nightLoss.businessTypes?.retail?.label || 'B2C Retail' },
+                                            { id: 'both', label: t.common.industries?.services || 'Hybrid' }
                                         ].map(type => (
                                             <div
                                                 key={type.id}
@@ -865,7 +859,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                        {isSaving ? 'Calculating...' : 'Next Protocol'}
+                                        {isSaving ? (t.common?.calculating || 'Calculating...') : (t.common?.next || 'Next Protocol')}
                                     </span>
                                 </button>
                             </div>
@@ -877,7 +871,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM3Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    Audit external digital surface area presence to calculate stealth losses.
+                                    {t.visibility.subTitle || 'Audit external digital surface area presence to calculate stealth losses.'}
                                 </p>
                             </div>
 
@@ -885,32 +879,32 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Operating City / Geography
+                                        {t.visibility.cityLabel || 'Operating City / Geography'}
                                     </label>
                                     <input
                                         required
                                         type="text"
-                                        placeholder="e.g. MUMBAI, DELHI, SURAT"
+                                        placeholder={t.visibility.placeholders?.cityInput || "e.g. MUMBAI, DELHI, SURAT"}
                                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-ios-cyan outline-none transition-all placeholder:text-white/5 text-lg font-medium uppercase"
                                         value={formM3.city}
                                         onChange={e => setFormM3({ ...formM3, city: e.target.value })}
                                     />
-                                    <p className="text-[9px] text-white/20 uppercase tracking-widest">Required for search volume intensity calibration</p>
+                                    <p className="text-[9px] text-white/20 uppercase tracking-widest">{t.visibility.citySub || 'Required for search volume intensity calibration'}</p>
                                 </div>
 
                                 <div className="space-y-4">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full"></span>
-                                        Active Digital Signals
+                                        {t.visibility.signalsTitle || 'Active Digital Signals'}
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {[
-                                            { id: 'hasGoogleMyBusiness', label: 'Google Business Profile' },
-                                            { id: 'hasWebsite', label: 'Active Website' },
-                                            { id: 'hasWhatsApp', label: 'WhatsApp Business' },
-                                            { id: 'activeSocialMedia', label: 'Active Social Media' },
-                                            { id: 'seoOptimized', label: 'Local SEO Optimized' },
-                                            { id: 'runsAds', label: 'Search/Social Ads' },
+                                            { id: 'hasGoogleMyBusiness', label: t.visibility.signals?.hasGoogleMyBusiness || 'Google Business Profile' },
+                                            { id: 'hasWebsite', label: t.visibility.signals?.hasWebsite || 'Active Website' },
+                                            { id: 'hasWhatsApp', label: t.visibility.signals?.hasWhatsApp || 'WhatsApp Business' },
+                                            { id: 'activeSocialMedia', label: t.visibility.signals?.activeSocialMedia || 'Active Social Media' },
+                                            { id: 'seoOptimized', label: t.visibility.signals?.seoOptimized || 'Local SEO Optimized' },
+                                            { id: 'runsAds', label: t.visibility.signals?.runsAds || 'Search/Social Ads' },
                                         ].map(sig => (
                                             <div
                                                 key={sig.id}
@@ -935,7 +929,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                        {isSaving ? 'Calculating...' : 'Next Protocol'}
+                                        {isSaving ? (t.common?.calculating || 'Calculating...') : (t.common?.next || 'Next Protocol')}
                                     </span>
                                 </button>
                             </div>
@@ -947,7 +941,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM4Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    Final assessment: Analyze how AI disruption affects your business survival.
+                                    {t.wizard.step4.sub || t.aiThreat.subTitle || "Final assessment: Analyze how AI disruption affects your business survival."}
                                 </p>
                             </div>
 
@@ -957,7 +951,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">Physical Presence</span>
+                                        <span className="break-words">{t.wizard.step4.physicalPresence || t.aiThreat.physicalPresenceLabel || 'Physical Presence'}</span>
                                     </label>
 
                                     <div
@@ -967,14 +961,14 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                         <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${formM4.isOmnichannel ? 'bg-ios-cyan border-ios-cyan' : 'border-white/20 group-hover:border-white/40'}`}>
                                             {formM4.isOmnichannel && <span className="material-symbols-outlined text-[16px] text-black font-bold">check</span>}
                                         </div>
-                                        <p className={`font-black text-[11px] uppercase tracking-wider break-words ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>I have a physical store / office space</p>
+                                        <p className={`font-black text-[11px] uppercase tracking-wider break-words ${formM4.isOmnichannel ? 'text-ios-cyan' : 'text-white/40'}`}>{t.wizard.step4.physicalPresenceCheck || t.aiThreat.physicalPresenceCheck || 'I have a physical store / office space'}</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">Current AI Usage</span>
+                                        <span className="break-words">{t.wizard.step4.aiAdoptionLabel || t.aiThreat.aiAdoptionLabel || 'Current AI Usage'}</span>
                                     </label>
                                     <div className="relative group w-full">
 
@@ -983,10 +977,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             value={formM4.aiAdoptionLevel}
                                             onChange={e => setFormM4({ ...formM4, aiAdoptionLevel: e.target.value })}
                                         >
-                                            <option value="none" className="bg-neutral-900 text-white">Not using AI yet</option>
-                                            <option value="basic" className="bg-neutral-900 text-white">Using basic tools (ChatGPT)</option>
-                                            <option value="integrated" className="bg-neutral-900 text-white">AI is part of my daily work</option>
-                                            <option value="advanced" className="bg-neutral-900 text-white">AI runs my core processes</option>
+                                            <option value="none" className="bg-neutral-900 text-white">{t.wizard.step4.aiAdoptionOptions?.none || t.aiThreat.aiAdoptionOptions?.none || 'Not using AI yet'}</option>
+                                            <option value="basic" className="bg-neutral-900 text-white">{t.wizard.step4.aiAdoptionOptions?.basic || t.aiThreat.aiAdoptionOptions?.basic || 'Using basic tools (ChatGPT)'}</option>
+                                            <option value="integrated" className="bg-neutral-900 text-white">{t.wizard.step4.aiAdoptionOptions?.integrated || t.aiThreat.aiAdoptionOptions?.integrated || 'AI is part of my daily work'}</option>
+                                            <option value="advanced" className="bg-neutral-900 text-white">{t.wizard.step4.aiAdoptionOptions?.advanced || t.aiThreat.aiAdoptionOptions?.advanced || 'AI runs my core processes'}</option>
                                         </select>
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                             <span className="material-symbols-outlined">expand_more</span>
@@ -997,7 +991,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">AI in Your Market</span>
+                                        <span className="break-words">{t.wizard.step4.competitorAdoptionLabel || t.aiThreat.competitorAdoptionLabel || 'AI in Your Market'}</span>
                                     </label>
                                     <div className="relative group w-full">
 
@@ -1006,9 +1000,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             value={formM4.competitorAdoption}
                                             onChange={e => setFormM4({ ...formM4, competitorAdoption: e.target.value })}
                                         >
-                                            <option value="low" className="bg-neutral-900 text-white">Industry is stable (No AI impact)</option>
-                                            <option value="medium" className="bg-neutral-900 text-white">Seeing new AI tools in market</option>
-                                            <option value="high" className="bg-neutral-900 text-white">AI is replacing businesses fast</option>
+                                            <option value="low" className="bg-neutral-900 text-white">{t.wizard.step4.competitorAdoptionOptions?.low || t.aiThreat.competitorAdoptionOptions?.low || 'Industry is stable (No AI impact)'}</option>
+                                            <option value="medium" className="bg-neutral-900 text-white">{t.wizard.step4.competitorAdoptionOptions?.medium || t.aiThreat.competitorAdoptionOptions?.medium || 'Seeing new AI tools in market'}</option>
+                                            <option value="high" className="bg-neutral-900 text-white">{t.wizard.step4.competitorAdoptionOptions?.high || t.aiThreat.competitorAdoptionOptions?.high || 'AI is replacing businesses fast'}</option>
                                         </select>
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                             <span className="material-symbols-outlined">expand_more</span>
@@ -1019,7 +1013,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 <div className="space-y-3 min-w-0">
                                     <label className="text-[10px] text-ios-cyan font-black uppercase tracking-[0.3em] flex items-center gap-2 flex-wrap">
                                         <span className="w-1.5 h-1.5 bg-ios-cyan rounded-full shrink-0"></span>
-                                        <span className="break-words">Business Complexity</span>
+                                        <span className="break-words">{t.wizard.step4.operationalComplexityLabel || t.aiThreat.operationalComplexityLabel || 'Business Complexity'}</span>
                                     </label>
                                     <div className="relative group w-full">
 
@@ -1028,9 +1022,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             value={formM4.operationalComplexity}
                                             onChange={e => setFormM4({ ...formM4, operationalComplexity: e.target.value })}
                                         >
-                                            <option value="low" className="bg-neutral-900 text-white">Simple & straightforward tasks</option>
-                                            <option value="medium" className="bg-neutral-900 text-white">Tasks need heavy human effort</option>
-                                            <option value="high" className="bg-neutral-900 text-white">Tasks run on complex software</option>
+                                            <option value="low" className="bg-neutral-900 text-white">{t.wizard.step4.operationalComplexityOptions?.low || t.aiThreat.operationalComplexityOptions?.low || 'Simple & straightforward tasks'}</option>
+                                            <option value="medium" className="bg-neutral-900 text-white">{t.wizard.step4.operationalComplexityOptions?.medium || t.aiThreat.operationalComplexityOptions?.medium || 'Tasks need heavy human effort'}</option>
+                                            <option value="high" className="bg-neutral-900 text-white">{t.wizard.step4.operationalComplexityOptions?.high || t.aiThreat.operationalComplexityOptions?.high || 'Tasks run on complex software'}</option>
                                         </select>
                                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
                                             <span className="material-symbols-outlined">expand_more</span>
@@ -1047,7 +1041,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                                     <span className="relative z-10 group-hover:text-black transition-colors duration-500">
-                                        {isSaving ? 'Finalizing...' : 'Submit Diagnostics'}
+                                        {isSaving ? (t.wizard.step4.running || t.aiThreat.runningText || 'Finalizing...') : (t.wizard.step4.btn || t.aiThreat.btnText || 'Submit Diagnostics')}
                                     </span>
                                 </button>
                             </div>

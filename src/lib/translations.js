@@ -36,6 +36,10 @@ export const translations = {
                 OKAY: "Mid-Level",
                 GHOST: "Ghost",
                 INVISIBLE: "Invisible"
+            },
+            errors: {
+                syncFailed: "Sync Failed: {message}",
+                unexpectedError: "An unexpected error occurred while saving. Please try again."
             }
         },
         scanningSuite: {
@@ -112,18 +116,25 @@ export const translations = {
         wizard: {
             step0: {
                 badge: "System Protocol v2.1",
-                title: "Scan your Business for Profit Leaks.",
-                sub: "Identify where you are losing revenue and how AI is threatening your business model.",
+                title: "Scan your business for profit leakage.",
+                sub: "Initialize your enterprise protocol. Provide the core entity details to unlock deep-level diagnostics.",
                 btn: "Start System Audit",
-                survival: "Traditional dhanda is dying.",
-                survivalSub: "Let's calculate your survival rate and find your exact operational bleed.",
-                goDashboard: "GO TO DASHBOARD"
+                survival: "Traditional business is dying.",
+                survivalSub: "Let's calculate your survival rate and find your real losses.",
+                goDashboard: "GO TO DASHBOARD",
+                identityTitle: "Identity Profiling",
+                identityBadge: "Business Identity",
+                secureActive: "Secure Initialization Protocol Active"
             },
             step1: {
                 title: "Identification",
                 badge: "Step 1 — Identity",
                 vertical: "Business Vertical",
-                revenue: "Monthly Revenue Bracket"
+                revenue: "Monthly Revenue Bracket",
+                industryBenchmark: "Critical for waste benchmark calibration.",
+                bizContext: "Business & Operational Context",
+                usesCRM: "Uses CRM",
+                usesERP: "Uses ERP/Systems"
             },
             step2: {
                 title: "The Bleed",
@@ -132,7 +143,13 @@ export const translations = {
                 marketing: "Monthly Marketing Spend (₹)",
                 ops: "Monthly Operations Overhead (₹)",
                 prev: "Back",
-                next: "Next Step"
+                next: "Next Step",
+                closingTimeSeq: "Closing Time Sequence",
+                avgTxnValue: "Average Transaction / Ticket Value",
+                conversionProfile: "Conversion Profile",
+                b2b: "B2B/Mfg",
+                b2c: "B2C Retail",
+                hybrid: "Hybrid"
             },
             step3: {
                 title: "The Tech Gap",
@@ -143,20 +160,58 @@ export const translations = {
                     manual: "Manual WhatsApp / Calls",
                     ai: "Automated AI Agent"
                 },
-                btn: "Generate Diagnostic Report"
+                btn: "Generate Diagnostic Report",
+                cityLabel: "Operating City / Geography",
+                citySub: "Required for search volume intensity calibration",
+                signalsTitle: "Active Digital Signals",
+                signals: {
+                    hasGoogleMyBusiness: "Google Business Profile",
+                    hasWebsite: "Active Website",
+                    hasWhatsApp: "WhatsApp Business",
+                    activeSocialMedia: "Active Social Media",
+                    seoOptimized: "Local SEO Optimized",
+                    runsAds: "Search/Social Ads"
+                }
             },
             step4: {
                 title: "Protocol Deciphered",
                 sub: "Risk profile and Profit-Leak report ready for {name}.",
                 btn: "Save Report & Secure Data",
-                running: "Running Diagnostic Protocols..."
+                running: "Running Diagnostic Protocols...",
+                physicalPresence: "Physical Presence",
+                physicalPresenceCheck: "I have a physical store / office space",
+                aiAdoptionLabel: "Current AI Usage",
+                aiAdoptionOptions: {
+                    none: "Not using AI yet",
+                    basic: "Using basic tools (ChatGPT)",
+                    integrated: "AI is part of my daily work",
+                    advanced: "AI runs my core processes"
+                },
+                competitorAdoptionLabel: "AI in Your Market",
+                competitorAdoptionOptions: {
+                    low: "Industry is stable (No AI impact)",
+                    medium: "Seeing new AI tools in market",
+                    high: "AI is replacing businesses fast"
+                },
+                operationalComplexityLabel: "Business Complexity",
+                operationalComplexityOptions: {
+                    low: "Simple & straightforward tasks",
+                    medium: "Tasks need heavy human effort",
+                    high: "Tasks run on complex software"
+                },
+                runningText: "Finalizing...",
+                btnText: "Submit Diagnostics"
             },
             step5: {
-                leaks: "CRITICAL LEAKS DETECTED",
-                decryption: "Your comprehensive Extinction Report and Savings Target are ready. Enter your details to decrypt the dashboard.",
-                decryptBtn: "DECRYPT DASHBOARD",
                 alreadyAccount: "Already have an account? Log In"
-            }
+            },
+            stepTitles: [
+                "System Initialization [V2.1-RPC]",
+                "Module 01: Operational Waste",
+                "Module 02: Night Loss Leakage",
+                "Module 03: Digital Invisibility",
+                "Module 04: Extinction Horizon"
+            ]
         },
         nav: {
             dashboard: "Dashboard",
@@ -197,7 +252,14 @@ export const translations = {
             emptyState: "Enter your costs to see the breakdown",
             errors: {
                 insufficientRevenue: "DATA INCONSISTENCY: Reported monthly costs significantly exceed annual revenue. Please verify your inputs before proceeding."
-            }
+            },
+            searchSteps: [
+                'Syncing Market Data...',
+                'Calculating Payroll Waste...',
+                'Analyzing Marketing Leakage...',
+                'Detecting Coordination Drag...',
+                'Generating Operational Audit...'
+            ]
         },
         nightLoss: {
             title: "Night Loss Calculator",
@@ -222,6 +284,13 @@ export const translations = {
             hourlyLossSub: "from closing time to next morning",
             source: "SOURCE: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
             emptyState: "Configure your business hours to see the loss",
+            searchSteps: [
+                'Analyzing Business Hours...',
+                'Calculating Lead Decay Rate...',
+                'Estimating Missed Revenue...',
+                'Analyzing Conversion Gaps...',
+                'Generating Night-Loss Report...'
+            ],
             closingTimes: {
                 "6pm": { label: "6:00 PM", desc: "Standard Closing" },
                 "8pm": { label: "8:00 PM", desc: "Late Evening" },
@@ -231,6 +300,9 @@ export const translations = {
                 retail: { label: "Retail / Shop", desc: "Physical storefront" },
                 service: { label: "Service / Agency", desc: "Lead-based business" },
                 b2b: { label: "B2B / Manufacturing", desc: "Large ticket contracts" }
+            },
+            errors: {
+                missingTxnValue: "Please enter your average transaction value (₹). This is required to calculate revenue loss."
             }
         },
         visibility: {
@@ -269,12 +341,40 @@ export const translations = {
                 citySelect: "— Select city —",
                 cityInput: "Enter city name...",
                 revenue: "₹ 1,500"
-            }
+            },
+            searchSteps: [
+                'Scanning Local Search Volume...',
+                'Analyzing Competitor Visibility...',
+                'Checking Market Signal Strength...',
+                'Estimating Missed Customers...',
+                'Generating Invisibility Audit...'
+            ]
         },
         aiThreat: {
             title: "Extinction Horizon (AI Threat)",
             subTitle: "Calculate your business's survival timeline in the era of Generative AI.",
             formHeader: "Survival Protocol Inputs",
+            physicalPresenceLabel: "Physical Presence",
+            physicalPresenceCheck: "I have a physical store / office space",
+            aiAdoptionLabel: "Current AI Usage",
+            aiAdoptionOptions: {
+                none: "Not using AI yet",
+                basic: "Using basic tools (ChatGPT)",
+                integrated: "AI is part of my daily work",
+                advanced: "AI runs my core processes"
+            },
+            competitorAdoptionLabel: "AI in Your Market",
+            competitorAdoptionOptions: {
+                low: "Industry is stable (No AI impact)",
+                medium: "Seeing new AI tools in market",
+                high: "AI is replacing businesses fast"
+            },
+            operationalComplexityLabel: "Business Complexity",
+            operationalComplexityOptions: {
+                low: "Simple & straightforward tasks",
+                medium: "Tasks need heavy human effort",
+                high: "Tasks run on complex software"
+            },
             industryLabel: "Industry / Vertical",
             manualTasksLabel: "% Of Tasks that are Repetitive/Manual",
             manualTasksSub: "Data entry, scheduling, basic writing, repetitive sorting.",
@@ -314,7 +414,14 @@ export const translations = {
                 watch: "WATCH CLOSELY — 12-month action plan needed",
                 manageable: "MANAGEABLE RUNWAY — Begin transition planning",
                 monitor: "LONG RUNWAY — Monitor and prepare, not urgent"
-            }
+            },
+            searchSteps: [
+                'Dissecting Departmental Tasks...',
+                'Calculating Automation Exposure...',
+                'Checking Market Resilience...',
+                'Mapping Extinction Horizon...',
+                'Finalizing Survival Protocol...'
+            ]
         },
         header: {
             home: "Home",
@@ -394,50 +501,7 @@ export const translations = {
             risksTitle: "Immediate Capital Risks",
             logTitle: "Protocol Intelligence Log",
             logStatus: "Status: Live Monitoring",
-            auditSummary: {
-                header: {
-                    log: "Profit Leak Intelligence Log",
-                    overview: "Your AI Survival Report",
-                    exportBtn: "Export Intelligence Report",
-                    exporting: "Analyzing Systems..."
-                },
-                module01: {
-                    tag: "The Internal Leak",
-                    title: "Where your money is leaking",
-                    hole: "Monthly Revenue Hole",
-                    payroll: "Payroll Waste",
-                    overhead: "Overhead Waste",
-                    marketing: "Marketing Waste",
-                    coordination: "Coordination Drag"
-                },
-                module02: {
-                    tag: "The Sleep Gap",
-                    title: "Missed After-Hours Revenue",
-                    potential: "Potential Revenue",
-                    current: "Current Revenue",
-                    leak: "Nightly Leakage",
-                    recovery: "Recoverable with AI"
-                },
-                module03: {
-                    tag: "Market Invisibility",
-                    title: "Missed Local Customers",
-                    missed: "Missed Customers",
-                    search: "Monthly Volume",
-                    signal01: "GBP Signal",
-                    signal02: "WEB Signal",
-                    signal03: "SOC Signal",
-                    signal04: "ADS Signal"
-                },
-                module04: {
-                    tag: "Extinction Horizon",
-                    title: "System Survival",
-                    term: "Survival Window",
-                    risk: "Threat Level",
-                    factor01: "AI Disruption",
-                    factor02: "Market Fragility",
-                    factor03: "Tech Obsolescence"
-                }
-            },
+
             profile: {
                 title: "Business Profile",
                 managedBy: "Managed by",
@@ -521,8 +585,7 @@ export const translations = {
                 scanComplete: "Diagnostic Scan Complete",
                 partial: "Partial protocols active. Complete all scans for full readiness."
             },
-            lockedTitle: "Aggregate Intelligence Locked",
-            lockedSub: "Initialize and complete all four diagnostic protocols to unlock your consolidated survival score.",
+
             cards: {
                 loss: { title: "Loss Audit", run: "Run Audit", sub: "Find hidden waste in staff, marketing & operations costs" },
                 night: { title: "Night Loss", run: "Calculate", sub: "Revenue lost from after-hours unanswered inquiries" },
@@ -557,11 +620,66 @@ export const translations = {
                 sub: "Submit your business details on the landing page to see your AI threat assessment."
             },
             auditSummary: {
-                header: {
-                    log: "Diagnostic Intelligence Log",
-                    overview: "System Survival Overview",
-                    exportBtn: "Export Intelligence Report",
-                    exporting: "Analyzing Systems..."
+                lockedTitle: "Aggregate Intelligence Locked",
+                lockedSub: "Initialize and complete all four diagnostic protocols to unlock your consolidated survival score.",
+                bleedCard: {
+                    liveBurn: "Live Burn Detected",
+                    annualBleed: "Total Annual<br />Capital Bleed",
+                    recoverable: "Recoverable with AI: {amount} / yr",
+                    unlockReport: "Unlock Full Report",
+                    bookCall: "Book a Call",
+                    secureBlueprint: "Secure your technical blueprint today."
+                },
+                report: {
+                    generatorTitle: "Audit Report Generator",
+                    lockedSubtitle: "Complete the Operational Audit Sequence to generate your board-ready transformation roadmap.",
+                    unlockedSubtitle: "Compile all critical leakages and transformation roadmaps into a singular, board-ready audit document.",
+                    btnLocked: "Locked by Protocol",
+                    btnProcessing: "Processing Payload...",
+                    btnGenerate: "Generate & Download Report",
+                    pdfHeader: "Diagnostic Audit Payload",
+                    criticalBadge: "CRITICAL SYSTEM DISRUPTION DETECTED",
+                    recoverableLegend: "We can reclaim 50% of this burn by deploying autonomous operational protocols.",
+                    telemetryTitle: "Diagnostic Telemetry",
+                    opsFriction: "Operational Friction",
+                    staffWaste: "Includes {amount} in payroll inefficiency.",
+                    afterHoursBleed: "After-Hours Bleed",
+                    nightLossDesc: "While systems sleep, you hemorrhage {amount} annually due to lack of 24/7 AI lead response.",
+                    digitalInvisibility: "Digital Invisibility",
+                    visibilityDesc: "An estimated {amount} ({count} missed customers) is captured by local competitors.",
+                    aiThreatHorizon: "AI Irrelevance Horizon",
+                    aiLossDesc: "Window of survival: {amount} months remaining before AI-native firms render your model obsolete.",
+                    coordinationDragTitle: "Coordination Drag Applied",
+                    coordinationDragDesc: "Fixing inefficiencies at this scale is technically complex. Every day of delay compounds the capital dump. Immediate architectural intervention is mandatory.",
+                    protocolTitle: "The Survival Protocol",
+                    protocol01Title: "Ecosystem Unification",
+                    protocol01Desc: "Consolidate fragmented tools into a singular, high-availability architecture.",
+                    protocol02Title: "Autonomous Orchestration",
+                    protocol02Desc: "Deploy programmatic workflows and intelligent routing to eliminate manual cognitive load.",
+                    protocol03Title: "Scale & Dominance",
+                    protocol03Desc: "Dominate local metrics and capture 24/7 inbound traffic across all digital touchpoints.",
+                    rawDiagnostics: "Raw System Diagnostics",
+                    mod01Title: "Mod 01: Operational Waste",
+                    mod02Title: "Mod 02: Night Loss",
+                    mod03Title: "Mod 03: Digital Invisibility",
+                    mod04Title: "Mod 04: AI Threat Horizon",
+                    staffPayroll: "Staff/Payroll Waste",
+                    marketingBleed: "Marketing Bleed",
+                    rawOps: "Raw Ops Overheads",
+                    coordinationDragApplied: "Coordination Drag Applied",
+                    missedWeeklyInquiries: "Missed Weekly Inquiries",
+                    avgTxnVelocity: "Avg Txn / LTV Velocity",
+                    estConversion: "Est. Conversion Rate",
+                    monthlyHemorrhage: "Monthly Revenue Hemorrhage",
+                    lostLocalSearches: "Lost Local Searches",
+                    missedHighIntent: "High-Intent Missed Customers",
+                    visibilityScore: "Calculated Invisibility Score",
+                    threatThreshold: "Threat Assessment Threshold",
+                    survivalComplexity: "Survival Complexity Score",
+                    calculatedTTL: "Calculated Time to Live",
+                    extinctionDeadline: "Extinction Deadline Status",
+                    criticalEvasion: "CRITICAL EVASION REQ.",
+                    monitoring: "MONITORING"
                 },
                 module01: {
                     tag: "Module 01: The Internal Leak",
@@ -670,34 +788,38 @@ export const translations = {
         badge: "सिस्टम स्कोर सक्रिय",
         common: {
             market_context: "आपका बाजार",
+            revenueLabel: "अनुमानित वार्षिक राजस्व",
+            employeeCountLabel: "कर्मचारियों की संख्या (ऑपरेशनल स्केल)",
             industries: {
-                it_services: "IT / BPO",
+                it_services: "आईटी / बीपीओ",
                 ecommerce: "ई-कॉमर्स",
-                finance: "फाइनेंस",
-                travel: "यात्रा (Travel)",
-                data_entry: "डाटा एंट्री",
-                retail: "खुदरा (Retail)",
-                manufacturing: "विनिर्माण (Manufacturing)",
+                finance: "फाइनेंस (रुटीन)",
+                travel: "ट्रैवल बुकिंग",
+                data_entry: "डेटा एंट्री फर्म",
+                retail: "रिटेल (भौतिक)",
+                manufacturing: "मैन्युफैक्चरिंग (सेमी-ऑटो)",
                 logistics: "लॉजिस्टिक्स",
                 education: "शिक्षा / कोचिंग",
                 real_estate: "रियल एस्टेट",
-                construction: "निर्माण (Construction)",
-                hospitality: "आतिथ्य (Hospitality)",
-                fb: "खाद्य एवं पेय (F&B)",
-                healthcare: "स्वास्थ्य सेवा",
-                legal: "कानूनी (Legal)",
-                services: "सेवा क्षेत्र (Services)",
-                b2b: "B2B गुड्स"
+                construction: "कंस्ट्रक्शन",
+                hospitality: "हॉस्पिटैलिटी",
+                fb: "मीडिया / कंटेंट",
+                healthcare: "हेल्थकेयर (क्लिनिकल)",
+                legal: "लीगल",
+                services: "कुशल व्यापार",
+                b2b: "कृषि"
             },
             statuses: {
                 DOMINANT: "प्रभावी",
                 VISIBLE: "दृश्यमान",
-                OKAY: "मध्यम",
-                GHOST: "अदृश्य (Ghost)",
-                INVISIBLE: "अदृश्य"
+                OKAY: "मध्यम स्तर",
+                GHOST: "अदृश्य",
+                INVISIBLE: "गायब"
             },
-            employeeCountLabel: "कर्मचारियों की संख्या (ऑपरेशनल स्केल)",
-            revenueLabel: "अनुमानित वार्षिक राजस्व"
+            errors: {
+                syncFailed: "सिंक विफल रहा: {message}",
+                unexpectedError: "सेव करते समय एक अप्रतिशित त्रुटि हुई। कृपया पुन: प्रयास करें।"
+            }
         },
         hero: {
             title1: "भविष्य",
@@ -779,17 +901,24 @@ export const translations = {
             step0: {
                 badge: "सिस्टम प्रोटोकॉल v2.1",
                 title: "प्रॉफिट लीकेज के लिए अपने बिजनेस को स्कैन करें।",
-                sub: "पहचानें कि आप रेवेन्यू कहां खो रहे हैं और AI आपके बिजनेस मॉडल के लिए खतरा कैसे है।",
+                sub: "अपने एंटरप्राइज प्रोटोकॉल को इनिशियलाइज करें। गहन डायग्नोस्टिक्स अनलॉक करने के लिए मुख्य विवरण प्रदान करें।",
                 btn: "सिस्टम ऑडिट शुरू करें",
                 survival: "पारंपरिक धंधा खत्म हो रहा है।",
                 survivalSub: "आइए आपकी उत्तरजीविता दर (Survival Rate) की गणना करें और आपके वास्तविक घाटे का पता लगाएं।",
-                goDashboard: "डैशबोर्ड पर जाएं"
+                goDashboard: "डैशबोर्ड पर जाएं",
+                identityTitle: "पहचान प्रोफाइलिंग",
+                identityBadge: "बिजनेस पहचान",
+                secureActive: "सुरक्षित इनिशियलाइजेशन प्रोटोकॉल सक्रिय"
             },
             step1: {
                 title: "पहचान (Identity)",
                 badge: "चरण 1 — पहचान",
                 vertical: "व्यवसाय का क्षेत्र (Vertical)",
-                revenue: "मासिक राजस्व ब्रैकेट"
+                revenue: "मासिक राजस्व ब्रैकेट",
+                industryBenchmark: "वेस्ट बेंचमार्क कैलिब्रेशन के लिए महत्वपूर्ण।",
+                bizContext: "बिजनेस और ऑपरेशनल संदर्भ",
+                usesCRM: "CRM का उपयोग करता है",
+                usesERP: "ERP/सिस्टम का उपयोग करता है"
             },
             step2: {
                 title: "द ब्लीड (नुकसान)",
@@ -798,7 +927,13 @@ export const translations = {
                 marketing: "मासिक मार्केटिंग खर्च (₹)",
                 ops: "मासिक ऑपरेशनल ओवरहेड्स (₹)",
                 prev: "पीछे",
-                next: "अगला कदम"
+                next: "अगला कदम",
+                closingTimeSeq: "समापन समय अनुक्रम (Closing Time)",
+                avgTxnValue: "औसत लेनदेन / टिकट वैल्यू",
+                conversionProfile: "कन्वर्जन प्रोफाइल",
+                b2b: "B2B/मैन्युफैक्चरिंग",
+                b2c: "B2C रिटेल",
+                hybrid: "हाइब्रिड"
             },
             step3: {
                 title: "टेक गैप (तकनीकी अंतर)",
@@ -809,20 +944,59 @@ export const translations = {
                     manual: "मैन्युअल व्हाट्सएप / कॉल",
                     ai: "स्वचालित AI एजेंट"
                 },
-                btn: "डायग्नोस्टिक रिपोर्ट तैयार करें"
+                btn: "डायग्नोस्टिक रिपोर्ट तैयार करें",
+                cityLabel: "संचालन शहर / भूगोल",
+                citySub: "सर्च वॉल्यूम तीव्रता कैलिब्रेशन के लिए आवश्यक",
+                signalsTitle: "सक्रिय डिजिटल सिग्नल",
+                signals: {
+                    hasGoogleMyBusiness: "गूगल बिजनेस प्रोफाइल",
+                    hasWebsite: "सक्रिय वेबसाइट",
+                    hasWhatsApp: "व्हाट्सएप बिजनेस",
+                    activeSocialMedia: "सक्रिय सोशल मीडिया",
+                    seoOptimized: "स्थानीय SEO ऑप्टिमाइज्ड",
+                    runsAds: "सर्च/सोशल विज्ञापन"
+                }
             },
             step4: {
-                title: "प्रोटोकॉल डिकोड हुआ",
-                sub: "{name} के लिए रिस्क प्रोफाइल और प्रॉफिट-लीक रिपोर्ट तैयार है।",
-                btn: "रिपोर्ट सेव करें और डेटा सुरक्षित करें",
-                running: "डायग्नोस्टिक प्रोटोकॉल चल रहे हैं..."
+                title: "प्रोटोकॉल डिकोड किया गया",
+                sub: "{name} के लिए जोखिम प्रोफाइल और प्रॉफिट-लीक रिपोर्ट तैयार है।",
+                physicalPresence: "भौतिक उपस्थिति",
+                physicalPresenceCheck: "मेरा एक भौतिक स्टोर / ऑफिस स्पेस है",
+                aiAdoptionLabel: "वर्तमान AI उपयोग",
+                aiAdoptionOptions: {
+                    none: "अभी तक AI का उपयोग नहीं कर रहे हैं",
+                    basic: "बुनियादी उपकरणों का उपयोग (ChatGPT)",
+                    integrated: "AI मेरे दैनिक कार्य का हिस्सा है",
+                    advanced: "AI मेरी मुख्य प्रक्रियाओं को चलाता है"
+                },
+                competitorAdoptionLabel: "आपके बाजार में AI",
+                competitorAdoptionOptions: {
+                    low: "उद्योग स्थिर है (कोई AI प्रभाव नहीं)",
+                    medium: "बाजार में नए AI उपकरण देख रहे हैं",
+                    high: "AI व्यवसायों को तेजी से बदल रहा है"
+                },
+                operationalComplexityLabel: "बिजनेस की जटिलता",
+                operationalComplexityOptions: {
+                    low: "सरल और सीधा कार्य",
+                    medium: "कार्यों के लिए भारी मानवीय प्रयास की आवश्यकता",
+                    high: "कार्य जटिल सॉफ्टवेयर पर चलते हैं"
+                },
+                runningText: "अंतिम रूप दिया जा रहा है...",
+                btnText: "डायग्नोस्टिक्स सबमिट करें"
             },
             step5: {
                 leaks: "गंभीर लीकेज पाया गया",
                 decryption: "आपकी विस्तृत रिपोर्ट और बचत लक्ष्य तैयार हैं। डैशबोर्ड को डिक्रिप्ट करने के लिए अपना विवरण दर्ज करें।",
                 decryptBtn: "डैशबोर्ड डिक्रिप्ट करें",
                 alreadyAccount: "क्या आपके पास पहले से खाता है? लॉगिन करें"
-            }
+            },
+            stepTitles: [
+                "सिस्टम इनिशियलाइजेशन [V2.1-RPC]",
+                "मॉड्यूल 01: ऑपरेशनल वेस्ट",
+                "मॉड्यूल 02: नाइट लॉस लीकेज",
+                "मॉड्यूल 03: डिजिटल इनविजिबिलिटी",
+                "मॉड्यूल 04: एक्स्तिंक्शन होराइजन"
+            ]
         },
         lossAudit: {
             title: "लॉस ऑडिट (Loss Audit)",
@@ -857,7 +1031,14 @@ export const translations = {
             emptyState: "विवरण देखने के लिए अपनी लागत दर्ज करें",
             errors: {
                 insufficientRevenue: "डेटा विसंगति (Data Inconsistency): रिपोर्ट किया गया मासिक खर्च वार्षिक आय से काफी अधिक है। कृपया आगे बढ़ने से पहले विवरण सत्यापित करें।"
-            }
+            },
+            searchSteps: [
+                'मार्केट डेटा सिंक हो रहा है...',
+                'पेरोल वेस्ट की गणना...',
+                'मार्केटिंग लीकेज का विश्लेषण...',
+                'कोऑर्डिनेशन ड्रैग का पता लगाना...',
+                'ऑपरेशनल ऑडिट रिपोर्ट जेनरेट हो रही है...'
+            ]
         },
         nightLoss: {
             title: "नाइट लॉस कैलकुलेटर",
@@ -882,6 +1063,13 @@ export const translations = {
             hourlyLossSub: "बंद होने के समय से अगली सुबह तक",
             source: "स्रोत: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
             emptyState: "नुकसान देखने के लिए अपने बिजनेस के घंटे सेट करें",
+            searchSteps: [
+                'बिजनेस आवर्स एनालिसिस...',
+                'लीड्स डिके रेट की गणना...',
+                'मिस्ड रेवेन्यू का अनुमान...',
+                'कन्वर्जन गैप का विश्लेषण...',
+                'नाइट लॉस रिपोर्ट तैयार हो रही है...'
+            ],
             closingTimes: {
                 "6pm": { label: "शाम 6:00 बजे", desc: "सामान्य समापन" },
                 "8pm": { label: "रात 8:00 बजे", desc: "देर शाम" },
@@ -891,6 +1079,9 @@ export const translations = {
                 retail: { label: "रिटेल / दुकान", desc: "भौतिक स्टोरफ्रंट" },
                 service: { label: "सेवा / एजेंसी", desc: "लीड-आधारित बिजनेस" },
                 b2b: { label: "B2B / मैन्युफैक्चरिंग", desc: "बड़े टिकट अनुबंध" }
+            },
+            errors: {
+                missingTxnValue: "कृपया अपने औसत ट्रांजेक्शन मूल्य (₹) को दर्ज करें। रेवेन्यू लॉस की गणना के लिए यह आवश्यक है।"
             }
         },
         visibility: {
@@ -925,44 +1116,45 @@ export const translations = {
             },
             gapsHeader: "गैप विश्लेषण ({count} सिग्नल गायब हैं)",
             conversionRate: "6% कन्वर्जन रेट",
+            searchSteps: [
+                'लोकल सर्च वॉल्यूम स्कैन...',
+                'कॉम्पिटिटर विजिबिलिटी एनालिसिस...',
+                'मार्केट सिग्नल स्ट्रेंथ चेक...',
+                'मिस किए गए कस्टमर्स की गणना...',
+                'इनविजिबिलिटी ऑडिट जेनरेट हो रहा है...'
+            ],
             placeholders: {
                 citySelect: "— शहर चुनें —",
                 cityInput: "शहर का नाम दर्ज करें...",
                 revenue: "₹ 1,500"
-            }
-        },
-        common: {
-            industries: {
-                it_services: "आईटी / बीपीओ",
-                ecommerce: "ई-कॉमर्स",
-                finance: "फाइनेंस (रुटीन)",
-                travel: "ट्रैवल बुकिंग",
-                data_entry: "डेटा एंट्री फर्म",
-                retail: "रिटेल (भौतिक)",
-                manufacturing: "मैन्युफैक्चरिंग (सेमी-ऑटो)",
-                logistics: "लॉजिस्टिक्स",
-                education: "शिक्षा / कोचिंग",
-                real_estate: "रियल एस्टेट",
-                construction: "कंस्ट्रक्शन",
-                hospitality: "हॉस्पिटैलिटी",
-                fb: "मीडिया / कंटेंट",
-                healthcare: "हेल्थकेयर (क्लिनिकल)",
-                legal: "लीगल",
-                services: "कुशल व्यापार",
-                b2b: "कृषि"
             },
-            statuses: {
-                DOMINANT: "प्रभावी",
-                VISIBLE: "दृश्यमान",
-                OKAY: "मध्यम स्तर",
-                GHOST: "अदृश्य",
-                INVISIBLE: "गायब"
-            }
+
         },
         aiThreat: {
             title: "एक्स्तिंक्शन होराइजन (AI थ्रेट)",
             subTitle: "जेनरेटिव AI के युग में अपने बिजनेस के सर्वाइवल टाइमलाइन की गणना करें।",
             formHeader: "सर्वाइवल प्रोटोकॉल इनपुट्स",
+            physicalPresenceLabel: "भौतिक उपस्थिति (Physical Presence)",
+            physicalPresenceCheck: "मेरा एक भौतिक स्टोर / ऑफिस स्पेस है",
+            aiAdoptionLabel: "वर्तमान AI उपयोग",
+            aiAdoptionOptions: {
+                none: "अभी AI का उपयोग नहीं कर रहे",
+                basic: "बेसिक टूल्स का उपयोग (ChatGPT)",
+                integrated: "AI मेरे दैनिक कार्य का हिस्सा है",
+                advanced: "AI मेरी मुख्य प्रक्रियाओं को चलाता है"
+            },
+            competitorAdoptionLabel: "आपके मार्केट में AI",
+            competitorAdoptionOptions: {
+                low: "इंडस्ट्री स्थिर है (कोई AI प्रभाव नहीं)",
+                medium: "मार्केट में नए AI टूल्स दिख रहे हैं",
+                high: "AI बिजनेस को तेजी से रिप्लेस कर रहा है"
+            },
+            operationalComplexityLabel: "बिजनेस की जटिलता",
+            operationalComplexityOptions: {
+                low: "सरल और सीधे कार्य",
+                medium: "कार्यों में भारी मानवीय प्रयास की आवश्यकता",
+                high: "कार्य जटिल सॉफ्टवेयर पर चलते हैं"
+            },
             industryLabel: "उद्योग / क्षेत्र (Vertical)",
             manualTasksLabel: "दोहराए जाने वाले/मैन्युअल कार्यों का %",
             manualTasksSub: "डेटा एंट्री, शेड्यूलिंग, बेसिक लेखन, चीजों को छांटना।",
@@ -982,7 +1174,14 @@ export const translations = {
             med: "मध्यम (Medium)",
             high: "उच्च (High)",
             source: "स्रोत: Goldman Sachs \"The Potentially Large Effects of AI on Economic Growth\" (2023) | World Economic Forum \"Future of Jobs\" Report (2023) | OpenAI \"GPTs are GPTs\" Impact Study (2023)",
-            emptyState: "अपना होराइजन देखने के लिए थ्रेट एनालिसिस चलाएं"
+            emptyState: "अपना होराइजन देखने के लिए थ्रेट एनालिसिस चलाएं",
+            searchSteps: [
+                'जॉब टास्क डिसेक्शन...',
+                'ऑटोमेशन एक्सपोजर कैलकुलेशन...',
+                'मार्केट रेजिलिएंस चेक...',
+                'एक्स्तिंक्शन होराइजन मैपिंग...',
+                'सर्वाइवल प्रोटोकॉल तैयार हो रहा है...'
+            ]
         },
         nav: {
             dashboard: "डैशबोर्ड",
@@ -1069,55 +1268,7 @@ export const translations = {
         dashboard: {
             risksTitle: "तत्काल पूंजी जोखिम (Risks)",
             logStatus: "स्थिति: लाइव मॉनिटरिंग",
-            auditSummary: {
-                header: {
-                    log: "डायग्नोस्टिक इंटेलिजेंस लॉग",
-                    overview: "सिस्टम सर्वाइवल ओवरव्यू",
-                    exportBtn: "इंटेलिजेंस रिपोर्ट एक्सपोर्ट करें",
-                    exporting: "सिस्टम का विश्लेषण हो रहा है..."
-                },
-                module01: {
-                    tag: "मॉड्यूल 01: आंतरिक रिसाव (Internal Leak)",
-                    title: "ऑपरेशनल वेस्ट",
-                    hole: "मासिक रिसोर्स होल",
-                    payroll: "पेरोल इनएफिशिएंसी",
-                    overhead: "ओवरहेड वेस्ट",
-                    marketing: "मार्केटिंग ब्लीड",
-                    coordination: "कोआर्डिनेशन ड्रैग"
-                },
-                module02: {
-                    tag: "मॉड्यूल 02: डार्क प्रॉफिट लीक (Dark Profit Leak)",
-                    title: "मिस किया गया आफ्टर-ऑवर्स रेवेन्यू",
-                    decay: "आफ्टर-अवर्स डिके",
-                    gap: "कन्वर्जन गैप",
-                    potential: "संभावित राजस्व",
-                    current: "वर्तमान राजस्व",
-                    leak: "हर रात का रिसाव",
-                    recovery: "AI के साथ सुधार संभव",
-                    sub: "आपका बिजनेस बंद हो जाता है, लेकिन बाजार नहीं। आप हर साल {amount} खो रहे हैं सिर्फ इसलिए कि आपके पास \"Dark Hours\" के दौरान सक्रिय AI रिस्पॉन्स प्रोटोकॉल नहीं है।"
-                },
-                module03: {
-                    tag: "मॉड्यूल 03: द डिजिटल शैडो (The Digital Shadow)",
-                    title: "मिस किए गए स्थानीय ग्राहक",
-                    opp: "मिस की गई अवसर/महीना",
-                    missed: "छूटे हुए ग्राहक",
-                    search: "मासिक सर्च वॉल्यूम",
-                    signal01: "GBP सिग्नल",
-                    signal02: "WEB सिग्नल",
-                    signal03: "SOC सिग्नल",
-                    signal04: "ADS सिग्नल",
-                    sub: "आपकी {city} भूगोल में, आप हर महीने लगभग {count} हाई-इंटेंट ग्राहकों को उन प्रतिस्पर्धियों से खो रहे हैं जिनके पास उच्च डिजिटल सिग्नल स्कोर हैं।"
-                },
-                module04: {
-                    tag: "मॉड्यूल 04: सर्वाइवल डेडलाइन (Survival Deadline)",
-                    title: "एक्स्तिंक्शन होराइजन",
-                    ttl: "मार्केट प्रासंगिकता TTL",
-                    months: "महीने",
-                    complexity: "सर्वाइवल कॉम्प्लेक्सिटी",
-                    threat: "खतरा (THREAT)",
-                    projected: "यह AI-संचालित प्रतिस्पर्धियों या बदलते बाजार के रुझानों से पहले आपके वर्तमान ऑपरेशन्स के अस्तित्व की अनुमानित समयरेखा है।"
-                }
-            },
+
             bleedCard: {
                 liveBurn: "लाइव बर्न मिला",
                 annualBleed: "कुल वार्षिक <br />पूंजी रिसाव (Capital Bleed)",
@@ -1209,8 +1360,7 @@ export const translations = {
                 scanComplete: "डायग्नोस्टिक स्कैन पूरा हुआ",
                 partial: "कुछ प्रोटोकॉल सक्रिय हैं। पूरी तैयारी के लिए सभी स्कैन पूरे करें।"
             },
-            lockedTitle: "एग्रीगेट इंटेलिजेंस लॉक्ड",
-            lockedSub: "अपना सर्वाइवल स्कोर अनलॉक करने के लिए चारों डायग्नोस्टिक प्रोटोकॉल पूरे करें।",
+
             cards: {
                 loss: { title: "लॉस ऑडिट", run: "ऑडिट चलाएं", sub: "स्टाफ और ऑपरेशंस खर्चों में छिपी फिजूलखर्ची खोजें" },
                 night: { title: "नाइट लॉस", run: "गणना करें", sub: "बिना जवाब वाली पूछताछ से राजस्व की हानि" },
@@ -1245,11 +1395,66 @@ export const translations = {
                 sub: "लैंडिंग पृष्ठ पर अपने व्यावसायिक विवरण सबमिट करें।"
             },
             auditSummary: {
-                header: {
-                    log: "प्रॉफिट लीक इंटेलिजेंस लॉग",
-                    overview: "आपकी AI सर्वाइवल रिपोर्ट",
-                    exportBtn: "इंटेलीजेंस रिपोर्ट एक्सपोर्ट करें",
-                    exporting: "सिस्टम का विश्लेषण हो रहा है..."
+                lockedTitle: "एग्रीगेट इंटेलिजेंस लॉक्ड",
+                lockedSub: "अपना सर्वाइवल स्कोर अनलॉक करने के लिए चारों डायग्नोस्टिक प्रोटोकॉल पूरे करें।",
+                bleedCard: {
+                    liveBurn: "लाइव बर्न मिला",
+                    annualBleed: "कुल वार्षिक<br />पूंजी का नुकसान (Bleed)",
+                    recoverable: "AI के साथ रिकवरेबल: {amount} / वर्ष",
+                    unlockReport: "पूरी रिपोर्ट अनलॉक करें",
+                    bookCall: "कॉल बुक करें",
+                    secureBlueprint: "आज ही अपना तकनीकी ब्लूप्रिंट सुरक्षित करें।"
+                },
+                report: {
+                    generatorTitle: "ऑडिट रिपोर्ट जनरेटर",
+                    lockedSubtitle: "अपना बोर्ड-रेडी ट्रांसफॉर्मेशन रोडमैप जनरेट करने के लिए ऑपरेशनल ऑडिट सीक्वेंस पूरा करें।",
+                    unlockedSubtitle: "सभी महत्वपूर्ण लीकेज और ट्रांसफॉर्मेशन रोडमैप को एक ही, बोर्ड-रेडी ऑडिट दस्तावेज़ में संकलित करें।",
+                    btnLocked: "प्रोटोकॉल द्वारा लॉक",
+                    btnProcessing: "पेलोड प्रोसेस हो रहा है...",
+                    btnGenerate: "रिपोर्ट जनरेट और डाउनलोड करें",
+                    pdfHeader: "डायग्नोस्टिक ऑडिट पेलोड",
+                    criticalBadge: "गंभीर सिस्टम व्यवधान (Disruption) मिला",
+                    recoverableLegend: "स्वायत्त ऑपरेशनल प्रोटोकॉल तैनात करके हम इस खर्च का 50% वापस पा सकते हैं।",
+                    telemetryTitle: "डायग्नोस्टिक टेलीमेट्री",
+                    opsFriction: "ऑपरेशनल घर्षण (Friction)",
+                    staffWaste: "इसमें पेरोल अक्षमता में {amount} शामिल है।",
+                    afterHoursBleed: "आफ्टर-आवर्स ब्लीड",
+                    nightLossDesc: "जब सिस्टम सोता है, तो 24/7 AI लीड रिस्पांस की कमी के कारण आप सालाना {amount} खो देते हैं।",
+                    digitalInvisibility: "डिजिटल अदृश्यता",
+                    visibilityDesc: "अनुमानित {amount} ({count} छूटे हुए ग्राहक) स्थानीय कॉम्पिटिटर्स द्वारा कब्जा कर लिया जाता है।",
+                    aiThreatHorizon: "AI प्रासंगिकता क्षितिज",
+                    aiLossDesc: "सर्वाइवल की विंडो: AI-native फर्मों द्वारा आपके मॉडल को पुराना बनाने से पहले {amount} महीने शेष हैं।",
+                    coordinationDragTitle: "कोऑर्डिनेशन ड्रैग लागू",
+                    coordinationDragDesc: "इस स्तर पर अक्षमताओं को ठीक करना तकनीकी रूप से जटिल है। देरी का हर दिन नुकसान को बढ़ाता है। तत्काल वास्तुशिल्प (Architectural) हस्तक्षेप अनिवार्य है।",
+                    protocolTitle: "सर्वाइवल प्रोटोकॉल",
+                    protocol01Title: "इकोसिस्टम एकीकरण (Unification)",
+                    protocol01Desc: "खंडित उपकरणों को एक ही, उच्च-उपलब्धता आर्किटेक्चर में समेकित करें।",
+                    protocol02Title: "स्वायत्त ऑर्केस्ट्रेशन",
+                    protocol02Desc: "मैनुअल संज्ञानात्मक भार को समाप्त करने के लिए प्रोग्रामेटिक वर्कफ़्लो और इंटेलिजेंट रूटिंग तैनात करें।",
+                    protocol03Title: "स्केल और प्रभुत्व (Dominance)",
+                    protocol03Desc: "स्थानीय मैट्रिक्स पर हावी हों और सभी डिजिटल टचप्वाइंट पर 24/7 इनबाउंड ट्रैफ़िक कैप्चर करें।",
+                    rawDiagnostics: "रॉ सिस्टम डायग्नोस्टिक्स",
+                    mod01Title: "मोड 01: ऑपरेशनल वेस्ट",
+                    mod02Title: "मोड 02: नाइट लॉस",
+                    mod03Title: "मोड 03: डिजिटल अदृश्यता",
+                    mod04Title: "मोड 04: AI खतरा क्षितिज",
+                    staffPayroll: "स्टाफ/पेरोल वेस्ट",
+                    marketingBleed: "मार्केटिंग ब्लीड",
+                    rawOps: "रॉ ऑप्स ओवरहेड्स",
+                    coordinationDragApplied: "कोऑर्डिनेशन ड्रैग लागू",
+                    missedWeeklyInquiries: "छूटी हुई साप्ताहिक पूछताछ",
+                    avgTxnVelocity: "औसत Txn / LTV वेग",
+                    estConversion: "अनुमानित कनवर्जन रेट",
+                    monthlyHemorrhage: "मासिक राजस्व रक्तस्राव (Hemorrhage)",
+                    lostLocalSearches: "खोई हुई स्थानीय खोजें",
+                    missedHighIntent: "हाई-इंटेंट छूटे हुए ग्राहक",
+                    visibilityScore: "अदृश्यता स्कोर",
+                    threatThreshold: "खतरा मूल्यांकन सीमा",
+                    survivalComplexity: "सर्वाइवल कॉम्प्लेक्सिटी स्कोर",
+                    calculatedTTL: "जहाने की गणना (TTL)",
+                    extinctionDeadline: "समाप्ति की समयसीमा स्थिति",
+                    criticalEvasion: "गंभीर बचाव आवश्यक",
+                    monitoring: "निगरानी (Monitoring)"
                 },
                 module01: {
                     tag: "मॉड्यूल 01: इंटरनल लीक",
@@ -1374,7 +1579,10 @@ export const translations = {
                 GHOST: "Ghost",
                 INVISIBLE: "Invisible"
             },
-            employeeCountLabel: "Employees ki count (Operational Scale)",
+            errors: {
+                syncFailed: "Sync fail ho gaya: {message}",
+                unexpectedError: "Save karte waqt unexpected error aayi. Please dobara try karein."
+            },
             revenueLabel: "Estimated Annual Revenue"
         },
         hero: {
@@ -1805,7 +2013,14 @@ export const translations = {
             emptyState: "Breakdown dekhne ke liye apni costs bhariye",
             errors: {
                 insufficientRevenue: "DATA INCONSISTENCY: Aapka monthly kharcha annual revenue se bahut zyada hai. Please check karein aur verify karein."
-            }
+            },
+            searchSteps: [
+                'Syncing Market Data...',
+                'Payroll Waste calculate ho raha hai...',
+                'Marketing Leakage ka analysis...',
+                'Coordination Drag detect ho raha hai...',
+                'Operational Audit report ready ho rahi hai...'
+            ]
         },
         nightLoss: {
             title: "Night Loss Calculator",
@@ -1830,6 +2045,13 @@ export const translations = {
             hourlyLossSub: "Closing time se lekar agli subah tak",
             source: "SOURCE: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
             emptyState: "Apne business hours configure karein nuksan dekhne ke liye",
+            searchSteps: [
+                'Analyzing Business Hours...',
+                'Lead Decay Rate calculate ho raha hai...',
+                'Missed Revenue ka estimate...',
+                'Conversion Gaps ka analysis...',
+                'Night-Loss report ready ho rahi hai...'
+            ],
             closingTimes: {
                 "6pm": { label: "6:00 PM", desc: "Standard Closing" },
                 "8pm": { label: "8:00 PM", desc: "Late Evening" },
@@ -1877,7 +2099,14 @@ export const translations = {
                 citySelect: "— Select city —",
                 cityInput: "City name enter karein...",
                 revenue: "₹ 1,500"
-            }
+            },
+            searchSteps: [
+                'Scanning Local Search Volume...',
+                'Competitor Visibility analysis...',
+                'Market Signal Strength check...',
+                'Missed Customers estimate ho rahe hain...',
+                'Invisibility Audit generate ho raha hai...'
+            ]
         },
         common: {
             market_context: "aapka market",
@@ -1950,7 +2179,14 @@ export const translations = {
                 watch: "WATCH CLOSELY — Plan needed",
                 manageable: "MANAGEABLE RUNWAY — Start planning",
                 monitor: "LONG RUNWAY — Keep monitoring"
-            }
+            },
+            searchSteps: [
+                'Departmental Tasks dissect ho rahe hain...',
+                'Automation Exposure calculate ho raha hai...',
+                'Market Resilience check ho rahe hain...',
+                'Extinction Horizon map ho raha hai...',
+                'Survival Protocol finalize ho raha hai...'
+            ]
         },
         sidebar: {
             status: "System Status",
