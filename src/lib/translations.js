@@ -194,7 +194,10 @@ export const translations = {
             recoverableTitle: "Recoverable Savings",
             inactionTitle: "5-Year Cost of Inaction",
             source: "SOURCE: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
-            emptyState: "Enter your costs to see the breakdown"
+            emptyState: "Enter your costs to see the breakdown",
+            errors: {
+                insufficientRevenue: "DATA INCONSISTENCY: Reported monthly costs significantly exceed annual revenue. Please verify your inputs before proceeding."
+            }
         },
         nightLoss: {
             title: "Night Loss Calculator",
@@ -661,9 +664,6 @@ export const translations = {
                 phone: "Phone Number"
             }
         },
-        footer: {
-            confidential: "Confidential System Audit"
-        }
     },
     hi: {
         tagline: "आधुनिक प्रणालियों के लिए एडेप्टिव इंटेलिजेंस",
@@ -854,7 +854,10 @@ export const translations = {
             recoverableTitle: "बचाने योग्य बचत",
             inactionTitle: "5-साल का निष्क्रियता मूल्य",
             source: "स्रोत: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
-            emptyState: "विवरण देखने के लिए अपनी लागत दर्ज करें"
+            emptyState: "विवरण देखने के लिए अपनी लागत दर्ज करें",
+            errors: {
+                insufficientRevenue: "डेटा विसंगति (Data Inconsistency): रिपोर्ट किया गया मासिक खर्च वार्षिक आय से काफी अधिक है। कृपया आगे बढ़ने से पहले विवरण सत्यापित करें।"
+            }
         },
         nightLoss: {
             title: "नाइट लॉस कैलकुलेटर",
@@ -1339,9 +1342,6 @@ export const translations = {
                 phone: "फोन नंबर"
             }
         },
-        footer: {
-            confidential: "गोपनीय सिस्टम ऑडिट"
-        }
     },
     hinglish: {
         tagline: "Modern Systems ke liye Adaptive Intelligence",
@@ -1802,7 +1802,10 @@ export const translations = {
             recoverableTitle: "Recoverable Savings",
             inactionTitle: "5-Year Cost of Inaction",
             source: "SOURCE: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
-            emptyState: "Breakdown dekhne ke liye apni costs bhariye"
+            emptyState: "Breakdown dekhne ke liye apni costs bhariye",
+            errors: {
+                insufficientRevenue: "DATA INCONSISTENCY: Aapka monthly kharcha annual revenue se bahut zyada hai. Please check karein aur verify karein."
+            }
         },
         nightLoss: {
             title: "Night Loss Calculator",

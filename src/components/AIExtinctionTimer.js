@@ -354,11 +354,33 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             if (!el) { setCaptureStatus("failed"); return; }
             try {
                 const { toBlob } = await import('html-to-image');
-                const blob = await toBlob(el, {
-                    pixelRatio: 4, // Boost quality for high-res social sharing
+                
+                // Optimized configuration for html-to-image to avoid SecurityError
+                const options = {
+                    pixelRatio: 2, // Slightly reduced for reliability
                     backgroundColor: "#000000",
                     cacheBust: true,
-                });
+                    // Filter to skip problematic external stylesheets that might cause CORS issues
+                    filter: (node) => {
+                        if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
+                            try {
+                                return !!node.sheet && !!node.sheet.cssRules;
+                            } catch (e) {
+                                return false; // Skip if cross-origin rules are inaccessible
+                            }
+                        }
+                        return true;
+                    }
+                };
+
+                let blob;
+                try {
+                    blob = await toBlob(el, options);
+                } catch (firstErr) {
+                    console.warn('Initial capture failed, retrying without fonts...', firstErr);
+                    // Retry with skipFonts as fallback if the first attempt fails due to CORS/SecurityError
+                    blob = await toBlob(el, { ...options, skipFonts: true });
+                }
 
                 if (blob) {
                     setPreviewBlob(blob);
@@ -368,7 +390,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                     setCaptureStatus("failed");
                 }
             } catch (err) {
-                console.error('Capture failed:', err);
+                console.error('Final capture attempt failed:', err);
                 setCaptureStatus("failed");
             }
         }, 1500);
@@ -795,34 +817,6 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
 
                         {/* ─── SOCIAL SHARE ─── */}
                         <div style={{ marginTop: "18px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "16px", position: "relative" }}>
-                            <button
-                                onClick={() => shareImage(null)} // Trigger general native share
-                                style={{
-                                    display: "block",
-                                    width: "100%",
-                                    background: "#FF6D00",
-                                    padding: "12px 20px",
-                                    borderRadius: "99px",
-                                    fontSize: "0.75rem",
-                                    color: "#000",
-                                    fontWeight: 900,
-                                    letterSpacing: "1.5px",
-                                    textTransform: "uppercase",
-                                    zIndex: 10,
-                                    boxShadow: "0 10px 25px rgba(255,109,0,0.4)",
-                                    border: "2px solid #000",
-                                    whiteSpace: "nowrap",
-                                    cursor: "pointer",
-                                    transition: "transform 0.2s, filter 0.2s",
-                                    marginTop: "-14px",
-                                    marginBottom: "10px"
-                                }}
-                                onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.filter = "brightness(1.1)"; }}
-                                onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.filter = "brightness(1)"; }}
-                            >
-                                {t.extinctionTimer.sharePrompt || "Share this on Social Media"}
-                            </button>
-
                             <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#444", letterSpacing: "2px", fontWeight: 700, marginBottom: "12px", textTransform: "uppercase", marginTop: "10px" }}>
                                 ⚡ Export Your Analysis
                             </div>
@@ -837,9 +831,51 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                                 </div>
                             )}
 
-                            {/* Image preview hidden per requirement */}
-
-                            {/* Individual platform icons removed per requirement */}
+                            {/* ─── Social Share Buttons ─── */}
+                            <div className="ext-share-grid" style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(5, 1fr)",
+                                gap: "8px",
+                                marginBottom: "16px"
+                            }}>
+                                {[
+                                    { id: 'twitter', icon: 'X', color: '#000' },
+                                    { id: 'linkedin', icon: 'In', color: '#0077b5' },
+                                    { id: 'whatsapp', icon: 'WA', color: '#25D366' },
+                                    { id: 'facebook', icon: 'FB', color: '#1877f2' },
+                                    { id: 'instagram', icon: 'Insta', color: '#E1306C' }
+                                ].map(p => (
+                                    <button
+                                        key={p.id}
+                                        onClick={() => shareImage(p.id)}
+                                        className="ext-share-btn"
+                                        style={{
+                                            background: "rgba(255,255,255,0.03)",
+                                            border: "1px solid rgba(255,255,255,0.05)",
+                                            borderRadius: "12px",
+                                            padding: "10px 4px",
+                                            cursor: "pointer",
+                                            transition: "all 0.2s",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "4px"
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                                            e.currentTarget.style.borderColor = p.color + '44';
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                                            e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+                                        }}
+                                    >
+                                        <div style={{ color: p.color, fontWeight: 900, fontSize: "0.8rem" }}>{p.icon}</div>
+                                        <div className="ext-share-label" style={{ fontSize: "0.45rem", color: "#555", fontWeight: 700, textTransform: "uppercase" }}>{p.id}</div>
+                                    </button>
+                                ))}
+                            </div>
 
                             <p style={{ textAlign: "center", color: shareNotice ? "#FF6D00" : "#555", fontSize: "0.58rem", marginTop: "8px", lineHeight: 1.5, fontWeight: shareNotice ? 800 : 400, transition: "color 0.3s" }}>
                                 {shareNotice || (captureStatus === "done"

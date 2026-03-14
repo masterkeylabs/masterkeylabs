@@ -4,11 +4,12 @@ import { formatIndian } from '@/utils/formatIndian';
 import { useDiagnosticStore } from '@/store/diagnosticStore';
 
 export default function BleedSummaryCard({ t, locked }) {
-    if (locked) return null;
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => { setMounted(true); }, []);
 
-    const {
-        totalAnnualBleed = 0,
-    } = useDiagnosticStore();
+    const totalAnnualBleed = useDiagnosticStore((state) => state.totalAnnualBleed || 0);
+
+    if (!mounted || locked) return null;
 
     // Estimate recoverable as 50%
     const recoverablePotential = totalAnnualBleed * 0.5;

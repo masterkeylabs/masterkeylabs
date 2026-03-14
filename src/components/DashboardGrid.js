@@ -25,79 +25,77 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
     const [showAuditWizard, setShowAuditWizard] = useState(false);
     const [isUnlocking, setIsUnlocking] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const setAuditData = useDiagnosticStore((state) => state.setAuditData);
 
-    // SELECT REACTIVE DATA FROM STORE
+    // Zustand store reactive selectors (MUST be at top level)
+    const setAuditData = useDiagnosticStore((state) => state.setAuditData);
     const lossAudit = useDiagnosticStore((state) => state.lossAudit);
     const nightLoss = useDiagnosticStore((state) => state.nightLoss);
     const missedCustomers = useDiagnosticStore((state) => state.missedCustomers);
     const aiThreat = useDiagnosticStore((state) => state.aiThreat);
 
+    // Derived states
     const computedData = { lossAudit, nightLoss, missedCustomers, aiThreat };
-
-    console.log('--- DashboardGrid: Render ---', {
-        businessId: business?.id,
-        businessName: business?.entity_name,
-        hasAuditData: !!lossAudit
-    });
+    const auditsIncomplete = !lossAudit || !nightLoss || !missedCustomers || !aiThreat;
+    const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
 
     useEffect(() => {
         setMounted(true);
+    }, []);
 
-        // --- HYDRATION LOGIC ---
-        // Only hydrate if the server actually sent us data packages
+    // 2. Hydration Effect (Moved to top level)
+    useEffect(() => {
+        if (!mounted) return;
+        
         const serverHasData = initialComputedData?.lossAudit || initialComputedData?.nightLoss || initialComputedData?.missedCustomers || initialComputedData?.aiThreat;
-
-        // Note: We hydrate unconditionally if serverHasData is true because window.location.href 
-        // completely wipes the Zustand store, meaning we always need to trust the server payload on mount.
         if (serverHasData) {
             console.log('--- DashboardGrid: Hydrating store from robust server data ---');
             setAuditData(initialComputedData);
         }
-    }, [initialComputedData, setAuditData, business?.id]);
+    }, [mounted, initialComputedData, setAuditData]);
 
-    if (!mounted || authLoading) return (
-        <div className="bg-background-dark min-h-screen flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-ios-blue border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-white/40 text-xs font-mono tracking-widest uppercase">Initializing Vault...</p>
+    // 3. Status Reporting (Moved to top level)
+    useEffect(() => {
+        if (!mounted) return;
+        console.log('--- Live Dashboard Status ---', {
+            id: business?.id,
+            name: business?.entity_name,
+            profileIncomplete,
+            auditsIncomplete,
+            showAuditWizard
+        });
+    }, [mounted, business?.id, profileIncomplete, auditsIncomplete, showAuditWizard]);
+
+    // Consolidation Guard: Render spinner until mounted and auth is ready
+    if (!mounted || authLoading) {
+        return (
+            <div className="bg-background-dark min-h-screen flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-ios-blue border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-white/40 text-xs font-mono tracking-widest uppercase">Initializing Vault...</p>
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 
-    const auditsIncomplete = !lossAudit || !nightLoss || !missedCustomers || !aiThreat;
-    const profileIncomplete = !business?.id || !business?.entity_name || !business?.owner_name || !business?.phone || !business?.email || business.entity_name === 'Initialize System';
-
-    console.log('--- Live Dashboard Status ---', {
-        id: business?.id,
-        name: business?.entity_name,
-        profileIncomplete,
-        auditsIncomplete,
-        audits: {
-            loss: !!lossAudit,
-            night: !!nightLoss,
-            vis: !!missedCustomers,
-            ai: !!aiThreat
-        },
-        showAuditWizard
-    });
 
     const handleWizardComplete = () => {
         console.log('--- Wizard: Received onComplete signal ---');
-        // Close the wizard modal immediately
-        setShowAuditWizard(false);
+        // Only close if we are truly done with everything
+        const currentStore = useDiagnosticStore.getState();
+        const auditsDone = currentStore.lossAudit && currentStore.nightLoss && currentStore.missedCustomers && currentStore.aiThreat;
+        const profileDone = business?.id && business?.entity_name && business.entity_name !== 'Initialize System';
+
+        if (auditsDone && profileDone) {
+            setShowAuditWizard(false);
+        }
 
         // Check if we are now complete (wait a tiny bit for store to settle if needed, but it should be instant)
         // We use the LATEST store values directly rather than the constant from render to avoid closure issues
-        const currentStore = useDiagnosticStore.getState();
-        const auditsDone = currentStore.lossAudit && currentStore.nightLoss && currentStore.missedCustomers && currentStore.aiThreat;
         
         // Use fallback to localStorage because closure variables 'business' might be stale on fast completions
         const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
         const finalBizId = business?.id || localBizId;
         
-        const profileDone = finalBizId && business?.entity_name && business.entity_name !== 'Initialize System';
-
         if (auditsDone && profileDone) {
             console.log('--- Wizard: Full system completion detected! ---');
             setIsUnlocking(true);
@@ -156,11 +154,6 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
         </div>
     );
 
-    if (!mounted) return (
-        <div className="bg-background-dark min-h-screen flex items-center justify-center">
-            <div className="w-12 h-12 border-4 border-ios-blue border-t-transparent rounded-full animate-spin"></div>
-        </div>
-    );
 
     return (
         <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden flex">
@@ -175,7 +168,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                     <div className="absolute bottom-0 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-ios-orange/5 blur-[120px] rounded-full opacity-40"></div>
                 </div>
 
-                <div className={`max-w-7xl mx-auto relative z-10 transition-all duration-700 ${profileIncomplete ? 'blur-sm grayscale pointer-events-none opacity-50' : ''}`}>
+                <div className={`max-w-7xl mx-auto relative z-10 transition-all duration-700 ${(profileIncomplete || auditsIncomplete) ? 'blur-sm grayscale pointer-events-none opacity-50' : ''}`}>
                     <DashboardHeader
                         companyName={business?.entity_name || t.header.command}
                         lang={lang}
@@ -192,10 +185,12 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                         <BusinessProfile business={business} t={t} lang={lang} />
 
                         {/* BLEED SUMMARY CARD (P4 Implementation) */}
-                        <BleedSummaryCard
-                            t={t}
-                            locked={auditsIncomplete}
-                        />
+                        {mounted && (
+                            <BleedSummaryCard
+                                t={t}
+                                locked={auditsIncomplete}
+                            />
+                        )}
 
                         {/* Highlighting the 4 deterministic calculations using the DiagnosticGrid */}
                         <section className="animate-fade-in opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
@@ -229,7 +224,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
             </main>
 
             {/* Profile Wizard shows if profile incomplete. Audit Wizard shows if explicitly triggered or audits are incomplete (but profile IS complete) */}
-            {(profileIncomplete || showAuditWizard) && (
+            {(profileIncomplete || auditsIncomplete || showAuditWizard) && (
                 <DashboardIntakeWizard
                     business={business}
                     existingData={computedData}

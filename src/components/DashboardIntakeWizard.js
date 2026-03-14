@@ -263,12 +263,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             if (onComplete) onComplete();
 
-            if (mode === 'profile') {
-                // Parent onComplete already handles standard refresh/transition
-                console.log('Profile Sync Complete');
-            } else {
-                setStep(1);
-            }
+            console.log('--- Wizard: Profile Sync Complete, advancing to Step 1 ---');
+            setStep(1);
         } catch (err) {
             console.error('--- Wizard handleM0Submit Fault ---');
             console.error('Error Object (Stringified):', JSON.stringify(err, null, 2));
@@ -313,6 +309,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 hasERP: formM1.hasERP,
                 annualRevenue: revenue
             });
+
+            // --- LOGIC GUARD: COMMON SENSE VALIDATION ---
+            // If the data is highly suspicious (costs >> revenue), block and warn.
+            if (calc.intelligence?.isSuspicious) {
+                console.warn('--- LOGIC GUARD TRIGGERED: SUSPICIOUS REALITY ---');
+                setError(t?.audit?.errors?.insufficientRevenue || "DATA INCONSISTENCY: Reported monthly costs significantly exceed annual revenue. Please verify your inputs before proceeding.");
+                setIsSaving(false);
+                return;
+            }
+            // --------------------------------------------
 
             console.log('--- Wizard Step 1: Preparing payload ---', { activeId });
             const payload = {
