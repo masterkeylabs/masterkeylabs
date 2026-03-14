@@ -126,17 +126,34 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
             // A. Sync Identity (Step 0)
             setFormM0(prev => {
-                const owner = business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || user?.user_metadata?.given_name || parsedTemp?.contactName || '';
-                const email = business?.email || user?.email || user?.user_metadata?.email || parsedTemp?.email || '';
-                const phone = business?.phone || user?.user_metadata?.phone || user?.phone || parsedTemp?.whatsapp || '';
-                const title = (business?.entity_name && business.entity_name !== 'Initialize System') ? business.entity_name : (parsedTemp?.businessName || '');
+                // Extract possible names and emails robustly
+                const extractedOwner = business?.owner_name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.user_metadata?.display_name || parsedTemp?.contactName || '';
+                const extractedEmail = business?.email || user?.email || user?.user_metadata?.email || parsedTemp?.email || '';
+                const extractedPhone = business?.phone || user?.user_metadata?.phone || user?.phone || parsedTemp?.whatsapp || '';
+                const extractedTitle = (business?.entity_name && business.entity_name !== 'Initialize System') ? business.entity_name : (parsedTemp?.businessName || '');
+
+                // Only update if the new value is truthy AND the old value is exactly empty
+                const newOwner = (prev.ownerName === '' && extractedOwner) ? extractedOwner : prev.ownerName;
+                const newEmail = (prev.email === '' && extractedEmail) ? extractedEmail : prev.email;
+                const newPhone = (prev.whatsapp === '' && extractedPhone) ? extractedPhone : prev.whatsapp;
+                const newTitle = (prev.entityName === '' && extractedTitle) ? extractedTitle : prev.entityName;
+
+                // Stop React from re-rendering if nothing actually changed
+                if (
+                    prev.ownerName === newOwner &&
+                    prev.email === newEmail &&
+                    prev.whatsapp === newPhone &&
+                    prev.entityName === newTitle
+                ) {
+                    return prev;
+                }
 
                 return {
                     ...prev,
-                    ownerName: prev.ownerName || owner || '',
-                    email: prev.email || email || '',
-                    whatsapp: prev.whatsapp || phone || '',
-                    entityName: prev.entityName || title || ''
+                    ownerName: newOwner || '',
+                    email: newEmail || '',
+                    whatsapp: newPhone || '',
+                    entityName: newTitle || ''
                 };
             });
 
