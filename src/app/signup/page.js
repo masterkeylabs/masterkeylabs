@@ -13,6 +13,7 @@ export default function SignupPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const router = useRouter();
 
@@ -36,66 +37,76 @@ export default function SignupPage() {
     }, [user]);
 
     const handleSignup = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
         setLoading(true);
         setError(null);
-        console.log('--- Signup: Attempting manual signup ---', { 
-            email: email.trim(), 
-            fullName, 
-            currentAuthState: { user: !!user, business: !!business } 
-        });
+        console.log('--- Signup: Attempting submission ---', { email: email.trim() });
 
         try {
-            // 1. Auth Signup - Simplified
             const { data: authData, error: signupError } = await supabase.auth.signUp({
                 email: email.trim(),
                 password: password,
                 options: {
-                    data: {
-                        full_name: fullName
-                    }
+                    data: { full_name: fullName }
                 }
             });
 
             if (signupError) {
-                console.error('--- Signup: Supabase error ---', signupError.message);
+                // AUTO-RECOVERY: If already registered, try to log in with these credentials immediately.
+                // This handles the "Double-Click" or "Ghost User" scenarios.
+                if (signupError.status === 422 || signupError.message.toLowerCase().includes('already registered')) {
+                    console.warn('--- Signup: Collision detected, launching auto-recovery ---');
+                    return handleForceLogin();
+                }
                 throw signupError;
             }
 
-            console.log('--- Signup: Auth response received ---', { hasSession: !!authData.session });
-
-            // 2. Handle Redirection / Messaging
             if (!authData.session) {
-                console.log('--- Signup: Email verification required ---');
                 setError(<>
                     <span className="font-bold block mb-1">Registration successful!</span>
-                    Supabase is still requesting email verification. Please click the link in your mailbox to activate your terminal,
-                    or <span className="font-bold underline">disable "Confirm Email"</span> in your Supabase Dashboard settings to skip this step.
+                    Please verify your email or check if public registration is enabled in Supabase.
                 </>);
             } else {
-                console.log('--- Signup: Success, redirecting ---');
                 router.push('/dashboard');
             }
         } catch (err) {
-            console.error('--- Signup: Catch block triggered ---', err);
-            const msg = err.message || 'Registration sequence failed.';
-            
-            if (msg.toLowerCase().includes('already registered')) {
+            console.error('--- Signup: Fatal Error ---', err);
+            setError(err.message || 'Registration failed.');
+        } finally {
+            setLoading(false);
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleForceLogin = async () => {
+        try {
+            const { error: loginError } = await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password: password,
+            });
+            if (loginError) {
                 setError(
                     <div className="space-y-2">
-                        <p>User already registered.</p>
-                        <div className="flex flex-col gap-2">
-                            <Link href="/login" className="text-ios-blue underline underline-offset-4 font-bold uppercase text-[10px]">1. Log In to Terminal</Link>
-                            <Link href="/login" className="text-ios-orange underline underline-offset-4 font-bold uppercase text-[10px]">2. Reset Access Password</Link>
+                        <p className="font-bold">System Access Conflict</p>
+                        <p className="text-xs opacity-60">This email is recognized by the system but the password doesn't match, or the account is locked.</p>
+                        <div className="flex flex-col gap-2 mt-4">
+                            <Link href="/login" className="text-ios-blue underline font-bold uppercase text-[10px]">1. Go to Login Terminal</Link>
+                            <Link href="/login" className="text-ios-orange underline font-bold uppercase text-[10px]">2. Reset Forgotten Password</Link>
                         </div>
                     </div>
                 );
             } else {
-                setError(msg);
+                console.log('--- Signup (Recovery): Login success, routing to dashboard ---');
+                router.push('/dashboard');
             }
+        } catch (e) {
+            setError("Recovery failed. Please use the manual login terminal.");
         } finally {
-            console.log('--- Signup: Sequence finished ---');
             setLoading(false);
+            setIsSubmitting(false);
         }
     };
 

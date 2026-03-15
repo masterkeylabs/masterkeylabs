@@ -34,13 +34,20 @@ export const AuthProvider = ({ children }) => {
         const initializeAuth = async () => {
             console.log('--- AuthProvider: Running initializeAuth ---');
             try {
+                // Defensive check: If we are already signed in from a previous session that's "half-broken"
+                // we should try to clear it if getUser fails.
                 const { data: { user: currentUser }, error } = await supabase.auth.getUser();
 
-                if (error && error.name !== 'AuthSessionMissingError') {
-                    console.warn('--- AuthProvider: getUser error ---', error.message);
+                if (error) {
+                    if (error.name === 'AuthSessionMissingError') {
+                         console.log('--- AuthProvider: No active session ---');
+                    } else {
+                        console.warn('--- AuthProvider: getUser error ---', error.message);
+                        // If it's a real error (like network), don't wipe, just wait
+                    }
                 }
 
-                console.log('--- AuthProvider: currentUser ---', currentUser?.email || 'none');
+                console.log('--- AuthProvider: currentUser identified ---', currentUser?.email || 'none');
 
                 if (isMounted) {
                     setUser(currentUser);
@@ -48,19 +55,16 @@ export const AuthProvider = ({ children }) => {
                         await fetchBusinessProfile(currentUser);
                     } else {
                         setBusiness(null);
-                        setLoading(false); // Force finish loading for guest users
+                        setLoading(false);
+                        // Ensure no stale biz ID lingers
                         if (typeof window !== 'undefined') {
                             localStorage.removeItem('masterkey_business_id');
                         }
                     }
                 }
             } catch (err) {
-                console.error('--- AuthProvider: Init Error ---', err);
+                console.error('--- AuthProvider: Init Fatal Error ---', err);
                 if (isMounted) setLoading(false);
-            } finally {
-                if (isMounted) {
-                    console.log('--- AuthProvider: Init complete sequence finished ---');
-                }
             }
         };
 
@@ -226,38 +230,60 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const signOut = async () => {
-        console.log('--- AuthContext: Starting SignOut sequence ---');
+    const clearAuthData = () => {
+        console.log('--- AuthContext: Aggressive Local Cleanup Running ---');
+        if (typeof window === 'undefined') return;
+        
         try {
-            // Priority 1: Clear local state and storage FIRST to make it feel instant
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('masterkey_business_id');
-                localStorage.removeItem('masterkey_returning_user');
-                localStorage.removeItem('masterkey_temp_form');
-                localStorage.removeItem('masterkey_temp_results');
-                localStorage.removeItem('masterkey-auth-token'); 
-                
-                // AGGRESSIVE COOKIE CLEANUP
-                clearBrowserCookies();
-            }
+            // 1. Clear LocalStorage
+            localStorage.removeItem('masterkey_business_id');
+            localStorage.removeItem('masterkey_returning_user');
+            localStorage.removeItem('masterkey_temp_form');
+            localStorage.removeItem('masterkey_temp_results');
+            localStorage.removeItem('sb-vtvkesndocbelqqnfore-auth-token'); // Specific Supabase key
+            localStorage.removeItem('masterkey-auth-token');
+            
+            // 2. Clear SessionStorage
+            sessionStorage.clear();
 
+            // 3. Clear Cookies (Specifically Supabase ones)
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+                if (name.startsWith('sb-') || name.includes('supabase')) {
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+                }
+            }
+            console.log('--- AuthContext: Cleanup Finalized ---');
+        } catch (e) {
+            console.error('--- AuthContext: Cleanup partial failure ---', e);
+        }
+    };
+
+    const signOut = async () => {
+        console.log('--- AuthContext: Critical SignOut initiated ---');
+        try {
+            // Priority 1: Instant UI Wipe
             setUser(null);
             setBusiness(null);
+            clearAuthData();
 
-            // Priority 2: Attempt Supabase Signout with a hard timeout
+            // Priority 2: Attempt Server-side Logout with 2s race
             const supabaseSignOut = supabase.auth.signOut();
             const timeoutPromise = new Promise((resolve) => setTimeout(() => {
-                console.warn('--- AuthContext: Supabase signOut timed out, forcing redirect ---');
+                console.warn('--- AuthContext: Supabase Remote SignOut Timed Out ---');
                 resolve({ error: null });
-            }, 3000));
+            }, 2000));
 
             await Promise.race([supabaseSignOut, timeoutPromise]);
-
-            console.log('--- AuthContext: Logout sequence complete ---');
+            
             router.push('/');
         } catch (error) {
-            console.error('Logout error:', error);
-            clearBrowserCookies();
+            console.error('Exit Error:', error);
+            clearAuthData();
             window.location.href = '/';
         }
     };
