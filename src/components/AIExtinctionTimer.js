@@ -320,7 +320,7 @@ function ShareCard({ result, cfg, jobTitle, years, months, days, t }) {
 }
 
 export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
-    const { t } = useLanguage();
+    const { lang, t } = useLanguage();
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -503,7 +503,7 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         systemPrompt: SYSTEM_PROMPT,
-                        prompt: `Analyze this role or business type: "${trimmed}"`,
+                        prompt: `Analyze this role or business type: "${trimmed}". CRITICAL: Return all string values in the JSON (threats, edge, verdict, urgency, researchBasis) in the ${lang === 'en' ? 'English' : lang === 'hi' ? 'Hindi' : 'Hinglish (Hindi-English mix)'} language.`,
                     }),
                 });
                 const data = await res.json();
