@@ -16,11 +16,13 @@ export default function SignupPage() {
     const [error, setError] = useState(null);
     const router = useRouter();
 
-    // Auto-redirect if already fully registered
+    // Auto-redirect if already signed in
     useEffect(() => {
-        if (!authLoading && user && business) {
-            console.log('--- Signup Page: Fully registered user detected, redirecting to dashboard ---');
-            router.push(`/dashboard?id=${business.id}`);
+        if (!authLoading && user) {
+            console.log('--- Signup (Auto-Redirect): User detected, routing to dashboard ---');
+            // Dashboard grid handles the placeholder if business is missing
+            const path = business?.id ? `/dashboard?id=${business.id}` : '/dashboard';
+            router.push(path);
         }
     }, [user, business, authLoading, router]);
 
@@ -72,7 +74,17 @@ export default function SignupPage() {
             }
         } catch (err) {
             console.error('--- Signup: Catch block triggered ---', err);
-            setError(err.message || 'Registration sequence failed.');
+            const msg = err.message || 'Registration sequence failed.';
+            
+            if (msg.toLowerCase().includes('already registered')) {
+                setError(
+                    <span>
+                        User already registered. Please <Link href="/login" className="text-ios-blue underline underline-offset-4 font-bold">LOG IN</Link> to access your terminal.
+                    </span>
+                );
+            } else {
+                setError(msg);
+            }
         } finally {
             console.log('--- Signup: Sequence finished ---');
             setLoading(false);
@@ -128,7 +140,15 @@ export default function SignupPage() {
                             <input type="password" required className="ios-input w-full" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} />
                         </div>
 
-                        {error && <div className={`text-xs p-3 rounded-xl border ${(typeof error === 'string' && error.includes('successful')) ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>{error}</div>}
+                        {error && (
+                            <div className={`text-xs p-3 rounded-xl border ${
+                                (typeof error === 'string' && (error.includes('successful') || error.includes('success'))) 
+                                ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                                : 'bg-red-500/10 text-red-500 border-red-500/20'
+                            }`}>
+                                {error}
+                            </div>
+                        )}
 
                         <button disabled={loading} type="submit" className="w-full py-4 mt-4 ios-button-primary flex items-center justify-center gap-2">
                             {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : 'ACTIVATE TERMINAL'}

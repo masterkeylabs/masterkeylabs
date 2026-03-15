@@ -112,22 +112,25 @@ export const AuthProvider = ({ children }) => {
 
     const fetchBusinessProfile = async (userObj, force = false) => {
         if (!userObj) {
+            console.log('--- AuthProvider: No user object, skipping lookup ---');
             setLoading(false);
             return;
         }
 
         if (!force && fetchingRef.current === userObj.id) {
+            console.log('--- AuthProvider: Lookup already in progress for this user, skipping. ---');
             return;
         }
 
         fetchingRef.current = userObj.id;
-        console.log('--- AuthProvider: Starting lookup for ---', userObj.email);
+        console.log('--- AuthProvider: Starting lookup sequence for ---', { email: userObj.email, id: userObj.id, force });
 
         const timeoutLimit = 10000; // 10 second hard limit for DB loopups
 
         try {
             // Priority 1: Match by user_id
             const lookupById = async () => {
+                console.log('--- AuthProvider: Attempting Priority 1 (user_id lookup) ---');
                 const { data, error } = await supabase
                     .from('businesses')
                     .select('*')
@@ -143,7 +146,7 @@ export const AuthProvider = ({ children }) => {
 
             let profile = await Promise.race([lookupById(), timeoutPromise]).catch(err => {
                 if (err.message === 'DATABASE_TIMEOUT') {
-                    console.warn('--- AuthProvider: ID lookup timed out ---');
+                    console.warn('--- AuthProvider: ID lookup timed out after 10s ---');
                 } else {
                     console.warn('--- AuthProvider: id lookup error ---', err.message);
                 }
@@ -152,7 +155,7 @@ export const AuthProvider = ({ children }) => {
 
             // Priority 2: Fallback to email if user_id not found
             if (!profile && userObj.email) {
-                console.log('--- AuthProvider: Fallback lookup by email ---', userObj.email);
+                console.log('--- AuthProvider: Fallback - Attempting Priority 2 (email lookup) ---', userObj.email);
                 
                 const lookupByEmail = async () => {
                     const { data, error } = await supabase
@@ -166,7 +169,7 @@ export const AuthProvider = ({ children }) => {
 
                 profile = await Promise.race([lookupByEmail(), timeoutPromise]).catch(err => {
                     if (err.message === 'DATABASE_TIMEOUT') {
-                        console.warn('--- AuthProvider: Email lookup timed out ---');
+                        console.warn('--- AuthProvider: Email lookup timed out after 10s ---');
                     } else {
                         console.warn('--- AuthProvider: email lookup error ---', err.message);
                     }
@@ -175,25 +178,29 @@ export const AuthProvider = ({ children }) => {
             }
 
             if (profile) {
-                console.log('--- AuthProvider: Profile found ---', profile.id);
+                console.log('--- AuthProvider: Profile identified! ---', { bizId: profile.id, owner: profile.owner_name });
                 // Link user_id if missing (Fire and forget, don't block)
                 if (!profile.user_id) {
-                    supabase.from('businesses').update({ user_id: userObj.id }).eq('id', profile.id).then();
+                    console.log('--- AuthProvider: Linking user_id to business profile ---');
+                    supabase.from('businesses').update({ user_id: userObj.id }).eq('id', profile.id).then(({ error }) => {
+                        if (error) console.error('--- AuthProvider: Linking failed ---', error.message);
+                        else console.log('--- AuthProvider: Linking success ---');
+                    });
                 }
                 setBusiness(profile);
                 if (typeof window !== 'undefined') {
                     localStorage.setItem('masterkey_business_id', profile.id);
                 }
             } else {
-                console.log('--- AuthProvider: No profile found/search timed out ---');
+                console.log('--- AuthProvider: Result - No business profile exists for this session. ---');
                 setBusiness(null);
             }
         } catch (err) {
-            console.error('--- AuthProvider: Lookup exception ---', err);
+            console.error('--- AuthProvider: UNHANDLED LOOKUP EXCEPTION ---', err);
         } finally {
             fetchingRef.current = null;
             setLoading(false);
-            console.log('--- AuthProvider: Lookup sequence finished ---');
+            console.log('--- AuthProvider: Lookup sequence finished. Loading state cleared. ---');
         }
     };
 

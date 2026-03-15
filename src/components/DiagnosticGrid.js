@@ -29,10 +29,11 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
     const handleExport = async () => {
         setExporting(true);
         try {
+            const auditData = { lossAudit, nightLoss, missedCustomers, aiThreat };
             const response = await fetch('/api/export-report', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ business, data })
+                body: JSON.stringify({ business, data: auditData })
             });
             const result = await response.json();
             if (result.success) {
