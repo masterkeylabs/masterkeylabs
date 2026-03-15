@@ -135,8 +135,17 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
     // Safely map translation sub-tree for the report
     const ts = t?.dashboard?.auditSummary?.report || {};
 
-    const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ₹${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
+    const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
     const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`;
+
+    const replacePlaceholders = (str, data = {}) => {
+        if (!str) return '';
+        let result = str;
+        Object.keys(data).forEach(key => {
+            result = result.replace(new RegExp(`\\{${key}\\}`, 'g'), data[key]);
+        });
+        return result;
+    };
 
     return (
         <section className="animate-fade-in opacity-0 w-full mt-4" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
@@ -260,7 +269,6 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                         <div className="relative py-10">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-500/5 blur-[120px] rounded-full"></div>
                             <p className="text-[220px] font-black text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.1)] tracking-tighter leading-none relative z-10">
-                                <span className="text-7xl align-top mr-4 text-white/30 font-medium">₹</span>
                                 {formatIndian(totalAnnualBleed)}
                             </p>
                         </div>
@@ -273,7 +281,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="text-left relative z-10">
                                     <p className="text-sm font-black text-green-500 tracking-[0.4em] mb-4 uppercase">PROTOCOL RECOVERY TARGET</p>
                                     <div className="flex items-baseline gap-4">
-                                        <p className="text-7xl font-black text-green-400 tracking-tight">₹{formatIndian(recoverablePotential)}</p>
+                                        <p className="text-7xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)}</p>
                                         <p className="text-2xl text-green-500/40 font-bold uppercase tracking-widest">Yearly Gain</p>
                                     </div>
                                     <p className="mt-6 text-2xl text-green-400/70 font-medium leading-relaxed max-w-2xl">
@@ -304,9 +312,9 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <span className="w-8 h-[1px] bg-ios-blue/30"></span>
                                     01 // {ts.opsFriction || 'Operational Waste'}
                                 </h4>
-                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">₹{formatIndian(annualOpsWaste)}</p>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualOpsWaste)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
-                                    {ts.staffWaste || 'Capital lost to repetitive manual work and human coordination drag.'}
+                                    {replacePlaceholders(ts.staffWaste, { amount: formatIndian(staffWaste * 12) })}
                                 </p>
                             </div>
 
@@ -317,9 +325,9 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <span className="w-8 h-[1px] bg-purple-500/30"></span>
                                     02 // {ts.afterHoursBleed || 'Night Loss Decay'}
                                 </h4>
-                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">₹{formatIndian(annualNightLoss)}</p>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualNightLoss)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
-                                    {ts.nightLossDesc || 'Revenue lost due to zero responsiveness during after-market hours.'}
+                                    {replacePlaceholders(ts.nightLossDesc, { amount: formatIndian(annualNightLoss) })}
                                 </p>
                             </div>
 
@@ -330,9 +338,12 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <span className="w-8 h-[1px] bg-ios-cyan/30"></span>
                                     03 // {ts.digitalInvisibility || 'Visibility Void'}
                                 </h4>
-                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">₹{formatIndian(annualVisibilityLoss)}</p>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualVisibilityLoss)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
-                                    {ts.visibilityDesc || 'Market share lost to competitors with superior digital signal density.'}
+                                    {replacePlaceholders(ts.visibilityDesc, { 
+                                        amount: formatIndian(annualVisibilityLoss),
+                                        count: missedCustomers
+                                    })}
                                 </p>
                             </div>
 
@@ -345,7 +356,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{extinctionHorizon} <span className="text-2xl text-white/30 font-medium">Months</span></p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
-                                    {ts.aiLossDesc || 'Estimated time remaining before current systems become legacy liabilities.'}
+                                    {replacePlaceholders(ts.aiLossDesc, { amount: extinctionHorizon })}
                                 </p>
                             </div>
                         </div>
