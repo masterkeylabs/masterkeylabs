@@ -105,7 +105,7 @@ export default function RescueArchitecture({ businessId, t }) {
                 <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay"></div>
                 <div className="absolute -top-40 right-0 w-[600px] h-[600px] bg-ios-blue/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 p-8 md:p-14 items-center">
+                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 p-6 md:p-14 items-center">
 
                     {/* Copy Section */}
                     <div className="space-y-6">
@@ -155,7 +155,7 @@ export default function RescueArchitecture({ businessId, t }) {
 
                             <div className="space-y-4 mb-8">
                                 {/* Stylized calendar slots */}
-                                <div className="grid grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 min-[400px]:grid-cols-3 gap-2 md:gap-3">
                                     {isFetchingSlots ? (
                                         [1, 2, 3].map(i => (
                                             <div key={i} className="p-3 rounded-xl border border-white/5 bg-white/5 animate-pulse h-[68px]"></div>
@@ -186,7 +186,7 @@ export default function RescueArchitecture({ businessId, t }) {
                             <button
                                 onClick={handleBooking}
                                 disabled={status === 'loading' || status === 'success'}
-                                className={`w-full py-4.5 rounded-xl flex items-center justify-center gap-3 text-sm font-bold uppercase tracking-widest transition-all ${status === 'success'
+                                className={`w-full py-3.5 md:py-4.5 rounded-xl flex items-center justify-center gap-2 md:gap-3 text-xs md:text-sm font-bold uppercase tracking-widest transition-all ${status === 'success'
                                     ? 'bg-ios-cyan/20 text-ios-cyan border border-ios-cyan/30'
                                     : 'ios-button-primary bg-ios-blue shadow-[0_0_20px_rgba(0,122,255,0.3)] hover:shadow-[0_0_30px_rgba(0,122,255,0.5)] border border-transparent hover:scale-[1.02] active:scale-[0.98]'
                                     }`}
