@@ -39,7 +39,11 @@ export default function SignupPage() {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        console.log('--- Signup: Starting manual signup sequence for ---', email);
+        console.log('--- Signup: Attempting manual signup ---', { 
+            email: email.trim(), 
+            fullName, 
+            currentAuthState: { user: !!user, business: !!business } 
+        });
 
         try {
             // 1. Auth Signup - Simplified
@@ -78,9 +82,13 @@ export default function SignupPage() {
             
             if (msg.toLowerCase().includes('already registered')) {
                 setError(
-                    <span>
-                        User already registered. Please <Link href="/login" className="text-ios-blue underline underline-offset-4 font-bold">LOG IN</Link> to access your terminal.
-                    </span>
+                    <div className="space-y-2">
+                        <p>User already registered.</p>
+                        <div className="flex flex-col gap-2">
+                            <Link href="/login" className="text-ios-blue underline underline-offset-4 font-bold uppercase text-[10px]">1. Log In to Terminal</Link>
+                            <Link href="/login" className="text-ios-orange underline underline-offset-4 font-bold uppercase text-[10px]">2. Reset Access Password</Link>
+                        </div>
+                    </div>
                 );
             } else {
                 setError(msg);

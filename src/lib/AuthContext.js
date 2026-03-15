@@ -19,8 +19,7 @@ export const AuthProvider = ({ children }) => {
         let isMounted = true;
 
         // --- SAFETY TIMEOUT ---
-        // Force-clear loading after 12s, even if a fetch is technically "active"
-        // (to handle hung network requests that never resolve)
+        // Force-clear loading after 6s (reduced from 12s for India responsiveness)
         const safetyTimer = setTimeout(() => {
             if (loading && isMounted) {
                 console.warn('--- AuthProvider: SAFETY TIMEOUT TRIGGERED (Forced Clear) ---');
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }) => {
                 }
                 setLoading(false);
             }
-        }, 12000);
+        }, 6000);
 
         const initializeAuth = async () => {
             console.log('--- AuthProvider: Running initializeAuth ---');
@@ -204,6 +203,29 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const clearBrowserCookies = () => {
+        console.log('--- AuthContext: Aggressive Cookie Cleanup initiated ---');
+        if (typeof document === 'undefined') return;
+        
+        try {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+                
+                // Specifically targeting Supabase cookies (usually start with sb-)
+                if (name.startsWith('sb-') || name.includes('supabase')) {
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+                }
+            }
+            console.log('--- AuthContext: Cleanup complete ---');
+        } catch (e) {
+            console.error('--- AuthContext: Cookie cleanup error ---', e);
+        }
+    };
+
     const signOut = async () => {
         console.log('--- AuthContext: Starting SignOut sequence ---');
         try {
@@ -213,14 +235,16 @@ export const AuthProvider = ({ children }) => {
                 localStorage.removeItem('masterkey_returning_user');
                 localStorage.removeItem('masterkey_temp_form');
                 localStorage.removeItem('masterkey_temp_results');
-                localStorage.removeItem('masterkey-auth-token'); // Clear supabase persistence
+                localStorage.removeItem('masterkey-auth-token'); 
+                
+                // AGGRESSIVE COOKIE CLEANUP
+                clearBrowserCookies();
             }
 
             setUser(null);
             setBusiness(null);
 
             // Priority 2: Attempt Supabase Signout with a hard timeout
-            // If Supabase is blocked (e.g. in India) or hangs, we don't want the UI stuck.
             const supabaseSignOut = supabase.auth.signOut();
             const timeoutPromise = new Promise((resolve) => setTimeout(() => {
                 console.warn('--- AuthContext: Supabase signOut timed out, forcing redirect ---');
@@ -233,7 +257,7 @@ export const AuthProvider = ({ children }) => {
             router.push('/');
         } catch (error) {
             console.error('Logout error:', error);
-            // Fallback redirect
+            clearBrowserCookies();
             window.location.href = '/';
         }
     };

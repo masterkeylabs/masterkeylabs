@@ -65,6 +65,23 @@ export default function LoginPage() {
         }
     };
 
+    const handleSystemReset = () => {
+        console.log('--- Terminal: Force System Reset triggered ---');
+        if (typeof window !== 'undefined') {
+            localStorage.clear();
+            sessionStorage.clear();
+            // Clear cookies
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            }
+            window.location.reload();
+        }
+    };
+
     const handleGoogleLogin = async () => {
         setLoading(true);
         try {
@@ -144,10 +161,18 @@ export default function LoginPage() {
                         <span className="text-sm font-bold tracking-tight text-white/90 uppercase">Continue with Google</span>
                     </button>
 
-                    <div className="mt-8 pt-6 border-t border-white/5 text-center">
+                    <div className="mt-8 pt-6 border-t border-white/5 text-center flex flex-col gap-4">
                         <Link href="/signup" className="text-[11px] text-white/20 uppercase tracking-widest font-bold hover:text-white transition-colors">
                             Need authorization? <span className="text-ios-blue underline underline-offset-4 ml-1">REGISTER TERMINAL</span>
                         </Link>
+                        
+                        <button 
+                            type="button"
+                            onClick={handleSystemReset}
+                            className="text-[9px] text-white/10 hover:text-red-500/50 uppercase tracking-[0.2em] font-black transition-colors"
+                        >
+                            Force System Reset
+                        </button>
                     </div>
                 </div>
             </motion.div>
