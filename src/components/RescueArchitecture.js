@@ -5,6 +5,27 @@ import { supabase } from '@/lib/supabaseClient';
 
 export default function RescueArchitecture({ businessId, t }) {
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
+    const [dynamicSlots, setDynamicSlots] = useState([]);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [isFetchingSlots, setIsFetchingSlots] = useState(true);
+
+    useEffect(() => {
+        const fetchSlots = async () => {
+            try {
+                const res = await fetch('/api/google-calendar');
+                const data = await res.json();
+                if (data.availableSlots) {
+                    setDynamicSlots(data.availableSlots);
+                    setSelectedSlot(data.availableSlots[0]);
+                }
+            } catch (err) {
+                console.error("Failed to fetch calendar slots", err);
+            } finally {
+                setIsFetchingSlots(false);
+            }
+        };
+        fetchSlots();
+    }, []);
 
     const rescueT = t?.dashboard?.rescue || {
         badge: "Protocol Override Available",
@@ -30,30 +51,39 @@ export default function RescueArchitecture({ businessId, t }) {
     };
 
     const handleBooking = async () => {
-        if (!businessId) {
-            // Mock success if dev/no id
-            setStatus('loading');
-            setTimeout(() => setStatus('success'), 1200);
-            return;
-        }
-
+        if (!selectedSlot) return;
+        
         setStatus('loading');
 
         try {
-            // We use 'intent_logs' if it exists. If not, it fails gracefully and still shows success in UI
-            const { error } = await supabase.from('intent_logs').insert({
-                business_id: businessId,
-                intent: 'Intent to Buy',
-                source: 'RescueArchitecture',
+            // 1. Create Google Calendar Event
+            const calRes = await fetch('/api/google-calendar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    startTime: selectedSlot.start,
+                    endTime: selectedSlot.end,
+                    summary: `Architecture Review - Business ID: ${businessId || 'N/A'}`,
+                    description: `Automated booking from MasterKey Diagnostic Terminal.`,
+                }),
             });
 
-            // For demo/UX purposes, even if the table doesn't exist yet (42P01), we proceed to show success 
-            if (error && error.code !== '42P01') {
-                console.error("Supabase booking error", error);
+            if (!calRes.ok) throw new Error('Failed to create calendar event');
+
+            // 2. Log Intent in Supabase
+            if (businessId) {
+                const { error } = await supabase.from('intent_logs').insert({
+                    business_id: businessId,
+                    intent: 'Intent to Buy',
+                    source: 'RescueArchitecture',
+                    metadata: { slot: selectedSlot }
+                });
+
+                if (error && error.code !== '42P01') {
+                    console.error("Supabase booking error", error);
+                }
             }
 
-            // Artificial delay for UI polish to simulate network processing
-            await new Promise((res) => setTimeout(res, 800));
             setStatus('success');
         } catch (err) {
             console.error(err);
@@ -126,16 +156,30 @@ export default function RescueArchitecture({ businessId, t }) {
                             <div className="space-y-4 mb-8">
                                 {/* Stylized calendar slots */}
                                 <div className="grid grid-cols-3 gap-3">
-                                    {[
-                                        `${rescueT.booking.times.today} - 4:00 PM`,
-                                        `${rescueT.booking.times.tmrw} - 11:30 AM`,
-                                        `${rescueT.booking.times.tmrw} - 2:00 PM`
-                                    ].map((time, i) => (
-                                        <div key={i} className={`p-3 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition-all ${i === 0 ? 'bg-ios-blue/10 border-ios-blue/30 text-ios-blue' : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white/80'}`}>
-                                            <span className="text-[10px] md:text-[11px] font-bold tracking-wider">{time.split(' - ')[0]}</span>
-                                            <span className="text-[10px] md:text-xs font-medium mt-1 whitespace-nowrap">{time.split(' - ')[1]}</span>
+                                    {isFetchingSlots ? (
+                                        [1, 2, 3].map(i => (
+                                            <div key={i} className="p-3 rounded-xl border border-white/5 bg-white/5 animate-pulse h-[68px]"></div>
+                                        ))
+                                    ) : dynamicSlots.length > 0 ? (
+                                        dynamicSlots.map((slot, i) => {
+                                            const [day, time] = slot.label.split(', ');
+                                            const isSelected = selectedSlot?.start === slot.start;
+                                            return (
+                                                <div 
+                                                    key={i} 
+                                                    onClick={() => setSelectedSlot(slot)}
+                                                    className={`p-3 rounded-xl border flex flex-col items-center justify-center cursor-pointer transition-all ${isSelected ? 'bg-ios-blue/10 border-ios-blue/30 text-ios-blue' : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white/80'}`}
+                                                >
+                                                    <span className="text-[10px] md:text-[11px] font-bold tracking-wider uppercase">{day}</span>
+                                                    <span className="text-[10px] md:text-xs font-medium mt-1 whitespace-nowrap">{time}</span>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="col-span-3 text-center py-4 text-white/20 text-[10px] uppercase tracking-widest border border-dashed border-white/10 rounded-xl">
+                                            No slots available
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
 

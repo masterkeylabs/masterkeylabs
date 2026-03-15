@@ -815,188 +815,75 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
                             </div>
                         </div>
 
-                        {/* ─── SOCIAL SHARE ─── */}
-                        <div style={{ marginTop: "18px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "16px", position: "relative" }}>
-                            <div style={{ textAlign: "center", fontSize: "0.58rem", color: "#444", letterSpacing: "2px", fontWeight: 700, marginBottom: "12px", textTransform: "uppercase", marginTop: "10px" }}>
-                                ⚡ Export Your Analysis
-                            </div>
-
-                            {/* Captured image preview */}
-                            {captureStatus === "capturing" && (
-                                <div style={{ marginBottom: "10px", borderRadius: "12px", background: "rgba(255,255,255,0.03)", height: "50px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                                    <svg style={{ animation: "spin 1s linear infinite", width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2">
-                                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                                    </svg>
-                                    <span style={{ fontSize: "0.62rem", color: "#555", letterSpacing: "1px" }}>{t.extinctionTimer.generatingImage}</span>
+                        {/* ─── SINGLE SHARE CTA ─── */}
+                        <div style={{ marginTop: "24px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "24px", textAlign: "center" }}>
+                            {captureStatus === "capturing" ? (
+                                <div style={{ marginBottom: "10px", borderRadius: "14px", background: "rgba(255,255,255,0.03)", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                                    <div style={{ width: "24px", height: "24px", border: "2px solid rgba(255,109,0,0.2)", borderTopColor: "#FF6D00", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                                    <span style={{ fontSize: "0.7rem", color: "#FF6D00", letterSpacing: "2px", fontWeight: 800, textTransform: "uppercase" }}>
+                                        {t.extinctionTimer.generatingImage || "Generating Analysis..."}
+                                    </span>
                                 </div>
+                            ) : (
+                                <button
+                                    onClick={() => shareImage()}
+                                    style={{
+                                        width: "100%",
+                                        padding: "18px",
+                                        background: "linear-gradient(135deg, #FF6000, #FF8000)",
+                                        border: "none",
+                                        borderRadius: "14px",
+                                        color: "#fff",
+                                        fontWeight: 900,
+                                        fontSize: "0.9rem",
+                                        letterSpacing: "1px",
+                                        cursor: "pointer",
+                                        transition: "all 0.3s cubic-bezier(0.23, 1, 0.32, 1)",
+                                        boxShadow: "0 10px 30px rgba(255,96,0,0.3)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        gap: "10px",
+                                        textTransform: "uppercase"
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.transform = "translateY(-2px)";
+                                        e.currentTarget.style.boxShadow = "0 15px 40px rgba(255,96,0,0.45)";
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                        e.currentTarget.style.boxShadow = "0 10px 30px rgba(255,96,0,0.3)";
+                                    }}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>share</span>
+                                    {t.extinctionTimer.shareOnSocial || "Share on Social Media"}
+                                </button>
                             )}
 
-                            {/* ─── Social Share Buttons ─── */}
-                            <div className="ext-share-grid" style={{
-                                display: "grid",
-                                gridTemplateColumns: "repeat(5, 1fr)",
-                                gap: "8px",
-                                marginBottom: "16px"
+                            {shareNotice && (
+                                <p style={{ 
+                                    color: "#FF6D00", 
+                                    fontSize: "0.7rem", 
+                                    marginTop: "12px", 
+                                    fontWeight: 800, 
+                                    letterSpacing: "0.5px",
+                                    animation: "fadeUp 0.3s ease both"
+                                }}>
+                                    {shareNotice}
+                                </p>
+                            )}
+                            
+                            <p style={{ 
+                                color: "#444", 
+                                fontSize: "0.6rem", 
+                                marginTop: "16px", 
+                                lineHeight: 1.5, 
+                                letterSpacing: "1px",
+                                textTransform: "uppercase"
                             }}>
-                                {[
-                                    { id: 'twitter', icon: 'X', color: '#000' },
-                                    { id: 'linkedin', icon: 'In', color: '#0077b5' },
-                                    { id: 'whatsapp', icon: 'WA', color: '#25D366' },
-                                    { id: 'facebook', icon: 'FB', color: '#1877f2' },
-                                    { id: 'instagram', icon: 'Insta', color: '#E1306C' }
-                                ].map(p => (
-                                    <button
-                                        key={p.id}
-                                        onClick={() => shareImage(p.id)}
-                                        className="ext-share-btn"
-                                        style={{
-                                            background: "rgba(255,255,255,0.03)",
-                                            border: "1px solid rgba(255,255,255,0.05)",
-                                            borderRadius: "12px",
-                                            padding: "10px 4px",
-                                            cursor: "pointer",
-                                            transition: "all 0.2s",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            gap: "4px"
-                                        }}
-                                        onMouseEnter={e => {
-                                            e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-                                            e.currentTarget.style.borderColor = p.color + '44';
-                                        }}
-                                        onMouseLeave={e => {
-                                            e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-                                            e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
-                                        }}
-                                    >
-                                        <div style={{ color: p.color, fontWeight: 900, fontSize: "0.8rem" }}>{p.icon}</div>
-                                        <div className="ext-share-label" style={{ fontSize: "0.45rem", color: "#555", fontWeight: 700, textTransform: "uppercase" }}>{p.id}</div>
-                                    </button>
-                                ))}
-                            </div>
-
-                            <p style={{ textAlign: "center", color: shareNotice ? "#FF6D00" : "#555", fontSize: "0.58rem", marginTop: "8px", lineHeight: 1.5, fontWeight: shareNotice ? 800 : 400, transition: "color 0.3s" }}>
-                                {shareNotice || (captureStatus === "done"
-                                    ? t.extinctionTimer.shareNoticeDone
-                                    : captureStatus === "failed"
-                                        ? "Error preparing share"
-                                        : "Generating share image...")}
+                                Tap to share your AI Risk Horizon directly<br/>
+                                or save the analysis to your device.
                             </p>
-                        </div>
-
-                        {/* ─── NEW: POST-RESULT CTA CARD (Fix #1) ─── */}
-                        <div style={{
-                            marginTop: "32px",
-                            background: "rgba(255,255,255,0.03)",
-                            border: `1px solid ${cfg.color}33`,
-                            borderRadius: "20px",
-                            padding: "24px",
-                            textAlign: "center",
-                            animation: "fadeUp 0.6s ease 0.3s both",
-                            position: "relative",
-                            overflow: "hidden"
-                        }}>
-                            {/* Visual Accent */}
-                            <div style={{
-                                position: "absolute",
-                                top: 0, left: 0, right: 0, height: "2px",
-                                background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)`
-                            }} />
-
-                            <div style={{
-                                display: "inline-block",
-                                background: cfg.color === '#FF2D2D' ? 'rgba(255,45,45,0.1)' : cfg.color === '#FF6B00' ? 'rgba(255,107,0,0.1)' : 'rgba(0,229,255,0.1)',
-                                border: `1px solid ${cfg.color}55`,
-                                color: cfg.color,
-                                fontSize: "0.6rem",
-                                fontWeight: 900,
-                                padding: "5px 14px",
-                                borderRadius: "99px",
-                                marginBottom: "14px",
-                                textTransform: "uppercase",
-                                letterSpacing: "1.5px"
-                            }}>
-                                {result.riskScore > 70 ? (t.extinctionTimer.priorityAction || '🚨 IMMEDIATE ACTION REQUIRED') : (t.extinctionTimer.optimizationAction || '💡 OPTIMIZATION REQUIRED')}
-                            </div>
-
-                            <h3 style={{
-                                color: "#fff",
-                                fontSize: "clamp(1rem, 3.5vw, 1.15rem)",
-                                fontWeight: 900,
-                                marginBottom: "10px",
-                                lineHeight: 1.3,
-                                letterSpacing: "-0.5px"
-                            }}>
-                                {t.extinctionTimer.resultTitle || `AI is coming for ${input.toLowerCase() || 'your role'}.`}<br />
-                                {t.extinctionTimer.resultSub || "Don't just watch — adapt."}
-                            </h3>
-                            <p style={{
-                                color: "#A0A0A0",
-                                fontSize: "0.78rem",
-                                marginBottom: "24px",
-                                lineHeight: 1.6,
-                                maxWidth: "280px",
-                                margin: "0 auto 24px"
-                            }}>
-                                {t.extinctionTimer.extinctionSub || "Our system detected high friction in your workflow. See exactly where you are losing revenue."}
-                            </p>
-
-                            <button
-                                onClick={onGetStarted}
-                                style={{
-                                    display: "block",
-                                    width: "100%",
-                                    background: "linear-gradient(135deg, #00E5FF, #0099FF)",
-                                    color: "#000",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    padding: "16px",
-                                    borderRadius: "14px",
-                                    fontSize: "0.85rem",
-                                    fontWeight: 900,
-                                    marginBottom: "14px",
-                                    boxShadow: "0 10px 25px rgba(0,229,255,0.25)",
-                                    transition: "transform 0.2s ease, filter 0.2s ease",
-                                    transform: "scale(1)",
-                                }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.transform = "scale(1.02)";
-                                    e.currentTarget.style.filter = "brightness(1.1)";
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.transform = "scale(1)";
-                                    e.currentTarget.style.filter = "brightness(1)";
-                                }}
-                            >
-                                {t.extinctionTimer.seeLeaksBtn || "See your Profit Leaks — 4 min Audit →"}
-                            </button>
-
-                            <a
-                                href={t?.fab?.waMessage ? `https://wa.me/91XXXXXXXXXX?text=${encodeURIComponent(t.fab.waMessage.replace('{businessName}', input || 'Business').replace('{threatZone}', result.threatLevel).replace('{lossText}', 'high risk'))}` : "#"}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: "8px",
-                                    color: "#00C48C",
-                                    fontSize: "0.78rem",
-                                    fontWeight: 700,
-                                    textDecoration: "none",
-                                    padding: "8px 12px",
-                                    borderRadius: "8px",
-                                    transition: "background 0.2s"
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.background = "rgba(0,196,140,0.05)"}
-                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                            >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.342 2.518.938 3.565l-.994 3.634 3.717-.974c1.011.552 2.169.869 3.407.87 3.181 0 5.767-2.586 5.768-5.766 0-3.181-2.587-5.766-5.768-5.766zM12.031 3c4.935 0 8.938 4.003 8.938 8.938s-4.003 8.938-8.938 8.938c-1.572 0-3.045-.407-4.326-1.118l-5.705 1.494 1.521-5.558c-.808-1.353-1.278-2.937-1.278-4.631 0-4.935 4.003-8.938 8.938-8.938z" />
-                                </svg>
-                                {t.extinctionTimer.whatsappSecondary || "or chat with us on WhatsApp →"}
-                            </a>
                         </div>
                     </div>
                 )}

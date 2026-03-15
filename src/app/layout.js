@@ -9,6 +9,10 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata = {
   title: "Masterkey.OS | Command Center",
   description: "AI-Powered Diagnostic Terminal for Business Intelligence",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 import { AuthProvider } from '@/lib/AuthContext';
