@@ -203,7 +203,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
             <div style={{ position: 'absolute', left: '-10000px', top: '0', pointerEvents: 'none' }}>
                 <div
                     ref={reportRef}
-                    className="w-[1200px] bg-[#0a0a0d] p-16 space-y-20 flex flex-col items-center"
+                    className="w-[800px] bg-[#0a0a0d] p-12 space-y-16 flex flex-col items-center"
                     style={{ background: '#0a0a0d', color: 'white', fontFamily: 'Inter, sans-serif' }}
                 >
                     {/* Header: Confidential Watermark & Branding */}
@@ -217,10 +217,10 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 Verified Audit
                             </div>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right flex-1">
                             <h4 className="text-ios-cyan font-black tracking-[0.3em] uppercase text-[10px] mb-2">Diagnostic Dispatch</h4>
-                            <p className="text-5xl font-black text-white tracking-tighter uppercase">{businessName || 'Your Business'}</p>
-                            <p className="text-white/40 text-lg mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
+                            <p className="text-4xl font-black text-white tracking-tighter uppercase">{businessName || 'Your Business'}</p>
+                            <p className="text-white/40 text-sm mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
                         </div>
                     </div>
 
@@ -244,13 +244,13 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 {ts.architectNote?.p3 || 'Use this intelligence to protect your profit margins and prepare for the next leap in autonomous business efficiency.'}
                             </p>
                             
-                            <div className="pt-8 border-t border-white/5 flex justify-between items-end">
+                            <div className="pt-8 border-t border-white/5 flex justify-between items-center">
                                 <div>
-                                    <p className="text-white text-3xl font-black italic tracking-tighter">{ts.architectNote?.sign || 'MasterKey Labs OS'}</p>
-                                    <p className="text-sm text-white/30 tracking-[0.3em] uppercase mt-2">{ts.architectNote?.role || 'Founders, MasterKey Labs'}</p>
+                                    <p className="text-white text-2xl font-black italic tracking-tighter">{ts.architectNote?.sign || 'MasterKey Labs OS'}</p>
+                                    <p className="text-[10px] text-white/30 tracking-[0.3em] uppercase mt-1">{ts.architectNote?.role || 'Founders, MasterKey Labs'}</p>
                                 </div>
                                 <div className="opacity-20 grayscale">
-                                    <img src="/logo.png" alt="Signature" className="h-24 w-auto filter invert" />
+                                    <img src="/logo.png" alt="Signature" className="h-16 w-auto filter invert" />
                                 </div>
                             </div>
                         </div>
@@ -266,25 +266,25 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                         
                         <h2 className="text-4xl font-black text-white/40 tracking-[0.3em] uppercase">{ts.annualBleed || 'TOTAL ANNUAL BLEED'}</h2>
                         
-                        <div className="relative py-10 w-full flex justify-center">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-500/5 blur-[120px] rounded-full"></div>
-                            <p className="text-[200px] font-black text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.1)] tracking-tight leading-none relative z-10 whitespace-nowrap">
+                        <div className="relative py-6 w-full flex justify-center">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-red-500/5 blur-[100px] rounded-full"></div>
+                            <p className="text-[130px] font-black text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.1)] tracking-tighter leading-none relative z-10 whitespace-nowrap">
                                 {formatIndian(totalAnnualBleed)}
                             </p>
                         </div>
 
                         <div className="max-w-4xl mx-auto grid grid-cols-1 gap-8">
-                            <div className="p-12 bg-gradient-to-br from-green-500/[0.08] to-transparent border border-green-500/20 rounded-[45px] shadow-2xl relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-6 opacity-20">
-                                    <span className="material-symbols-outlined text-green-500 text-7xl font-light">verified</span>
+                            <div className="p-10 bg-gradient-to-br from-green-500/[0.08] to-transparent border border-green-500/20 rounded-[40px] shadow-2xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-6 opacity-10">
+                                    <span className="material-symbols-outlined text-green-500 text-6xl font-light">verified</span>
                                 </div>
                                 <div className="text-left relative z-10">
-                                    <p className="text-sm font-black text-green-500 tracking-[0.4em] mb-4 uppercase">PROTOCOL RECOVERY TARGET</p>
-                                    <div className="flex items-baseline gap-4">
-                                        <p className="text-7xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)}</p>
-                                        <p className="text-2xl text-green-500/40 font-bold uppercase tracking-widest">Yearly Gain</p>
+                                    <p className="text-[10px] font-black text-green-500 tracking-[0.4em] mb-3 uppercase">PROTOCOL RECOVERY TARGET</p>
+                                    <div className="flex items-baseline gap-3">
+                                        <p className="text-6xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)}</p>
+                                        <p className="text-xl text-green-500/40 font-bold uppercase tracking-widest">Yearly Gain</p>
                                     </div>
-                                    <p className="mt-6 text-2xl text-green-400/70 font-medium leading-relaxed max-w-2xl">
+                                    <p className="mt-4 text-xl text-green-400/70 font-medium leading-relaxed">
                                         {ts.recoverableLegend || 'A 50% efficiency recovery is immediately possible through Autonomous Orchestration.'}
                                     </p>
                                 </div>
@@ -304,7 +304,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-12">
+                        <div className="grid grid-cols-1 gap-8">
                             {/* Leakage 1 */}
                             <div className="p-12 bg-white/[0.02] border border-white/10 rounded-[50px] relative overflow-hidden group">
                                 <div className="absolute top-0 left-0 w-2 h-full bg-ios-blue opacity-50"></div>
@@ -416,24 +416,24 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                     </div>
 
                     {/* Section 5: Call to Action (The Hook) */}
-                    <div className="w-full bg-gradient-to-br from-[#007AFF] to-[#5856D6] p-24 rounded-[70px] text-center space-y-10 mt-16 shadow-[0_40px_100px_-20px_rgba(0,122,255,0.4)] relative overflow-hidden border border-white/20">
+                    <div className="w-full bg-gradient-to-br from-[#007AFF] to-[#5856D6] p-16 rounded-[60px] text-center space-y-8 mt-16 shadow-[0_40px_100px_-20px_rgba(0,122,255,0.4)] relative overflow-hidden border border-white/20">
                         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
-                        <h2 className="text-7xl font-black text-white tracking-widest uppercase leading-[1.1] relative z-10">
+                        <h2 className="text-5xl font-black text-white tracking-widest uppercase leading-[1.1] relative z-10">
                             {ts.cta?.title || 'STOP THE BLEED'}
                         </h2>
-                        <p className="text-3xl text-white/80 font-medium max-w-4xl mx-auto leading-relaxed relative z-10">
+                        <p className="text-2xl text-white/80 font-medium max-w-2xl mx-auto leading-relaxed relative z-10">
                             {ts.cta?.sub || 'Don\'t deal with these losses alone. Map your custom transformation path today.'}
                         </p>
-                        <div className="pt-12 flex flex-col items-center gap-8 relative z-10">
+                        <div className="pt-8 flex flex-col items-center gap-6 relative z-10">
                             <a 
                                 href={waLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-20 py-8 bg-white text-black rounded-[30px] text-3xl font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-transform inline-block"
+                                className="px-16 py-6 bg-white text-black rounded-[24px] text-2xl font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-transform inline-block"
                             >
                                 {ts.cta?.btn || 'Book Review'}
                             </a>
-                            <p className="text-white/60 text-lg tracking-[0.4em] font-black uppercase">{ts.cta?.footer || 'CONFIRM YOUR SLOT AT MASTERKEYLABS.AI'}</p>
+                            <p className="text-white/60 text-[10px] tracking-[0.4em] font-black uppercase">{ts.cta?.footer || 'CONFIRM YOUR SLOT AT MASTERKEYLABS.AI'}</p>
                         </div>
                     </div>
 
