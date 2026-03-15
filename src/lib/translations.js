@@ -1777,12 +1777,12 @@ export const translations = {
             optimizationAction: "💡 OPTIMIZATION REQUIRED",
             searchSteps: [
                 "NASSCOM displacement data sync ho raha hai...",
-                "SCANNING DISPLACEMENT DATABASES...",
-                "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
-                "CALCULATING AUTOMATION HORIZON...",
-                "ESTIMATING SURVIVAL METRICS...",
-                "DECRYPTING EXTINCTION TIMELINE...",
-                "FINALIZING RISK PROFILE...",
+                "Indian workforce sector risk ka analysis...",
+                "NITI Aayog (2025) projections ka matching...",
+                "Indian market relevance TTL ki calculation...",
+                "India mein automation horizon ki mapping...",
+                "Extinction timeline decode ho rahi hai...",
+                "Indian risk profile ko finalize kiya ja raha hai...",
             ],
             threatLevels: {
                 CRITICAL: "CRITICAL RISK",
