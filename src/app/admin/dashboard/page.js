@@ -29,6 +29,9 @@ export default function AdminDashboard() {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+    
+    // Mobile navigation state
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const COLORS = ['#00e5ff', '#ff3d00', '#ffd600', '#00e676', '#d500f9', '#3d5afe', '#ff9100'];
 
@@ -236,9 +239,18 @@ export default function AdminDashboard() {
     );
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white flex font-sans selection:bg-primary/30">
+        <div className="min-h-screen bg-[#020617] text-white flex font-sans selection:bg-primary/30 relative">
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-64 border-r border-white/5 bg-[#03081a] flex flex-col fixed h-full z-10 transition-all">
+            <aside className={`w-64 border-r border-white/5 bg-[#03081a] flex flex-col fixed h-full z-30 transition-all duration-300 transform 
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 <div className="p-8">
                     <Image src="/logo-icon.png" alt="MasterKey Labs" width={64} height={64} className="h-16 w-auto mb-2 object-contain" />
                     <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] mt-2">Command Center</p>
@@ -246,28 +258,40 @@ export default function AdminDashboard() {
 
                 <nav className="flex-1 px-4 space-y-2">
                     <button 
-                        onClick={() => setActiveTab('overview')}
+                        onClick={() => {
+                            setActiveTab('overview');
+                            setIsSidebarOpen(false);
+                        }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'overview' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
                     >
                         <span className="material-symbols-outlined text-sm">analytics</span>
                         <span className="text-sm font-bold tracking-tight">Overview</span>
                     </button>
                     <button 
-                        onClick={() => setActiveTab('businesses')}
+                        onClick={() => {
+                            setActiveTab('businesses');
+                            setIsSidebarOpen(false);
+                        }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'businesses' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
                     >
                         <span className="material-symbols-outlined text-sm">corporate_fare</span>
                         <span className="text-sm font-bold tracking-tight">Management</span>
                     </button>
                     <button 
-                        onClick={() => setActiveTab('bookings')}
+                        onClick={() => {
+                            setActiveTab('bookings');
+                            setIsSidebarOpen(false);
+                        }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'bookings' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
                     >
                         <span className="material-symbols-outlined text-sm">calendar_month</span>
                         <span className="text-sm font-bold tracking-tight">Architecture Bookings</span>
                     </button>
                     <button 
-                        onClick={() => setActiveTab('users')}
+                        onClick={() => {
+                            setActiveTab('users');
+                            setIsSidebarOpen(false);
+                        }}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'users' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
                     >
                         <span className="material-symbols-outlined text-sm">group</span>
@@ -297,17 +321,30 @@ export default function AdminDashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 p-6 lg:p-10">
+            <main className="flex-1 lg:ml-64 p-6 lg:p-10 transition-all overflow-x-hidden">
+                {/* Mobile Header Nav */}
+                <div className="flex items-center justify-between lg:hidden mb-8 glass-dark p-4 rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-3">
+                        <Image src="/logo-icon.png" alt="Logo" width={32} height={32} className="h-8 w-auto object-contain" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">MasterKey Ops</span>
+                    </div>
+                    <button 
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="p-2 bg-primary/10 text-primary rounded-xl"
+                    >
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
                 {/* Header */}
-                <header className="flex items-center justify-between mb-12">
+                <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 lg:mb-12 gap-4">
                     <div>
-                        <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">
+                        <h1 className="text-2xl lg:text-4xl font-black tracking-tight mb-2 uppercase">
                             {activeTab === 'overview' ? 'Intelligence Hub' : 
                              activeTab === 'businesses' ? 'Business Registry' : 
                              activeTab === 'bookings' ? 'Review Operations' :
                              'Personnel Command'}
                         </h1>
-                        <p className="text-white/40 font-medium tracking-wide">
+                        <p className="text-xs lg:text-sm text-white/40 font-medium tracking-wide">
                             {activeTab === 'overview' ? 'Real-time tracking of all business diagnostics & market threats.' : 
                              activeTab === 'businesses' ? 'Full operational over-ride of registered entities.' : 
                              activeTab === 'bookings' ? 'Monitoring and optimizing architectural sessions.' :
@@ -315,11 +352,11 @@ export default function AdminDashboard() {
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-end">
-                            <span className="text-xs font-black text-primary tracking-widest uppercase mb-1">Status: Operational</span>
+                        <div className="flex flex-col items-start md:items-end">
+                            <span className="text-[10px] lg:text-xs font-black text-primary tracking-widest uppercase mb-1">Status: Operational</span>
                             <div className="flex gap-1">
-                                <span className="w-8 h-1 bg-primary rounded-full shadow-[0_0_10px_#00E5FF]"></span>
-                                <span className="w-8 h-1 bg-primary/30 rounded-full animate-pulse"></span>
+                                <span className="w-6 lg:w-8 h-1 bg-primary rounded-full shadow-[0_0_10px_#00E5FF]"></span>
+                                <span className="w-6 lg:w-8 h-1 bg-primary/30 rounded-full animate-pulse"></span>
                             </div>
                         </div>
                     </div>
@@ -328,40 +365,40 @@ export default function AdminDashboard() {
                 {activeTab === 'overview' && (
                     <>
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                            <div className="glass rounded-3xl p-8 border border-white/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Total Deployments</span>
-                                <span className="text-5xl font-black text-white mb-2">{stats.total}</span>
-                                <span className="text-xs text-primary font-bold">Terminal Registrations</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 mb-8 lg:mb-12">
+                            <div className="glass rounded-2xl lg:rounded-3xl p-6 lg:p-8 border border-white/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Total Deployments</span>
+                                <span className="text-3xl lg:text-5xl font-black text-white mb-2">{stats.total}</span>
+                                <span className="text-[10px] lg:text-xs text-primary font-bold uppercase">Terminal Registrations</span>
                             </div>
 
-                            <div className="glass rounded-3xl p-8 border border-alert-red/20 bg-alert-red/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-alert-red/50 mb-2">Critical Threats</span>
-                                <span className="text-5xl font-black text-alert-red mb-2">{stats.critical}</span>
-                                <span className="text-xs text-alert-red font-bold">Khatra Status Active</span>
+                            <div className="glass rounded-2xl lg:rounded-3xl p-6 lg:p-8 border border-alert-red/20 bg-alert-red/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.4em] text-alert-red/50 mb-2">Critical Threats</span>
+                                <span className="text-3xl lg:text-5xl font-black text-alert-red mb-2">{stats.critical}</span>
+                                <span className="text-[10px] lg:text-xs text-alert-red font-bold uppercase">Khatra Status Active</span>
                             </div>
 
-                            <div className="glass rounded-3xl p-8 border border-primary/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/50 mb-2">Total Burn Detected</span>
-                                <span className="text-5xl font-black text-white mb-2">{formatCurrency(stats.totalWaste)}</span>
-                                <span className="text-xs text-primary font-bold">Monthly Combined Drain</span>
+                            <div className="glass rounded-2xl lg:rounded-3xl p-6 lg:p-8 border border-primary/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.4em] text-primary/50 mb-2">Total Burn Detected</span>
+                                <span className="text-3xl lg:text-5xl font-black text-white mb-2">{formatCurrency(stats.totalWaste)}</span>
+                                <span className="text-[10px] lg:text-xs text-primary font-bold uppercase">Monthly Combined Drain</span>
                             </div>
 
-                            <div className="glass rounded-3xl p-8 border border-cyan-400/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400/50 mb-2">Waitlist/Bookings</span>
-                                <span className="text-5xl font-black text-white mb-2">{stats.bookingsCount}</span>
-                                <span className="text-xs text-cyan-400 font-bold">Architecture Requests</span>
+                            <div className="glass rounded-2xl lg:rounded-3xl p-6 lg:p-8 border border-cyan-400/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400/50 mb-2">Waitlist/Bookings</span>
+                                <span className="text-3xl lg:text-5xl font-black text-white mb-2">{stats.bookingsCount}</span>
+                                <span className="text-[10px] lg:text-xs text-cyan-400 font-bold uppercase">Architecture Requests</span>
                             </div>
                         </div>
 
                         {/* Analytics Grid */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                             <div className="glass rounded-[2.5rem] p-8 border border-white/5">
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                                <h3 className="text-xs lg:text-sm font-black uppercase tracking-widest mb-6 lg:mb-8 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary text-lg">pie_chart</span>
                                     Market Composition
                                 </h3>
-                                <div className="h-72 w-full">
+                                <div className="h-64 lg:h-72 w-full">
                                     {mounted && (
                                         <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
@@ -388,11 +425,11 @@ export default function AdminDashboard() {
                             </div>
 
                             <div className="glass rounded-[2.5rem] p-8 border border-white/5">
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                                <h3 className="text-xs lg:text-sm font-black uppercase tracking-widest mb-6 lg:mb-8 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-alert-red text-lg">bar_chart</span>
                                     Threat Landscape
                                 </h3>
-                                <div className="h-72 w-full">
+                                <div className="h-64 lg:h-72 w-full">
                                     {mounted && (
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={threatLandscape}>
@@ -414,11 +451,11 @@ export default function AdminDashboard() {
                             </div>
 
                             <div className="lg:col-span-2 glass rounded-[2.5rem] p-8 border border-white/5">
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                                <h3 className="text-xs lg:text-sm font-black uppercase tracking-widest mb-6 lg:mb-8 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary text-lg">timeline</span>
                                     Combined Drain Trend (₹K)
                                 </h3>
-                                <div className="h-64 w-full">
+                                <div className="h-56 lg:h-64 w-full">
                                     {mounted && (
                                         <ResponsiveContainer width="100%" height="100%">
                                             <AreaChart data={economicTrend}>
@@ -444,9 +481,9 @@ export default function AdminDashboard() {
                 )}
 
                 {(activeTab === 'businesses' || activeTab === 'bookings' || activeTab === 'users') && (
-                    <div className="glass rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
-                        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                            <h3 className="text-xl font-bold tracking-tight flex items-center gap-3">
+                    <div className="glass rounded-2xl lg:rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
+                        <div className="p-4 lg:p-8 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between bg-white/[0.02] gap-4">
+                            <h3 className="text-lg lg:text-xl font-bold tracking-tight flex items-center gap-3">
                                 <span className="material-symbols-outlined text-primary">
                                     {activeTab === 'businesses' ? 'storage' : 
                                      activeTab === 'bookings' ? 'event_note' : 'group'}
@@ -454,14 +491,14 @@ export default function AdminDashboard() {
                                 {activeTab === 'businesses' ? 'Entity Registry' : 
                                  activeTab === 'bookings' ? 'Session Requests' : 'Operator Database'}
                             </h3>
-                            <div className="relative">
+                            <div className="relative w-full sm:w-auto">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-white/20 text-sm">search</span>
                                 <input
                                     type="text"
                                     placeholder="Search..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="bg-white/5 border border-white/10 rounded-full pl-10 pr-6 py-2 text-sm focus:outline-none focus:border-primary/40 focus:bg-white/10 transition-all w-64 uppercase tracking-tighter"
+                                    className="bg-white/5 border border-white/10 rounded-full pl-10 pr-6 py-2 text-sm focus:outline-none focus:border-primary/40 focus:bg-white/10 transition-all w-full sm:w-64 uppercase tracking-tighter"
                                 />
                             </div>
                         </div>
