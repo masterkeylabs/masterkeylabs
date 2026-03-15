@@ -1397,6 +1397,11 @@ export const translations = {
                 sub: "लैंडिंग पृष्ठ पर अपने व्यावसायिक विवरण सबमिट करें।"
             },
             auditSummary: {
+                header: {
+                    log: "प्रॉफ़िट लीक लॉग",
+                    overview: "AI सर्वाइवल रिपोर्ट",
+                    exportBtn: "इंटेलिजेंस रिपोर्ट निर्यात करें"
+                },
                 lockedTitle: "एग्रीगेट इंटेलिजेंस लॉक्ड",
                 lockedSub: "अपना सर्वाइवल स्कोर अनलॉक करने के लिए चारों डायग्नोस्टिक प्रोटोकॉल पूरे करें।",
                 bleedCard: {
@@ -1840,6 +1845,11 @@ export const translations = {
                     tag: "Module 04: Survival Deadline",
                     title: "Is your business AI-proof?",
                     ttl: "Market Relevance TTL",
+                },
+                header: {
+                    log: "Profit Leak Log",
+                    overview: "AI Survival Report",
+                    exportBtn: "Export Intelligence Report"
                 },
                 bleedCard: {
                     liveBurn: "Live Burn Detected",
