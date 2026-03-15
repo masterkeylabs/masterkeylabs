@@ -128,7 +128,7 @@ export const translations = {
             },
             step1: {
                 title: "Identification",
-                badge: "Step 1 â Identity",
+                badge: "Step 1 — Identity",
                 vertical: "Business Vertical",
                 revenue: "Monthly Revenue Bracket",
                 industryBenchmark: "Critical for waste benchmark calibration.",
@@ -138,10 +138,10 @@ export const translations = {
             },
             step2: {
                 title: "The Bleed",
-                badge: "Step 2 â The Bleed",
+                badge: "Step 2 — The Bleed",
                 employees: "Number of Employees",
-                marketing: "Monthly Marketing Spend (â¹)",
-                ops: "Monthly Operations Overhead (â¹)",
+                marketing: "Monthly Marketing Spend (₹)",
+                ops: "Monthly Operations Overhead (₹)",
                 prev: "Back",
                 next: "Next Step",
                 closingTimeSeq: "Closing Time Sequence",
@@ -153,7 +153,7 @@ export const translations = {
             },
             step3: {
                 title: "The Tech Gap",
-                badge: "Step 3 â The Tech Gap",
+                badge: "Step 3 — The Tech Gap",
                 inquiry: "How are client inquiries handled after 6 PM?",
                 options: {
                     ignored: "Missed / Ignored",
@@ -228,7 +228,7 @@ export const translations = {
             marketingBudgetLabel: "Marketing Budget",
             opsOverheadLabel: "Operations & Overheads",
             revenueLabel: "Estimated Annual Revenue",
-            revenueSub: "Used for Coordination Drag calculation. Use midpoint if range (e.g. â¹25Lââ¹1Cr â â¹62.5L).",
+            revenueSub: "Used for Coordination Drag calculation. Use midpoint if range (e.g. ₹25L–₹1Cr → ₹62.5L).",
             advancedHeader: "Advanced Diagnostic Metrics",
             manualHoursLabel: "Daily Manual Work Hours (per employee)",
             manualHoursSub: "Hours spent on spreadsheets, manual data entry, and repetitive follow-ups.",
@@ -267,8 +267,8 @@ export const translations = {
             formHeader: "Your Business Hours",
             dailyInquiriesLabel: "Average Daily Inquiries / Leads",
             closingTimeLabel: "Business Closing Time",
-            avgTransactionLabel: "Avg Transaction Value (â¹)",
-            avgTransactionSub: "â  Required â audit cannot produce a â¹ figure without this input.",
+            avgTransactionLabel: "Avg Transaction Value (₹)",
+            avgTransactionSub: "⚠ Required — audit cannot produce a ₹ figure without this input.",
             businessTypeLabel: "Business Type",
             btnText: "Calculate Night Loss",
             savingText: "Saving...",
@@ -302,7 +302,7 @@ export const translations = {
                 b2b: { label: "B2B / Manufacturing", desc: "Large ticket contracts" }
             },
             errors: {
-                missingTxnValue: "Please enter your average transaction value (â¹). This is required to calculate revenue loss."
+                missingTxnValue: "Please enter your average transaction value (₹). This is required to calculate revenue loss."
             }
         },
         visibility: {
@@ -338,9 +338,9 @@ export const translations = {
             gapsHeader: "Gap Analysis ({count} signals missing)",
             conversionRate: "6% conversion rate",
             placeholders: {
-                citySelect: "â Select city â",
+                citySelect: "— Select city —",
                 cityInput: "Enter city name...",
-                revenue: "â¹ 1,500"
+                revenue: "₹ 1,500"
             },
             searchSteps: [
                 'Scanning Local Search Volume...',
@@ -405,15 +405,15 @@ export const translations = {
             },
             employeeRanges: {
                 micro: { label: "< 10", desc: "Micro (+6 mo)" },
-                small: { label: "10â49", desc: "Small (neutral)" },
-                medium: { label: "50â200", desc: "Medium (â6 mo)" },
-                large: { label: "200+", desc: "Large (â12 mo)" }
+                small: { label: "10–49", desc: "Small (neutral)" },
+                medium: { label: "50–200", desc: "Medium (−6 mo)" },
+                large: { label: "200+", desc: "Large (−12 mo)" }
             },
             statusLabels: {
-                critical: "CRITICAL WINDOW â Act immediately",
-                watch: "WATCH CLOSELY â 12-month action plan needed",
-                manageable: "MANAGEABLE RUNWAY â Begin transition planning",
-                monitor: "LONG RUNWAY â Monitor and prepare, not urgent"
+                critical: "CRITICAL WINDOW — Act immediately",
+                watch: "WATCH CLOSELY — 12-month action plan needed",
+                manageable: "MANAGEABLE RUNWAY — Begin transition planning",
+                monitor: "LONG RUNWAY — Monitor and prepare, not urgent"
             },
             searchSteps: [
                 'Dissecting Departmental Tasks...',
@@ -426,7 +426,7 @@ export const translations = {
         header: {
             home: "Home",
             command: "Command Center",
-            sync: "Cloud Sync Active â v2.1.0-secure"
+            sync: "Cloud Sync Active — v2.1.0-secure"
         },
         sidebar: {
             status: "System Status",
@@ -444,7 +444,7 @@ export const translations = {
             directives: "Directives",
             privacy: "Privacy Policy",
             terms: "Terms & Conditions",
-            rights: "Â© 2025 MASTERKEY LABS â ADAPTIVE SYSTEMS PROTOCOL",
+            rights: "© 2025 MASTERKEY LABS — ADAPTIVE SYSTEMS PROTOCOL",
             confidential: "Confidential System Audit"
         },
         fab: {
@@ -457,8 +457,8 @@ export const translations = {
             title1: "Will AI Replace",
             title2: "You?",
             sub: "Enter your job title or business type below. Get your AI extinction timeline in seconds.",
-            placeholder: "e.g. accountant Â· HR manager Â· law firm Â· marketing agency",
-            calculateBtn: "Calculate My AI Risk â",
+            placeholder: "e.g. accountant · HR manager · law firm · marketing agency",
+            calculateBtn: "Calculate My AI Risk →",
             yearsLabel: "YEARS",
             monthsLabel: "MONTHS",
             daysLabel: "DAYS",
@@ -473,11 +473,11 @@ export const translations = {
             sharePrompt: "Share this on Social Media",
             exportLabel: "Export Your Analysis",
             generatingImage: "Generating share image...",
-            shareNoticeDone: "Image auto-saved when sharing Â· tap to open platform",
+            shareNoticeDone: "Image auto-saved when sharing · tap to open platform",
             resultTitle: "AI doesn't have to be the end of your story.",
             resultSub: "It's time to build your Digital Factory.",
-            seeLeaksBtn: "See your Profit Leaks â 4 min Audit â",
-            whatsappSecondary: "or chat with us on WhatsApp â",
+            seeLeaksBtn: "See your Profit Leaks — 4 min Audit →",
+            whatsappSecondary: "or chat with us on WhatsApp →",
             searchSteps: [
                 "INITIALIZING NEURAL ENGINE...",
                 "SCANNING DISPLACEMENT DATABASES...",
@@ -644,21 +644,20 @@ export const translations = {
                     btnLocked: "Locked by Protocol",
                     btnProcessing: "Processing Payload...",
                     btnGenerate: "Generate & Download Report",
-                    pdfHeader: "CONFIDENTIAL BUSINESS INTELLIGENCE",
-                    criticalBadge: "Critical System Leak Detected",
-                    annualBleed: "Total Annual Money Loss",
-                    recoverableLegend: "We can reclaim 50% of your lost capital through system automation.",
-                    telemetryTitle: "Where your money goes",
-                    opsFriction: "Internal Efficiency",
-                    staffWaste: "Money lost to manual work.",
-                    afterHoursBleed: "Missing 24/7 Revenue",
-                    nightLossDesc: "Leads lost because nobody answers after-hours.",
-                    digitalInvisibility: "Low Customer Visibility",
-                    visibilityDesc: "Customers are finding other businesses instead of yours.",
-                    aiThreatHorizon: "Window of Survival",
-                    aiLossDesc: "Time left before the market shifts to AI permanently.",
-                    coordinationDragTitle: "Complex Waste Detected",
-                    coordinationDragDesc: "Your business scale makes manual fixes too slow. Immediate automation is required.",
+                    pdfHeader: "Diagnostic Audit Payload",
+                    criticalBadge: "CRITICAL SYSTEM DISRUPTION DETECTED",
+                    recoverableLegend: "We can reclaim 50% of this burn by deploying autonomous operational protocols.",
+                    telemetryTitle: "Diagnostic Telemetry",
+                    opsFriction: "Operational Friction",
+                    staffWaste: "Includes {amount} in payroll inefficiency.",
+                    afterHoursBleed: "After-Hours Bleed",
+                    nightLossDesc: "While systems sleep, you hemorrhage {amount} annually due to lack of 24/7 AI lead response.",
+                    digitalInvisibility: "Digital Invisibility",
+                    visibilityDesc: "An estimated {amount} ({count} missed customers) is captured by local competitors.",
+                    aiThreatHorizon: "AI Irrelevance Horizon",
+                    aiLossDesc: "Window of survival: {amount} months remaining before AI-native firms render your model obsolete.",
+                    coordinationDragTitle: "Coordination Drag Applied",
+                    coordinationDragDesc: "Fixing inefficiencies at this scale is technically complex. Every day of delay compounds the capital dump. Immediate architectural intervention is mandatory.",
                     protocolTitle: "The Survival Protocol",
                     protocol01Title: "Ecosystem Unification",
                     protocol01Desc: "Consolidate fragmented tools into a singular, high-availability architecture.",
@@ -667,41 +666,41 @@ export const translations = {
                     protocol03Title: "Scale & Dominance",
                     protocol03Desc: "Dominate local metrics and capture 24/7 inbound traffic across all digital touchpoints.",
                     rawDiagnostics: "Raw System Diagnostics",
-                    mod01Title: "System Check 01: Internal Waste",
-                    mod02Title: "System Check 02: Missing Revenue",
-                    mod03Title: "System Check 03: Local Presence",
-                    mod04Title: "System Check 04: Market Timeline",
-                    staffPayroll: "Staff Payroll Waste",
-                    marketingBleed: "Marketing Waste",
-                    rawOps: "Operations Waste",
-                    coordinationDragApplied: "Efficiency Drag",
-                    missedWeeklyInquiries: "Missed Weekly Leads",
-                    avgTxnVelocity: "Average Sale Value",
-                    estConversion: "Success Rate",
-                    monthlyHemorrhage: "Monthly Money Loss",
-                    lostLocalSearches: "Missed Local Searches",
-                    missedHighIntent: "Ready-to-Buy Customers",
-                    visibilityScore: "Overall Visibility Score",
-                    threatThreshold: "Risk Level",
-                    architectNote: {
-                        title: "Note from the System Architect",
-                        p1: "Your current systems are working, but they are expensive.",
-                        p2: "Every month, your operations 'bleed' capital because of human friction and missed timing. This report isn't just a list of numbersâit's a look at the money you are leaving behind simply because you haven't deployed modern AI protocols yet.",
-                        p3: "Use this data to protect your profit margins and prepare for the next leap in business efficiency.",
-                        sign: "MasterKey OS Team",
-                        role: "Founders, MasterKey Labs"
-                    },
-                    cta: {
-                        title: "Ready to stop the bleed?",
-                        sub: "Don't deal with this alone. Your numbers are unique, and your solution should be too. Book a free review of your business architecture with our team.",
-                        btn: "Book Architecture Review",
-                        footer: "Visit masterkeylabs.ai to schedule your slot"
-                    },
+                    mod01Title: "Mod 01: Operational Waste",
+                    mod02Title: "Mod 02: Night Loss",
+                    mod03Title: "Mod 03: Digital Invisibility",
+                    mod04Title: "Mod 04: AI Threat Horizon",
+                    staffPayroll: "Staff/Payroll Waste",
+                    marketingBleed: "Marketing Bleed",
+                    rawOps: "Raw Ops Overheads",
+                    coordinationDragApplied: "Coordination Drag Applied",
+                    missedWeeklyInquiries: "Missed Weekly Inquiries",
+                    avgTxnVelocity: "Avg Txn / LTV Velocity",
+                    estConversion: "Est. Conversion Rate",
+                    monthlyHemorrhage: "Monthly Revenue Hemorrhage",
+                    lostLocalSearches: "Lost Local Searches",
+                    missedHighIntent: "High-Intent Missed Customers",
+                    visibilityScore: "Calculated Invisibility Score",
+                    threatThreshold: "Threat Assessment Threshold",
                     survivalComplexity: "Survival Complexity Score",
                     calculatedTTL: "Calculated Time to Live",
                     extinctionDeadline: "Extinction Deadline Status",
                     criticalEvasion: "CRITICAL EVASION REQ.",
-                    monitoring: "MONITORING"
+                    monitoring: "MONITORING",
+                    architectNote: {
+                        title: "MESSAGE FROM THE SYSTEM ARCHITECT",
+                        p1: "Your current systems aren't broken—they're just expensive. They were built for a world that no longer exists, where manual labor was the only way to scale.",
+                        p2: "Every month you delay autonomous integration, you're not just losing money; you're handing market share to competitors who are already building their digital factories. This report isn't just data; it's a blueprint for your survival.",
+                        p3: "Use this intelligence to stop the bleed and reclaim your dominance.",
+                        sign: "MasterKey OS Team",
+                        role: "Founder, MasterKey Labs"
+                    },
+                    cta: {
+                        title: "WANT TO STOP THE BLEED?",
+                        sub: "Don't fight this alone. Your problems are unique, and your solution should be too. Book a free architecture review with our team.",
+                        btn: "Book Your Free Review",
+                        footer: "Go to masterkeylabs.ai to secure your slot"
+                    }
                 },
                 module01: {
                     tag: "Module 01: The Internal Leak",
@@ -806,778 +805,787 @@ export const translations = {
         },
     },
     hi: {
-        tagline: "à¤à¤§à¥à¤¨à¤¿à¤ à¤ªà¥à¤°à¤£à¤¾à¤²à¤¿à¤¯à¥à¤ à¤à¥ à¤²à¤¿à¤ à¤à¤¡à¥à¤ªà¥à¤à¤¿à¤µ à¤à¤à¤à¥à¤²à¤¿à¤à¥à¤à¤¸",
-        badge: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤¸à¥à¤à¥à¤° à¤¸à¤à¥à¤°à¤¿à¤¯",
+        tagline: "आधुनिक प्रणालियों के लिए एडेप्टिव इंटेलिजेंस",
+        badge: "सिस्टम स्कोर सक्रिय",
         common: {
-            market_context: "à¤à¤ªà¤à¤¾ à¤¬à¤¾à¤à¤¾à¤°",
-            revenueLabel: "à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ à¤µà¤¾à¤°à¥à¤·à¤¿à¤ à¤°à¤¾à¤à¤¸à¥à¤µ",
-            employeeCountLabel: "à¤à¤°à¥à¤®à¤à¤¾à¤°à¤¿à¤¯à¥à¤ à¤à¥ à¤¸à¤à¤à¥à¤¯à¤¾ (à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤¸à¥à¤à¥à¤²)",
+            market_context: "आपका बाजार",
+            revenueLabel: "अनुमानित वार्षिक राजस्व",
+            employeeCountLabel: "कर्मचारियों की संख्या (ऑपरेशनल स्केल)",
             industries: {
-                it_services: "à¤à¤à¤à¥ / à¤¬à¥à¤ªà¥à¤",
-                ecommerce: "à¤-à¤à¥à¤®à¤°à¥à¤¸",
-                finance: "à¤«à¤¾à¤à¤¨à¥à¤à¤¸ (à¤°à¥à¤à¥à¤¨)",
-                travel: "à¤à¥à¤°à¥à¤µà¤² à¤¬à¥à¤à¤¿à¤à¤",
-                data_entry: "à¤¡à¥à¤à¤¾ à¤à¤à¤à¥à¤°à¥ à¤«à¤°à¥à¤®",
-                retail: "à¤°à¤¿à¤à¥à¤² (à¤­à¥à¤¤à¤¿à¤)",
-                manufacturing: "à¤®à¥à¤¨à¥à¤¯à¥à¤«à¥à¤à¥à¤à¤°à¤¿à¤à¤ (à¤¸à¥à¤®à¥-à¤à¤à¥)",
-                logistics: "à¤²à¥à¤à¤¿à¤¸à¥à¤à¤¿à¤à¥à¤¸",
-                education: "à¤¶à¤¿à¤à¥à¤·à¤¾ / à¤à¥à¤à¤¿à¤à¤",
-                real_estate: "à¤°à¤¿à¤¯à¤² à¤à¤¸à¥à¤à¥à¤",
-                construction: "à¤à¤à¤¸à¥à¤à¥à¤°à¤à¥à¤¶à¤¨",
-                hospitality: "à¤¹à¥à¤¸à¥à¤ªà¤¿à¤à¥à¤²à¤¿à¤à¥",
-                fb: "à¤®à¥à¤¡à¤¿à¤¯à¤¾ / à¤à¤à¤à¥à¤à¤",
-                healthcare: "à¤¹à¥à¤²à¥à¤¥à¤à¥à¤¯à¤° (à¤à¥à¤²à¤¿à¤¨à¤¿à¤à¤²)",
-                legal: "à¤²à¥à¤à¤²",
-                services: "à¤à¥à¤¶à¤² à¤µà¥à¤¯à¤¾à¤ªà¤¾à¤°",
-                b2b: "à¤à¥à¤·à¤¿"
+                it_services: "आईटी / बीपीओ",
+                ecommerce: "ई-कॉमर्स",
+                finance: "फाइनेंस (रुटीन)",
+                travel: "ट्रैवल बुकिंग",
+                data_entry: "डेटा एंट्री फर्म",
+                retail: "रिटेल (भौतिक)",
+                manufacturing: "मैन्युफैक्चरिंग (सेमी-ऑटो)",
+                logistics: "लॉजिस्टिक्स",
+                education: "शिक्षा / कोचिंग",
+                real_estate: "रियल एस्टेट",
+                construction: "कंस्ट्रक्शन",
+                hospitality: "हॉस्पिटैलिटी",
+                fb: "मीडिया / कंटेंट",
+                healthcare: "हेल्थकेयर (क्लिनिकल)",
+                legal: "लीगल",
+                services: "कुशल व्यापार",
+                b2b: "कृषि"
             },
             statuses: {
-                DOMINANT: "à¤ªà¥à¤°à¤­à¤¾à¤µà¥",
-                VISIBLE: "à¤¦à¥à¤¶à¥à¤¯à¤®à¤¾à¤¨",
-                OKAY: "à¤®à¤§à¥à¤¯à¤® à¤¸à¥à¤¤à¤°",
-                GHOST: "à¤à¤¦à¥à¤¶à¥à¤¯",
-                INVISIBLE: "à¤à¤¾à¤¯à¤¬"
+                DOMINANT: "प्रभावी",
+                VISIBLE: "दृश्यमान",
+                OKAY: "मध्यम स्तर",
+                GHOST: "अदृश्य",
+                INVISIBLE: "गायब"
             },
             errors: {
-                syncFailed: "à¤¸à¤¿à¤à¤ à¤µà¤¿à¤«à¤² à¤°à¤¹à¤¾: {message}",
-                unexpectedError: "à¤¸à¥à¤µ à¤à¤°à¤¤à¥ à¤¸à¤®à¤¯ à¤à¤ à¤à¤ªà¥à¤°à¤¤à¤¿à¤¶à¤¿à¤¤ à¤¤à¥à¤°à¥à¤à¤¿ à¤¹à¥à¤à¥¤ à¤à¥à¤ªà¤¯à¤¾ à¤ªà¥à¤¨: à¤ªà¥à¤°à¤¯à¤¾à¤¸ à¤à¤°à¥à¤à¥¤"
+                syncFailed: "सिंक विफल रहा: {message}",
+                unexpectedError: "सेव करते समय एक अप्रतिशित त्रुटि हुई। कृपया पुन: प्रयास करें।"
             }
         },
         hero: {
-            title1: "à¤­à¤µà¤¿à¤·à¥à¤¯",
-            title2: "AI-à¤«à¤°à¥à¤¸à¥à¤ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¾ à¤¹à¥",
-            sub: "à¤¹à¤° à¤¬à¥à¤¤à¤¤à¤¾ à¤¦à¤¿à¤¨ à¤à¤ªà¤à¥ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤¶à¤¨ à¤à¥ à¤à¤à¥ à¤¬à¥à¤¾ à¤°à¤¹à¤¾ à¤¹à¥à¥¤ à¤à¤ªà¤¨à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤ªà¥à¤°à¤¾à¤¨à¤¾ à¤¸à¤¿à¤¸à¥à¤à¤® à¤¨ à¤¬à¤¨à¤¨à¥ à¤¦à¥à¤à¥¤"
+            title1: "भविष्य",
+            title2: "AI-फर्स्ट बिजनेस का है",
+            sub: "हर बीतता दिन आपके कॉम्पिटिशन को आगे बढ़ा रहा है। अपने बिजनेस को पुराना सिस्टम न बनने दें।"
         },
         scanningSuite: {
-            badge: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤à¤°",
-            title1: "à¤¹à¤®à¤¾à¤°à¤¾ à¤à¥à¤° à¤¸à¥à¤à¥à¤¨à¤¿à¤à¤ à¤à¤°",
-            title2: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤¸à¥à¤",
-            sub: "à¤¹à¤®à¤¾à¤°à¤¾ AI-à¤à¤§à¤¾à¤°à¤¿à¤¤ à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¿à¤ªà¥ à¤¹à¥à¤ à¤à¤à¥à¤·à¤®à¤¤à¤¾à¤à¤ à¤à¥ à¤ªà¤¹à¤à¤¾à¤¨à¤¨à¥ à¤à¤° à¤¹à¤² à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤à¥à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¾ à¤à¤¹à¤°à¤¾ à¤¸à¥à¤à¥à¤¨ à¤à¤°à¤¤à¤¾ à¤¹à¥:",
+            badge: "सिस्टम आर्किटेक्चर",
+            title1: "हमारा कोर स्कैनिंग और",
+            title2: "डायग्नोस्टिक सूट",
+            sub: "हमारा AI-आधारित सिस्टम छिपी हुई अक्षमताओं को पहचानने और हल करने के लिए आपके बिजनेस इकोसिस्टम का गहरा स्कैन करता है:",
             waste: {
-                module: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 01",
-                title: "à¤ªà¥à¤¸à¥ à¤à¤¹à¤¾à¤ à¤²à¥à¤ à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥à¤",
-                sub: "à¤à¤¾à¤¨à¥à¤ à¤à¤ªà¤à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤®à¥à¤ à¤ªà¥à¤¸à¤¾ à¤à¤¹à¤¾à¤ à¤¬à¤°à¥à¤¬à¤¾à¤¦ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥, à¤¹à¤® à¤¬à¤¤à¤¾à¤à¤à¤à¥à¥¤"
+                module: "मॉड्यूल 01",
+                title: "पैसे कहाँ लीक हो रहे हैं",
+                sub: "जानें आपके बिजनेस में पैसा कहाँ बर्बाद हो रहा है, हम बताएंगे।"
             },
             night: {
-                module: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 02",
+                module: "मॉड्यूल 02",
                 title: "Earn while you sleep",
-                sub: "à¤à¥à¤°à¤¾à¤¹à¤ à¤°à¤¾à¤¤ à¤®à¥à¤ à¤­à¥ à¤®à¥à¤¸à¥à¤ à¤à¤°à¥à¤, à¤¤à¥ à¤à¤¨à¥à¤¹à¥à¤ à¤¤à¥à¤°à¤à¤¤ 2 à¤¸à¥à¤à¤à¤¡ à¤®à¥à¤ à¤°à¤¿à¤¸à¥à¤ªà¤¾à¤à¤¸ à¤®à¤¿à¤²à¥à¤à¤¾à¥¤"
+                sub: "ग्राहक रात में भी मैसेज करें, तो उन्हें तुरंत 2 सेकंड में रिस्पांस मिलेगा।"
             },
             visibility: {
-                module: "à¤®à¤¼à¥à¤¡à¥à¤¯à¥à¤² 03",
-                title: "à¤à¥à¤°à¤¾à¤¹à¤à¥à¤ à¤à¥ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤°à¥à¤¸ à¤à¥ à¤²à¤¿à¤ à¤à¥à¤¨à¤¾ à¤¬à¤à¤¦ à¤à¤°à¥à¤",
-                sub: "à¤¡à¤¿à¤à¤¿à¤à¤² à¤ªà¥à¤°à¥à¤à¥à¤à¤¸ à¤à¤¡à¤¿à¤ â à¤¤à¤¾à¤à¤¿ à¤²à¥à¤ à¤à¤ªà¤à¥ à¤à¥à¤à¤² à¤ªà¤° à¤à¤¸à¤¾à¤¨à¥ à¤¸à¥ à¤¢à¥à¤à¤¢ à¤¸à¤à¥à¤à¥¤"
+                module: "म़ॉड्यूल 03",
+                title: "ग्राहकों को कॉम्पिटिटर्स के लिए खोना बंद करें",
+                sub: "डिजिटल प्रेजेंस ऑडिट — ताकि लोग आपको गूगल पर आसानी से ढूंढ सकें।"
             },
             threat: {
-                module: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 04",
-                title: "à¤à¥à¤¯à¤¾ à¤à¤ªà¤à¤¾ à¤¬à¤¿à¤à¤¨à¥à¤¸ AI-à¤ªà¥à¤°à¥à¤« à¤¹à¥?",
-                sub: "à¤à¥à¤ à¤à¤°à¥à¤ à¤à¤¿ AI à¤à¤ªà¤à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤à¤à¤²à¥ 2-3 à¤¸à¤¾à¤² à¤®à¥à¤ à¤à¤¿à¤¤à¤¨à¤¾ à¤¬à¤¦à¤² à¤¦à¥à¤à¤¾à¥¤"
+                module: "मॉड्यूल 04",
+                title: "क्या आपका बिजनेस AI-प्रूफ है?",
+                sub: "चेक करें कि AI आपके बिजनेस को अगले 2-3 साल में कितना बदल देगा।"
             }
         },
         diagnostic: {
-            readyTitle: "à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ à¤à¥ à¤²à¤¿à¤ à¤¤à¥à¤¯à¤¾à¤°",
-            readySub: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¶à¥à¤°à¥ à¤à¤°à¥à¤ à¤à¤° à¤à¤ªà¤¨à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤ªà¥à¤°à¥à¤«à¤¿à¤ à¤²à¥à¤ à¤à¤° AI à¤¥à¥à¤°à¥à¤ à¤²à¥à¤µà¤² à¤à¥ à¤®à¥à¤ª à¤à¤°à¥à¤à¥¤",
-            reports: "à¤°à¤¿à¤ªà¥à¤°à¥à¤à¥à¤¸",
-            atRisk: "à¤à¤¤à¤°à¥ à¤®à¥à¤",
-            process: "à¤ªà¥à¤°à¥à¤¸à¥à¤¸",
-            scanning: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¥ à¤à¤¾à¤®à¤¿à¤¯à¥à¤ à¤à¥ à¤®à¥à¤ª à¤à¤°à¤¨à¤¾",
+            readyTitle: "विश्लेषण के लिए तैयार",
+            readySub: "प्रोटोकॉल शुरू करें और अपने बिजनेस के प्रॉफिट लीक और AI थ्रेट लेवल को मैप करें।",
+            reports: "रिपोर्ट्स",
+            atRisk: "खतरे में",
+            process: "प्रोसेस",
+            scanning: "सिस्टम की खामियों को मैप करना",
             scanSteps: [
-                'à¤®à¤¾à¤°à¥à¤à¥à¤ à¤à¤à¤«à¥à¤°à¤¾à¤¸à¥à¤à¥à¤°à¤à¥à¤à¤° à¤¸à¥à¤à¥à¤¨ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...',
-                'à¤ªà¥à¤°à¥à¤«à¤¿à¤ à¤²à¥à¤à¥à¤ à¤à¤¾ à¤ªà¤¤à¤¾ à¤²à¤ à¤°à¤¹à¤¾ à¤¹à¥...',
-                'AI à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤¶à¤¨ à¤à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£...',
-                'à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¥ à¤à¤¤à¥à¤® à¤¹à¥à¤¨à¥ à¤à¥ à¤à¤£à¤¨à¤¾...',
-                'à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤¤à¥à¤¯à¤¾à¤° à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥...'
+                'मार्केट इंफ्रास्ट्रक्चर स्कैन हो रहा है...',
+                'प्रॉफिट लीकेज का पता लग रहा है...',
+                'AI कॉम्पिटिशन का विश्लेषण...',
+                'सिस्टम के खत्म होने की गणना...',
+                'प्रोटोकॉल रिपोर्ट तैयार हो रही है...'
             ],
             results: {
-                vulnerable: "à¤à¤à¤­à¥à¤° à¤à¤¤à¤°à¤¾ à¤ªà¤¾à¤¯à¤¾ à¤à¤¯à¤¾",
-                minimal: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¨à¥à¤à¥à¤²à¤¿à¤¤ (Optimized)",
-                index: "à¤ªà¥à¤°à¥à¤«à¤¿à¤ à¤²à¥à¤ à¤à¤à¤¡à¥à¤à¥à¤¸",
-                yearsLeft: "à¤¶à¥à¤· à¤µà¤°à¥à¤·",
-                vertical: "à¤à¥à¤·à¥à¤¤à¥à¤°"
+                vulnerable: "गंभीर खतरा पाया गया",
+                minimal: "सिस्टम अनुकूलित (Optimized)",
+                index: "प्रॉफिट लीक इंडेक्स",
+                yearsLeft: "शेष वर्ष",
+                vertical: "क्षेत्र"
             }
         },
         form: {
-            entity: "à¤¸à¤à¤¸à¥à¤¥à¤¾ à¤à¤¾ à¤¨à¤¾à¤®",
-            entityPlaceholder: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¾ à¤¨à¤¾à¤®",
-            location: "à¤¸à¤à¤à¤¾à¤²à¤¨",
-            locationPlaceholder: "à¤¶à¤¹à¤°/à¤µà¥à¤¶à¥à¤µà¤¿à¤",
-            age: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¿à¤¤à¤¨à¥ à¤µà¤°à¥à¤· à¤ªà¥à¤°à¤¾à¤¨à¤¾ à¤¹à¥",
-            classification: "à¤à¥à¤·à¥à¤¤à¥à¤° (Vertical)",
-            scale: "à¤à¥à¤® à¤à¤¾ à¤ªà¥à¤®à¤¾à¤¨à¤¾",
-            infrastructure: "à¤¡à¤¿à¤à¤¿à¤à¤² à¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-            continue: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤à¤¾à¤°à¥ à¤°à¤à¥à¤",
-            back: "à¤ªà¤¿à¤à¤²à¤¾ à¤à¤¦à¤®",
-            submit: "AI à¤¸à¥à¤à¥à¤¨ à¤¶à¥à¤°à¥ à¤à¤°à¥à¤",
-            submitting: "à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-            footer1: "à¤à¤à¤à¤°à¤ªà¥à¤°à¤¾à¤à¤ à¤à¥à¤°à¥à¤¡ à¤¸à¤¤à¥à¤¯à¤¾à¤ªà¤¨",
-            footer2: "à¤à¥à¤ªà¤¨à¥à¤¯ à¤¡à¥à¤à¤¾ à¤¸à¥à¤°à¤à¥à¤·à¤¾ à¤¸à¤à¥à¤°à¤¿à¤¯"
+            entity: "संस्था का नाम",
+            entityPlaceholder: "बिजनेस का नाम",
+            location: "संचालन",
+            locationPlaceholder: "शहर/वैश्विक",
+            age: "बिजनेस कितने वर्ष पुराना है",
+            classification: "क्षेत्र (Vertical)",
+            scale: "टीम का पैमाना",
+            infrastructure: "डिजिटल स्थिति",
+            continue: "प्रोटोकॉल जारी रखें",
+            back: "पिछला कदम",
+            submit: "AI स्कैन शुरू करें",
+            submitting: "विश्लेषण हो रहा है...",
+            footer1: "एंटरप्राइज ग्रेड सत्यापन",
+            footer2: "गोपनीय डेटा सुरक्षा सक्रिय"
         },
         verticals: {
-            retail: "à¤à¥à¤¦à¤°à¤¾ (Retail)",
-            fb: "à¤à¤¾à¤¦à¥à¤¯ à¤à¤µà¤ à¤ªà¥à¤¯ (F&B)",
-            services: "à¤¸à¥à¤µà¤¾ à¤à¥à¤·à¥à¤¤à¥à¤° (Services)",
-            b2b: "B2B à¤à¥à¤¡à¥à¤¸",
-            ecommerce: "à¤-à¤à¥à¤®à¤°à¥à¤¸"
+            retail: "खुदरा (Retail)",
+            fb: "खाद्य एवं पेय (F&B)",
+            services: "सेवा क्षेत्र (Services)",
+            b2b: "B2B गुड्स",
+            ecommerce: "ई-कॉमर्स"
         },
         wizard: {
             step0: {
-                badge: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² v2.1",
-                title: "à¤ªà¥à¤°à¥à¤«à¤¿à¤ à¤²à¥à¤à¥à¤ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤¨à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤¸à¥à¤à¥à¤¨ à¤à¤°à¥à¤à¥¤",
-                sub: "à¤à¤ªà¤¨à¥ à¤à¤à¤à¤°à¤ªà¥à¤°à¤¾à¤à¤ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤à¥ à¤à¤¨à¤¿à¤¶à¤¿à¤¯à¤²à¤¾à¤à¤ à¤à¤°à¥à¤à¥¤ à¤à¤¹à¤¨ à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤à¥à¤¸ à¤à¤¨à¤²à¥à¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤®à¥à¤à¥à¤¯ à¤µà¤¿à¤µà¤°à¤£ à¤ªà¥à¤°à¤¦à¤¾à¤¨ à¤à¤°à¥à¤à¥¤",
-                btn: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¡à¤¿à¤ à¤¶à¥à¤°à¥ à¤à¤°à¥à¤",
-                survival: "à¤ªà¤¾à¤°à¤à¤ªà¤°à¤¿à¤ à¤§à¤à¤§à¤¾ à¤à¤¤à¥à¤® à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥à¥¤",
-                survivalSub: "à¤à¤à¤ à¤à¤ªà¤à¥ à¤à¤¤à¥à¤¤à¤°à¤à¥à¤µà¤¿à¤¤à¤¾ à¤¦à¤° (Survival Rate) à¤à¥ à¤à¤£à¤¨à¤¾ à¤à¤°à¥à¤ à¤à¤° à¤à¤ªà¤à¥ à¤µà¤¾à¤¸à¥à¤¤à¤µà¤¿à¤ à¤à¤¾à¤à¥ à¤à¤¾ à¤ªà¤¤à¤¾ à¤²à¤à¤¾à¤à¤à¥¤",
-                goDashboard: "à¤¡à¥à¤¶à¤¬à¥à¤°à¥à¤¡ à¤ªà¤° à¤à¤¾à¤à¤",
-                identityTitle: "à¤ªà¤¹à¤à¤¾à¤¨ à¤ªà¥à¤°à¥à¤«à¤¾à¤à¤²à¤¿à¤à¤",
-                identityBadge: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤ªà¤¹à¤à¤¾à¤¨",
-                secureActive: "à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤ à¤à¤¨à¤¿à¤¶à¤¿à¤¯à¤²à¤¾à¤à¤à¥à¤¶à¤¨ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¸à¤à¥à¤°à¤¿à¤¯"
+                badge: "सिस्टम प्रोटोकॉल v2.1",
+                title: "प्रॉफिट लीकेज के लिए अपने बिजनेस को स्कैन करें।",
+                sub: "अपने एंटरप्राइज प्रोटोकॉल को इनिशियलाइज करें। गहन डायग्नोस्टिक्स अनलॉक करने के लिए मुख्य विवरण प्रदान करें।",
+                btn: "सिस्टम ऑडिट शुरू करें",
+                survival: "पारंपरिक धंधा खत्म हो रहा है।",
+                survivalSub: "आइए आपकी उत्तरजीविता दर (Survival Rate) की गणना करें और आपके वास्तविक घाटे का पता लगाएं।",
+                goDashboard: "डैशबोर्ड पर जाएं",
+                identityTitle: "पहचान प्रोफाइलिंग",
+                identityBadge: "बिजनेस पहचान",
+                secureActive: "सुरक्षित इनिशियलाइजेशन प्रोटोकॉल सक्रिय"
             },
             step1: {
-                title: "à¤ªà¤¹à¤à¤¾à¤¨ (Identity)",
-                badge: "à¤à¤°à¤£ 1 â à¤ªà¤¹à¤à¤¾à¤¨",
-                vertical: "à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ à¤à¤¾ à¤à¥à¤·à¥à¤¤à¥à¤° (Vertical)",
-                revenue: "à¤®à¤¾à¤¸à¤¿à¤ à¤°à¤¾à¤à¤¸à¥à¤µ à¤¬à¥à¤°à¥à¤à¥à¤",
-                industryBenchmark: "à¤µà¥à¤¸à¥à¤ à¤¬à¥à¤à¤à¤®à¤¾à¤°à¥à¤ à¤à¥à¤²à¤¿à¤¬à¥à¤°à¥à¤¶à¤¨ à¤à¥ à¤²à¤¿à¤ à¤®à¤¹à¤¤à¥à¤µà¤ªà¥à¤°à¥à¤£à¥¤",
-                bizContext: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤° à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤¸à¤à¤¦à¤°à¥à¤­",
-                usesCRM: "CRM à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤à¤°à¤¤à¤¾ à¤¹à¥",
-                usesERP: "ERP/à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤à¤°à¤¤à¤¾ à¤¹à¥"
+                title: "पहचान (Identity)",
+                badge: "चरण 1 — पहचान",
+                vertical: "व्यवसाय का क्षेत्र (Vertical)",
+                revenue: "मासिक राजस्व ब्रैकेट",
+                industryBenchmark: "वेस्ट बेंचमार्क कैलिब्रेशन के लिए महत्वपूर्ण।",
+                bizContext: "बिजनेस और ऑपरेशनल संदर्भ",
+                usesCRM: "CRM का उपयोग करता है",
+                usesERP: "ERP/सिस्टम का उपयोग करता है"
             },
             step2: {
-                title: "à¤¦ à¤¬à¥à¤²à¥à¤¡ (à¤¨à¥à¤à¤¸à¤¾à¤¨)",
-                badge: "à¤à¤°à¤£ 2 â à¤¨à¥à¤à¤¸à¤¾à¤¨",
-                employees: "à¤à¤°à¥à¤®à¤à¤¾à¤°à¤¿à¤¯à¥à¤ à¤à¥ à¤¸à¤à¤à¥à¤¯à¤¾",
-                marketing: "à¤®à¤¾à¤¸à¤¿à¤ à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤à¤°à¥à¤ (â¹)",
-                ops: "à¤®à¤¾à¤¸à¤¿à¤ à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤à¤µà¤°à¤¹à¥à¤¡à¥à¤¸ (â¹)",
-                prev: "à¤ªà¥à¤à¥",
-                next: "à¤à¤à¤²à¤¾ à¤à¤¦à¤®",
-                closingTimeSeq: "à¤¸à¤®à¤¾à¤ªà¤¨ à¤¸à¤®à¤¯ à¤à¤¨à¥à¤à¥à¤°à¤® (Closing Time)",
-                avgTxnValue: "à¤à¤¸à¤¤ à¤²à¥à¤¨à¤¦à¥à¤¨ / à¤à¤¿à¤à¤ à¤µà¥à¤²à¥à¤¯à¥",
-                conversionProfile: "à¤à¤¨à¥à¤µà¤°à¥à¤à¤¨ à¤ªà¥à¤°à¥à¤«à¤¾à¤à¤²",
-                b2b: "B2B/à¤®à¥à¤¨à¥à¤¯à¥à¤«à¥à¤à¥à¤à¤°à¤¿à¤à¤",
-                b2c: "B2C à¤°à¤¿à¤à¥à¤²",
-                hybrid: "à¤¹à¤¾à¤à¤¬à¥à¤°à¤¿à¤¡"
+                title: "द ब्लीड (नुकसान)",
+                badge: "चरण 2 — नुकसान",
+                employees: "कर्मचारियों की संख्या",
+                marketing: "मासिक मार्केटिंग खर्च (₹)",
+                ops: "मासिक ऑपरेशनल ओवरहेड्स (₹)",
+                prev: "पीछे",
+                next: "अगला कदम",
+                closingTimeSeq: "समापन समय अनुक्रम (Closing Time)",
+                avgTxnValue: "औसत लेनदेन / टिकट वैल्यू",
+                conversionProfile: "कन्वर्जन प्रोफाइल",
+                b2b: "B2B/मैन्युफैक्चरिंग",
+                b2c: "B2C रिटेल",
+                hybrid: "हाइब्रिड"
             },
             step3: {
-                title: "à¤à¥à¤ à¤à¥à¤ª (à¤¤à¤à¤¨à¥à¤à¥ à¤à¤à¤¤à¤°)",
-                badge: "à¤à¤°à¤£ 3 â à¤¤à¤à¤¨à¥à¤à¥ à¤à¤à¤¤à¤°",
-                inquiry: "à¤¶à¤¾à¤® 6 à¤¬à¤à¥ à¤à¥ à¤¬à¤¾à¤¦ à¤à¥à¤²à¤¾à¤à¤à¤ à¤à¥ à¤ªà¥à¤à¤¤à¤¾à¤ à¤à¥à¤¸à¥ à¤¸à¤à¤­à¤¾à¤²à¥ à¤à¤¾à¤¤à¥ à¤¹à¥?",
+                title: "टेक गैप (तकनीकी अंतर)",
+                badge: "चरण 3 — तकनीकी अंतर",
+                inquiry: "शाम 6 बजे के बाद क्लाइंट की पूछताछ कैसे संभाली जाती है?",
                 options: {
-                    ignored: "à¤à¥à¤ à¤à¤¾à¤¤à¥ à¤¹à¥ / à¤¨à¤à¤°à¤à¤à¤¦à¤¾à¤",
-                    manual: "à¤®à¥à¤¨à¥à¤¯à¥à¤à¤² à¤µà¥à¤¹à¤¾à¤à¥à¤¸à¤à¤ª / à¤à¥à¤²",
-                    ai: "à¤¸à¥à¤µà¤à¤¾à¤²à¤¿à¤¤ AI à¤à¤à¥à¤à¤"
+                    ignored: "छूट जाती है / नजरअंदाज",
+                    manual: "मैन्युअल व्हाट्सएप / कॉल",
+                    ai: "स्वचालित AI एजेंट"
                 },
-                btn: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤¤à¥à¤¯à¤¾à¤° à¤à¤°à¥à¤",
-                cityLabel: "à¤¸à¤à¤à¤¾à¤²à¤¨ à¤¶à¤¹à¤° / à¤­à¥à¤à¥à¤²",
-                citySub: "à¤¸à¤°à¥à¤ à¤µà¥à¤²à¥à¤¯à¥à¤® à¤¤à¥à¤µà¥à¤°à¤¤à¤¾ à¤à¥à¤²à¤¿à¤¬à¥à¤°à¥à¤¶à¤¨ à¤à¥ à¤²à¤¿à¤ à¤à¤µà¤¶à¥à¤¯à¤",
-                signalsTitle: "à¤¸à¤à¥à¤°à¤¿à¤¯ à¤¡à¤¿à¤à¤¿à¤à¤² à¤¸à¤¿à¤à¥à¤¨à¤²",
+                btn: "डायग्नोस्टिक रिपोर्ट तैयार करें",
+                cityLabel: "संचालन शहर / भूगोल",
+                citySub: "सर्च वॉल्यूम तीव्रता कैलिब्रेशन के लिए आवश्यक",
+                signalsTitle: "सक्रिय डिजिटल सिग्नल",
                 signals: {
-                    hasGoogleMyBusiness: "à¤à¥à¤à¤² à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤ªà¥à¤°à¥à¤«à¤¾à¤à¤²",
-                    hasWebsite: "à¤¸à¤à¥à¤°à¤¿à¤¯ à¤µà¥à¤¬à¤¸à¤¾à¤à¤",
-                    hasWhatsApp: "à¤µà¥à¤¹à¤¾à¤à¥à¤¸à¤à¤ª à¤¬à¤¿à¤à¤¨à¥à¤¸",
-                    activeSocialMedia: "à¤¸à¤à¥à¤°à¤¿à¤¯ à¤¸à¥à¤¶à¤² à¤®à¥à¤¡à¤¿à¤¯à¤¾",
-                    seoOptimized: "à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ SEO à¤à¤ªà¥à¤à¤¿à¤®à¤¾à¤à¤à¥à¤¡",
-                    runsAds: "à¤¸à¤°à¥à¤/à¤¸à¥à¤¶à¤² à¤µà¤¿à¤à¥à¤à¤¾à¤ªà¤¨"
+                    hasGoogleMyBusiness: "गूगल बिजनेस प्रोफाइल",
+                    hasWebsite: "सक्रिय वेबसाइट",
+                    hasWhatsApp: "व्हाट्सएप बिजनेस",
+                    activeSocialMedia: "सक्रिय सोशल मीडिया",
+                    seoOptimized: "स्थानीय SEO ऑप्टिमाइज्ड",
+                    runsAds: "सर्च/सोशल विज्ञापन"
                 }
             },
             step4: {
-                title: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¡à¤¿à¤à¥à¤¡ à¤à¤¿à¤¯à¤¾ à¤à¤¯à¤¾",
-                sub: "{name} à¤à¥ à¤²à¤¿à¤ à¤à¥à¤à¤¿à¤® à¤ªà¥à¤°à¥à¤«à¤¾à¤à¤² à¤à¤° à¤ªà¥à¤°à¥à¤«à¤¿à¤-à¤²à¥à¤ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤¤à¥à¤¯à¤¾à¤° à¤¹à¥à¥¤",
-                physicalPresence: "à¤­à¥à¤¤à¤¿à¤ à¤à¤ªà¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-                physicalPresenceCheck: "à¤®à¥à¤°à¤¾ à¤à¤ à¤­à¥à¤¤à¤¿à¤ à¤¸à¥à¤à¥à¤° / à¤à¤«à¤¿à¤¸ à¤¸à¥à¤ªà¥à¤¸ à¤¹à¥",
-                aiAdoptionLabel: "à¤µà¤°à¥à¤¤à¤®à¤¾à¤¨ AI à¤à¤ªà¤¯à¥à¤",
+                title: "प्रोटोकॉल डिकोड किया गया",
+                sub: "{name} के लिए जोखिम प्रोफाइल और प्रॉफिट-लीक रिपोर्ट तैयार है।",
+                physicalPresence: "भौतिक उपस्थिति",
+                physicalPresenceCheck: "मेरा एक भौतिक स्टोर / ऑफिस स्पेस है",
+                aiAdoptionLabel: "वर्तमान AI उपयोग",
                 aiAdoptionOptions: {
-                    none: "à¤à¤­à¥ à¤¤à¤ AI à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤¨à¤¹à¥à¤ à¤à¤° à¤°à¤¹à¥ à¤¹à¥à¤",
-                    basic: "à¤¬à¥à¤¨à¤¿à¤¯à¤¾à¤¦à¥ à¤à¤ªà¤à¤°à¤£à¥à¤ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ (ChatGPT)",
-                    integrated: "AI à¤®à¥à¤°à¥ à¤¦à¥à¤¨à¤¿à¤ à¤à¤¾à¤°à¥à¤¯ à¤à¤¾ à¤¹à¤¿à¤¸à¥à¤¸à¤¾ à¤¹à¥",
-                    advanced: "AI à¤®à¥à¤°à¥ à¤®à¥à¤à¥à¤¯ à¤ªà¥à¤°à¤à¥à¤°à¤¿à¤¯à¤¾à¤à¤ à¤à¥ à¤à¤²à¤¾à¤¤à¤¾ à¤¹à¥"
+                    none: "अभी तक AI का उपयोग नहीं कर रहे हैं",
+                    basic: "बुनियादी उपकरणों का उपयोग (ChatGPT)",
+                    integrated: "AI मेरे दैनिक कार्य का हिस्सा है",
+                    advanced: "AI मेरी मुख्य प्रक्रियाओं को चलाता है"
                 },
-                competitorAdoptionLabel: "à¤à¤ªà¤à¥ à¤¬à¤¾à¤à¤¾à¤° à¤®à¥à¤ AI",
+                competitorAdoptionLabel: "आपके बाजार में AI",
                 competitorAdoptionOptions: {
-                    low: "à¤à¤¦à¥à¤¯à¥à¤ à¤¸à¥à¤¥à¤¿à¤° à¤¹à¥ (à¤à¥à¤ AI à¤ªà¥à¤°à¤­à¤¾à¤µ à¤¨à¤¹à¥à¤)",
-                    medium: "à¤¬à¤¾à¤à¤¾à¤° à¤®à¥à¤ à¤¨à¤ AI à¤à¤ªà¤à¤°à¤£ à¤¦à¥à¤ à¤°à¤¹à¥ à¤¹à¥à¤",
-                    high: "AI à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯à¥à¤ à¤à¥ à¤¤à¥à¤à¥ à¤¸à¥ à¤¬à¤¦à¤² à¤°à¤¹à¤¾ à¤¹à¥"
+                    low: "उद्योग स्थिर है (कोई AI प्रभाव नहीं)",
+                    medium: "बाजार में नए AI उपकरण देख रहे हैं",
+                    high: "AI व्यवसायों को तेजी से बदल रहा है"
                 },
-                operationalComplexityLabel: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤à¤à¤¿à¤²à¤¤à¤¾",
+                operationalComplexityLabel: "बिजनेस की जटिलता",
                 operationalComplexityOptions: {
-                    low: "à¤¸à¤°à¤² à¤à¤° à¤¸à¥à¤§à¤¾ à¤à¤¾à¤°à¥à¤¯",
-                    medium: "à¤à¤¾à¤°à¥à¤¯à¥à¤ à¤à¥ à¤²à¤¿à¤ à¤­à¤¾à¤°à¥ à¤®à¤¾à¤¨à¤µà¥à¤¯ à¤ªà¥à¤°à¤¯à¤¾à¤¸ à¤à¥ à¤à¤µà¤¶à¥à¤¯à¤à¤¤à¤¾",
-                    high: "à¤à¤¾à¤°à¥à¤¯ à¤à¤à¤¿à¤² à¤¸à¥à¤«à¥à¤à¤µà¥à¤¯à¤° à¤ªà¤° à¤à¤²à¤¤à¥ à¤¹à¥à¤"
+                    low: "सरल और सीधा कार्य",
+                    medium: "कार्यों के लिए भारी मानवीय प्रयास की आवश्यकता",
+                    high: "कार्य जटिल सॉफ्टवेयर पर चलते हैं"
                 },
-                runningText: "à¤à¤à¤¤à¤¿à¤® à¤°à¥à¤ª à¤¦à¤¿à¤¯à¤¾ à¤à¤¾ à¤°à¤¹à¤¾ à¤¹à¥...",
-                btnText: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤à¥à¤¸ à¤¸à¤¬à¤®à¤¿à¤ à¤à¤°à¥à¤"
+                runningText: "अंतिम रूप दिया जा रहा है...",
+                btnText: "डायग्नोस्टिक्स सबमिट करें"
             },
             step5: {
-                leaks: "à¤à¤à¤­à¥à¤° à¤²à¥à¤à¥à¤ à¤ªà¤¾à¤¯à¤¾ à¤à¤¯à¤¾",
-                decryption: "à¤à¤ªà¤à¥ à¤µà¤¿à¤¸à¥à¤¤à¥à¤¤ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¤° à¤¬à¤à¤¤ à¤²à¤à¥à¤·à¥à¤¯ à¤¤à¥à¤¯à¤¾à¤° à¤¹à¥à¤à¥¤ à¤¡à¥à¤¶à¤¬à¥à¤°à¥à¤¡ à¤à¥ à¤¡à¤¿à¤à¥à¤°à¤¿à¤ªà¥à¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤¨à¤¾ à¤µà¤¿à¤µà¤°à¤£ à¤¦à¤°à¥à¤ à¤à¤°à¥à¤à¥¤",
-                decryptBtn: "à¤¡à¥à¤¶à¤¬à¥à¤°à¥à¤¡ à¤¡à¤¿à¤à¥à¤°à¤¿à¤ªà¥à¤ à¤à¤°à¥à¤",
-                alreadyAccount: "à¤à¥à¤¯à¤¾ à¤à¤ªà¤à¥ à¤ªà¤¾à¤¸ à¤ªà¤¹à¤²à¥ à¤¸à¥ à¤à¤¾à¤¤à¤¾ à¤¹à¥? à¤²à¥à¤à¤¿à¤¨ à¤à¤°à¥à¤"
+                leaks: "गंभीर लीकेज पाया गया",
+                decryption: "आपकी विस्तृत रिपोर्ट और बचत लक्ष्य तैयार हैं। डैशबोर्ड को डिक्रिप्ट करने के लिए अपना विवरण दर्ज करें।",
+                decryptBtn: "डैशबोर्ड डिक्रिप्ट करें",
+                alreadyAccount: "क्या आपके पास पहले से खाता है? लॉगिन करें"
             },
             stepTitles: [
-                "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¨à¤¿à¤¶à¤¿à¤¯à¤²à¤¾à¤à¤à¥à¤¶à¤¨ [V2.1-RPC]",
-                "à¤®à¥à¤¡à¥à¤¯à¥à¤² 01: à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤µà¥à¤¸à¥à¤",
-                "à¤®à¥à¤¡à¥à¤¯à¥à¤² 02: à¤¨à¤¾à¤à¤ à¤²à¥à¤¸ à¤²à¥à¤à¥à¤",
-                "à¤®à¥à¤¡à¥à¤¯à¥à¤² 03: à¤¡à¤¿à¤à¤¿à¤à¤² à¤à¤¨à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥",
-                "à¤®à¥à¤¡à¥à¤¯à¥à¤² 04: à¤à¤à¥à¤¸à¥à¤¤à¤¿à¤à¤à¥à¤¶à¤¨ à¤¹à¥à¤°à¤¾à¤à¤à¤¨"
+                "सिस्टम इनिशियलाइजेशन [V2.1-RPC]",
+                "मॉड्यूल 01: ऑपरेशनल वेस्ट",
+                "मॉड्यूल 02: नाइट लॉस लीकेज",
+                "मॉड्यूल 03: डिजिटल इनविजिबिलिटी",
+                "मॉड्यूल 04: एक्स्तिंक्शन होराइजन"
             ]
         },
         lossAudit: {
-            title: "à¤²à¥à¤¸ à¤à¤¡à¤¿à¤ (Loss Audit)",
-            subTitle: "à¤ªà¤¤à¤¾ à¤²à¤à¤¾à¤à¤ à¤à¤¿ à¤à¤ªà¤à¤¾ à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ à¤¹à¤° à¤®à¤¹à¥à¤¨à¥ à¤à¤¿à¤¤à¤¨à¥ à¤ªà¥à¤à¤à¥ à¤à¥à¤ªà¤à¤¾à¤ª à¤à¤à¤µà¤¾ à¤°à¤¹à¤¾ à¤¹à¥à¥¤",
-            formHeader: "à¤à¤ªà¤¨à¥ à¤®à¤¾à¤¸à¤¿à¤ à¤²à¤¾à¤à¤¤ à¤¦à¤°à¥à¤ à¤à¤°à¥à¤",
-            industryLabel: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤¸à¥à¤à¥à¤à¤° (Industry)",
-            staffSalaryLabel: "à¤¸à¥à¤à¤¾à¤« à¤à¤¾ à¤µà¥à¤¤à¤¨ (à¤®à¤¾à¤¸à¤¿à¤)",
-            marketingBudgetLabel: "à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤¬à¤à¤",
-            opsOverheadLabel: "à¤à¤ªà¤°à¥à¤¶à¤¨à¥à¤¸ à¤à¤° à¤à¤µà¤°à¤¹à¥à¤¡à¥à¤¸",
-            revenueLabel: "à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ à¤µà¤¾à¤°à¥à¤·à¤¿à¤ à¤°à¤¾à¤à¤¸à¥à¤µ",
-            revenueSub: "à¤à¥à¤à¤°à¥à¤¡à¤¿à¤¨à¥à¤¶à¤¨ à¤¡à¥à¤°à¥à¤ à¤à¤£à¤¨à¤¾ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤¯à¥à¤ à¤à¤¿à¤¯à¤¾ à¤à¤¾à¤¤à¤¾ à¤¹à¥à¥¤ à¤¯à¤¦à¤¿ à¤°à¥à¤à¤ à¤¹à¥ à¤¤à¥ à¤®à¤§à¥à¤¯ à¤¬à¤¿à¤à¤¦à¥ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤à¤°à¥à¤ (à¤à¥à¤¸à¥ â¹25Lââ¹1Cr â â¹62.5L)à¥¤",
-            advancedHeader: "à¤à¤¨à¥à¤¨à¤¤ à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤®à¥à¤à¥à¤°à¤¿à¤à¥à¤¸",
-            manualHoursLabel: "à¤¦à¥à¤¨à¤¿à¤ à¤®à¥à¤¨à¥à¤¯à¥à¤à¤² à¤à¤¾à¤® à¤à¥ à¤à¤à¤à¥ (à¤ªà¥à¤°à¤¤à¤¿ à¤à¤°à¥à¤®à¤à¤¾à¤°à¥)",
-            manualHoursSub: "à¤¸à¥à¤ªà¥à¤°à¥à¤¡à¤¶à¥à¤, à¤®à¥à¤¨à¥à¤¯à¥à¤à¤² à¤¡à¥à¤à¤¾ à¤à¤à¤à¥à¤°à¥ à¤à¤° à¤¬à¤¾à¤°-à¤¬à¤¾à¤° à¤à¤¿à¤ à¤à¤¾à¤¨à¥ à¤µà¤¾à¤²à¥ à¤«à¥à¤²à¥-à¤à¤ª à¤ªà¤° à¤à¤°à¥à¤ à¤à¤¿à¤ à¤à¤ à¤à¤à¤à¥à¥¤",
-            crmReadyLabel: "CRM à¤¤à¥à¤¯à¤¾à¤° à¤¹à¥",
-            crmSub: "à¤¸à¥à¤²à¥à¤¸ à¤¹à¤¬ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤à¤° à¤°à¤¹à¥ à¤¹à¥à¤",
-            erpLabel: "ERP/à¤à¤¨à¥à¤µà¥à¤à¤à¤°à¥",
-            erpSub: "à¤à¤à¥à¤®à¥à¤à¥à¤¡ à¤à¤ªà¤°à¥à¤¶à¤¨à¥à¤¸",
-            btnText: "à¤²à¥à¤¸ à¤à¤¡à¤¿à¤ à¤à¥à¤²à¤¿à¤¬à¥à¤°à¥à¤ à¤à¤°à¥à¤",
-            syncingText: "à¤¸à¤¿à¤à¤à¥à¤°à¥à¤¨à¤¾à¤à¤à¤¼ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-            burnHeadline: "à¤à¤ªà¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥",
-            perMonth: "/à¤®à¤¾à¤¹",
-            annualBurnLine: "à¤¯à¤¾à¤¨à¥ à¤¹à¤° à¤¸à¤¾à¤² {amount} à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨",
-            breakdownTitle: "à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤à¤¾ à¤µà¤¿à¤µà¤°à¤£",
-            payrollWaste: "à¤ªà¥à¤°à¥à¤² à¤µà¥à¤¸à¥à¤",
-            overheadWaste: "à¤à¤µà¤°à¤¹à¥à¤¡ à¤µà¥à¤¸à¥à¤",
-            marketingWaste: "à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤µà¥à¤¸à¥à¤",
-            coordinationDrag: "à¤à¥à¤à¤°à¥à¤¡à¤¿à¤¨à¥à¤¶à¤¨ à¤¡à¥à¤°à¥à¤",
-            recoverableTitle: "à¤¬à¤à¤¾à¤¨à¥ à¤¯à¥à¤à¥à¤¯ à¤¬à¤à¤¤",
-            inactionTitle: "5-à¤¸à¤¾à¤² à¤à¤¾ à¤¨à¤¿à¤·à¥à¤à¥à¤°à¤¿à¤¯à¤¤à¤¾ à¤®à¥à¤²à¥à¤¯",
-            source: "à¤¸à¥à¤°à¥à¤¤: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
-            emptyState: "à¤µà¤¿à¤µà¤°à¤£ à¤¦à¥à¤à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤¨à¥ à¤²à¤¾à¤à¤¤ à¤¦à¤°à¥à¤ à¤à¤°à¥à¤",
+            title: "लॉस ऑडिट (Loss Audit)",
+            subTitle: "पता लगाएं कि आपका व्यवसाय हर महीने कितनी पूंजी चुपचाप गंवा रहा है।",
+            formHeader: "अपनी मासिक लागत दर्ज करें",
+            industryLabel: "बिजनेस सेक्टर (Industry)",
+            staffSalaryLabel: "स्टाफ का वेतन (मासिक)",
+            marketingBudgetLabel: "मार्केटिंग बजट",
+            opsOverheadLabel: "ऑपरेशन्स और ओवरहेड्स",
+            revenueLabel: "अनुमानित वार्षिक राजस्व",
+            revenueSub: "कोआर्डिनेशन ड्रैग गणना के लिए उपयोग किया जाता है। यदि रेंज है तो मध्य बिंदु का उपयोग करें (जैसे ₹25L–₹1Cr → ₹62.5L)।",
+            advancedHeader: "उन्नत डायग्नोस्टिक मेट्रिक्स",
+            manualHoursLabel: "दैनिक मैन्युअल काम के घंटे (प्रति कर्मचारी)",
+            manualHoursSub: "स्प्रेडशीट, मैन्युअल डेटा एंट्री और बार-बार किए जाने वाले फॉलो-अप पर खर्च किए गए घंटे।",
+            crmReadyLabel: "CRM तैयार है",
+            crmSub: "सेल्स हब का उपयोग कर रहे हैं",
+            erpLabel: "ERP/इन्वेंटरी",
+            erpSub: "ऑटोमेटेड ऑपरेशन्स",
+            btnText: "लॉस ऑडिट कैलिब्रेट करें",
+            syncingText: "सिंक्रोनाइज़ हो रहा है...",
+            burnHeadline: "आपका नुकसान हो रहा है",
+            perMonth: "/माह",
+            annualBurnLine: "यानी हर साल {amount} का नुकसान",
+            breakdownTitle: "नुकसान का विवरण",
+            payrollWaste: "पेरोल वेस्ट",
+            overheadWaste: "ओवरहेड वेस्ट",
+            marketingWaste: "मार्केटिंग वेस्ट",
+            coordinationDrag: "कोआर्डिनेशन ड्रैग",
+            recoverableTitle: "बचाने योग्य बचत",
+            inactionTitle: "5-साल का निष्क्रियता मूल्य",
+            source: "स्रोत: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
+            emptyState: "विवरण देखने के लिए अपनी लागत दर्ज करें",
             errors: {
-                insufficientRevenue: "à¤¡à¥à¤à¤¾ à¤µà¤¿à¤¸à¤à¤à¤¤à¤¿ (Data Inconsistency): à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¤¿à¤¯à¤¾ à¤à¤¯à¤¾ à¤®à¤¾à¤¸à¤¿à¤ à¤à¤°à¥à¤ à¤µà¤¾à¤°à¥à¤·à¤¿à¤ à¤à¤¯ à¤¸à¥ à¤à¤¾à¤«à¥ à¤à¤§à¤¿à¤ à¤¹à¥à¥¤ à¤à¥à¤ªà¤¯à¤¾ à¤à¤à¥ à¤¬à¤¢à¤¼à¤¨à¥ à¤¸à¥ à¤ªà¤¹à¤²à¥ à¤µà¤¿à¤µà¤°à¤£ à¤¸à¤¤à¥à¤¯à¤¾à¤ªà¤¿à¤¤ à¤à¤°à¥à¤à¥¤"
+                insufficientRevenue: "डेटा विसंगति (Data Inconsistency): रिपोर्ट किया गया मासिक खर्च वार्षिक आय से काफी अधिक है। कृपया आगे बढ़ने से पहले विवरण सत्यापित करें।"
             },
             searchSteps: [
-                'à¤®à¤¾à¤°à¥à¤à¥à¤ à¤¡à¥à¤à¤¾ à¤¸à¤¿à¤à¤ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...',
-                'à¤ªà¥à¤°à¥à¤² à¤µà¥à¤¸à¥à¤ à¤à¥ à¤à¤£à¤¨à¤¾...',
-                'à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤²à¥à¤à¥à¤ à¤à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£...',
-                'à¤à¥à¤à¤°à¥à¤¡à¤¿à¤¨à¥à¤¶à¤¨ à¤¡à¥à¤°à¥à¤ à¤à¤¾ à¤ªà¤¤à¤¾ à¤²à¤à¤¾à¤¨à¤¾...',
-                'à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤à¤¡à¤¿à¤ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¥à¤¨à¤°à¥à¤ à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥...'
+                'मार्केट डेटा सिंक हो रहा है...',
+                'पेरोल वेस्ट की गणना...',
+                'मार्केटिंग लीकेज का विश्लेषण...',
+                'कोऑर्डिनेशन ड्रैग का पता लगाना...',
+                'ऑपरेशनल ऑडिट रिपोर्ट जेनरेट हो रही है...'
             ]
         },
         nightLoss: {
-            title: "à¤¨à¤¾à¤à¤ à¤²à¥à¤¸ à¤à¥à¤²à¤à¥à¤²à¥à¤à¤°",
-            subTitle: "à¤à¤¬ à¤à¤ª à¤¸à¥ à¤°à¤¹à¥ à¤¹à¥à¤¤à¥ à¤¹à¥à¤ à¤¤à¥ à¤à¤ª à¤à¤¿à¤¤à¤¨à¤¾ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥ à¤à¥ à¤°à¤¹à¥ à¤¹à¥à¤?",
-            formHeader: "à¤à¤ªà¤à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤à¤à¤à¥",
-            dailyInquiriesLabel: "à¤à¤¸à¤¤ à¤¦à¥à¤¨à¤¿à¤ à¤ªà¥à¤à¤¤à¤¾à¤ / à¤²à¥à¤¡à¥à¤¸",
-            closingTimeLabel: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤¬à¤à¤¦ à¤¹à¥à¤¨à¥ à¤à¤¾ à¤¸à¤®à¤¯",
-            avgTransactionLabel: "à¤à¤¸à¤¤ à¤à¥à¤°à¤¾à¤à¤à¥à¤à¥à¤¶à¤¨ à¤µà¥à¤²à¥à¤¯à¥ (â¹)",
-            avgTransactionSub: "â  à¤à¤µà¤¶à¥à¤¯à¤ â à¤à¤¸à¤à¥ à¤¬à¤¿à¤¨à¤¾ à¤à¤¡à¤¿à¤ â¹ à¤à¤à¤à¤¡à¤¼à¥ à¤¨à¤¹à¥à¤ à¤¦à¤¿à¤à¤¾ à¤¸à¤à¤¤à¤¾à¥¤",
-            businessTypeLabel: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¾ à¤ªà¥à¤°à¤à¤¾à¤°",
-            btnText: "à¤¨à¤¾à¤à¤ à¤²à¥à¤¸ à¤à¥à¤²à¤à¥à¤²à¥à¤ à¤à¤°à¥à¤",
-            savingText: "à¤¸à¥à¤µ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-            loseHeadline: "à¤à¤ª à¤¹à¤° à¤°à¤¾à¤¤ à¤à¥ à¤°à¤¹à¥ à¤¹à¥à¤",
-            perMonth: "/à¤®à¤¾à¤¹",
-            annualLossLine: "à¤µà¤¾à¤°à¥à¤·à¤¿à¤ à¤¹à¤¾à¤¨à¤¿: {amount}",
-            breakdownTitle: "à¤à¤¾à¤® à¤à¥ à¤à¤à¤à¥à¤ à¤à¥ à¤¬à¤¾à¤¦ à¤à¥ à¤à¤¤à¤¿à¤µà¤¿à¤§à¤¿",
-            leadsLabel: "à¤à¤«-à¤à¤µà¤°à¥à¤¸ à¤²à¥à¤¡à¥à¤¸: {count} / à¤®à¤¾à¤¹",
-            conversionsLabel: "à¤à¥à¤¯à¤¾ à¤¹à¥à¤ à¤à¤¨à¥à¤µà¤°à¥à¤¶à¤¨: ~{count} / à¤®à¤¾à¤¹ ({gap}% à¤à¤¨à¥à¤µà¤°à¥à¤¶à¤¨ à¤à¥à¤ª)",
-            nextDayRevenue: "à¤à¤à¤²à¥ à¤¦à¤¿à¤¨ à¤°à¤¿à¤ªà¥à¤²à¤¾à¤ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥",
-            aiRevenue: "AI à¤à¤à¤¸à¥à¤à¥à¤à¤ à¤°à¤¿à¤ªà¥à¤²à¤¾à¤ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥",
-            hourlyLossText: "à¤¹à¤° à¤à¤à¤à¥ {amount} à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨",
-            hourlyLossSub: "à¤¬à¤à¤¦ à¤¹à¥à¤¨à¥ à¤à¥ à¤¸à¤®à¤¯ à¤¸à¥ à¤à¤à¤²à¥ à¤¸à¥à¤¬à¤¹ à¤¤à¤",
-            source: "à¤¸à¥à¤°à¥à¤¤: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
-            emptyState: "à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤¦à¥à¤à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤¨à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤à¤à¤à¥ à¤¸à¥à¤ à¤à¤°à¥à¤",
+            title: "नाइट लॉस कैलकुलेटर",
+            subTitle: "जब आप सो रहे होते हैं तो आप कितना रेवेन्यू खो रहे हैं?",
+            formHeader: "आपके बिजनेस के घंटे",
+            dailyInquiriesLabel: "औसत दैनिक पूछताछ / लीड्स",
+            closingTimeLabel: "बिजनेस बंद होने का समय",
+            avgTransactionLabel: "औसत ट्रांजेक्शन वैल्यू (₹)",
+            avgTransactionSub: "⚠ आवश्यक — इसके बिना ऑडिट ₹ आंकड़े नहीं दिखा सकता।",
+            businessTypeLabel: "बिजनेस का प्रकार",
+            btnText: "नाइट लॉस कैलकुलेट करें",
+            savingText: "सेव हो रहा है...",
+            loseHeadline: "आप हर रात खो रहे हैं",
+            perMonth: "/माह",
+            annualLossLine: "वार्षिक हानि: {amount}",
+            breakdownTitle: "काम के घंटों के बाद की गतिविधि",
+            leadsLabel: "ऑफ-ऑवर्स लीड्स: {count} / माह",
+            conversionsLabel: "खोया हुआ कन्वर्शन: ~{count} / माह ({gap}% कन्वर्शन गैप)",
+            nextDayRevenue: "अगले दिन रिप्लाई रेवेन्यू",
+            aiRevenue: "AI इंस्टेंट रिप्लाई रेवेन्यू",
+            hourlyLossText: "हर घंटे {amount} का नुकसान",
+            hourlyLossSub: "बंद होने के समय से अगली सुबह तक",
+            source: "स्रोत: Google Consumer Insights India (2023) | Facebook IQ India Report (2022) | HBR \"Short Life of Online Sales Leads\" (Oldroyd, 2011) | Salesforce \"State of Connected Customer\" India Edition (2023)",
+            emptyState: "नुकसान देखने के लिए अपने बिजनेस के घंटे सेट करें",
             searchSteps: [
-                'à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤µà¤°à¥à¤¸ à¤à¤¨à¤¾à¤²à¤¿à¤¸à¤¿à¤¸...',
-                'à¤²à¥à¤¡à¥à¤¸ à¤¡à¤¿à¤à¥ à¤°à¥à¤ à¤à¥ à¤à¤£à¤¨à¤¾...',
-                'à¤®à¤¿à¤¸à¥à¤¡ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥ à¤à¤¾ à¤à¤¨à¥à¤®à¤¾à¤¨...',
-                'à¤à¤¨à¥à¤µà¤°à¥à¤à¤¨ à¤à¥à¤ª à¤à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£...',
-                'à¤¨à¤¾à¤à¤ à¤²à¥à¤¸ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤¤à¥à¤¯à¤¾à¤° à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥...'
+                'बिजनेस आवर्स एनालिसिस...',
+                'लीड्स डिके रेट की गणना...',
+                'मिस्ड रेवेन्यू का अनुमान...',
+                'कन्वर्जन गैप का विश्लेषण...',
+                'नाइट लॉस रिपोर्ट तैयार हो रही है...'
             ],
             closingTimes: {
-                "6pm": { label: "à¤¶à¤¾à¤® 6:00 à¤¬à¤à¥", desc: "à¤¸à¤¾à¤®à¤¾à¤¨à¥à¤¯ à¤¸à¤®à¤¾à¤ªà¤¨" },
-                "8pm": { label: "à¤°à¤¾à¤¤ 8:00 à¤¬à¤à¥", desc: "à¤¦à¥à¤° à¤¶à¤¾à¤®" },
-                "10pm": { label: "à¤°à¤¾à¤¤ 10:00 à¤¬à¤à¥", desc: "à¤¨à¤¾à¤à¤ à¤à¤ªà¤°à¥à¤¶à¤¨à¥à¤¸" }
+                "6pm": { label: "शाम 6:00 बजे", desc: "सामान्य समापन" },
+                "8pm": { label: "रात 8:00 बजे", desc: "देर शाम" },
+                "10pm": { label: "रात 10:00 बजे", desc: "नाइट ऑपरेशन्स" }
             },
             businessTypes: {
-                retail: { label: "à¤°à¤¿à¤à¥à¤² / à¤¦à¥à¤à¤¾à¤¨", desc: "à¤­à¥à¤¤à¤¿à¤ à¤¸à¥à¤à¥à¤°à¤«à¥à¤°à¤à¤" },
-                service: { label: "à¤¸à¥à¤µà¤¾ / à¤à¤à¥à¤à¤¸à¥", desc: "à¤²à¥à¤¡-à¤à¤§à¤¾à¤°à¤¿à¤¤ à¤¬à¤¿à¤à¤¨à¥à¤¸" },
-                b2b: { label: "B2B / à¤®à¥à¤¨à¥à¤¯à¥à¤«à¥à¤à¥à¤à¤°à¤¿à¤à¤", desc: "à¤¬à¤¡à¤¼à¥ à¤à¤¿à¤à¤ à¤à¤¨à¥à¤¬à¤à¤§" }
+                retail: { label: "रिटेल / दुकान", desc: "भौतिक स्टोरफ्रंट" },
+                service: { label: "सेवा / एजेंसी", desc: "लीड-आधारित बिजनेस" },
+                b2b: { label: "B2B / मैन्युफैक्चरिंग", desc: "बड़े टिकट अनुबंध" }
             },
             errors: {
-                missingTxnValue: "à¤à¥à¤ªà¤¯à¤¾ à¤à¤ªà¤¨à¥ à¤à¤¸à¤¤ à¤à¥à¤°à¤¾à¤à¤à¥à¤à¥à¤¶à¤¨ à¤®à¥à¤²à¥à¤¯ (â¹) à¤à¥ à¤¦à¤°à¥à¤ à¤à¤°à¥à¤à¥¤ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥ à¤²à¥à¤¸ à¤à¥ à¤à¤£à¤¨à¤¾ à¤à¥ à¤²à¤¿à¤ à¤¯à¤¹ à¤à¤µà¤¶à¥à¤¯à¤ à¤¹à¥à¥¤"
+                missingTxnValue: "कृपया अपने औसत ट्रांजेक्शन मूल्य (₹) को दर्ज करें। रेवेन्यू लॉस की गणना के लिए यह आवश्यक है।"
             }
         },
         visibility: {
-            title: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤à¤¨à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤à¤¡à¤¿à¤",
-            subTitle: "à¤à¤­à¥ à¤à¤ª à¤à¤¿à¤¤à¤¨à¥ à¤¹à¤¾à¤-à¤à¤à¤à¥à¤à¤ à¤à¥à¤°à¤¾à¤¹à¤à¥à¤ à¤à¥ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤°à¥à¤¸ à¤¸à¥ à¤à¥ à¤°à¤¹à¥ à¤¹à¥à¤?",
-            formHeader: "à¤¸à¤°à¥à¤ à¤à¤° à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤®à¥à¤à¥à¤°à¤¿à¤à¥à¤¸",
-            cityLabel: "à¤ªà¥à¤°à¤¾à¤¥à¤®à¤¿à¤ à¤¬à¤¾à¤à¤¾à¤° (à¤¶à¤¹à¤°)",
-            searchTermLabel: "à¤ªà¥à¤°à¤¾à¤¥à¤®à¤¿à¤ à¤¸à¤°à¥à¤ à¤à¤°à¥à¤®",
-            monthlyVolumeLabel: "à¤®à¤¾à¤¸à¤¿à¤ à¤¸à¤°à¥à¤ à¤µà¥à¤²à¥à¤¯à¥à¤®",
-            monthlyVolumeSub: "{term} à¤à¥ {city} à¤®à¥à¤ à¤¹à¤° à¤®à¤¹à¥à¤¨à¥ à¤¸à¤°à¥à¤ à¤à¤°à¤¨à¥ à¤µà¤¾à¤²à¥ à¤²à¥à¤à¥¤",
-            competitorIndexLabel: "à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤° à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤à¤à¤¡à¥à¤à¥à¤¸",
-            competitorSub: "à¤¸à¤°à¥à¤ à¤ªà¤°à¤¿à¤£à¤¾à¤®à¥à¤ à¤®à¥à¤ à¤¦à¥à¤¸à¤°à¥ à¤à¤¿à¤¤à¤¨à¥ à¤ªà¥à¤°à¤®à¥à¤à¤¤à¤¾ à¤¸à¥ à¤¦à¤¿à¤ à¤°à¤¹à¥ à¤¹à¥à¤?",
-            btnText: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ à¤à¤°à¥à¤",
-            scanningText: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤¸à¥à¤à¥à¤¨ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-            missedHeadline: "à¤à¥à¤à¤¾ à¤¹à¥à¤ à¤à¤µà¤¸à¤°",
-            potentialLeads: "à¤¸à¤à¤­à¤¾à¤µà¤¿à¤¤ à¤²à¥à¤¡à¥à¤¸: {count} / à¤®à¤¾à¤¹",
-            highIntent: "à¤à¥à¤ à¤¹à¥à¤ à¤¹à¤¾à¤-à¤à¤à¤à¥à¤à¤ à¤à¥à¤°à¤¾à¤¹à¤",
-            marketScore: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤¸à¤¿à¤à¥à¤¨à¤² à¤¸à¥à¤à¥à¤°",
-            industryAvg: "à¤à¤à¤¡à¤¸à¥à¤à¥à¤°à¥ à¤à¤¸à¤¤",
-            lostRevenue: "à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ à¤®à¤¾à¤¸à¤¿à¤ à¤à¥à¤¯à¤¾ à¤¹à¥à¤ à¤°à¤¾à¤à¤¸à¥à¤µ",
-            lostRevenueSub: "{city} à¤®à¤¾à¤°à¥à¤à¥à¤ à¤à¥ à¤à¤¸à¤¤ à¤à¥à¤°à¤¾à¤¹à¤ LTV à¤à¥ à¤à¤§à¤¾à¤° à¤ªà¤°à¥¤",
-            source: "à¤¸à¥à¤°à¥à¤¤: SEMRush India Search Data (2023) | Google Trends Regional Index (2023) | Local Search Association Consumer Survey (2022)",
-            emptyState: "à¤à¤à¤¤à¤° à¤¦à¥à¤à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤¨à¥ à¤¸à¤°à¥à¤ à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ à¤à¤°à¥à¤",
+            title: "मार्केट इनविजिबिलिटी ऑडिट",
+            subTitle: "अभी आप कितने हाई-इंटेंट ग्राहकों को कॉम्पिटिटर्स से खो रहे हैं?",
+            formHeader: "सर्च और विजिबिलिटी मेट्रिक्स",
+            cityLabel: "प्राथमिक बाजार (शहर)",
+            searchTermLabel: "प्राथमिक सर्च टर्म",
+            monthlyVolumeLabel: "मासिक सर्च वॉल्यूम",
+            monthlyVolumeSub: "{term} को {city} में हर महीने सर्च करने वाले लोग।",
+            competitorIndexLabel: "कॉम्पिटिटर विजिबिलिटी इंडेक्स",
+            competitorSub: "सर्च परिणामों में दूसरे कितनी प्रमुखता से दिख रहे हैं?",
+            btnText: "मार्केट विजिबिलिटी विश्लेषण करें",
+            scanningText: "मार्केट स्कैन हो रहा है...",
+            missedHeadline: "छूटा हुआ अवसर",
+            potentialLeads: "संभावित लीड्स: {count} / माह",
+            highIntent: "खोए हुए हाई-इंटेंट ग्राहक",
+            marketScore: "मार्केट सिग्नल स्कोर",
+            industryAvg: "इंडस्ट्री औसत",
+            lostRevenue: "अनुमानित मासिक खोया हुआ राजस्व",
+            lostRevenueSub: "{city} मार्केट के औसत ग्राहक LTV के आधार पर।",
+            source: "स्रोत: SEMRush India Search Data (2023) | Google Trends Regional Index (2023) | Local Search Association Consumer Survey (2022)",
+            emptyState: "अंतर देखने के लिए अपनी सर्च विजिबिलिटी का विश्लेषण करें",
             signals: {
-                hasGoogleMyBusiness: "à¤à¥à¤à¤² à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤ªà¥à¤°à¥à¤«à¤¾à¤à¤² (à¤ªà¥à¤°à¥à¤£)",
-                hasWebsite: "à¤®à¥à¤¬à¤¾à¤à¤²-à¤à¤¨à¥à¤à¥à¤² à¤µà¥à¤¬à¤¸à¤¾à¤à¤",
-                hasWhatsApp: "à¤µà¥à¤¹à¤¾à¤à¥à¤¸à¤à¤ª à¤¬à¤¿à¤à¤¨à¥à¤¸ (à¤¸à¤à¥à¤°à¤¿à¤¯)",
-                activeSocialMedia: "à¤¸à¤à¥à¤°à¤¿à¤¯ à¤¸à¥à¤¶à¤² à¤®à¥à¤¡à¤¿à¤¯à¤¾ (2+ à¤ªà¥à¤²à¥à¤à¤«à¥à¤°à¥à¤®)",
-                seoOptimized: "à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ SEO (à¤à¥à¤µà¤°à¥à¤¡ à¤à¤ªà¥à¤à¤¿à¤®à¤¾à¤à¤à¥à¤¡)",
-                hasCRM: "CRM / à¤²à¥à¤¡ à¤®à¥à¤¨à¥à¤à¤®à¥à¤à¤ à¤à¥à¤²",
-                runsAds: "à¤ªà¥à¤¡ à¤à¤¡à¥à¤¸ (à¤à¥à¤à¤² / à¤®à¥à¤à¤¾ à¤¸à¤à¥à¤°à¤¿à¤¯)"
+                hasGoogleMyBusiness: "गूगल बिजनेस प्रोफाइल (पूर्ण)",
+                hasWebsite: "मोबाइल-अनुकूल वेबसाइट",
+                hasWhatsApp: "व्हाट्सएप बिजनेस (सक्रिय)",
+                activeSocialMedia: "सक्रिय सोशल मीडिया (2+ प्लेटफॉर्म)",
+                seoOptimized: "स्थानीय SEO (कीवर्ड ऑप्टिमाइज्ड)",
+                hasCRM: "CRM / लीड मैनेजमेंट टूल",
+                runsAds: "पेड एड्स (गूगल / मेटा सक्रिय)"
             },
-            gapsHeader: "à¤à¥à¤ª à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ ({count} à¤¸à¤¿à¤à¥à¤¨à¤² à¤à¤¾à¤¯à¤¬ à¤¹à¥à¤)",
-            conversionRate: "6% à¤à¤¨à¥à¤µà¤°à¥à¤à¤¨ à¤°à¥à¤",
+            gapsHeader: "गैप विश्लेषण ({count} सिग्नल गायब हैं)",
+            conversionRate: "6% कन्वर्जन रेट",
             searchSteps: [
-                'à¤²à¥à¤à¤² à¤¸à¤°à¥à¤ à¤µà¥à¤²à¥à¤¯à¥à¤® à¤¸à¥à¤à¥à¤¨...',
-                'à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤° à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤à¤¨à¤¾à¤²à¤¿à¤¸à¤¿à¤¸...',
-                'à¤®à¤¾à¤°à¥à¤à¥à¤ à¤¸à¤¿à¤à¥à¤¨à¤² à¤¸à¥à¤à¥à¤°à¥à¤à¤¥ à¤à¥à¤...',
-                'à¤®à¤¿à¤¸ à¤à¤¿à¤ à¤à¤ à¤à¤¸à¥à¤à¤®à¤°à¥à¤¸ à¤à¥ à¤à¤£à¤¨à¤¾...',
-                'à¤à¤¨à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤à¤¡à¤¿à¤ à¤à¥à¤¨à¤°à¥à¤ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...'
+                'लोकल सर्च वॉल्यूम स्कैन...',
+                'कॉम्पिटिटर विजिबिलिटी एनालिसिस...',
+                'मार्केट सिग्नल स्ट्रेंथ चेक...',
+                'मिस किए गए कस्टमर्स की गणना...',
+                'इनविजिबिलिटी ऑडिट जेनरेट हो रहा है...'
             ],
             placeholders: {
-                citySelect: "â à¤¶à¤¹à¤° à¤à¥à¤¨à¥à¤ â",
-                cityInput: "à¤¶à¤¹à¤° à¤à¤¾ à¤¨à¤¾à¤® à¤¦à¤°à¥à¤ à¤à¤°à¥à¤...",
-                revenue: "â¹ 1,500"
+                citySelect: "— शहर चुनें —",
+                cityInput: "शहर का नाम दर्ज करें...",
+                revenue: "₹ 1,500"
             },
 
         },
         aiThreat: {
-            title: "à¤à¤à¥à¤¸à¥à¤¤à¤¿à¤à¤à¥à¤¶à¤¨ à¤¹à¥à¤°à¤¾à¤à¤à¤¨ (AI à¤¥à¥à¤°à¥à¤)",
-            subTitle: "à¤à¥à¤¨à¤°à¥à¤à¤¿à¤µ AI à¤à¥ à¤¯à¥à¤ à¤®à¥à¤ à¤à¤ªà¤¨à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤à¤¾à¤à¤®à¤²à¤¾à¤à¤¨ à¤à¥ à¤à¤£à¤¨à¤¾ à¤à¤°à¥à¤à¥¤",
-            formHeader: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤à¤¨à¤ªà¥à¤à¥à¤¸",
-            physicalPresenceLabel: "à¤­à¥à¤¤à¤¿à¤ à¤à¤ªà¤¸à¥à¤¥à¤¿à¤¤à¤¿ (Physical Presence)",
-            physicalPresenceCheck: "à¤®à¥à¤°à¤¾ à¤à¤ à¤­à¥à¤¤à¤¿à¤ à¤¸à¥à¤à¥à¤° / à¤à¤«à¤¿à¤¸ à¤¸à¥à¤ªà¥à¤¸ à¤¹à¥",
-            aiAdoptionLabel: "à¤µà¤°à¥à¤¤à¤®à¤¾à¤¨ AI à¤à¤ªà¤¯à¥à¤",
+            title: "एक्स्तिंक्शन होराइजन (AI थ्रेट)",
+            subTitle: "जेनरेटिव AI के युग में अपने बिजनेस के सर्वाइवल टाइमलाइन की गणना करें।",
+            formHeader: "सर्वाइवल प्रोटोकॉल इनपुट्स",
+            physicalPresenceLabel: "भौतिक उपस्थिति (Physical Presence)",
+            physicalPresenceCheck: "मेरा एक भौतिक स्टोर / ऑफिस स्पेस है",
+            aiAdoptionLabel: "वर्तमान AI उपयोग",
             aiAdoptionOptions: {
-                none: "à¤à¤­à¥ AI à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤¨à¤¹à¥à¤ à¤à¤° à¤°à¤¹à¥",
-                basic: "à¤¬à¥à¤¸à¤¿à¤ à¤à¥à¤²à¥à¤¸ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ (ChatGPT)",
-                integrated: "AI à¤®à¥à¤°à¥ à¤¦à¥à¤¨à¤¿à¤ à¤à¤¾à¤°à¥à¤¯ à¤à¤¾ à¤¹à¤¿à¤¸à¥à¤¸à¤¾ à¤¹à¥",
-                advanced: "AI à¤®à¥à¤°à¥ à¤®à¥à¤à¥à¤¯ à¤ªà¥à¤°à¤à¥à¤°à¤¿à¤¯à¤¾à¤à¤ à¤à¥ à¤à¤²à¤¾à¤¤à¤¾ à¤¹à¥"
+                none: "अभी AI का उपयोग नहीं कर रहे",
+                basic: "बेसिक टूल्स का उपयोग (ChatGPT)",
+                integrated: "AI मेरे दैनिक कार्य का हिस्सा है",
+                advanced: "AI मेरी मुख्य प्रक्रियाओं को चलाता है"
             },
-            competitorAdoptionLabel: "à¤à¤ªà¤à¥ à¤®à¤¾à¤°à¥à¤à¥à¤ à¤®à¥à¤ AI",
+            competitorAdoptionLabel: "आपके मार्केट में AI",
             competitorAdoptionOptions: {
-                low: "à¤à¤à¤¡à¤¸à¥à¤à¥à¤°à¥ à¤¸à¥à¤¥à¤¿à¤° à¤¹à¥ (à¤à¥à¤ AI à¤ªà¥à¤°à¤­à¤¾à¤µ à¤¨à¤¹à¥à¤)",
-                medium: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤®à¥à¤ à¤¨à¤ AI à¤à¥à¤²à¥à¤¸ à¤¦à¤¿à¤ à¤°à¤¹à¥ à¤¹à¥à¤",
-                high: "AI à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤¤à¥à¤à¥ à¤¸à¥ à¤°à¤¿à¤ªà¥à¤²à¥à¤¸ à¤à¤° à¤°à¤¹à¤¾ à¤¹à¥"
+                low: "इंडस्ट्री स्थिर है (कोई AI प्रभाव नहीं)",
+                medium: "मार्केट में नए AI टूल्स दिख रहे हैं",
+                high: "AI बिजनेस को तेजी से रिप्लेस कर रहा है"
             },
-            operationalComplexityLabel: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤à¤à¤¿à¤²à¤¤à¤¾",
+            operationalComplexityLabel: "बिजनेस की जटिलता",
             operationalComplexityOptions: {
-                low: "à¤¸à¤°à¤² à¤à¤° à¤¸à¥à¤§à¥ à¤à¤¾à¤°à¥à¤¯",
-                medium: "à¤à¤¾à¤°à¥à¤¯à¥à¤ à¤®à¥à¤ à¤­à¤¾à¤°à¥ à¤®à¤¾à¤¨à¤µà¥à¤¯ à¤ªà¥à¤°à¤¯à¤¾à¤¸ à¤à¥ à¤à¤µà¤¶à¥à¤¯à¤à¤¤à¤¾",
-                high: "à¤à¤¾à¤°à¥à¤¯ à¤à¤à¤¿à¤² à¤¸à¥à¤«à¥à¤à¤µà¥à¤¯à¤° à¤ªà¤° à¤à¤²à¤¤à¥ à¤¹à¥à¤"
+                low: "सरल और सीधे कार्य",
+                medium: "कार्यों में भारी मानवीय प्रयास की आवश्यकता",
+                high: "कार्य जटिल सॉफ्टवेयर पर चलते हैं"
             },
-            industryLabel: "à¤à¤¦à¥à¤¯à¥à¤ / à¤à¥à¤·à¥à¤¤à¥à¤° (Vertical)",
-            manualTasksLabel: "à¤¦à¥à¤¹à¤°à¤¾à¤ à¤à¤¾à¤¨à¥ à¤µà¤¾à¤²à¥/à¤®à¥à¤¨à¥à¤¯à¥à¤à¤² à¤à¤¾à¤°à¥à¤¯à¥à¤ à¤à¤¾ %",
-            manualTasksSub: "à¤¡à¥à¤à¤¾ à¤à¤à¤à¥à¤°à¥, à¤¶à¥à¤¡à¥à¤¯à¥à¤²à¤¿à¤à¤, à¤¬à¥à¤¸à¤¿à¤ à¤²à¥à¤à¤¨, à¤à¥à¤à¥à¤ à¤à¥ à¤à¤¾à¤à¤à¤¨à¤¾à¥¤",
-            customerInteractionLabel: "à¤à¥à¤°à¤¾à¤¹à¤ à¤¬à¤¾à¤¤à¤à¥à¤¤ à¤à¤¾ à¤ªà¥à¤°à¤à¤¾à¤°",
-            btnText: "à¤¥à¥à¤°à¥à¤ à¤à¤¨à¤¾à¤²à¤¿à¤¸à¤¿à¤¸ à¤à¤²à¤¾à¤à¤",
-            runningText: "à¤à¤£à¤¨à¤¾ à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥...",
-            ttlHead                    pdfHeader: "à¤à¥à¤ªà¤¨à¥à¤¯ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤à¤à¥à¤²à¤¿à¤à¥à¤à¤¸",
-                    criticalBadge: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤²à¥à¤ à¤à¤¾ à¤ªà¤¤à¤¾ à¤à¤²à¤¾",
-                    annualBleed: "à¤à¥à¤² à¤µà¤¾à¤°à¥à¤·à¤¿à¤ à¤ªà¥à¤¸à¥à¤ à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨",
-                    recoverableLegend: "à¤¹à¤® à¤à¤à¥à¤®à¥à¤¶à¤¨ à¤à¥ à¤à¤°à¤¿à¤ à¤à¤ªà¤à¥ 50% à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤à¥ à¤µà¤¾à¤ªà¤¸ à¤²à¤¾ à¤¸à¤à¤¤à¥ à¤¹à¥à¤à¥¤",
-                    telemetryTitle: "à¤à¤ªà¤à¤¾ à¤ªà¥à¤¸à¤¾ à¤à¤¹à¤¾à¤ à¤à¤¾ à¤°à¤¹à¤¾ à¤¹à¥",
-                    opsFriction: "à¤à¤à¤¤à¤°à¤¿à¤ à¤¦à¤à¥à¤·à¤¤à¤¾",
-                    staffWaste: "à¤®à¥à¤¨à¥à¤à¤² à¤à¤¾à¤® à¤®à¥à¤ à¤¹à¥à¤¨à¥ à¤µà¤¾à¤²à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨à¥¤",
-                    afterHoursBleed: "24/7 à¤à¤¾à¤¯à¤¬ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥",
-                    nightLossDesc: "à¤à¤«à¤¿à¤¸ à¤¬à¤à¤¦ à¤¹à¥à¤¨à¥ à¤à¥ à¤¬à¤¾à¤¦ à¤à¥à¤°à¤¾à¤¹à¤à¥à¤ à¤à¥ à¤à¤µà¤¾à¤¬ à¤¨ à¤®à¤¿à¤²à¤¨à¥ à¤¸à¥ à¤¹à¥à¤¨à¥ à¤µà¤¾à¤²à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨à¥¤",
-                    digitalInvisibility: "à¤à¤® à¤à¤¨à¤²à¤¾à¤à¤¨ à¤à¤ªà¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-                    visibilityDesc: "à¤à¥à¤°à¤¾à¤¹à¤ à¤à¤ªà¤à¥ à¤¬à¤à¤¾à¤¯ à¤à¤ªà¤à¥ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤°à¥à¤¸ à¤à¥ à¤¢à¥à¤à¤¢ à¤°à¤¹à¥ à¤¹à¥à¤à¥¤",
-                    aiThreatHorizon: "à¤¬à¤à¤¨à¥ à¤à¤¾ à¤¸à¤®à¤¯",
-                    aiLossDesc: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤à¥ à¤ªà¥à¤°à¥ à¤¤à¤°à¤¹ AI à¤ªà¤° à¤¶à¤¿à¤«à¥à¤ à¤¹à¥à¤¨à¥ à¤¸à¥ à¤ªà¤¹à¤²à¥ à¤à¤ªà¤à¥ à¤ªà¤¾à¤¸ à¤¬à¤à¤¾ à¤¸à¤®à¤¯à¥¤",
-                    coordinationDragTitle: "à¤à¤à¤¿à¤² à¤¬à¤°à¥à¤¬à¤¾à¤¦à¥ à¤à¤¾ à¤ªà¤¤à¤¾ à¤à¤²à¤¾",
-                    coordinationDragDesc: "à¤à¤ªà¤à¥ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¥ à¤²à¥à¤µà¤² à¤ªà¤° à¤®à¥à¤¨à¥à¤à¤² à¤¸à¥à¤§à¤¾à¤° à¤¬à¤¹à¥à¤¤ à¤§à¥à¤®à¥ à¤¹à¥à¤à¥¤ à¤¤à¥à¤°à¤à¤¤ à¤à¤à¥à¤®à¥à¤¶à¤¨ à¤à¥ à¤à¤°à¥à¤°à¤¤ à¤¹à¥à¥¤",
-                    protocolTitle: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤²",
-                    protocol01Title: "à¤à¤à¥à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤à¥à¤à¤°à¤£",
-                    protocol01Desc: "à¤à¤²à¤-à¤à¤²à¤ à¤à¥à¤²à¥à¤¸ à¤à¥ à¤à¤ à¤¹à¥ à¤¹à¤¾à¤-à¤à¥à¤ à¤¸à¤¿à¤¸à¥à¤à¤® à¤®à¥à¤ à¤à¥à¤¡à¤¼à¥à¤à¥¤",
-                    protocol02Title: "à¤à¤à¥à¤®à¥à¤¶à¤¨ à¤®à¥à¤¨à¥à¤à¤®à¥à¤à¤",
-                    protocol02Desc: "à¤¦à¤¿à¤®à¤¾à¤à¥ à¤¬à¥à¤ à¤à¤¤à¥à¤® à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤à¥à¤®à¥à¤à¥à¤¡ à¤µà¤°à¥à¤à¤«à¤¼à¥à¤²à¥ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤à¤°à¥à¤à¥¤",
-                    protocol03Title: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤ªà¥à¤°à¤­à¥à¤¤à¥à¤µ",
-                    protocol03Desc: "à¤¹à¤° à¤à¤à¤¹ à¤¸à¥ 24/7 à¤¨à¤ à¤à¥à¤°à¤¾à¤¹à¤à¥à¤ à¤à¥ à¤ªà¤à¤¡à¤¼à¥à¤à¥¤",
-                    rawDiagnostics: "à¤°à¥ à¤¸à¤¿à¤¸à¥à¤à¤® à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤à¥à¤¸",
-                    mod01Title: "à¤à¥à¤ 01: à¤à¤à¤¤à¤°à¤¿à¤ à¤¬à¤°à¥à¤¬à¤¾à¤¦à¥",
-                    mod02Title: "à¤à¥à¤ 02: à¤à¤¾à¤¯à¤¬ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥",
-                    mod03Title: "à¤à¥à¤ 03: à¤²à¥à¤à¤² à¤à¤ªà¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-                    mod04Title: "à¤à¥à¤ 04: à¤®à¤¾à¤°à¥à¤à¥à¤ à¤à¤¾à¤à¤®à¤²à¤¾à¤à¤¨",
-                    staffPayroll: "à¤¸à¥à¤à¤¾à¤« à¤ªà¥à¤°à¥à¤² à¤µà¥à¤¸à¥à¤",
-                    marketingBleed: "à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤µà¥à¤¸à¥à¤",
-                    rawOps: "à¤à¤ªà¤°à¥à¤¶à¤à¤¸ à¤à¥ à¤¬à¤°à¥à¤¬à¤¾à¤¦à¥",
-                    coordinationDragApplied: "à¤¦à¤à¥à¤·à¤¤à¤¾ à¤®à¥à¤ à¤à¤®à¥",
-                    missedWeeklyInquiries: "à¤à¥à¤à¥ à¤¹à¥à¤ à¤¸à¤¾à¤ªà¥à¤¤à¤¾à¤¹à¤¿à¤ à¤²à¥à¤¡à¥à¤¸",
-                    avgTxnVelocity: "à¤à¤¸à¤¤ à¤¸à¥à¤² à¤µà¥à¤²à¥à¤¯à¥",
-                    estConversion: "à¤¸à¤«à¤²à¤¤à¤¾ à¤à¥ à¤¦à¤°",
-                    monthlyHemorrhage: "à¤®à¤¾à¤¸à¤¿à¤ à¤ªà¥à¤¸à¥à¤ à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨",
-                    lostLocalSearches: "à¤à¥à¤à¥ à¤¹à¥à¤ à¤²à¥à¤à¤² à¤¸à¤°à¥à¤",
-                    missedHighIntent: "à¤à¤°à¥à¤¦à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤¤à¥à¤¯à¤¾à¤° à¤à¥à¤°à¤¾à¤¹à¤",
-                    visibilityScore: "à¤à¥à¤² à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤¸à¥à¤à¥à¤°",
-                    threatThreshold: "à¤à¥à¤à¤¿à¤® à¤à¤¾ à¤¸à¥à¤¤à¤°",
-                    architectNote: {
-                        title: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤ à¤à¤¾ à¤¸à¤à¤¦à¥à¤¶",
-                        p1: "à¤à¤ªà¤à¥ à¤µà¤°à¥à¤¤à¤®à¤¾à¤¨ à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¾à¤® à¤¤à¥ à¤à¤° à¤°à¤¹à¥ à¤¹à¥à¤, à¤²à¥à¤à¤¿à¤¨ à¤µà¥ à¤à¤¾à¤«à¥ à¤®à¤¹à¤à¤à¥ à¤¹à¥à¤à¥¤",
-                        p2: "à¤¹à¤° à¤®à¤¹à¥à¤¨à¥, à¤®à¥à¤¨à¥à¤à¤² à¤à¤¾à¤® à¤à¤° à¤¸à¤®à¤¯ à¤à¥ à¤à¤®à¥ à¤à¥ à¤à¤¾à¤°à¤£ à¤à¤ªà¤à¤¾ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤ªà¥à¤¸à¤¾ à¤à¤à¤µà¤¾ à¤°à¤¹à¤¾ à¤¹à¥à¥¤ à¤¯à¤¹ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤¸à¤¿à¤°à¥à¤« à¤¨à¤à¤¬à¤° à¤¨à¤¹à¥à¤ à¤¹à¥âà¤¯à¤¹ à¤à¤¸ à¤ªà¥à¤¸à¥ à¤à¤¾ à¤¹à¤¿à¤¸à¤¾à¤¬ à¤¹à¥ à¤à¥ à¤à¤ª à¤¸à¤¿à¤°à¥à¤« à¤à¤¸à¤²à¤¿à¤ à¤à¥à¤¡à¤¼ à¤°à¤¹à¥ à¤¹à¥à¤ à¤à¥à¤¯à¥à¤à¤à¤¿ à¤à¤ªà¤¨à¥ à¤à¤­à¥ à¤¤à¤ à¤à¤§à¥à¤¨à¤¿à¤ AI à¤¸à¤¿à¤¸à¥à¤à¤® à¤¨à¤¹à¥à¤ à¤²à¤à¤¾à¤¯à¤¾ à¤¹à¥à¥¤",
-                        p3: "à¤à¤ªà¤¨à¥ à¤®à¥à¤¨à¤¾à¤«à¥ à¤à¥ à¤¬à¤à¤¾à¤¨à¥ à¤à¤° à¤­à¤µà¤¿à¤·à¥à¤¯ à¤à¥ à¤²à¤¿à¤ à¤¤à¥à¤¯à¤¾à¤° à¤¹à¥à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤¸ à¤¡à¥à¤à¤¾ à¤à¤¾ à¤à¤ªà¤¯à¥à¤ à¤à¤°à¥à¤à¥¤",
-                        sign: "à¤®à¤¾à¤¸à¥à¤à¤°à¤à¥ à¤à¤à¤¸ à¤à¥à¤®",
-                        role: "à¤¸à¤à¤¸à¥à¤¥à¤¾à¤ªà¤, à¤®à¤¾à¤¸à¥à¤à¤°à¤à¥ à¤²à¥à¤¬à¥à¤¸"
-                    },
-                    cta: {
-                        title: "à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤°à¥à¤à¤¨à¤¾ à¤à¤¾à¤¹à¤¤à¥ à¤¹à¥à¤?",
-                        sub: "à¤à¤¸à¥ à¤à¤à¥à¤²à¥ à¤¨ à¤à¥à¤²à¥à¤à¥¤ à¤à¤ªà¤à¥ à¤¸à¤®à¤¸à¥à¤¯à¤¾ à¤à¤¾ à¤¸à¤®à¤¾à¤§à¤¾à¤¨ à¤­à¥ à¤à¤¾à¤¸ à¤¹à¥à¤¨à¤¾ à¤à¤¾à¤¹à¤¿à¤à¥¤ à¤¹à¤®à¤¾à¤°à¥ à¤à¥à¤® à¤à¥ à¤¸à¤¾à¤¥ à¤à¤ à¤«à¥à¤°à¥ à¤°à¤¿à¤µà¥à¤¯à¥ à¤¬à¥à¤ à¤à¤°à¥à¤à¥¤",
-                        btn: "à¤«à¥à¤°à¥ à¤°à¤¿à¤µà¥à¤¯à¥ à¤¬à¥à¤ à¤à¤°à¥à¤",
-                        footer: "à¤¸à¥à¤²à¥à¤ à¤¬à¥à¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ masterkeylabs.ai à¤ªà¤° à¤à¤¾à¤à¤"
-                    },
-                    survivalComplexity: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤à¥à¤®à¥à¤ªà¥à¤²à¥à¤à¥à¤¸à¤¿à¤à¥ à¤¸à¥à¤à¥à¤°",
-                    calculatedTTL: "à¤¬à¤à¥ à¤¹à¥à¤ à¤¸à¤®à¤¯ à¤à¥ à¤à¤£à¤¨à¤¾",
-                    extinctionDeadline: "à¤¡à¥à¤¡à¤²à¤¾à¤à¤¨ à¤à¥ à¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-                    criticalEvasion: "à¤¬à¤à¤¾à¤µ à¤¬à¤¹à¥à¤¤ à¤à¤°à¥à¤°à¥ à¤¹à¥",
-                    monitoring: "à¤¨à¤¿à¤à¤°à¤¾à¤¨à¥ (Monitoring)"
-                },
-¤ à¤¸à¥ à¤¬à¤¾à¤¤ à¤à¤°à¥à¤",
-            waMessage: "à¤¨à¤®à¤¸à¥à¤¤à¥ à¤®à¤¾à¤¸à¥à¤à¤°à¤à¥ à¤²à¥à¤¬à¥à¤¸, à¤®à¥à¤°à¤¾ à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ ({businessName}) {threatZone} à¤à¤¼à¥à¤¨ à¤®à¥à¤ à¤¹à¥à¥¤ à¤®à¥à¤°à¥ à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤¡à¤¿à¤ à¤¸à¥ à¤ªà¤¤à¤¾ à¤à¤²à¤¤à¤¾ à¤¹à¥ à¤à¤¿ à¤®à¥à¤à¥ à¤¹à¤° à¤¸à¤¾à¤² {lossText} à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥à¥¤ à¤®à¥à¤à¥ à¤¡à¤¿à¤à¤¿à¤à¤² à¤«à¥à¤à¥à¤à¥à¤°à¥ à¤¬à¤¨à¤¾à¤¨à¥ à¤à¥ à¤à¤°à¥à¤°à¤¤ à¤¹à¥à¥¤"
+            industryLabel: "उद्योग / क्षेत्र (Vertical)",
+            manualTasksLabel: "दोहराए जाने वाले/मैन्युअल कार्यों का %",
+            manualTasksSub: "डेटा एंट्री, शेड्यूलिंग, बेसिक लेखन, चीजों को छांटना।",
+            customerInteractionLabel: "ग्राहक बातचीत का प्रकार",
+            btnText: "थ्रेट एनालिसिस चलाएं",
+            runningText: "गणना हो रही है...",
+            ttlHeadline: "मार्केट प्रासंगिकता TTL",
+            months: "महीने",
+            threatLevel: "सर्वाइवल कॉम्प्लेक्सिटी",
+            threatSub: "उच्च जटिलता = रिप्लेस होने का उच्च जोखिम।",
+            baseMonths: "आधार समयरेखा (Base)",
+            modifiers: "रिजिलिएंस मॉडिफायर्स",
+            riskAssessment: "AI थ्रेट और रिस्क असेसमेंट",
+            automationPotential: "ऑटोमेशन क्षमता",
+            replacabilityScale: "रिप्लेसबिलिटी स्केल",
+            low: "कम (Low)",
+            med: "मध्यम (Medium)",
+            high: "उच्च (High)",
+            source: "स्रोत: Goldman Sachs \"The Potentially Large Effects of AI on Economic Growth\" (2023) | World Economic Forum \"Future of Jobs\" Report (2023) | OpenAI \"GPTs are GPTs\" Impact Study (2023)",
+            emptyState: "अपना होराइजन देखने के लिए थ्रेट एनालिसिस चलाएं",
+            searchSteps: [
+                'जॉब टास्क डिसेक्शन...',
+                'ऑटोमेशन एक्सपोजर कैलकुलेशन...',
+                'मार्केट रेजिलिएंस चेक...',
+                'एक्स्तिंक्शन होराइजन मैपिंग...',
+                'सर्वाइवल प्रोटोकॉल तैयार हो रहा है...'
+            ]
+        },
+        nav: {
+            dashboard: "डैशबोर्ड",
+            login: "लॉगिन",
+            signup: "साइन अप",
+            home: "होम"
+        },
+        header: {
+            command: "कमांड सेंटर",
+            sync: "Cloud Sync Active — v2.1.0-secure",
+            home: "होम"
+        },
+        sidebar: {
+            status: "सिस्टम स्टेटस",
+            analytics: "डीप एनालिटिक्स",
+            protocols: "प्रोटोकॉल्स",
+            growth: "ग्रोथ",
+            map: "मैप",
+            logout: "लॉगआउट",
+            active: "नोड एक्टिव"
+        },
+        footer: {
+            systems: "सिस्टम",
+            infrastructure: "इंफ्रास्ट्रक्चर",
+            intelligence: "इंटेलिजेंस",
+            directives: "निर्देश (Directives)",
+            privacy: "गोपनीयता नीति",
+            terms: "नियम और शर्तें",
+            rights: "© 2025 मास्टरकी लैब्स — एडेप्टिव सिस्टम्स प्रोटोकॉल",
+            confidential: "गोपनीय सिस्टम ऑडिट"
+        },
+        fab: {
+            badge: "अपना फायदा सुनिश्चित करें",
+            main: "आर्किटेक्ट से बात करें",
+            waMessage: "नमस्ते मास्टरकी लैब्स, मेरा व्यवसाय ({businessName}) {threatZone} ज़ोन में है। मेरे सिस्टम ऑडिट से पता चलता है कि मुझे हर साल {lossText} का नुकसान हो रहा है। मुझे डिजिटल फैक्ट्री बनाने की जरूरत है।"
         },
         extinctionTimer: {
-            analysisBadge: "AI à¤µà¤¿à¤¸à¥à¤¥à¤¾à¤ªà¤¨ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ (DI-ANALYSIS)",
-            title1: "à¤à¥à¤¯à¤¾ AI",
-            title2: "à¤à¤ªà¤à¥ à¤¬à¤¦à¤² à¤¦à¥à¤à¤¾?",
-            sub: "à¤¨à¥à¤à¥ à¤à¤ªà¤¨à¤¾ à¤à¥à¤¬ à¤à¤¾à¤à¤à¤² à¤¯à¤¾ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¾à¤à¤ª à¤¦à¤°à¥à¤ à¤à¤°à¥à¤à¥¤ à¤à¥à¤ à¤¹à¥ à¤¸à¥à¤à¤à¤¡ à¤®à¥à¤ à¤à¤ªà¤¨à¥ AI à¤à¤à¥à¤¸à¤à¤¿à¤à¤à¥à¤à¤¶à¤¨ à¤à¤¾à¤à¤®à¤²à¤¾à¤à¤¨ à¤à¤¾à¤¨à¥à¤à¥¤",
-            placeholder: "à¤à¥à¤¸à¥: à¤à¤à¤¾à¤à¤à¤à¥à¤à¤ Â· à¤à¤à¤à¤° à¤®à¥à¤¨à¥à¤à¤° Â· à¤µà¤à¥à¤² Â· à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤à¤à¥à¤à¤¸à¥",
-            calculateBtn: "à¤®à¥à¤°à¤¾ AI à¤°à¤¿à¤¸à¥à¤ à¤à¥à¤²à¤à¥à¤²à¥à¤ à¤à¤°à¥à¤ â",
-            yearsLabel: "à¤¸à¤¾à¤²",
-            monthsLabel: "à¤®à¤¹à¥à¤¨à¥",
-            daysLabel: "à¤¦à¤¿à¤¨",
-            exposureLabel: "à¤à¤à¥à¤®à¥à¤¶à¤¨ à¤à¤à¥à¤¸à¤ªà¥à¤à¤°",
-            highRiskBadge: "à¤à¤à¥à¤ à¤à¥à¤à¤¿à¤®",
-            modRiskBadge: "à¤®à¤§à¥à¤¯à¤® à¤à¥à¤à¤¿à¤®",
-            safeBadge: "à¤²à¤à¥à¤²à¤¾",
-            timeToAdapt: "à¤à¤ªà¤¨à¥ à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ à¤à¥ à¤à¤¨à¥à¤à¥à¤²à¤¿à¤¤ à¤à¤°à¤¨à¥ à¤à¤¾ à¤¸à¤®à¤¯",
-            aiWillHandle: "AI à¤¸à¤à¤­à¤¾à¤²à¥à¤à¤¾",
-            humanEdgeLabel: "à¤à¤ªà¤à¥ à¤¬à¤¢à¤¼à¤¤",
-            shareOnSocial: "à¤¸à¥à¤¶à¤² à¤®à¥à¤¡à¤¿à¤¯à¤¾ à¤ªà¤° à¤¸à¤¾à¤à¤¾ à¤à¤°à¥à¤",
-            sharePrompt: "à¤à¤¸à¥ à¤¸à¥à¤¶à¤² à¤®à¥à¤¡à¤¿à¤¯à¤¾ à¤ªà¤° à¤¸à¤¾à¤à¤¾ à¤à¤°à¥à¤",
-            exportLabel: "à¤à¤ªà¤¨à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ à¤à¤à¥à¤¸à¤ªà¥à¤°à¥à¤ à¤à¤°à¥à¤",
-            generatingImage: "à¤¶à¥à¤¯à¤° à¤à¤®à¥à¤ à¤à¥à¤¨à¤°à¥à¤ à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥...",
-            shareNoticeDone: "à¤¶à¥à¤¯à¤° à¤à¤°à¤¤à¥ à¤¸à¤®à¤¯ à¤à¤®à¥à¤ à¤à¤à¥-à¤¸à¥à¤µ à¤¹à¥ à¤à¤ Â· à¤ªà¥à¤²à¥à¤à¤«à¥à¤°à¥à¤® à¤à¥à¤²à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¥à¤ª à¤à¤°à¥à¤",
-            resultTitle: "AI à¤à¤ªà¤à¥ à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ à¤à¤¾ à¤à¤à¤¤ à¤¨à¤¹à¥à¤ à¤¹à¥à¥¤",
-            resultSub: "à¤à¤¬ à¤à¤ªà¤¨à¥ à¤¡à¤¿à¤à¤¿à¤à¤² à¤«à¥à¤à¥à¤à¥à¤°à¥ à¤¬à¤¨à¤¾à¤¨à¥ à¤à¤¾ à¤¸à¤®à¤¯ à¤¹à¥à¥¤",
-            seeLeaksBtn: "à¤à¤ªà¤¨à¤¾ à¤ªà¥à¤°à¥à¤«à¤¿à¤ à¤²à¥à¤ à¤¦à¥à¤à¥à¤ â 4 à¤®à¤¿à¤¨à¤ à¤à¤¾ à¤à¤¡à¤¿à¤ â",
-            whatsappSecondary: "à¤¯à¤¾ WhatsApp à¤ªà¤° à¤à¥à¤ à¤à¤°à¥à¤ â",
-            priorityAction: "ð¨ à¤¤à¤¤à¥à¤à¤¾à¤² à¤à¤¾à¤°à¥à¤°à¤µà¤¾à¤ à¤à¤µà¤¶à¥à¤¯à¤",
-            optimizationAction: "ð¡ à¤à¤¨à¥à¤à¥à¤²à¤¨ à¤à¤µà¤¶à¥à¤¯à¤",
+            analysisBadge: "AI विस्थापन विश्लेषण (DI-ANALYSIS)",
+            title1: "क्या AI",
+            title2: "आपको बदल देगा?",
+            sub: "नीचे अपना जॉब टाइटल या बिजनेस टाइप दर्ज करें। कुछ ही सेकंड में अपनी AI एक्सटिंक्टशन टाइमलाइन जानें।",
+            placeholder: "जैसे: अकाउंटेंट · एचआर मैनेजर · वकील · मार्केटिंग एजेंसी",
+            calculateBtn: "मेरा AI रिस्क कैलकुलेट करें →",
+            yearsLabel: "साल",
+            monthsLabel: "महीने",
+            daysLabel: "दिन",
+            exposureLabel: "ऑटोमेशन एक्सपोजर",
+            highRiskBadge: "उच्च जोखिम",
+            modRiskBadge: "मध्यम जोखिम",
+            safeBadge: "लचीला",
+            timeToAdapt: "अपने व्यवसाय को अनुकूलित करने का समय",
+            aiWillHandle: "AI संभालेगा",
+            humanEdgeLabel: "आपकी बढ़त",
+            shareOnSocial: "सोशल मीडिया पर साझा करें",
+            sharePrompt: "इसे सोशल मीडिया पर साझा करें",
+            exportLabel: "अपना विश्लेषण एक्सपोर्ट करें",
+            generatingImage: "शेयर इमेज जेनरेट हो रही है...",
+            shareNoticeDone: "शेयर करते समय इमेज ऑटो-सेव हो गई · प्लेटफॉर्म खोलने के लिए टैप करें",
+            resultTitle: "AI आपके व्यवसाय का अंत नहीं है।",
+            resultSub: "अब अपनी डिजिटल फैक्ट्री बनाने का समय है।",
+            seeLeaksBtn: "अपना प्रॉफिट लीक देखें — 4 मिनट का ऑडिट →",
+            whatsappSecondary: "या WhatsApp पर चैट करें →",
+            priorityAction: "🚨 तत्काल कार्रवाई आवश्यक",
+            optimizationAction: "💡 अनुकूलन आवश्यक",
             searchSteps: [
-                "NASSCOM à¤µà¤¿à¤¸à¥à¤¥à¤¾à¤ªà¤¨ à¤¡à¥à¤à¤¾ à¤¸à¤¿à¤à¤ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-                "à¤­à¤¾à¤°à¤¤à¥à¤¯ à¤à¤¾à¤°à¥à¤¯à¤¬à¤² à¤à¥à¤·à¥à¤¤à¥à¤° à¤à¥à¤à¤¿à¤® à¤à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£...",
-                "à¤¨à¥à¤¤à¤¿ à¤à¤¯à¥à¤ (2025) à¤à¤¨à¥à¤®à¤¾à¤¨à¥à¤ à¤à¤¾ à¤®à¤¿à¤²à¤¾à¤¨...",
-                "à¤­à¤¾à¤°à¤¤à¥à¤¯ à¤¬à¤¾à¤à¤¾à¤° à¤ªà¥à¤°à¤¾à¤¸à¤à¤à¤¿à¤à¤¤à¤¾ TTL à¤à¥ à¤à¤£à¤¨à¤¾...",
-                "à¤­à¤¾à¤°à¤¤ à¤®à¥à¤ à¤à¤à¥à¤®à¥à¤¶à¤¨ à¤à¥à¤·à¤¿à¤¤à¤¿à¤ à¤à¥ à¤®à¥à¤ªà¤¿à¤à¤...",
-                "à¤à¤à¥à¤¸à¤¤à¤¿à¤à¤à¥à¤¶à¤¨ à¤à¤¾à¤à¤®à¤²à¤¾à¤à¤¨ à¤¡à¤¿à¤à¥à¤¡ à¤à¥ à¤à¤¾ à¤°à¤¹à¥ à¤¹à¥...",
-                "à¤­à¤¾à¤°à¤¤à¥à¤¯ à¤à¥à¤à¤¿à¤® à¤ªà¥à¤°à¥à¤«à¤¾à¤à¤² à¤à¥ à¤à¤à¤¤à¤¿à¤® à¤°à¥à¤ª à¤¦à¤¿à¤¯à¤¾ à¤à¤¾ à¤°à¤¹à¤¾ à¤¹à¥...",
+                "NASSCOM विस्थापन डेटा सिंक हो रहा है...",
+                "भारतीय कार्यबल क्षेत्र जोखिम का विश्लेषण...",
+                "नीति आयोग (2025) अनुमानों का मिलान...",
+                "भारतीय बाजार प्रासंगिकता TTL की गणना...",
+                "भारत में ऑटोमेशन क्षितिज की मैपिंग...",
+                "एक्सतिंक्शन टाइमलाइन डिकोड की जा रही है...",
+                "भारतीय जोखिम प्रोफाइल को अंतिम रूप दिया जा रहा है...",
             ],
             threatLevels: {
-                CRITICAL: "à¤à¤à¤­à¥à¤° à¤à¥à¤à¤¿à¤®",
-                HIGH: "à¤à¤à¥à¤ à¤à¥à¤à¤¿à¤®",
-                MODERATE: "à¤®à¤§à¥à¤¯à¤® à¤à¥à¤à¤¿à¤®",
-                RESILIENT: "à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤ (Resilient)"
+                CRITICAL: "गंभीर जोखिम",
+                HIGH: "उच्च जोखिम",
+                MODERATE: "मध्यम जोखिम",
+                RESILIENT: "सुरक्षित (Resilient)"
             },
-            marketTTL: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤ªà¥à¤°à¤¾à¤¸à¤à¤à¤¿à¤à¤¤à¤¾ TTL",
-            extinctionSub: "à¤à¥à¤°à¥à¤¥ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤à¤¨à¤à¤ªà¥à¤à¤¿à¤®à¤¾à¤à¤à¥à¤¡ à¤°à¤¹à¤¨à¥ à¤ªà¤° à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¤à¥à¤® à¤¹à¥à¤¨à¥ à¤à¤¾ à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ à¤¸à¤®à¤¯à¥¤",
-            days: "à¤¦à¤¿à¤¨",
-            deploy: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤²à¤¾à¤à¥ à¤à¤°à¥à¤"
+            marketTTL: "मार्केट प्रासंगिकता TTL",
+            extinctionSub: "ग्रोथ प्रोटोकॉल अनऑप्टिमाइज्ड रहने पर बिजनेस खत्म होने का अनुमानित समय।",
+            days: "दिन",
+            deploy: "प्रोटोकॉल लागू करें"
         },
         dashboard: {
-            risksTitle: "à¤¤à¤¤à¥à¤à¤¾à¤² à¤ªà¥à¤à¤à¥ à¤à¥à¤à¤¿à¤® (Risks)",
-            logStatus: "à¤¸à¥à¤¥à¤¿à¤¤à¤¿: à¤²à¤¾à¤à¤µ à¤®à¥à¤¨à¤¿à¤à¤°à¤¿à¤à¤",
+            risksTitle: "तत्काल पूंजी जोखिम (Risks)",
+            logStatus: "स्थिति: लाइव मॉनिटरिंग",
 
             bleedCard: {
-                liveBurn: "à¤²à¤¾à¤à¤µ à¤¬à¤°à¥à¤¨ à¤®à¤¿à¤²à¤¾",
-                annualBleed: "à¤à¥à¤² à¤µà¤¾à¤°à¥à¤·à¤¿à¤ <br />à¤ªà¥à¤à¤à¥ à¤°à¤¿à¤¸à¤¾à¤µ (Capital Bleed)",
-                recoverable: "AI à¤à¥ à¤¸à¤¾à¤¥ à¤¸à¥à¤§à¤¾à¤° à¤¸à¤à¤­à¤µ: {amount} / à¤µà¤°à¥à¤·",
-                unlockReport: "à¤ªà¥à¤°à¥ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¤¨à¤²à¥à¤ à¤à¤°à¥à¤",
-                bookCall: "à¤à¥à¤² à¤¬à¥à¤ à¤à¤°à¥à¤",
-                secureBlueprint: "à¤à¤ à¤¹à¥ à¤à¤ªà¤¨à¤¾ à¤¤à¤à¤¨à¥à¤à¥ à¤¬à¥à¤²à¥à¤ªà¥à¤°à¤¿à¤à¤ à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤ à¤à¤°à¥à¤à¥¤"
+                liveBurn: "लाइव बर्न मिला",
+                annualBleed: "कुल वार्षिक <br />पूंजी रिसाव (Capital Bleed)",
+                recoverable: "AI के साथ सुधार संभव: {amount} / वर्ष",
+                unlockReport: "पूरी रिपोर्ट अनलॉक करें",
+                bookCall: "कॉल बुक करें",
+                secureBlueprint: "आज ही अपना तकनीकी ब्लूप्रिंट सुरक्षित करें।"
             },
             profile: {
-                title: "à¤µà¥à¤¯à¤¾à¤µà¤¸à¤¾à¤¯à¤¿à¤ à¤ªà¥à¤°à¥à¤«à¤¼à¤¾à¤à¤²",
-                managedBy: "à¤ªà¥à¤°à¤¬à¤à¤§à¤:",
-                vertical: "à¤à¥à¤·à¥à¤¤à¥à¤° (Vertical)",
-                revenue: "à¤°à¤¾à¤à¤¸à¥à¤µ",
-                employees: "à¤à¤°à¥à¤®à¤à¤¾à¤°à¥",
-                contact: "à¤¸à¤à¤ªà¤°à¥à¤"
+                title: "व्यावसायिक प्रोफ़ाइल",
+                managedBy: "प्रबंधक:",
+                vertical: "क्षेत्र (Vertical)",
+                revenue: "राजस्व",
+                employees: "कर्मचारी",
+                contact: "संपर्क"
             },
             diagnosticGrid: {
                 waste: {
-                    title: "à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤µà¥à¤¸à¥à¤",
-                    sub: "à¤®à¤¾à¤¸à¤¿à¤ à¤¬à¤à¤¤ à¤à¥ à¤¸à¤à¤­à¤¾à¤µà¤¨à¤¾"
+                    title: "ऑपरेशनल वेस्ट",
+                    sub: "मासिक बचत की संभावना"
                 },
                 night: {
-                    title: "à¤®à¤¿à¤¸ à¤à¤¿à¤¯à¤¾ à¤à¤¯à¤¾ à¤à¤«à¥à¤à¤°-à¤à¤µà¤°à¥à¤¸ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥",
-                    sub: "à¤à¤¨à¥à¤¤à¥à¤¤à¤°à¤¿à¤¤ à¤²à¥à¤¡à¥à¤¸ à¤à¤¾ à¤®à¥à¤²à¥à¤¯"
+                    title: "मिस किया गया आफ्टर-ऑवर्स रेवेन्यू",
+                    sub: "अनुत्तरित लीड्स का मूल्य"
                 },
                 visibility: {
-                    title: "à¤®à¤¿à¤¸ à¤à¤¿à¤ à¤à¤ à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ à¤à¥à¤°à¤¾à¤¹à¤",
-                    sub: "à¤à¥à¤ à¤®à¤¾à¤¤à¥à¤°à¤¾ à¤à¤à¤¤à¤° à¤à¥ à¤à¤§à¤¾à¤° à¤ªà¤°"
+                    title: "मिस किए गए स्थानीय ग्राहक",
+                    sub: "खोज मात्रा अंतर के आधार पर"
                 },
                 threat: {
-                    title: "à¤à¤à¥à¤¸à¥à¤¤à¤¿à¤à¤à¥à¤¶à¤¨ à¤¹à¥à¤°à¤¾à¤à¤à¤¨",
+                    title: "एक्स्तिंक्शन होराइजन",
                     labels: {
-                        khatra: "à¤à¤à¤­à¥à¤° à¤à¤¤à¤°à¤¾",
-                        savdhan: "à¤¸à¤¾à¤µà¤§à¤¾à¤¨",
-                        safe: "à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤"
+                        khatra: "गंभीर खतरा",
+                        savdhan: "सावधान",
+                        safe: "सुरक्षित"
                     }
                 }
             },
             roadmap: {
-                title: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤ªà¤°à¤¿à¤µà¤°à¥à¤¤à¤¨",
-                subTitle: "à¤à¤°à¤£-à¤¦à¤°-à¤à¤°à¤£",
-                roi: "à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ ROI",
-                cure: "à¤ªà¥à¤°à¤£à¤¾à¤²à¥à¤à¤¤ à¤¸à¥à¤§à¤¾à¤°",
+                title: "प्रोटोकॉल परिवर्तन",
+                subTitle: "चरण-दर-चरण",
+                roi: "अनुमानित ROI",
+                cure: "प्रणालीगत सुधार",
                 steps: [
                     {
-                        title: "à¤à¥à¤²à¤¾à¤à¤¡ à¤à¤à¤«à¥à¤°à¤¾à¤¸à¥à¤à¥à¤°à¤à¥à¤à¤° à¤®à¤¾à¤à¤à¥à¤°à¥à¤¶à¤¨",
-                        description: "à¤ªà¥à¤°à¤¾à¤¨à¥ à¤à¤ªà¤°à¥à¤¶à¤à¤¸ à¤à¥ à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤, à¤à¤à¥à¤-à¤à¤ªà¤²à¤¬à¥à¤§à¤¤à¤¾ à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤à¤° à¤®à¥à¤ à¤¸à¥à¤¥à¤¾à¤¨à¤¾à¤à¤¤à¤°à¤¿à¤¤ à¤à¤°à¥à¤à¥¤",
-                        timeframe: "à¤¸à¤ªà¥à¤¤à¤¾à¤¹ 1-2"
+                        title: "क्लाउड इंफ्रास्ट्रक्चर माइग्रेशन",
+                        description: "पुरानी ऑपरेशंस को सुरक्षित, उच्च-उपलब्धता आर्किटेक्चर में स्थानांतरित करें।",
+                        timeframe: "सप्ताह 1-2"
                     },
                     {
-                        title: "AI à¤µà¤°à¥à¤à¤«à¤¼à¥à¤²à¥ à¤à¤à¥à¤®à¥à¤¶à¤¨",
-                        description: "à¤¶à¤¾à¤® 6 à¤¬à¤à¥ à¤à¥ à¤¬à¤¾à¤¦ à¤à¥ à¤ªà¥à¤à¤¤à¤¾à¤ à¤à¤° à¤ªà¤°à¤¿à¤à¤¾à¤²à¤¨ à¤à¤¾à¤à¥ à¤à¥ à¤ªà¥à¤°à¤¬à¤à¤§à¤¿à¤¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤¸à¤¿à¤¸à¥à¤à¤® à¤¤à¥à¤¨à¤¾à¤¤ à¤à¤°à¥à¤à¥¤",
-                        timeframe: "à¤¸à¤ªà¥à¤¤à¤¾à¤¹ 3-4"
+                        title: "AI वर्कफ़्लो ऑटोमेशन",
+                        description: "शाम 6 बजे के बाद की पूछताछ और परिचालन घाटे को प्रबंधित करने के लिए सिस्टम तैनात करें।",
+                        timeframe: "सप्ताह 3-4"
                     },
                     {
-                        title: "à¤ªà¤°à¤«à¥à¤°à¤®à¥à¤à¤¸ à¤à¤° à¤µà¤¿à¤à¤¿à¤¬à¤¿à¤²à¤¿à¤à¥ à¤¸à¥à¤à¥à¤²à¤¿à¤à¤",
-                        description: "à¤à¥à¤à¥ à¤¹à¥à¤ à¤à¥à¤°à¤¾à¤¹à¤ à¤µà¥à¤²à¥à¤¯à¥à¤® à¤à¥ à¤ªà¤à¤¡à¤¼à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤¡à¥à¤à¤¾-à¤¸à¤à¤à¤¾à¤²à¤¿à¤¤ à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤²à¤à¤¾à¤à¤à¥¤",
-                        timeframe: "à¤¸à¤ªà¥à¤¤à¤¾à¤¹ 5-6"
+                        title: "परफॉरमेंस और विजिबिलिटी स्केलिंग",
+                        description: "छूटे हुए ग्राहक वॉल्यूम को पकड़ने के लिए डेटा-संचालित मार्केटिंग प्रोटोकॉल लगाएं।",
+                        timeframe: "सप्ताह 5-6"
                     }
                 ]
             },
             rescue: {
-                badge: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤à¤µà¤°à¤°à¤¾à¤à¤¡ à¤à¤ªà¤²à¤¬à¥à¤§",
-                title1: "à¤ªà¥à¤à¤à¥ à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤°à¥à¤à¥à¤à¥¤",
-                title2: "à¤à¤ªà¤¨à¤¾ à¤à¤¨à¥à¤à¤¿à¤¤ à¤²à¤¾à¤­ à¤ªà¥à¤°à¤¾à¤ªà¥à¤¤ à¤à¤°à¥à¤à¥¤",
-                sub: "à¤à¤ªà¤à¤¾ à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤ªà¥à¤°à¤¾ à¤¹à¥à¤à¥¤ à¤à¤ªà¤¨à¥ à¤à¤¸à¥à¤à¤® à¤à¥à¤°à¥à¤¥ à¤à¤à¤«à¥à¤°à¤¾à¤¸à¥à¤à¥à¤°à¤à¥à¤à¤° à¤à¥ à¤¸à¤®à¤à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤ à¤à¥ à¤¸à¤¾à¤¥ à¤¸à¥à¤¶à¤¨ à¤¬à¥à¤ à¤à¤°à¥à¤à¥¤",
-                founders: "150+ à¤¸à¤à¤¸à¥à¤¥à¤¾à¤ªà¤à¥à¤ à¤¸à¥ à¤à¥à¤¡à¤¼à¥à¤",
-                deploying: "à¤à¤ à¤¹à¥ à¤¸à¤¿à¤¸à¥à¤à¤® à¤¤à¥à¤¨à¤¾à¤¤ à¤à¤° à¤°à¤¹à¥ à¤¹à¥à¤",
+                badge: "प्रोटोकॉल ओवरराइड उपलब्ध",
+                title1: "पूंजी का नुकसान रोकें।",
+                title2: "अपना अनुचित लाभ प्राप्त करें।",
+                sub: "आपका डायग्नोस्टिक पूरा हुआ। अपने कस्टम ग्रोथ इंफ्रास्ट्रक्चर को समझने के लिए सिस्टम आर्किटेक्ट के साथ सेशन बुक करें।",
+                founders: "150+ संस्थापकों से जुड़ें",
+                deploying: "आज ही सिस्टम तैनात कर रहे हैं",
                 booking: {
-                    title: "à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤à¤° à¤¸à¤®à¥à¤à¥à¤·à¤¾ à¤¶à¥à¤¡à¥à¤¯à¥à¤² à¤à¤°à¥à¤",
-                    slot: "45 à¤®à¤¿à¤¨à¤ à¤à¤¾ à¤¸à¥à¤²à¥à¤",
+                    title: "आर्किटेक्चर समीक्षा शेड्यूल करें",
+                    slot: "45 मिनट का स्लॉट",
                     times: {
-                        today: "à¤à¤",
-                        tmrw: "à¤à¤²"
+                        today: "आज",
+                        tmrw: "कल"
                     },
                     btn: {
-                        idle: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤ à¤¬à¥à¤ à¤à¤°à¥à¤",
-                        loading: "à¤¸à¥à¤²à¥à¤ à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-                        success: "à¤¸à¥à¤²à¥à¤ à¤à¥ à¤ªà¥à¤·à¥à¤à¤¿ à¤¹à¥à¤",
-                        error: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤¤à¥à¤°à¥à¤à¤¿"
+                        idle: "सिस्टम आर्किटेक्ट बुक करें",
+                        loading: "स्लॉट सुरक्षित हो रहा है...",
+                        success: "स्लॉट की पुष्टि हुई",
+                        error: "सिस्टम त्रुटि"
                     }
                 }
             },
             health: {
-                critical: "à¤à¤à¤­à¥à¤° à¤à¤¤à¤°à¤¾ (Critical)",
-                caution: "à¤¸à¤¾à¤µà¤§à¤¾à¤¨ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤²",
-                optimized: "à¤à¤¨à¥à¤à¥à¤²à¤¿à¤¤ à¤¸à¥à¤¥à¤¿à¤¤à¤¿ (Optimized)",
-                analyzing: "à¤ªà¥à¤°à¤£à¤¾à¤²à¤¿à¤¯à¥à¤ à¤à¤¾ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£...",
-                scanComplete: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤¸à¥à¤à¥à¤¨ à¤ªà¥à¤°à¤¾ à¤¹à¥à¤",
-                partial: "à¤à¥à¤ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¸à¤à¥à¤°à¤¿à¤¯ à¤¹à¥à¤à¥¤ à¤ªà¥à¤°à¥ à¤¤à¥à¤¯à¤¾à¤°à¥ à¤à¥ à¤²à¤¿à¤ à¤¸à¤­à¥ à¤¸à¥à¤à¥à¤¨ à¤ªà¥à¤°à¥ à¤à¤°à¥à¤à¥¤"
+                critical: "गंभीर खतरा (Critical)",
+                caution: "सावधान प्रोटोकॉल",
+                optimized: "अनुकूलित स्थिति (Optimized)",
+                analyzing: "प्रणालियों का विश्लेषण...",
+                scanComplete: "डायग्नोस्टिक स्कैन पूरा हुआ",
+                partial: "कुछ प्रोटोकॉल सक्रिय हैं। पूरी तैयारी के लिए सभी स्कैन पूरे करें।"
             },
 
             cards: {
-                loss: { title: "à¤²à¥à¤¸ à¤à¤¡à¤¿à¤", run: "à¤à¤¡à¤¿à¤ à¤à¤²à¤¾à¤à¤", sub: "à¤¸à¥à¤à¤¾à¤« à¤à¤° à¤à¤ªà¤°à¥à¤¶à¤à¤¸ à¤à¤°à¥à¤à¥à¤ à¤®à¥à¤ à¤à¤¿à¤ªà¥ à¤«à¤¿à¤à¥à¤²à¤à¤°à¥à¤à¥ à¤à¥à¤à¥à¤" },
-                night: { title: "à¤¨à¤¾à¤à¤ à¤²à¥à¤¸", run: "à¤à¤£à¤¨à¤¾ à¤à¤°à¥à¤", sub: "à¤¬à¤¿à¤¨à¤¾ à¤à¤µà¤¾à¤¬ à¤µà¤¾à¤²à¥ à¤ªà¥à¤à¤¤à¤¾à¤ à¤¸à¥ à¤°à¤¾à¤à¤¸à¥à¤µ à¤à¥ à¤¹à¤¾à¤¨à¤¿" },
-                visibility: { title: "à¤¡à¤¿à¤à¤¿à¤à¤² à¤¦à¥à¤¶à¥à¤¯à¤¤à¤¾", run: "à¤¸à¥à¤à¥à¤¨ à¤à¤°à¥à¤", sub: "à¤à¥à¤¯à¤¾ à¤à¥à¤°à¤¾à¤¹à¤ à¤à¤ªà¤à¥ à¤¢à¥à¤à¤¢ à¤°à¤¹à¥ à¤¹à¥à¤ à¤¯à¤¾ à¤à¤ªà¤à¥ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤¶à¤¨ à¤à¥?" },
-                markets: { title: "à¤µà¥à¤¶à¥à¤µà¤¿à¤ à¤¬à¤¾à¤à¤¾à¤°", run: "à¤à¤à¥à¤¸à¤ªà¥à¤²à¥à¤° à¤à¤°à¥à¤", sub: "à¤à¤ªà¤à¥ à¤à¤¤à¥à¤ªà¤¾à¤¦ à¤¦à¥à¤¨à¤¿à¤¯à¤¾ à¤­à¤° à¤®à¥à¤ 3-7 à¤à¥à¤¨à¤¾ à¤à¤§à¤¿à¤ à¤¦à¤¾à¤® à¤ªà¤° à¤¬à¤¿à¤ à¤¸à¤à¤¤à¥ à¤¹à¥à¤" }
+                loss: { title: "लॉस ऑडिट", run: "ऑडिट चलाएं", sub: "स्टाफ और ऑपरेशंस खर्चों में छिपी फिजूलखर्ची खोजें" },
+                night: { title: "नाइट लॉस", run: "गणना करें", sub: "बिना जवाब वाली पूछताछ से राजस्व की हानि" },
+                visibility: { title: "डिजिटल दृश्यता", run: "स्कैन करें", sub: "क्या ग्राहक आपको ढूंढ रहे हैं या आपके कॉम्पिटिशन को?" },
+                markets: { title: "वैश्विक बाजार", run: "एक्सप्लोर करें", sub: "आपके उत्पाद दुनिया भर में 3-7 गुना अधिक दाम पर बिक सकते हैं" }
             },
-            protocolSearch: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¸à¤°à¥à¤",
+            protocolSearch: "प्रोटोकॉल सर्च",
             diagnosticLog: {
-                systemLog: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤²à¥à¤ v2.0",
-                stream: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤¸à¥à¤à¥à¤°à¥à¤®",
-                fetching: "_ à¤¡à¥à¤à¤¾ à¤ªà¥à¤°à¤¾à¤ªà¥à¤¤ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-                await: "à¤µà¤¿à¤¸à¤à¤à¤¤à¤¿ à¤à¥ à¤ªà¥à¤°à¤¤à¥à¤à¥à¤·à¤¾ (AWAIT_ANOMALY)"
+                systemLog: "सिस्टम लॉग v2.0",
+                stream: "डायग्नोस्टिक स्ट्रीम",
+                fetching: "_ डेटा प्राप्त हो रहा है...",
+                await: "विसंगति की प्रतीक्षा (AWAIT_ANOMALY)"
             },
             fab: {
-                waMessage: "à¤¨à¤®à¤¸à¥à¤¤à¥ MasterKey Labs! à¤®à¥à¤à¤¨à¥ à¤à¤­à¥ \"{name}\" à¤à¥ à¤²à¤¿à¤ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤à¤²à¤¾à¤¯à¤¾ à¤¹à¥à¥¤ à¤®à¥à¤ à¤à¤°à¥à¤à¤¾ à¤à¤°à¤¨à¤¾ à¤à¤¾à¤¹à¤¤à¤¾ à¤¹à¥à¤à¥¤"
+                waMessage: "नमस्ते MasterKey Labs! मैंने अभी \"{name}\" के लिए बिजनेस डायग्नोस्टिक चलाया है। मैं चर्चा करना चाहता हूं।"
             },
             capitalCard: {
-                premium: "à¤ªà¥à¤°à¥à¤®à¤¿à¤¯à¤® à¤à¤¨à¤¸à¤¾à¤à¤",
-                untappedTitle: "à¤à¤ªà¥à¤°à¤¯à¥à¤à¥à¤¤ à¤ªà¥à¤à¤à¥ (Capital) à¤®à¤¿à¤²à¥",
-                claim: "à¤°à¤£à¤¨à¥à¤¤à¤¿ à¤à¤¾ à¤¦à¤¾à¤µà¤¾ à¤à¤°à¥à¤"
+                premium: "प्रीमियम इनसाइट",
+                untappedTitle: "अप्रयुक्त पूंजी (Capital) मिली",
+                claim: "रणनीति का दावा करें"
             },
             healthMeter: {
-                healthVector: "à¤¹à¥à¤²à¥à¤¥ à¤µà¥à¤à¥à¤à¤°",
-                risk: "à¤à¥à¤à¤¿à¤® à¤ªà¤¾à¤¯à¤¾ à¤à¤¯à¤¾",
-                watch: "à¤ªà¥à¤°à¤¤à¥à¤à¥à¤·à¤¾ à¤¸à¥à¤¤à¤°",
-                verified: "à¤¸à¤¿à¤à¤à¥à¤°à¥à¤¨à¤¾à¤à¤à¤¼à¥à¤¡",
-                scanning: "à¤¸à¥à¤à¥à¤¨à¤¿à¤à¤",
-                relevanceHorizon: "à¤ªà¥à¤°à¤¾à¤¸à¤à¤à¤¿à¤à¤¤à¤¾ à¤à¥à¤·à¤¿à¤¤à¤¿à¤ (Relevance Horizon)",
-                months: "à¤®à¤¹à¥à¤¨à¥",
-                awaitScan: "à¤¸à¥à¤à¥à¤¨ à¤à¥ à¤ªà¥à¤°à¤¤à¥à¤à¥à¤·à¤¾ à¤à¤°à¥à¤...",
-                analyzing: "à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-                sub: "à¤²à¥à¤à¤¡à¤¿à¤à¤ à¤ªà¥à¤·à¥à¤  à¤ªà¤° à¤à¤ªà¤¨à¥ à¤µà¥à¤¯à¤¾à¤µà¤¸à¤¾à¤¯à¤¿à¤ à¤µà¤¿à¤µà¤°à¤£ à¤¸à¤¬à¤®à¤¿à¤ à¤à¤°à¥à¤à¥¤"
+                healthVector: "हेल्थ वेक्टर",
+                risk: "जोखिम पाया गया",
+                watch: "प्रतीक्षा स्तर",
+                verified: "सिंक्रोनाइज़्ड",
+                scanning: "स्कैनिंग",
+                relevanceHorizon: "प्रासंगिकता क्षितिज (Relevance Horizon)",
+                months: "महीने",
+                awaitScan: "स्कैन की प्रतीक्षा करें...",
+                analyzing: "विश्लेषण हो रहा है...",
+                sub: "लैंडिंग पृष्ठ पर अपने व्यावसायिक विवरण सबमिट करें।"
             },
             auditSummary: {
                 header: {
-                    log: "à¤ªà¥à¤°à¥à¤«à¤¼à¤¿à¤ à¤²à¥à¤ à¤²à¥à¤",
-                    overview: "AI à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤°à¤¿à¤ªà¥à¤°à¥à¤",
-                    exportBtn: "à¤à¤à¤à¥à¤²à¤¿à¤à¥à¤à¤¸ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤¨à¤¿à¤°à¥à¤¯à¤¾à¤¤ à¤à¤°à¥à¤"
+                    log: "प्रॉफ़िट लीक लॉग",
+                    overview: "AI सर्वाइवल रिपोर्ट",
+                    exportBtn: "इंटेलिजेंस रिपोर्ट निर्यात करें"
                 },
-                lockedTitle: "à¤à¤à¥à¤°à¥à¤à¥à¤ à¤à¤à¤à¥à¤²à¤¿à¤à¥à¤à¤¸ à¤²à¥à¤à¥à¤¡",
-                lockedSub: "à¤à¤ªà¤¨à¤¾ à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤¸à¥à¤à¥à¤° à¤à¤¨à¤²à¥à¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤¾à¤°à¥à¤ à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤ªà¥à¤°à¥ à¤à¤°à¥à¤à¥¤",
+                lockedTitle: "एग्रीगेट इंटेलिजेंस लॉक्ड",
+                lockedSub: "अपना सर्वाइवल स्कोर अनलॉक करने के लिए चारों डायग्नोस्टिक प्रोटोकॉल पूरे करें।",
                 bleedCard: {
-                    liveBurn: "à¤²à¤¾à¤à¤µ à¤¬à¤°à¥à¤¨ à¤®à¤¿à¤²à¤¾",
-                    annualBleed: "à¤à¥à¤² à¤µà¤¾à¤°à¥à¤·à¤¿à¤<br />à¤ªà¥à¤à¤à¥ à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨ (Bleed)",
-                    recoverable: "AI à¤à¥ à¤¸à¤¾à¤¥ à¤°à¤¿à¤à¤µà¤°à¥à¤¬à¤²: {amount} / à¤µà¤°à¥à¤·",
-                    unlockReport: "à¤ªà¥à¤°à¥ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¤¨à¤²à¥à¤ à¤à¤°à¥à¤",
-                    bookCall: "à¤à¥à¤² à¤¬à¥à¤ à¤à¤°à¥à¤",
-                    secureBlueprint: "à¤à¤ à¤¹à¥ à¤à¤ªà¤¨à¤¾ à¤¤à¤à¤¨à¥à¤à¥ à¤¬à¥à¤²à¥à¤ªà¥à¤°à¤¿à¤à¤ à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤ à¤à¤°à¥à¤à¥¤"
+                    liveBurn: "लाइव बर्न मिला",
+                    annualBleed: "कुल वार्षिक<br />पूंजी का नुकसान (Bleed)",
+                    recoverable: "AI के साथ रिकवरेबल: {amount} / वर्ष",
+                    unlockReport: "पूरी रिपोर्ट अनलॉक करें",
+                    bookCall: "कॉल बुक करें",
+                    secureBlueprint: "आज ही अपना तकनीकी ब्लूप्रिंट सुरक्षित करें।"
                 },
                 report: {
-                    generatorTitle: "à¤à¤¡à¤¿à¤ à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¤¨à¤°à¥à¤à¤°",
-                    lockedSubtitle: "à¤à¤ªà¤¨à¤¾ à¤¬à¥à¤°à¥à¤¡-à¤°à¥à¤¡à¥ à¤à¥à¤°à¤¾à¤à¤¸à¤«à¥à¤°à¥à¤®à¥à¤¶à¤¨ à¤°à¥à¤¡à¤®à¥à¤ª à¤à¤¨à¤°à¥à¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤à¤¡à¤¿à¤ à¤¸à¥à¤à¥à¤µà¥à¤à¤¸ à¤ªà¥à¤°à¤¾ à¤à¤°à¥à¤à¥¤",
-                    unlockedSubtitle: "à¤¸à¤­à¥ à¤®à¤¹à¤¤à¥à¤µà¤ªà¥à¤°à¥à¤£ à¤²à¥à¤à¥à¤ à¤à¤° à¤à¥à¤°à¤¾à¤à¤¸à¤«à¥à¤°à¥à¤®à¥à¤¶à¤¨ à¤°à¥à¤¡à¤®à¥à¤ª à¤à¥ à¤à¤ à¤¹à¥, à¤¬à¥à¤°à¥à¤¡-à¤°à¥à¤¡à¥ à¤à¤¡à¤¿à¤ à¤¦à¤¸à¥à¤¤à¤¾à¤µà¥à¤à¤¼ à¤®à¥à¤ à¤¸à¤à¤à¤²à¤¿à¤¤ à¤à¤°à¥à¤à¥¤",
-                    btnLocked: "à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¦à¥à¤µà¤¾à¤°à¤¾ à¤²à¥à¤",
-                    btnProcessing: "à¤ªà¥à¤²à¥à¤¡ à¤ªà¥à¤°à¥à¤¸à¥à¤¸ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥...",
-                    btnGenerate: "à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¤¨à¤°à¥à¤ à¤à¤° à¤¡à¤¾à¤à¤¨à¤²à¥à¤¡ à¤à¤°à¥à¤",
-                    pdfHeader: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤à¤¡à¤¿à¤ à¤ªà¥à¤²à¥à¤¡",
-                    criticalBadge: "à¤à¤à¤­à¥à¤° à¤¸à¤¿à¤¸à¥à¤à¤® à¤µà¥à¤¯à¤µà¤§à¤¾à¤¨ (Disruption) à¤®à¤¿à¤²à¤¾",
-                    recoverableLegend: "à¤¸à¥à¤µà¤¾à¤¯à¤¤à¥à¤¤ à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¤à¥à¤¨à¤¾à¤¤ à¤à¤°à¤à¥ à¤¹à¤® à¤à¤¸ à¤à¤°à¥à¤ à¤à¤¾ 50% à¤µà¤¾à¤ªà¤¸ à¤ªà¤¾ à¤¸à¤à¤¤à¥ à¤¹à¥à¤à¥¤",
-                    telemetryTitle: "à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤ à¤à¥à¤²à¥à¤®à¥à¤à¥à¤°à¥",
-                    opsFriction: "à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤à¤°à¥à¤·à¤£ (Friction)",
-                    staffWaste: "à¤à¤¸à¤®à¥à¤ à¤ªà¥à¤°à¥à¤² à¤à¤à¥à¤·à¤®à¤¤à¤¾ à¤®à¥à¤ {amount} à¤¶à¤¾à¤®à¤¿à¤² à¤¹à¥à¥¤",
-                    afterHoursBleed: "à¤à¤«à¥à¤à¤°-à¤à¤µà¤°à¥à¤¸ à¤¬à¥à¤²à¥à¤¡",
-                    nightLossDesc: "à¤à¤¬ à¤¸à¤¿à¤¸à¥à¤à¤® à¤¸à¥à¤¤à¤¾ à¤¹à¥, à¤¤à¥ 24/7 AI à¤²à¥à¤¡ à¤°à¤¿à¤¸à¥à¤ªà¤¾à¤à¤¸ à¤à¥ à¤à¤®à¥ à¤à¥ à¤à¤¾à¤°à¤£ à¤à¤ª à¤¸à¤¾à¤²à¤¾à¤¨à¤¾ {amount} à¤à¥ à¤¦à¥à¤¤à¥ à¤¹à¥à¤à¥¤",
-                    digitalInvisibility: "à¤¡à¤¿à¤à¤¿à¤à¤² à¤à¤¦à¥à¤¶à¥à¤¯à¤¤à¤¾",
-                    visibilityDesc: "à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ {amount} ({count} à¤à¥à¤à¥ à¤¹à¥à¤ à¤à¥à¤°à¤¾à¤¹à¤) à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤°à¥à¤¸ à¤¦à¥à¤µà¤¾à¤°à¤¾ à¤à¤¬à¥à¤à¤¾ à¤à¤° à¤²à¤¿à¤¯à¤¾ à¤à¤¾à¤¤à¤¾ à¤¹à¥à¥¤",
-                    aiThreatHorizon: "AI à¤ªà¥à¤°à¤¾à¤¸à¤à¤à¤¿à¤à¤¤à¤¾ à¤à¥à¤·à¤¿à¤¤à¤¿à¤",
-                    aiLossDesc: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤à¥ à¤µà¤¿à¤à¤¡à¥: AI-native à¤«à¤°à¥à¤®à¥à¤ à¤¦à¥à¤µà¤¾à¤°à¤¾ à¤à¤ªà¤à¥ à¤®à¥à¤¡à¤² à¤à¥ à¤ªà¥à¤°à¤¾à¤¨à¤¾ à¤¬à¤¨à¤¾à¤¨à¥ à¤¸à¥ à¤ªà¤¹à¤²à¥ {amount} à¤®à¤¹à¥à¤¨à¥ à¤¶à¥à¤· à¤¹à¥à¤à¥¤",
-                    coordinationDragTitle: "à¤à¥à¤à¤°à¥à¤¡à¤¿à¤¨à¥à¤¶à¤¨ à¤¡à¥à¤°à¥à¤ à¤²à¤¾à¤à¥",
-                    coordinationDragDesc: "à¤à¤¸ à¤¸à¥à¤¤à¤° à¤ªà¤° à¤à¤à¥à¤·à¤®à¤¤à¤¾à¤à¤ à¤à¥ à¤ à¥à¤ à¤à¤°à¤¨à¤¾ à¤¤à¤à¤¨à¥à¤à¥ à¤°à¥à¤ª à¤¸à¥ à¤à¤à¤¿à¤² à¤¹à¥à¥¤ à¤¦à¥à¤°à¥ à¤à¤¾ à¤¹à¤° à¤¦à¤¿à¤¨ à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤à¥ à¤¬à¥à¤¾à¤¤à¤¾ à¤¹à¥à¥¤ à¤¤à¤¤à¥à¤à¤¾à¤² à¤µà¤¾à¤¸à¥à¤¤à¥à¤¶à¤¿à¤²à¥à¤ª (Architectural) à¤¹à¤¸à¥à¤¤à¤à¥à¤·à¥à¤ª à¤à¤¨à¤¿à¤µà¤¾à¤°à¥à¤¯ à¤¹à¥à¥¤",
-                    protocolTitle: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤²",
-                    protocol01Title: "à¤à¤à¥à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤à¥à¤à¤°à¤£ (Unification)",
-                    protocol01Desc: "à¤à¤à¤¡à¤¿à¤¤ à¤à¤ªà¤à¤°à¤£à¥à¤ à¤à¥ à¤à¤ à¤¹à¥, à¤à¤à¥à¤-à¤à¤ªà¤²à¤¬à¥à¤§à¤¤à¤¾ à¤à¤°à¥à¤à¤¿à¤à¥à¤à¥à¤à¤° à¤®à¥à¤ à¤¸à¤®à¥à¤à¤¿à¤¤ à¤à¤°à¥à¤à¥¤",
-                    protocol02Title: "à¤¸à¥à¤µà¤¾à¤¯à¤¤à¥à¤¤ à¤à¤°à¥à¤à¥à¤¸à¥à¤à¥à¤°à¥à¤¶à¤¨",
-                    protocol02Desc: "à¤®à¥à¤¨à¥à¤à¤² à¤¸à¤à¤à¥à¤à¤¾à¤¨à¤¾à¤¤à¥à¤®à¤ à¤­à¤¾à¤° à¤à¥ à¤¸à¤®à¤¾à¤ªà¥à¤¤ à¤à¤°à¤¨à¥ à¤à¥ à¤²à¤¿à¤ à¤ªà¥à¤°à¥à¤à¥à¤°à¤¾à¤®à¥à¤à¤¿à¤ à¤µà¤°à¥à¤à¤«à¤¼à¥à¤²à¥ à¤à¤° à¤à¤à¤à¥à¤²à¤¿à¤à¥à¤à¤ à¤°à¥à¤à¤¿à¤à¤ à¤¤à¥à¤¨à¤¾à¤¤ à¤à¤°à¥à¤à¥¤",
-                    protocol03Title: "à¤¸à¥à¤à¥à¤² à¤à¤° à¤ªà¥à¤°à¤­à¥à¤¤à¥à¤µ (Dominance)",
-                    protocol03Desc: "à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ à¤®à¥à¤à¥à¤°à¤¿à¤à¥à¤¸ à¤ªà¤° à¤¹à¤¾à¤µà¥ à¤¹à¥à¤ à¤à¤° à¤¸à¤­à¥ à¤¡à¤¿à¤à¤¿à¤à¤² à¤à¤à¤ªà¥à¤µà¤¾à¤à¤à¤ à¤ªà¤° 24/7 à¤à¤¨à¤¬à¤¾à¤à¤à¤¡ à¤à¥à¤°à¥à¤«à¤¼à¤¿à¤ à¤à¥à¤ªà¥à¤à¤° à¤à¤°à¥à¤à¥¤",
-                    rawDiagnostics: "à¤°à¥ à¤¸à¤¿à¤¸à¥à¤à¤® à¤¡à¤¾à¤¯à¤à¥à¤¨à¥à¤¸à¥à¤à¤¿à¤à¥à¤¸",
-                    mod01Title: "à¤®à¥à¤¡ 01: à¤à¤ªà¤°à¥à¤¶à¤¨à¤² à¤µà¥à¤¸à¥à¤",
-                    mod02Title: "à¤®à¥à¤¡ 02: à¤¨à¤¾à¤à¤ à¤²à¥à¤¸",
-                    mod03Title: "à¤®à¥à¤¡ 03: à¤¡à¤¿à¤à¤¿à¤à¤² à¤à¤¦à¥à¤¶à¥à¤¯à¤¤à¤¾",
-                    mod04Title: "à¤®à¥à¤¡ 04: AI à¤à¤¤à¤°à¤¾ à¤à¥à¤·à¤¿à¤¤à¤¿à¤",
-                    staffPayroll: "à¤¸à¥à¤à¤¾à¤«/à¤ªà¥à¤°à¥à¤² à¤µà¥à¤¸à¥à¤",
-                    marketingBleed: "à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤¬à¥à¤²à¥à¤¡",
-                    rawOps: "à¤°à¥ à¤à¤ªà¥à¤¸ à¤à¤µà¤°à¤¹à¥à¤¡à¥à¤¸",
-                    coordinationDragApplied: "à¤à¥à¤à¤°à¥à¤¡à¤¿à¤¨à¥à¤¶à¤¨ à¤¡à¥à¤°à¥à¤ à¤²à¤¾à¤à¥",
-                    missedWeeklyInquiries: "à¤à¥à¤à¥ à¤¹à¥à¤ à¤¸à¤¾à¤ªà¥à¤¤à¤¾à¤¹à¤¿à¤ à¤ªà¥à¤à¤¤à¤¾à¤",
-                    avgTxnVelocity: "à¤à¤¸à¤¤ Txn / LTV à¤µà¥à¤",
-                    estConversion: "à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ à¤à¤¨à¤µà¤°à¥à¤à¤¨ à¤°à¥à¤",
-                    monthlyHemorrhage: "à¤®à¤¾à¤¸à¤¿à¤ à¤°à¤¾à¤à¤¸à¥à¤µ à¤°à¤à¥à¤¤à¤¸à¥à¤°à¤¾à¤µ (Hemorrhage)",
-                    lostLocalSearches: "à¤à¥à¤ à¤¹à¥à¤ à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ à¤à¥à¤à¥à¤",
-                    missedHighIntent: "à¤¹à¤¾à¤-à¤à¤à¤à¥à¤à¤ à¤à¥à¤à¥ à¤¹à¥à¤ à¤à¥à¤°à¤¾à¤¹à¤",
-                    visibilityScore: "à¤à¤¦à¥à¤¶à¥à¤¯à¤¤à¤¾ à¤¸à¥à¤à¥à¤°",
-                    threatThreshold: "à¤à¤¤à¤°à¤¾ à¤®à¥à¤²à¥à¤¯à¤¾à¤à¤à¤¨ à¤¸à¥à¤®à¤¾",
-                    survivalComplexity: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤à¥à¤®à¥à¤ªà¥à¤²à¥à¤à¥à¤¸à¤¿à¤à¥ à¤¸à¥à¤à¥à¤°",
-                    calculatedTTL: "à¤à¤¹à¤¾à¤¨à¥ à¤à¥ à¤à¤£à¤¨à¤¾ (TTL)",
-                    extinctionDeadline: "à¤¸à¤®à¤¾à¤ªà¥à¤¤à¤¿ à¤à¥ à¤¸à¤®à¤¯à¤¸à¥à¤®à¤¾ à¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-                    criticalEvasion: "à¤à¤à¤­à¥à¤° à¤¬à¤à¤¾à¤µ à¤à¤µà¤¶à¥à¤¯à¤",
-                    monitoring: "à¤¨à¤¿à¤à¤°à¤¾à¤¨à¥ (Monitoring)"
+                    generatorTitle: "ऑडिट रिपोर्ट जनरेटर",
+                    lockedSubtitle: "अपना बोर्ड-रेडी ट्रांसफॉर्मेशन रोडमैप जनरेट करने के लिए ऑपरेशनल ऑडिट सीक्वेंस पूरा करें।",
+                    unlockedSubtitle: "सभी महत्वपूर्ण लीकेज और ट्रांसफॉर्मेशन रोडमैप को एक ही, बोर्ड-रेडी ऑडिट दस्तावेज़ में संकलित करें।",
+                    btnLocked: "प्रोटोकॉल द्वारा लॉक",
+                    btnProcessing: "पेलोड प्रोसेस हो रहा है...",
+                    btnGenerate: "रिपोर्ट जनरेट और डाउनलोड करें",
+                    pdfHeader: "डायग्नोस्टिक ऑडिट पेलोड",
+                    criticalBadge: "गंभीर सिस्टम व्यवधान (Disruption) मिला",
+                    recoverableLegend: "स्वायत्त ऑपरेशनल प्रोटोकॉल तैनात करके हम इस खर्च का 50% वापस पा सकते हैं।",
+                    telemetryTitle: "डायग्नोस्टिक टेलीमेट्री",
+                    opsFriction: "ऑपरेशनल घर्षण (Friction)",
+                    staffWaste: "इसमें पेरोल अक्षमता में {amount} शामिल है।",
+                    afterHoursBleed: "आफ्टर-आवर्स ब्लीड",
+                    nightLossDesc: "जब सिस्टम सोता है, तो 24/7 AI लीड रिस्पांस की कमी के कारण आप सालाना {amount} खो देते हैं।",
+                    digitalInvisibility: "डिजिटल अदृश्यता",
+                    visibilityDesc: "अनुमानित {amount} ({count} छूटे हुए ग्राहक) स्थानीय कॉम्पिटिटर्स द्वारा कब्जा कर लिया जाता है।",
+                    aiThreatHorizon: "AI प्रासंगिकता क्षितिज",
+                    aiLossDesc: "सर्वाइवल की विंडो: AI-native फर्मों द्वारा आपके मॉडल को पुराना बनाने से पहले {amount} महीने शेष हैं।",
+                    coordinationDragTitle: "कोऑर्डिनेशन ड्रैग लागू",
+                    coordinationDragDesc: "इस स्तर पर अक्षमताओं को ठीक करना तकनीकी रूप से जटिल है। देरी का हर दिन नुकसान को बढ़ाता है। तत्काल वास्तुशिल्प (Architectural) हस्तक्षेप अनिवार्य है।",
+                    protocolTitle: "सर्वाइवल प्रोटोकॉल",
+                    protocol01Title: "इकोसिस्टम एकीकरण (Unification)",
+                    protocol01Desc: "खंडित उपकरणों को एक ही, उच्च-उपलब्धता आर्किटेक्चर में समेकित करें।",
+                    protocol02Title: "स्वायत्त ऑर्केस्ट्रेशन",
+                    protocol02Desc: "मैनुअल संज्ञानात्मक भार को समाप्त करने के लिए प्रोग्रामेटिक वर्कफ़्लो और इंटेलिजेंट रूटिंग तैनात करें।",
+                    protocol03Title: "स्केल और प्रभुत्व (Dominance)",
+                    protocol03Desc: "स्थानीय मैट्रिक्स पर हावी हों और सभी डिजिटल टचप्वाइंट पर 24/7 इनबाउंड ट्रैफ़िक कैप्चर करें।",
+                    rawDiagnostics: "रॉ सिस्टम डायग्नोस्टिक्स",
+                    mod01Title: "मोड 01: ऑपरेशनल वेस्ट",
+                    mod02Title: "मोड 02: नाइट लॉस",
+                    mod03Title: "मोड 03: डिजिटल अदृश्यता",
+                    mod04Title: "मोड 04: AI खतरा क्षितिज",
+                    staffPayroll: "स्टाफ/पेरोल वेस्ट",
+                    marketingBleed: "मार्केटिंग ब्लीड",
+                    rawOps: "रॉ ऑप्स ओवरहेड्स",
+                    coordinationDragApplied: "कोऑर्डिनेशन ड्रैग लागू",
+                    missedWeeklyInquiries: "छूटी हुई साप्ताहिक पूछताछ",
+                    avgTxnVelocity: "औसत Txn / LTV वेग",
+                    estConversion: "अनुमानित कनवर्जन रेट",
+                    monthlyHemorrhage: "मासिक राजस्व रक्तस्राव (Hemorrhage)",
+                    lostLocalSearches: "खोई हुई स्थानीय खोजें",
+                    missedHighIntent: "हाई-इंटेंट छूटे हुए ग्राहक",
+                    visibilityScore: "अदृश्यता स्कोर",
+                    threatThreshold: "खतरा मूल्यांकन सीमा",
+                    survivalComplexity: "सर्वाइवल कॉम्प्लेक्सिटी स्कोर",
+                    calculatedTTL: "जहाने की गणना (TTL)",
+                    extinctionDeadline: "समाप्ति की समयसीमा स्थिति",
+                    criticalEvasion: "गंभीर बचाव आवश्यक",
+                    monitoring: "निगरानी (Monitoring)",
+                    architectNote: {
+                        title: "सिस्टम आर्किटेक्ट का संदेश",
+                        p1: "आपके वर्तमान सिस्टम काम तो कर रहे हैं, लेकिन वे काफी महंगे हैं।",
+                        p2: "हर महीने, मैनुअल काम और समय की कमी के कारण आपका बिजनेस पैसा गँवा रहा है। यह रिपोर्ट सिर्फ नंबर नहीं है—यह उस पैसे का हिसाब है जो आप सिर्फ इसलिए छोड़ रहे हैं क्योंकि आपने अभी तक आधुनिक AI सिस्टम नहीं लगाया है।",
+                        p3: "अपने मुनाफे को बचाने और भविष्य के लिए तैयार होने के लिए इस डेटा का उपयोग करें।",
+                        sign: "मास्टरकी ओएस टीम",
+                        role: "संस्थापक, मास्टरकी लैब्स"
+                    },
+                    cta: {
+                        title: "नुकसान रोकना चाहते हैं?",
+                        sub: "इसे अकेले न झेलें। आपकी समस्या का समाधान भी खास होना चाहिए। हमारी टीम के साथ एक फ्री रिव्यु बुक करें।",
+                        btn: "फ्री रिव्यु बुक करें",
+                        footer: "स्लॉट बुक करने के लिए masterkeylabs.ai पर जाएं"
+                    }
                 },
                 module01: {
-                    tag: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 01: à¤à¤à¤à¤°à¤¨à¤² à¤²à¥à¤",
-                    title: "à¤ªà¥à¤¸à¥ à¤à¤¹à¤¾à¤ à¤²à¥à¤ à¤¹à¥ à¤°à¤¹à¥ à¤¹à¥à¤",
-                    hole: "à¤®à¤¾à¤¸à¤¿à¤ à¤¸à¤à¤¸à¤¾à¤§à¤¨ à¤à¥à¤¦ (Hole)",
-                    payroll: "à¤ªà¥à¤°à¥à¤² à¤à¤à¥à¤·à¤®à¤¤à¤¾",
-                    marketing: "à¤®à¤¾à¤°à¥à¤à¥à¤à¤¿à¤à¤ à¤¬à¥à¤²à¥à¤¡",
-                    dragTag: "à¤à¥à¤à¤°à¥à¤¡à¤¿à¤¨à¥à¤¶à¤¨ à¤¡à¥à¤°à¥à¤ à¤à¤²à¤°à¥à¤",
-                    dragText: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤¸à¤¿à¤à¤ à¤¨ à¤¹à¥à¤¨à¥ à¤à¥ à¤à¤¾à¤°à¤£ à¤à¤ªà¤à¥ à¤à¤¤à¤¿à¤°à¤¿à¤à¥à¤¤ {amount} à¤à¤¾ à¤¨à¥à¤à¤¸à¤¾à¤¨ à¤¹à¥ à¤°à¤¹à¤¾ à¤¹à¥à¥¤"
+                    tag: "मॉड्यूल 01: इंटरनल लीक",
+                    title: "पैसे कहाँ लीक हो रहे हैं",
+                    hole: "मासिक संसाधन छेद (Hole)",
+                    payroll: "पेरोल अक्षमता",
+                    marketing: "मार्केटिंग ब्लीड",
+                    dragTag: "कोऑर्डिनेशन ड्रैग अलर्ट",
+                    dragText: "सिस्टम सिंक न होने के कारण आपको अतिरिक्त {amount} का नुकसान हो रहा है।"
                 },
                 module02: {
-                    tag: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 02: à¤¡à¤¾à¤°à¥à¤ à¤ªà¥à¤°à¥à¤«à¤¿à¤ à¤²à¥à¤",
-                    title: "à¤®à¤¿à¤¸ à¤à¤¿à¤¯à¤¾ à¤à¤¯à¤¾ à¤à¤«à¥à¤à¤°-à¤à¤µà¤°à¥à¤¸ à¤°à¥à¤µà¥à¤¨à¥à¤¯à¥",
-                    decay: "à¤à¤«à¥à¤à¤°-à¤à¤µà¤°à¥à¤¸ à¤¡à¤¿à¤à¥",
-                    gap: "à¤à¤¨à¤µà¤°à¥à¤à¤¨ à¤à¥à¤ª",
-                    sub: "à¤à¤ªà¤à¤¾ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤¬à¤à¤¦ à¤¹à¥ à¤à¤¾à¤¤à¤¾ à¤¹à¥, à¤²à¥à¤à¤¿à¤¨ à¤¬à¤¾à¤à¤¾à¤° à¤¨à¤¹à¥à¤à¥¤ \"à¤¡à¤¾à¤°à¥à¤ à¤à¤µà¤°à¥à¤¸\" à¤à¥ à¤¦à¥à¤°à¤¾à¤¨ AI à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤² à¤¨ à¤¹à¥à¤¨à¥ à¤¸à¥ à¤à¤ª à¤¹à¤° à¤¸à¤¾à¤² {amount} à¤à¥ à¤°à¤¹à¥ à¤¹à¥à¤à¥¤"
+                    tag: "मॉड्यूल 02: डार्क प्रॉफिट लीक",
+                    title: "मिस किया गया आफ्टर-ऑवर्स रेवेन्यू",
+                    decay: "आफ्टर-आवर्स डिके",
+                    gap: "कनवर्जन गैप",
+                    sub: "आपका बिजनेस बंद हो जाता है, लेकिन बाजार नहीं। \"डार्क आवर्स\" के दौरान AI प्रोटोकॉल न होने से आप हर साल {amount} खो रहे हैं।"
                 },
                 module03: {
-                    tag: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 03: à¤¡à¤¿à¤à¤¿à¤à¤² à¤¶à¥à¤¡à¥",
-                    title: "à¤®à¤¿à¤¸ à¤à¤¿à¤ à¤à¤ à¤¸à¥à¤¥à¤¾à¤¨à¥à¤¯ à¤à¥à¤°à¤¾à¤¹à¤",
-                    opp: "à¤à¥à¤à¥ à¤¹à¥à¤ à¤à¤µà¤¸à¤°/à¤®à¤¾à¤¹",
-                    sub: "à¤à¤ªà¤à¥ {city} à¤­à¥à¤à¥à¤² à¤®à¥à¤, à¤à¤ª à¤¹à¤° à¤®à¤¹à¥à¤¨à¥ à¤²à¤à¤­à¤ {count} à¤¹à¤¾à¤-à¤à¤à¤à¥à¤à¤ à¤à¥à¤°à¤¾à¤¹à¤à¥à¤ à¤à¥ à¤à¤¨ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤°à¥à¤¸ à¤¸à¥ à¤à¥ à¤°à¤¹à¥ à¤¹à¥à¤ à¤à¤¿à¤¨à¤à¥ à¤¡à¤¿à¤à¤¿à¤à¤² à¤¸à¤¿à¤à¥à¤¨à¤² à¤¸à¥à¤à¥à¤° à¤à¤§à¤¿à¤ à¤¹à¥à¤à¥¤"
+                    tag: "मॉड्यूल 03: डिजिटल शैडो",
+                    title: "मिस किए गए स्थानीय ग्राहक",
+                    opp: "छूटे हुए अवसर/माह",
+                    sub: "आपके {city} भूगोल में, आप हर महीने लगभग {count} हाई-इंटेंट ग्राहकों को उन कॉम्पिटिटर्स से खो रहे हैं जिनके डिजिटल सिग्नल स्कोर अधिक हैं।"
                 },
                 module04: {
-                    tag: "à¤®à¥à¤¡à¥à¤¯à¥à¤² 04: à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤¡à¥à¤¡à¤²à¤¾à¤à¤¨",
-                    title: "à¤à¥à¤¯à¤¾ à¤à¤ªà¤à¤¾ à¤¬à¤¿à¤à¤¨à¥à¤¸ AI-à¤ªà¥à¤°à¥à¤« à¤¹à¥?",
-                    ttl: "à¤®à¤¾à¤°à¥à¤à¥à¤ à¤ªà¥à¤°à¤¾à¤¸à¤à¤à¤¿à¤à¤¤à¤¾ TTL",
-                    months: "à¤®à¤¹à¥à¤¨à¥",
-                    complexity: "à¤¸à¤°à¥à¤µà¤¾à¤à¤µà¤² à¤à¥à¤®à¥à¤ªà¥à¤²à¥à¤à¥à¤¸à¤¿à¤à¥",
-                    threat: "à¤à¤¤à¤°à¤¾",
-                    projected: "à¤¯à¤¹ AI-à¤¸à¤à¤à¤¾à¤²à¤¿à¤¤ à¤à¥à¤®à¥à¤ªà¤¿à¤à¤¿à¤à¤°à¥à¤¸ à¤¯à¤¾ à¤¶à¤¿à¤«à¥à¤à¤¿à¤à¤ à¤®à¤¾à¤°à¥à¤à¥à¤ à¤¸à¥à¤à¥à¤ à¤¦à¥à¤µà¤¾à¤°à¤¾ à¤à¤ªà¤à¥ à¤µà¤°à¥à¤¤à¤®à¤¾à¤¨ à¤à¤ªà¤°à¥à¤¶à¤à¤¸ à¤à¥ à¤ªà¥à¤°à¤¾à¤¨à¤¾ à¤¬à¤¨à¤¾à¤¨à¥ à¤¸à¥ à¤ªà¤¹à¤²à¥ à¤à¥ à¤à¤¨à¥à¤®à¤¾à¤¨à¤¿à¤¤ à¤¸à¤®à¤¯à¤¸à¥à¤®à¤¾ à¤¹à¥à¥¤"
+                    tag: "मॉड्यूल 04: सर्वाइवल डेडलाइन",
+                    title: "क्या आपका बिजनेस AI-प्रूफ है?",
+                    ttl: "मार्केट प्रासंगिकता TTL",
+                    months: "महीने",
+                    complexity: "सर्वाइवल कॉम्प्लेक्सिटी",
+                    threat: "खतरा",
+                    projected: "यह AI-संचालित कॉम्पिटिटर्स या शिफ्टिंग मार्केट स्टैक द्वारा आपके वर्तमान ऑपरेशंस को पुराना बनाने से पहले की अनुमानित समयसीमा है।"
                 }
             },
-            backToDashboard: "à¤¡à¥à¤¶à¤¬à¥à¤°à¥à¤¡ à¤ªà¤° à¤µà¤¾à¤ªà¤¸ à¤à¤¾à¤à¤"
+            backToDashboard: "डैशबोर्ड पर वापस जाएं"
         },
         header: {
-            command: "à¤à¤®à¤¾à¤à¤¡ à¤¸à¥à¤à¤à¤°",
-            sync: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤¸à¤¿à¤à¤ à¤à¤à¥à¤à¤¿à¤µ",
+            command: "कमांड सेंटर",
+            sync: "सिस्टम सिंक एक्टिव",
         },
         sidebar: {
-            status: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤¸à¥à¤¥à¤¿à¤¤à¤¿",
-            analytics: "à¤à¤¹à¤¨ à¤µà¤¿à¤¶à¥à¤²à¥à¤·à¤£",
-            protocols: "à¤¸à¤à¥à¤°à¤¿à¤¯ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤²",
-            growth: "à¤à¥à¤°à¥à¤¥ à¤à¤à¤à¤¨",
-            map: "à¤°à¤£à¤¨à¥à¤¤à¤¿à¤ à¤®à¤¾à¤¨à¤à¤¿à¤¤à¥à¤°",
-            active: "à¤¸à¥à¤°à¤à¥à¤·à¤¿à¤¤ à¤®à¥à¤¡ à¤¸à¤à¥à¤°à¤¿à¤¯",
-            logout: "à¤²à¥à¤à¤à¤à¤",
-            signup: "à¤¸à¤¾à¤à¤¨à¤à¤ª / à¤²à¥à¤à¤¿à¤¨"
+            status: "सिस्टम स्थिति",
+            analytics: "गहन विश्लेषण",
+            protocols: "सक्रिय प्रोटोकॉल",
+            growth: "ग्रोथ इंजन",
+            map: "रणनीतिक मानचित्र",
+            active: "सुरक्षित मोड सक्रिय",
+            logout: "लॉगआउट",
+            signup: "साइनअप / लॉगिन"
         },
         cta: {
-            main: "à¤­à¤µà¤¿à¤·à¥à¤¯ AI-à¤«à¤°à¥à¤¸à¥à¤ à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¾ à¤¹à¥à¥¤",
-            sub: "à¤ªà¥à¤°à¤¾à¤¨à¥ à¤¤à¤à¤¨à¥à¤ à¤à¥ à¤¯à¥à¤ à¤®à¥à¤ à¤ªà¥à¤à¥ à¤¨ à¤à¥à¤à¥à¤à¥¤"
+            main: "भविष्य AI-फर्स्ट बिजनेस का है।",
+            sub: "पुरानी तकनीक के युग में पीछे न छूटें।"
         },
         services: {
-            title: "à¤à¤à¤¤à¤°à¤¿à¤ à¤ªà¥à¤°à¤£à¤¾à¤²à¤¿à¤¯à¤¾à¤ à¤à¤° à¤µà¤¿à¤à¤¾à¤¸ à¤ªà¥à¤°à¥à¤à¥à¤à¥à¤²",
-            sub: "à¤¹à¤®à¤¾à¤°à¤¾ à¤®à¥à¤¡à¥à¤¯à¥à¤²-à¤à¤§à¤¾à¤°à¤¿à¤¤ à¤¦à¥à¤·à¥à¤à¤¿à¤à¥à¤£ à¤¸à¥à¤¨à¤¿à¤¶à¥à¤à¤¿à¤¤ à¤à¤°à¤¤à¤¾ à¤¹à¥ à¤à¤¿ à¤à¤ªà¤à¥ à¤µà¥à¤¯à¤µà¤¸à¤¾à¤¯ à¤à¤¾ à¤¹à¤° à¤ªà¤¹à¤²à¥ AI à¤¯à¥à¤ à¤à¥ à¤²à¤¿à¤ à¤à¤¨à¥à¤à¥à¤²à¤¿à¤¤ à¤¹à¥à¥¤",
+            title: "आंतरिक प्रणालियाँ और विकास प्रोटोकॉल",
+            sub: "हमारा मॉड्यूल-आधारित दृष्टिकोण सुनिश्चित करता है कि आपके व्यवसाय का हर पहलू AI युग के लिए अनुकूलित है।",
             p1: {
-                title: "à¤¬à¥à¤°à¤¾à¤à¤¡ à¤à¤° à¤ªà¤¹à¤à¤¾à¤¨ à¤¡à¤¿à¤à¤¾à¤à¤¨",
-                sub: "à¤¦à¥à¤¶à¥à¤¯ à¤¬à¥à¤¨à¤¿à¤¯à¤¾à¤¦à¥ à¤¢à¤¾à¤à¤à¤¾, à¤¬à¤¾à¤à¤¾à¤° à¤°à¤£à¤¨à¥à¤¤à¤¿, à¤ªà¥à¤°à¤¾à¤§à¤¿à¤à¤°à¤£ à¤¸à¤à¤ªà¤¤à¥à¤¤à¤¿"
+                title: "ब्रांड और पहचान डिजाइन",
+                sub: "दृश्य बुनियादी ढांचा, बाजार रणनीति, प्राधिकरण संपत्ति"
             },
             p2: {
-                title: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤° à¤à¤à¥à¤®à¥à¤¶à¤¨",
-                sub: "à¤à¤¸à¥à¤à¤® CRM à¤¸à¤®à¤¾à¤§à¤¾à¤¨, à¤µà¤°à¥à¤à¤«à¤¼à¥à¤²à¥ à¤à¤ªà¥à¤à¤¿à¤®à¤¾à¤à¤à¤¼à¥à¤¶à¤¨, AI à¤à¤à¥à¤à¤°à¤£"
+                title: "सिस्टम और ऑटोमेशन",
+                sub: "कस्टम CRM समाधान, वर्कफ़्लो ऑप्टिमाइज़ेशन, AI एकीकरण"
             },
             p3: {
-                title: "à¤²à¥à¤¡à¥à¤¸ à¤à¤° à¤à¥à¤°à¥à¤¥",
-                sub: "à¤¸à¤à¥à¤ à¤²à¤à¥à¤·à¥à¤¯à¥à¤à¤°à¤£, à¤¸à¥à¤µà¤à¤¾à¤²à¤¿à¤¤ à¤«à¤¼à¤¨à¤²"
+                title: "लीड्स और ग्रोथ",
+                sub: "सटीक लक्ष्यीकरण, स्वचालित फ़नल"
             },
             p4: {
-                title: "à¤°à¤£à¤¨à¥à¤¤à¤¿ à¤à¤° à¤à¤à¤à¥à¤²à¤¿à¤à¥à¤à¤¸",
-                sub: "à¤à¥à¤²à¥à¤¬à¤² à¤®à¤¾à¤°à¥à¤à¥à¤ à¤°à¤£à¤¨à¥à¤¤à¤¿, à¤¸à¤¿à¤¸à¥à¤à¤® à¤²à¤à¥à¤²à¤¾à¤ªà¤¨",
-                f1: "à¤¸à¥à¤à¥à¤²à¥à¤¬à¤² à¤à¥à¤à¥à¤¨à¥à¤²à¥à¤à¥ à¤°à¥à¤¡à¤®à¥à¤ª",
-                f2: "à¤à¤à¤¤à¤°à¤°à¤¾à¤·à¥à¤à¥à¤°à¥à¤¯ à¤¬à¤¾à¤à¤¾à¤° à¤µà¤¿à¤¸à¥à¤¤à¤¾à¤°"
+                title: "रणनीति और इंटेलिजेंस",
+                sub: "ग्लोबल मार्केट रणनीति, सिस्टम लचीलापन",
+                f1: "स्केलेबल टेक्नोलॉजी रोडमैप",
+                f2: "अंतरराष्ट्रीय बाजार विस्तार"
             }
         },
         auth: {
-            title: "à¤¸à¤¿à¤¸à¥à¤à¤® à¤à¤à¥à¤¸à¥à¤¸",
-            sub: "à¤°à¤¿à¤ªà¥à¤°à¥à¤ à¤à¥ à¤²à¤¿à¤ à¤à¥à¤°à¥à¤¡à¥à¤à¤¶à¤¿à¤¯à¤²à¥à¤¸ à¤à¤à¥à¤¸à¥à¤¸ à¤à¤°à¥à¤",
-            btn: "à¤¸à¤¿à¤à¤à¥à¤°à¥à¤¨à¤¾à¤à¤à¤¼ à¤à¤°à¥à¤",
-            notice: "à¤¸à¥à¤à¤¨à¤¾",
-            goDashboard: "à¤¡à¥à¤¶à¤¬à¥à¤°à¥à¤¡ à¤ªà¤° à¤à¤¾à¤à¤",
-            entity: "à¤à¤à¤¾à¤ (Entity)",
-            principal: "à¤ªà¥à¤°à¤®à¥à¤ (Principal)",
-            email: "à¤à¤®à¥à¤²",
-            contact: "à¤¸à¤à¤ªà¤°à¥à¤",
+            title: "सिस्टम एक्सेस",
+            sub: "रिपोर्ट के लिए क्रेडेंशियल्स एक्सेस करें",
+            btn: "सिंक्रोनाइज़ करें",
+            notice: "सूचना",
+            goDashboard: "डैशबोर्ड पर जाएं",
+            entity: "इकाई (Entity)",
+            principal: "प्रमुख (Principal)",
+            email: "ईमेल",
+            contact: "संपर्क",
             placeholder: {
-                business: "à¤¬à¤¿à¤à¤¨à¥à¤¸ à¤à¤¾ à¤¨à¤¾à¤®",
-                name: "à¤ªà¥à¤°à¤¾ à¤¨à¤¾à¤®",
+                business: "बिजनेस का नाम",
+                name: "पूरा नाम",
                 email: "email@company.com",
-                phone: "à¤«à¥à¤¨ à¤¨à¤à¤¬à¤°"
+                phone: "फोन नंबर"
             }
         },
     },
@@ -1641,7 +1649,7 @@ export const translations = {
             visibility: {
                 module: "Module 03",
                 title: "Stop losing customers to competitors",
-                sub: "Digital presence audit â taaki log aapko Google par asaani se dhund sakein."
+                sub: "Digital presence audit — taaki log aapko Google par asaani se dhund sakein."
             },
             threat: {
                 module: "Module 04",
@@ -1706,22 +1714,22 @@ export const translations = {
             },
             step1: {
                 title: "Identity Check",
-                badge: "Step 1 â Identity",
+                badge: "Step 1 — Identity",
                 vertical: "Business Vertical (Sector)",
                 revenue: "Monthly Revenue Bracket"
             },
             step2: {
                 title: "The Bleed (Nuksan)",
-                badge: "Step 2 â Nuksan",
+                badge: "Step 2 — Nuksan",
                 employees: "Team Size (Employees)",
-                marketing: "Monthly Marketing ka Kharcha (â¹)",
-                ops: "Monthly Operations ka Kharcha (â¹)",
+                marketing: "Monthly Marketing ka Kharcha (₹)",
+                ops: "Monthly Operations ka Kharcha (₹)",
                 prev: "Piche",
                 next: "Agla Step"
             },
             step3: {
                 title: "The Tech Gap",
-                badge: "Step 3 â Tech Gap",
+                badge: "Step 3 — Tech Gap",
                 inquiry: "Shyam 6 baje ke baad inquiries kaise handle hoti hain?",
                 options: {
                     ignored: "Miss hoti hain / Ignore",
@@ -1752,7 +1760,7 @@ export const translations = {
         header: {
             home: "Home",
             command: "Command Center",
-            sync: "Cloud Sync Active â v2.1.0-secure"
+            sync: "Cloud Sync Active — v2.1.0-secure"
         },
         sidebar: {
             status: "System Status",
@@ -1770,7 +1778,7 @@ export const translations = {
             directives: "Directives",
             privacy: "Privacy Policy",
             terms: "Terms & Conditions",
-            rights: "Â© 2025 MASTERKEY LABS â ADAPTIVE SYSTEMS PROTOCOL",
+            rights: "© 2025 MASTERKEY LABS — ADAPTIVE SYSTEMS PROTOCOL",
             confidential: "Confidential System Audit"
         },
         fab: {
@@ -1783,8 +1791,8 @@ export const translations = {
             title1: "Kya AI",
             title2: "Aapko replace karega?",
             sub: "Niche apna job title ya business type enter karein. Kuch seconds mein apni AI extinction timeline check karein.",
-            placeholder: "e.g. accountant Â· HR manager Â· law firm Â· marketing agency",
-            calculateBtn: "Mera AI Risk Calculate karein â",
+            placeholder: "e.g. accountant · HR manager · law firm · marketing agency",
+            calculateBtn: "Mera AI Risk Calculate karein →",
             yearsLabel: "YEARS",
             monthsLabel: "MONTHS",
             daysLabel: "DAYS",
@@ -1799,13 +1807,13 @@ export const translations = {
             sharePrompt: "Share this on Social Media",
             exportLabel: "Export Your Analysis",
             generatingImage: "Generating share image...",
-            shareNoticeDone: "Image auto-saved when sharing Â· tap to open platform",
+            shareNoticeDone: "Image auto-saved when sharing · tap to open platform",
             resultTitle: "AI aapke dhande ka ant nahi hai.",
             resultSub: "Ab apni Digital Factory banane ka time hai.",
-            seeLeaksBtn: "Apna Profit Leak dekhein â 4 min Audit â",
-            whatsappSecondary: "ya WhatsApp par chat karein â",
-            priorityAction: "ð¨ IMMEDIATE ACTION REQUIRED",
-            optimizationAction: "ð¡ OPTIMIZATION REQUIRED",
+            seeLeaksBtn: "Apna Profit Leak dekhein — 4 min Audit →",
+            whatsappSecondary: "ya WhatsApp par chat karein →",
+            priorityAction: "🚨 IMMEDIATE ACTION REQUIRED",
+            optimizationAction: "💡 OPTIMIZATION REQUIRED",
             searchSteps: [
                 "NASSCOM displacement data sync ho raha hai...",
                 "Indian workforce sector risk ka analysis...",
@@ -2014,18 +2022,18 @@ export const translations = {
                     extinctionDeadline: "Extinction Deadline",
                     months: "Mahine",
                     architectNote: {
-                        title: "System Architect ki taraf se ek Note",
-                        p1: "Aapke current systems chal toh rahe hain, par wo bahut mehnge hain.",
-                        p2: "Har mahine aapki operations 'paisa bleed' kar rahi hain human friction aur missed timing ki wajah se. Yeh report sirf numbers ki list nahi hai—yeh us paise ka aaina hai jo aap peeche chhod rahe hain kyunki aapne abhi tak modern AI protocols deploy nahi kiye hain.",
-                        p3: "Is data ka use karein apne profit margins ko protect karne ke liye aur business efficiency ke agle leap ke liye tayyar ho jayein.",
+                        title: "MESSAGE FROM THE SYSTEM ARCHITECT",
+                        p1: "Aapke systems broken nahi hain—bas mehnge hain. Ye legacy platforms manually scale karne ke liye bane thay, autonomous growth ke liye nahi.",
+                        p2: "Har mahina jo aap AI integration mein delay kar rahe ho, wo sirf capital loss nahi hai—wo market share ka loss hai. Ye report aapki checklist hai un leakages ko band karne ke liye jo aapka business hollow out kar rahe hain.",
+                        p3: "Is intelligence ko use karein aur apna dominance reclaim karein.",
                         sign: "MasterKey OS Team",
-                        role: "Founders, MasterKey Labs"
+                        role: "Founder, MasterKey Labs"
                     },
                     cta: {
-                        title: "Kya aap is nuksan ko rokne ke liye taiyar hain?",
-                        sub: "Isse akele mat jheliye. Aapke numbers unique hain, aur aapka solution bhi waisa hi hona chahiye. Hamari team ke saath apne business architecture ka free review book karein.",
-                        btn: "Architecture Review Book karein",
-                        footer: "Slots schedule karne ke liye masterkeylabs.ai par jayein"
+                        title: "WANT TO STOP THE BLEED?",
+                        sub: "Don't fight this alone. Aapki problems architectural hain, aur solution bhi technical intervention se hi milega. Book a free architecture review.",
+                        btn: "Book Your Free Review",
+                        footer: "Visit masterkeylabs.ai to secure your slot"
                     }
                 }
             },
@@ -2092,7 +2100,7 @@ export const translations = {
             marketingBudgetLabel: "Marketing Budget",
             opsOverheadLabel: "Operations & Overheads",
             revenueLabel: "Estimated Annual Revenue",
-            revenueSub: "Coordination Drag ki calculation ke liye. Agar range hai toh midpoint use karein (e.g. â¹25Lââ¹1Cr â â¹62.5L).",
+            revenueSub: "Coordination Drag ki calculation ke liye. Agar range hai toh midpoint use karein (e.g. ₹25L–₹1Cr → ₹62.5L).",
             advancedHeader: "Advanced Diagnostic Metrics",
             manualHoursLabel: "Har din ke manual kaam ke ghante (per employee)",
             manualHoursSub: "Spreadsheets, manual data entry aur baar-baar follow-ups mein lagne wala time.",
@@ -2131,8 +2139,8 @@ export const translations = {
             formHeader: "Aapke Business Hours",
             dailyInquiriesLabel: "Average Daily Inquiries / Leads",
             closingTimeLabel: "Business Closing Time",
-            avgTransactionLabel: "Avg Transaction Value (â¹)",
-            avgTransactionSub: "â  Required â iske bina audit â¹ figure nahi dikha sakta.",
+            avgTransactionLabel: "Avg Transaction Value (₹)",
+            avgTransactionSub: "⚠ Required — iske bina audit ₹ figure nahi dikha sakta.",
             businessTypeLabel: "Business Type",
             btnText: "Night Loss Calculate Karein",
             savingText: "Saving...",
@@ -2199,9 +2207,9 @@ export const translations = {
             gapsHeader: "Gap Analysis ({count} signals missing)",
             conversionRate: "6% conversion rate",
             placeholders: {
-                citySelect: "â Select city â",
+                citySelect: "— Select city —",
                 cityInput: "City name enter karein...",
-                revenue: "â¹ 1,500"
+                revenue: "₹ 1,500"
             },
             searchSteps: [
                 'Scanning Local Search Volume...',
@@ -2273,15 +2281,15 @@ export const translations = {
             },
             employeeRanges: {
                 micro: { label: "< 10", desc: "Micro (+6 mo)" },
-                small: { label: "10â49", desc: "Small (neutral)" },
-                medium: { label: "50â200", desc: "Medium (â6 mo)" },
-                large: { label: "200+", desc: "Large (â12 mo)" }
+                small: { label: "10–49", desc: "Small (neutral)" },
+                medium: { label: "50–200", desc: "Medium (−6 mo)" },
+                large: { label: "200+", desc: "Large (−12 mo)" }
             },
             statusLabels: {
-                critical: "CRITICAL WINDOW â Act immediately",
-                watch: "WATCH CLOSELY â Plan needed",
-                manageable: "MANAGEABLE RUNWAY â Start planning",
-                monitor: "LONG RUNWAY â Keep monitoring"
+                critical: "CRITICAL WINDOW — Act immediately",
+                watch: "WATCH CLOSELY — Plan needed",
+                manageable: "MANAGEABLE RUNWAY — Start planning",
+                monitor: "LONG RUNWAY — Keep monitoring"
             },
             searchSteps: [
                 'Departmental Tasks dissect ho rahe hain...',
