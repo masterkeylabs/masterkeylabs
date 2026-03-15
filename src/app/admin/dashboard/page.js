@@ -10,19 +10,32 @@ import {
     AreaChart, Area
 } from 'recharts';
 
+import AdminBusinessDetailsModal from '@/components/admin/AdminBusinessDetailsModal';
+
 export default function AdminDashboard() {
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState('overview'); // overview, businesses, bookings
     const [businesses, setBusinesses] = useState([]);
-    const [stats, setStats] = useState({ total: 0, critical: 0, totalWaste: 0 });
+    const [bookings, setBookings] = useState([]);
+    const [stats, setStats] = useState({ total: 0, critical: 0, totalWaste: 0, bookingsCount: 0 });
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [mounted, setMounted] = useState(false);
+    const [selectedBusiness, setSelectedBusiness] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const COLORS = ['#00e5ff', '#ff3d00', '#ffd600', '#00e676', '#d500f9', '#3d5afe', '#ff9100'];
 
     const formatToIST = (dateString, options) => {
         if (!dateString) return 'N/A';
         return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', ...options }).format(new Date(dateString));
+    };
+
+    const formatCurrency = (val) => {
+        if (!val) return '₹0';
+        if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
+        if (val >= 1000) return `₹${(val / 1000).toFixed(1)}K`;
+        return `₹${val}`;
     };
 
     useEffect(() => {
@@ -38,13 +51,23 @@ export default function AdminDashboard() {
     const fetchData = async () => {
         setLoading(true);
         try {
+            // 1. Fetch Businesses with all audit results
             const { data: bizData } = await supabase
                 .from('businesses')
                 .select(`
                     *,
-                    ai_threat_results (threat_level, score),
-                    loss_audit_results (total_burn)
+                    ai_threat_results (threat_level, score, created_at),
+                    loss_audit_results (total_burn, created_at, annual_loss),
+                    visibility_results (missed_customers, annual_loss, confidence, created_at),
+                    night_loss_results (total_loss, created_at)
                 `)
+                .order('created_at', { ascending: false });
+
+            // 2. Fetch Bookings (Intent Logs)
+            const { data: bookingData } = await supabase
+                .from('intent_logs')
+                .select('*')
+                .eq('source', 'RescueArchitecture')
                 .order('created_at', { ascending: false });
 
             if (bizData) {
@@ -54,8 +77,28 @@ export default function AdminDashboard() {
                 const total = bizData.length;
                 const critical = bizData.filter(b => b.ai_threat_results?.[0]?.threat_level === 'KHATRA').length;
                 const waste = bizData.reduce((acc, b) => acc + (b.loss_audit_results?.[0]?.total_burn || 0), 0);
+                
+                setStats(prev => ({ 
+                    ...prev, 
+                    total, 
+                    critical, 
+                    totalWaste: waste,
+                    bookingsCount: bookingData?.length || 0
+                }));
+            }
 
-                setStats({ total, critical, totalWaste: waste });
+            if (bookingData) {
+                // Enrich bookings with business names if possible (manual join since foreign keys might be missing)
+                const enrichedBookings = bookingData.map(booking => {
+                    const biz = bizData?.find(b => b.id === booking.business_id);
+                    return {
+                        ...booking,
+                        business_name: biz?.entity_name || 'Anonymous Business',
+                        business_email: biz?.email || 'N/A',
+                        business_phone: biz?.phone || 'N/A'
+                    };
+                });
+                setBookings(enrichedBookings);
             }
         } catch (err) {
             console.error(err);
@@ -88,7 +131,6 @@ export default function AdminDashboard() {
     }, [businesses]);
 
     const economicTrend = useMemo(() => {
-        // Mocking trend based on registration date for visual appeal
         const groups = {};
         businesses.forEach(b => {
             const date = formatToIST(b.created_at, { month: 'short', day: 'numeric' });
@@ -105,9 +147,19 @@ export default function AdminDashboard() {
         router.push('/admin/login');
     };
 
+    const handleViewBusiness = (biz) => {
+        setSelectedBusiness(biz);
+        setIsModalOpen(true);
+    };
+
     const filteredBusinesses = businesses.filter(b =>
-        b.entity_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        b.entity_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         b.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const filteredBookings = bookings.filter(b =>
+        b.business_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        b.business_email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -120,24 +172,46 @@ export default function AdminDashboard() {
                 </div>
 
                 <nav className="flex-1 px-4 space-y-2">
-                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary border border-primary/20 transition-all text-left">
-                        <span className="material-symbols-outlined">analytics</span>
-                        <span className="text-sm font-bold tracking-tight">Data Tracking</span>
+                    <button 
+                        onClick={() => setActiveTab('overview')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'overview' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <span className="material-symbols-outlined text-sm">analytics</span>
+                        <span className="text-sm font-bold tracking-tight">Overview</span>
                     </button>
+                    <button 
+                        onClick={() => setActiveTab('businesses')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'businesses' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <span className="material-symbols-outlined text-sm">corporate_fare</span>
+                        <span className="text-sm font-bold tracking-tight">Management</span>
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('bookings')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'bookings' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <span className="material-symbols-outlined text-sm">calendar_month</span>
+                        <span className="text-sm font-bold tracking-tight">Architecture Bookings</span>
+                    </button>
+                    
+                    <div className="pt-4 pb-2 px-4">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20">System Ops</p>
+                    </div>
+                    
                     <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white transition-all text-left">
                         <span className="material-symbols-outlined text-sm">database</span>
-                        <span className="text-sm font-medium">Database Management</span>
+                        <span className="text-sm font-medium">Core Logs</span>
                     </button>
                     <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white transition-all text-left">
                         <span className="material-symbols-outlined text-sm">settings_suggest</span>
-                        <span className="text-sm font-medium">System Scaling</span>
+                        <span className="text-sm font-medium">Scalability Settings</span>
                     </button>
                 </nav>
 
                 <div className="p-6 border-t border-white/5">
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-all text-left group">
                         <span className="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform">logout</span>
-                        <span className="text-sm font-black uppercase tracking-widest text-xs">Disconnect</span>
+                        <span className="text-sm font-black uppercase tracking-widest text-[10px]">Disconnect Hub</span>
                     </button>
                 </div>
             </aside>
@@ -147,227 +221,300 @@ export default function AdminDashboard() {
                 {/* Header */}
                 <header className="flex items-center justify-between mb-12">
                     <div>
-                        <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">System Intelligence</h1>
-                        <p className="text-white/40 font-medium tracking-wide">Real-time tracking of all business diagnostics & market threats.</p>
+                        <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">
+                            {activeTab === 'overview' ? 'Intelligence Hub' : 
+                             activeTab === 'businesses' ? 'Business Registry' : 
+                             'Review Operations'}
+                        </h1>
+                        <p className="text-white/40 font-medium tracking-wide">
+                            {activeTab === 'overview' ? 'Real-time tracking of all business diagnostics & market threats.' : 
+                             activeTab === 'businesses' ? 'Full operational over-ride of registered entities.' : 
+                             'Monitoring and optimizing architectural sessions.'}
+                        </p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col items-end">
                             <span className="text-xs font-black text-primary tracking-widest uppercase mb-1">Status: Operational</span>
                             <div className="flex gap-1">
-                                <span className="w-8 h-1 bg-primary rounded-full"></span>
+                                <span className="w-8 h-1 bg-primary rounded-full shadow-[0_0_10px_#00E5FF]"></span>
                                 <span className="w-8 h-1 bg-primary/30 rounded-full animate-pulse"></span>
                             </div>
                         </div>
                     </div>
                 </header>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-3 gap-8 mb-12">
-                    <div className="glass rounded-3xl p-8 border border-white/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700">
-                            <span className="material-symbols-outlined text-7xl">corporate_fare</span>
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Total Deployments</span>
-                        <span className="text-5xl font-black text-white mb-2">{stats.total}</span>
-                        <span className="text-xs text-primary font-bold">Businesses Analyzed</span>
-                    </div>
+                {activeTab === 'overview' && (
+                    <>
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                            <div className="glass rounded-3xl p-8 border border-white/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Total Deployments</span>
+                                <span className="text-5xl font-black text-white mb-2">{stats.total}</span>
+                                <span className="text-xs text-primary font-bold">Terminal Registrations</span>
+                            </div>
 
-                    <div className="glass rounded-3xl p-8 border border-alert-red/20 bg-alert-red/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700">
-                            <span className="material-symbols-outlined text-7xl text-alert-red">warning</span>
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-alert-red/50 mb-2">Critical Threats</span>
-                        <span className="text-5xl font-black text-alert-red mb-2">{stats.critical}</span>
-                        <span className="text-xs text-alert-red font-bold">Immediate Action Required</span>
-                    </div>
+                            <div className="glass rounded-3xl p-8 border border-alert-red/20 bg-alert-red/5 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-alert-red/50 mb-2">Critical Threats</span>
+                                <span className="text-5xl font-black text-alert-red mb-2">{stats.critical}</span>
+                                <span className="text-xs text-alert-red font-bold">Khatra Status Active</span>
+                            </div>
 
-                    <div className="glass rounded-3xl p-8 border border-primary/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700">
-                            <span className="material-symbols-outlined text-7xl text-primary">payments</span>
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/50 mb-2">Total Detected Waste</span>
-                        <span className="text-5xl font-black text-white mb-2">₹{(stats.totalWaste / 100000).toFixed(1)}L</span>
-                        <span className="text-xs text-primary font-bold">Monthly Operational Burn</span>
-                    </div>
-                </div>
+                            <div className="glass rounded-3xl p-8 border border-primary/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/50 mb-2">Total Burn Detected</span>
+                                <span className="text-5xl font-black text-white mb-2">{formatCurrency(stats.totalWaste)}</span>
+                                <span className="text-xs text-primary font-bold">Monthly Combined Drain</span>
+                            </div>
 
-                {/* Advanced Analytics Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                    {/* Industry Composition */}
-                    <div className="glass rounded-[2.5rem] p-8 border border-white/5">
-                        <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary text-lg">pie_chart</span>
-                            Market Composition
-                        </h3>
-                        <div className="h-72 w-full">
-                            {mounted && (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie
-                                            data={industryData}
-                                            innerRadius={60}
-                                            outerRadius={90}
-                                            paddingAngle={5}
-                                            dataKey="value"
-                                        >
-                                            {industryData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <div className="glass rounded-3xl p-8 border border-cyan-400/20 flex flex-col items-start shadow-2xl relative overflow-hidden group">
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400/50 mb-2">Waitlist/Bookings</span>
+                                <span className="text-5xl font-black text-white mb-2">{stats.bookingsCount}</span>
+                                <span className="text-xs text-cyan-400 font-bold">Architecture Requests</span>
+                            </div>
+                        </div>
+
+                        {/* Analytics Grid */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                            <div className="glass rounded-[2.5rem] p-8 border border-white/5">
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-primary text-lg">pie_chart</span>
+                                    Market Composition
+                                </h3>
+                                <div className="h-72 w-full">
+                                    {mounted && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={industryData}
+                                                    innerRadius={60}
+                                                    outerRadius={90}
+                                                    paddingAngle={5}
+                                                    dataKey="value"
+                                                >
+                                                    {industryData.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip
+                                                    contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                                    itemStyle={{ color: '#fff', fontSize: '10px', textTransform: 'uppercase', fontWeight: 900 }}
+                                                />
+                                                <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="glass rounded-[2.5rem] p-8 border border-white/5">
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-alert-red text-lg">bar_chart</span>
+                                    Threat Landscape
+                                </h3>
+                                <div className="h-72 w-full">
+                                    {mounted && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={threatLandscape}>
+                                                <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={8} tickLine={false} axisLine={false} />
+                                                <YAxis hide />
+                                                <Tooltip
+                                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                                    contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                                />
+                                                <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                                                    {threatLandscape.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="lg:col-span-2 glass rounded-[2.5rem] p-8 border border-white/5">
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-primary text-lg">timeline</span>
+                                    Combined Drain Trend (₹K)
+                                </h3>
+                                <div className="h-64 w-full">
+                                    {mounted && (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={economicTrend}>
+                                                <defs>
+                                                    <linearGradient id="colorBurn" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3} />
+                                                        <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <XAxis dataKey="date" stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
+                                                <YAxis stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
+                                                <Tooltip
+                                                    contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                                />
+                                                <Area type="monotone" dataKey="burn" stroke="#00e5ff" fillOpacity={1} fill="url(#colorBurn)" strokeWidth={3} />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                {(activeTab === 'businesses' || activeTab === 'bookings') && (
+                    <div className="glass rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
+                        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                            <h3 className="text-xl font-bold tracking-tight flex items-center gap-3">
+                                <span className="material-symbols-outlined text-primary">
+                                    {activeTab === 'businesses' ? 'storage' : 'event_note'}
+                                </span>
+                                {activeTab === 'businesses' ? 'Entity Registry' : 'Session Requests'}
+                            </h3>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-white/20 text-sm">search</span>
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="bg-white/5 border border-white/10 rounded-full pl-10 pr-6 py-2 text-sm focus:outline-none focus:border-primary/40 focus:bg-white/10 transition-all w-64 uppercase tracking-tighter"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                {activeTab === 'businesses' ? (
+                                    <>
+                                        <thead>
+                                            <tr className="text-[10px] uppercase font-black tracking-widest text-white/30 border-b border-white/5">
+                                                <th className="px-8 py-6">Target Entity</th>
+                                                <th className="px-8 py-6">Data Channel</th>
+                                                <th className="px-8 py-6">Classification</th>
+                                                <th className="px-8 py-6">Threat Status</th>
+                                                <th className="px-8 py-6">Operational Drain</th>
+                                                <th className="px-8 py-6 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/[0.03]">
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="6" className="px-8 py-20 text-center text-white/20 uppercase tracking-[0.5em] font-black animate-pulse">
+                                                        Accessing Registry...
+                                                    </td>
+                                                </tr>
+                                            ) : filteredBusinesses.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan="6" className="px-8 py-20 text-center text-white/20 uppercase tracking-widest text-xs font-bold">
+                                                        No active signals detected.
+                                                    </td>
+                                                </tr>
+                                            ) : filteredBusinesses.map((biz) => {
+                                                const threat = biz.ai_threat_results?.[0];
+                                                const loss = biz.loss_audit_results?.[0];
+                                                return (
+                                                    <tr key={biz.id} className="hover:bg-white/[0.02] transition-colors group">
+                                                        <td className="px-8 py-6">
+                                                            <div className="font-bold text-white group-hover:text-primary transition-colors">{biz.entity_name}</div>
+                                                            <div className="text-[10px] text-white/30 font-medium uppercase tracking-tighter mt-1">{biz.location || 'Unknown Node'}</div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="text-sm font-medium text-white/70">{biz.email || '—'}</div>
+                                                            <div className="text-xs text-white/30">{biz.phone || '—'}</div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="text-[10px] font-black text-white/40 bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest border border-white/5">
+                                                                {biz.classification?.replace('_', ' ')}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className={`text-xs font-black uppercase tracking-widest ${threat?.threat_level === 'KHATRA' ? 'text-alert-red' :
+                                                                threat?.threat_level === 'SAVDHAN' ? 'text-alert-orange' : 'text-primary'
+                                                                }`}>
+                                                                {threat?.threat_level || 'PENDING'}
+                                                            </div>
+                                                            <div className="text-[10px] text-white/20 mt-1 font-bold tracking-widest uppercase">Score: {threat?.score || '0'}</div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="text-sm font-bold text-white">{formatCurrency(loss?.total_burn)}/mo</div>
+                                                            <div className="w-16 h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
+                                                                <div className="h-full bg-primary" style={{ width: loss ? `${Math.min(100, (loss.total_burn / 500000) * 100)}%` : '0%' }}></div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6 text-right">
+                                                            <button 
+                                                                onClick={() => handleViewBusiness(biz)}
+                                                                className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+                                                            >
+                                                                View Report
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </>
+                                ) : (
+                                    <>
+                                        <thead>
+                                            <tr className="text-[10px] uppercase font-black tracking-widest text-white/30 border-b border-white/5">
+                                                <th className="px-8 py-6">Business Entity</th>
+                                                <th className="px-8 py-6">Target Slot (IST)</th>
+                                                <th className="px-8 py-6">Origin</th>
+                                                <th className="px-8 py-6 text-right">Logged At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/[0.03]">
+                                            {loading ? (
+                                                <tr>
+                                                    <td colSpan="4" className="px-8 py-20 text-center text-white/20 uppercase tracking-[0.5em] font-black animate-pulse">
+                                                        Scanning Schedule...
+                                                    </td>
+                                                </tr>
+                                            ) : filteredBookings.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan="4" className="px-8 py-20 text-center text-white/20 uppercase tracking-widest text-xs font-bold">
+                                                        No session requests queued.
+                                                    </td>
+                                                </tr>
+                                            ) : filteredBookings.map((booking) => (
+                                                <tr key={booking.id} className="hover:bg-white/[0.02] transition-colors group">
+                                                    <td className="px-8 py-6">
+                                                        <div className="font-bold text-white group-hover:text-cyan-400 transition-colors">{booking.business_name}</div>
+                                                        <div className="text-[10px] text-white/30 font-medium uppercase tracking-tighter mt-1">{booking.business_email}</div>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="material-symbols-outlined text-cyan-400 text-sm">schedule</span>
+                                                            <div className="text-sm font-bold text-white">
+                                                                {booking.metadata?.slot?.label || 'Direct Inquiry'}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-8 py-6">
+                                                        <span className="text-[10px] font-black text-cyan-400/60 bg-cyan-400/5 px-3 py-1 rounded-full uppercase tracking-widest border border-cyan-400/10">
+                                                            {booking.source}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-6 text-right">
+                                                        <div className="text-xs font-mono text-white/40">{formatToIST(booking.created_at, { year: 'numeric', month: 'short', day: '2-digit' })}</div>
+                                                        <div className="text-[10px] text-white/20 font-medium uppercase tracking-widest mt-1">{formatToIST(booking.created_at, { hour: '2-digit', minute: '2-digit', hour12: true })}</div>
+                                                    </td>
+                                                </tr>
                                             ))}
-                                        </Pie>
-                                        <Tooltip
-                                            contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                            itemStyle={{ color: '#fff', fontSize: '10px', textTransform: 'uppercase', fontWeight: 900 }}
-                                        />
-                                        <Legend wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            )}
+                                        </tbody>
+                                    </>
+                                )}
+                            </table>
                         </div>
                     </div>
-
-                    {/* Threat Landscape */}
-                    <div className="glass rounded-[2.5rem] p-8 border border-white/5">
-                        <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-alert-red text-lg">bar_chart</span>
-                            Threat Landscape
-                        </h3>
-                        <div className="h-72 w-full">
-                            {mounted && (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={threatLandscape}>
-                                        <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={8} tickLine={false} axisLine={false} />
-                                        <YAxis hide />
-                                        <Tooltip
-                                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                            contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                        />
-                                        <Bar dataKey="value" radius={[10, 10, 0, 0]}>
-                                            {threatLandscape.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Economic Burn Trend */}
-                    <div className="lg:col-span-2 glass rounded-[2.5rem] p-8 border border-white/5">
-                        <h3 className="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary text-lg">timeline</span>
-                            Detected Capital Waste Trend (₹K)
-                        </h3>
-                        <div className="h-64 w-full">
-                            {mounted && (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={economicTrend}>
-                                        <defs>
-                                            <linearGradient id="colorBurn" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3} />
-                                                <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
-                                            </linearGradient>
-                                        </defs>
-                                        <XAxis dataKey="date" stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
-                                        <YAxis stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
-                                        <Tooltip
-                                            contentStyle={{ backgroundColor: '#03081a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                        />
-                                        <Area type="monotone" dataKey="burn" stroke="#00e5ff" fillOpacity={1} fill="url(#colorBurn)" strokeWidth={3} />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Database Table */}
-                <div className="glass rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
-                    <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                        <h3 className="text-xl font-bold tracking-tight flex items-center gap-3">
-                            <span className="material-symbols-outlined text-primary">storage</span>
-                            Operational Database
-                        </h3>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-white/20 text-sm">search</span>
-                            <input
-                                type="text"
-                                placeholder="Search entity or email..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="bg-white/5 border border-white/10 rounded-full pl-10 pr-6 py-2 text-sm focus:outline-none focus:border-primary/40 focus:bg-white/10 transition-all w-64"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="text-[10px] uppercase font-black tracking-widest text-white/30 border-b border-white/5">
-                                    <th className="px-8 py-6">Entity Name</th>
-                                    <th className="px-8 py-6">Contact Info</th>
-                                    <th className="px-8 py-6">Classification</th>
-                                    <th className="px-8 py-6">Threat Status</th>
-                                    <th className="px-8 py-6">Burn Rate</th>
-                                    <th className="px-8 py-6 text-right">Registered</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/[0.03]">
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan="6" className="px-8 py-20 text-center text-white/20 uppercase tracking-[0.5em] font-black animate-pulse">
-                                            Scanning Database...
-                                        </td>
-                                    </tr>
-                                ) : filteredBusinesses.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="6" className="px-8 py-20 text-center text-white/20">
-                                            No entities detected in the current query.
-                                        </td>
-                                    </tr>
-                                ) : filteredBusinesses.map((biz) => {
-                                    const threat = biz.ai_threat_results?.[0];
-                                    const loss = biz.loss_audit_results?.[0];
-                                    return (
-                                        <tr key={biz.id} className="hover:bg-white/[0.02] transition-colors group">
-                                            <td className="px-8 py-6">
-                                                <div className="font-bold text-white group-hover:text-primary transition-colors">{biz.entity_name}</div>
-                                                <div className="text-[10px] text-white/30 font-medium uppercase tracking-tighter mt-1">{biz.location || 'Remote Node'}</div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="text-sm font-medium text-white/70">{biz.email || '—'}</div>
-                                                <div className="text-xs text-white/30">{biz.phone || '—'}</div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <span className="text-xs font-bold text-white/50 bg-white/5 px-3 py-1 rounded-full uppercase tracking-tighter">
-                                                    {biz.classification}
-                                                </span>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className={`text-xs font-black uppercase tracking-widest ${threat?.threat_level === 'KHATRA' ? 'text-alert-red' :
-                                                    threat?.threat_level === 'SAVDHAN' ? 'text-alert-orange' : 'text-primary'
-                                                    }`}>
-                                                    {threat?.threat_level || 'PENDING'}
-                                                </div>
-                                                <div className="text-[10px] text-white/20 mt-1 font-bold">SCORE: {threat?.score || '0'}</div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="text-sm font-bold text-white">₹{loss ? (loss.total_burn / 1000).toFixed(1) : '0'}K/mo</div>
-                                                <div className="w-16 h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
-                                                    <div className="h-full bg-primary" style={{ width: loss ? `${Math.min(100, (loss.total_burn / 500000) * 100)}%` : '0%' }}></div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <div className="text-xs font-mono text-white/40">{formatToIST(biz.created_at, { year: 'numeric', month: 'short', day: '2-digit' })}</div>
-                                                <div className="text-[10px] text-white/20 font-medium uppercase tracking-widest mt-1">{formatToIST(biz.created_at, { hour: '2-digit', minute: '2-digit', hour12: true })}</div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                )}
+                
+                <AdminBusinessDetailsModal 
+                    business={selectedBusiness}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
             </main>
         </div>
     );
