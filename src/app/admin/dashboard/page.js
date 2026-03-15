@@ -297,7 +297,7 @@ export default function AdminDashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 p-10">
+            <main className="flex-1 ml-64 p-6 lg:p-10">
                 {/* Header */}
                 <header className="flex items-center justify-between mb-12">
                     <div>
@@ -472,12 +472,12 @@ export default function AdminDashboard() {
                                     <>
                                         <thead>
                                             <tr className="text-[10px] uppercase font-black tracking-widest text-white/30 border-b border-white/5">
-                                                <th className="px-8 py-6">Target Entity</th>
-                                                <th className="px-8 py-6">Data Channel</th>
-                                                <th className="px-8 py-6">{activeTab === 'users' ? 'Status' : 'Classification'}</th>
-                                                <th className="px-8 py-6">{activeTab === 'users' ? 'Registration' : 'Threat Status'}</th>
-                                                <th className="px-8 py-6">{activeTab === 'users' ? 'Actions' : 'Operational Drain'}</th>
-                                                <th className="px-8 py-6 text-right">Commands</th>
+                                                <th className="px-6 py-6">Target Entity</th>
+                                                <th className="px-6 py-6 font-medium">Data Channel</th>
+                                                <th className="px-6 py-6">{activeTab === 'users' ? 'Status' : 'Classification'}</th>
+                                                <th className="px-6 py-6">{activeTab === 'users' ? 'Registration' : 'Threat Status'}</th>
+                                                <th className="px-6 py-6">{activeTab === 'users' ? 'Actions' : 'Op. Drain'}</th>
+                                                <th className="px-6 py-6 text-right">Commands</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/[0.03]">
@@ -498,15 +498,15 @@ export default function AdminDashboard() {
                                                 const loss = user.loss_audit_results?.[0];
                                                 return (
                                                     <tr key={user.id} className="hover:bg-white/[0.02] transition-colors group">
-                                                        <td className="px-8 py-6">
+                                                        <td className="px-6 py-6">
                                                             <div className="font-bold text-white group-hover:text-primary transition-colors">{user.entity_name}</div>
                                                             <div className="text-[10px] text-white/30 font-medium uppercase tracking-tighter mt-1">{user.location || 'Unknown Node'}</div>
                                                         </td>
-                                                        <td className="px-8 py-6">
+                                                        <td className="px-6 py-6">
                                                             <div className="text-sm font-medium text-white/70">{user.email || '—'}</div>
                                                             <div className="text-xs text-white/30">{user.phone || '—'}</div>
                                                         </td>
-                                                        <td className="px-8 py-6">
+                                                        <td className="px-6 py-6">
                                                             {activeTab === 'users' ? (
                                                                 <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border ${
                                                                     user.status === 'active' ? 'bg-primary/20 text-primary border-primary/20' :
@@ -521,7 +521,7 @@ export default function AdminDashboard() {
                                                                 </span>
                                                             )}
                                                         </td>
-                                                        <td className="px-8 py-6">
+                                                        <td className="px-6 py-6">
                                                             {activeTab === 'users' ? (
                                                                 <div className="text-xs font-mono text-white/40">{formatToIST(user.created_at, { dateStyle: 'medium' })}</div>
                                                             ) : (
@@ -535,9 +535,9 @@ export default function AdminDashboard() {
                                                                 </>
                                                             )}
                                                         </td>
-                                                        <td className="px-8 py-6">
+                                                        <td className="px-6 py-6">
                                                             {activeTab === 'users' ? (
-                                                                <div className="flex items-center gap-2">
+                                                                <div className="flex items-center gap-1">
                                                                     <button 
                                                                         onClick={() => handleToggleStatus(user.id, user.status)}
                                                                         className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/40 hover:text-white"
@@ -569,18 +569,18 @@ export default function AdminDashboard() {
                                                                 </>
                                                             )}
                                                         </td>
-                                                        <td className="px-8 py-6 text-right">
+                                                        <td className="px-6 py-6 text-right min-w-[160px]">
                                                             <div className="flex items-center justify-end gap-2">
                                                                 <button 
                                                                     onClick={() => handleOpenEmailModal(user)}
-                                                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-white/40 hover:text-white transition-all"
+                                                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-white/40 hover:text-white transition-all flex-shrink-0"
                                                                     title="Send Email"
                                                                 >
                                                                     <span className="material-symbols-outlined text-sm">mail</span>
                                                                 </button>
                                                                 <button 
                                                                     onClick={() => handleViewBusiness(user)}
-                                                                    className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
+                                                                    className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap"
                                                                 >
                                                                     Intelligence
                                                                 </button>
