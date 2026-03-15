@@ -212,7 +212,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                             CONFIDENTIAL BUSINESS INTELLIGENCE Report // ST-0422 // {new Date().getFullYear()}
                         </div>
                         <div className="flex flex-col gap-4">
-                            <img src="/logo.png" alt="MasterKey Labs" className="h-20 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
+                            <img src="/logo.png" alt="MasterKey Labs" className="h-40 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
                             <div className="px-4 py-1 bg-ios-cyan text-[10px] font-black uppercase tracking-widest text-black inline-block w-fit rounded-full">
                                 Verified Audit
                             </div>
@@ -250,7 +250,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <p className="text-sm text-white/30 tracking-[0.3em] uppercase mt-2">{ts.architectNote?.role || 'Founders, MasterKey Labs'}</p>
                                 </div>
                                 <div className="opacity-20 grayscale">
-                                    <img src="/logo.png" alt="Signature" className="h-12 w-auto filter invert" />
+                                    <img src="/logo.png" alt="Signature" className="h-24 w-auto filter invert" />
                                 </div>
                             </div>
                         </div>
@@ -266,9 +266,9 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                         
                         <h2 className="text-4xl font-black text-white/40 tracking-[0.3em] uppercase">{ts.annualBleed || 'TOTAL ANNUAL BLEED'}</h2>
                         
-                        <div className="relative py-10">
+                        <div className="relative py-10 w-full flex justify-center">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-500/5 blur-[120px] rounded-full"></div>
-                            <p className="text-[220px] font-black text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.1)] tracking-tighter leading-none relative z-10">
+                            <p className="text-[200px] font-black text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.1)] tracking-tight leading-none relative z-10 whitespace-nowrap">
                                 {formatIndian(totalAnnualBleed)}
                             </p>
                         </div>
@@ -323,7 +323,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="absolute top-0 left-0 w-2 h-full bg-purple-500 opacity-50"></div>
                                 <h4 className="text-xs font-black text-purple-400 tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
                                     <span className="w-8 h-[1px] bg-purple-500/30"></span>
-                                    02 // {ts.afterHoursBleed || 'Night Loss Decay'}
+                                    02 // {ts.afterHoursBleed || '24/7 Missed Income'}
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualNightLoss)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
@@ -336,7 +336,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="absolute top-0 left-0 w-2 h-full bg-ios-cyan opacity-50"></div>
                                 <h4 className="text-xs font-black text-ios-cyan tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
                                     <span className="w-8 h-[1px] bg-ios-cyan/30"></span>
-                                    03 // {ts.digitalInvisibility || 'Visibility Void'}
+                                    03 // {ts.digitalInvisibility || 'Low Online Presence'}
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualVisibilityLoss)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
@@ -352,7 +352,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="absolute top-0 left-0 w-2 h-full bg-red-500 opacity-50"></div>
                                 <h4 className="text-xs font-black text-red-500 tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
                                     <span className="w-8 h-[1px] bg-red-500/30"></span>
-                                    04 // {ts.aiThreatHorizon || 'Extinction Horizon'}
+                                    04 // {ts.aiThreatHorizon || 'AI Survival Time'}
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{extinctionHorizon} <span className="text-2xl text-white/30 font-medium">Months</span></p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
