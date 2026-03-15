@@ -131,6 +131,9 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
     const aiThreatData = aiThreat || {};
 
     const computedData = { lossAudit, nightLoss, missedCustomers, aiThreat };
+    
+    // Safely map translation sub-tree for the report
+    const ts = t?.dashboard?.auditSummary?.report || {};
 
     const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ₹${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
     const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`;
@@ -192,229 +195,239 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                 <div
                     ref={reportRef}
                     className="w-[1200px] bg-[#0a0a0d] p-16 space-y-20 flex flex-col items-center"
-                    style={{ background: '#0a0a0d', color: 'white' }}
+                    style={{ background: '#0a0a0d', color: 'white', fontFamily: 'Inter, sans-serif' }}
                 >
-                    {/* High-Fidelity PDF Header */}
-                    <div className="w-full flex justify-between items-end border-b border-white/10 pb-12 mb-12">
-                        <img src="/logo.png" alt="MasterKey Labs" className="h-20 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
+                    {/* Header: Confidential Watermark & Branding */}
+                    <div className="w-full flex justify-between items-start border-b border-white/10 pb-12 mb-12 relative">
+                        <div className="absolute top-[-40px] left-0 text-[10px] font-black tracking-[0.5em] text-white/10 uppercase">
+                            CONFIDENTIAL BUSINESS INTELLIGENCE Report // ST-0422 // {new Date().getFullYear()}
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <img src="/logo.png" alt="MasterKey Labs" className="h-20 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
+                            <div className="px-4 py-1 bg-ios-cyan text-[10px] font-black uppercase tracking-widest text-black inline-block w-fit rounded-full">
+                                Verified Audit
+                            </div>
+                        </div>
                         <div className="text-right">
-                            <h4 className="text-ios-cyan font-black tracking-widest uppercase text-xs mb-1">{t.dashboard.auditSummary.report.pdfHeader}</h4>
-                            <p className="text-3xl font-black text-white tracking-tighter uppercase">{businessName || 'Masterkey OS'}</p>
-                            <p className="text-white/40 text-sm mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
+                            <h4 className="text-ios-cyan font-black tracking-[0.3em] uppercase text-[10px] mb-2">Diagnostic Dispatch</h4>
+                            <p className="text-5xl font-black text-white tracking-tighter uppercase">{businessName || 'Your Business'}</p>
+                            <p className="text-white/40 text-lg mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
                         </div>
                     </div>
 
-                    {/* Section 1: Executive Summary */}
-                    <div className="text-center space-y-8 w-full">
-                        <div className="inline-block px-6 py-2 bg-red-500/10 border border-red-500/20 rounded-full mb-4">
-                            <span className="text-xs font-black tracking-[0.3em] text-red-500 uppercase">{t.dashboard.auditSummary.report.criticalBadge}</span>
-                        </div>
-                        <h1 className="text-7xl font-black text-white tracking-tighter uppercase leading-none" dangerouslySetInnerHTML={{ __html: t.dashboard.auditSummary.report.annualBleed }} />
-                        <p className="text-[160px] font-black text-amber-500 drop-shadow-[0_0_40px_rgba(245,158,11,0.4)] tracking-tighter leading-none py-10">
-                            {formatIndian(totalAnnualBleed)}
-                        </p>
-
-                        <div className="mt-12 p-8 bg-green-500/5 border border-green-500/20 rounded-3xl max-w-3xl mx-auto shadow-2xl">
-                            <p className="text-xs font-black text-green-500/50 uppercase tracking-[0.3em] mb-3">{t.dashboard.auditSummary.report.recoverablePotential || 'RECOVERABLE POTENTIAL'}</p>
-                            <p className="text-5xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)} / year</p>
-                            <p className="mt-4 text-lg text-green-400/80 italic font-medium">{t.dashboard.auditSummary.report.recoverableLegend}</p>
-                        </div>
-                    </div>
-
-                    {/* Section 2: The 4 Leakages */}
-                    <div className="w-full">
+                    {/* Section 1: The Executive Letter (Authority & Trust) */}
+                    <div className="w-full max-w-5xl bg-white/[0.02] border border-white/10 rounded-[60px] p-16 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-ios-blue/5 blur-[120px] rounded-full -z-10 translate-x-1/4 -translate-y-1/4"></div>
+                        
                         <div className="flex items-center gap-4 mb-10">
-                            <span className="w-2.5 h-10 bg-ios-cyan rounded-full shadow-[0_0_15px_rgba(0,210,255,0.5)]"></span>
-                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">{t.dashboard.auditSummary.report.telemetryTitle}</h3>
+                            <span className="w-10 h-[2px] bg-ios-cyan"></span>
+                            <h3 className="text-ios-cyan font-black tracking-[0.4em] text-sm uppercase">{ts.architectNote?.title || 'Note from the System Architect'}</h3>
                         </div>
-                        <div className="grid grid-cols-2 gap-10">
-                            <div className="p-10 bg-white/[0.03] border border-white/10 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6">{t.dashboard.auditSummary.report.opsFriction}</h4>
-                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualOpsWaste)}</p>
-                                <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    {t.dashboard.auditSummary.report.staffWaste.replace('{amount}', formatIndian(staffWaste * 12))}
-                                </p>
-                            </div>
 
-                            <div className="p-10 bg-white/[0.03] border border-purple-500/20 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-purple-400/60 uppercase tracking-[0.2em] mb-6">{t.dashboard.auditSummary.report.afterHoursBleed}</h4>
-                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualNightLoss)}</p>
-                                <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    {t.dashboard.auditSummary.report.nightLossDesc.replace('{amount}', formatIndian(annualNightLoss))}
-                                </p>
-                            </div>
-
-                            <div className="p-10 bg-white/[0.03] border border-ios-cyan/20 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-ios-cyan/60 uppercase tracking-[0.2em] mb-6">{t.dashboard.auditSummary.report.digitalInvisibility}</h4>
-                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{formatIndian(annualVisibilityLoss)}</p>
-                                <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    {t.dashboard.auditSummary.report.visibilityDesc.replace('{amount}', formatIndian(annualVisibilityLoss)).replace('{count}', missedCustomers)}
-                                </p>
-                            </div>
-
-                            <div className="p-10 bg-white/[0.03] border border-red-500/20 rounded-3xl shadow-xl">
-                                <h4 className="text-sm font-black text-red-500/60 uppercase tracking-[0.2em] mb-6">{t.dashboard.auditSummary.report.aiThreatHorizon}</h4>
-                                <p className="text-5xl font-black text-white mb-4 tracking-tighter">{extinctionHorizon} {t.dashboard.auditSummary.report.months || 'MO'}</p>
-                                <p className="text-lg text-white/50 leading-relaxed font-medium">
-                                    {t.dashboard.auditSummary.report.aiLossDesc.replace('{amount}', extinctionHorizon)}
-                                </p>
+                        <div className="space-y-10 text-2xl leading-relaxed text-white/70 font-medium">
+                            <p className="first-letter:text-5xl first-letter:font-black first-letter:text-white first-letter:mr-3 first-letter:float-left">
+                                {ts.architectNote?.p1 || 'Your current systems are working, but they are expensive.'}
+                            </p>
+                            <p>
+                                {ts.architectNote?.p2 || 'Every month, your operations "bleed" capital because of human friction and missed timing. This report mapping your vulnerabilities is the first step toward reclaiming that capital.'}
+                            </p>
+                            <p>
+                                {ts.architectNote?.p3 || 'Use this intelligence to protect your profit margins and prepare for the next leap in autonomous business efficiency.'}
+                            </p>
+                            
+                            <div className="pt-8 border-t border-white/5 flex justify-between items-end">
+                                <div>
+                                    <p className="text-white text-3xl font-black italic tracking-tighter">{ts.architectNote?.sign || 'MasterKey Labs OS'}</p>
+                                    <p className="text-sm text-white/30 tracking-[0.3em] uppercase mt-2">{ts.architectNote?.role || 'Founders, MasterKey Labs'}</p>
+                                </div>
+                                <div className="opacity-20 grayscale">
+                                    <img src="/logo.png" alt="Signature" className="h-12 w-auto filter invert" />
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Section 3: Coordination Drag (Conditional) */}
-                    {totalAnnualBleed > 1000000 && (
-                        <div className="w-full p-12 bg-amber-500/5 border border-amber-500/20 rounded-3xl relative overflow-hidden flex items-start gap-8 shadow-inner">
-                            <div className="absolute top-0 right-0 w-[400px] h-full bg-amber-500/5 blur-[100px] rounded-full"></div>
-                            <span className="material-symbols-outlined text-amber-500 text-6xl mt-1">warning</span>
-                            <div className="relative z-10">
-                                <h4 className="text-2xl font-black text-amber-500 uppercase tracking-widest mb-4">{t.dashboard.auditSummary.report.coordinationDragTitle}</h4>
-                                <p className="text-xl text-white/70 leading-relaxed font-medium">
-                                    {t.dashboard.auditSummary.report.coordinationDragDesc}
-                                </p>
-                            </div>
+                    {/* Section 2: Annual Money Loss (The "Ouch" Factor) */}
+                    <div className="text-center space-y-8 w-full py-16 px-12 bg-gradient-to-b from-white/[0.03] to-transparent rounded-[60px] border border-white/5 relative overflow-hidden">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent"></div>
+                        
+                        <div className="inline-flex items-center gap-2 px-8 py-3 bg-red-500/10 border border-red-500/30 rounded-full mb-4">
+                            <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.8)]"></span>
+                            <span className="text-sm font-black tracking-[0.4em] text-red-500 uppercase">{ts.criticalBadge || 'CRITICAL SYSTEM LEAK'}</span>
                         </div>
-                    )}
-
-                    {/* Section 4: The Survival Protocol */}
-                    <div className="w-full pb-20">
-                        <div className="flex items-center gap-4 mb-12">
-                            <span className="w-2.5 h-10 bg-green-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"></span>
-                            <h3 className="text-4xl font-black text-white uppercase tracking-widest">{t.dashboard.auditSummary.report.protocolTitle}</h3>
+                        
+                        <h2 className="text-4xl font-black text-white/40 tracking-[0.3em] uppercase">{ts.annualBleed || 'TOTAL ANNUAL BLEED'}</h2>
+                        
+                        <div className="relative py-10">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-500/5 blur-[120px] rounded-full"></div>
+                            <p className="text-[220px] font-black text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.1)] tracking-tighter leading-none relative z-10">
+                                <span className="text-7xl align-top mr-4 text-white/30 font-medium">₹</span>
+                                {formatIndian(totalAnnualBleed)}
+                            </p>
                         </div>
-                        <div className="relative pl-12">
-                            <div className="absolute left-[24px] top-[40px] bottom-[40px] w-1 bg-white/10"></div>
-                            <div className="space-y-16">
-                                <div className="flex gap-10">
-                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-green-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                                        <span className="text-black font-black text-lg">01</span>
-                                    </div>
-                                    <div className="pt-1">
-                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{t.dashboard.auditSummary.report.protocol01Title}</h4>
-                                        <p className="text-lg text-white/40 leading-relaxed font-medium">{t.dashboard.auditSummary.report.protocol01Desc}</p>
-                                    </div>
+
+                        <div className="max-w-4xl mx-auto grid grid-cols-1 gap-8">
+                            <div className="p-12 bg-gradient-to-br from-green-500/[0.08] to-transparent border border-green-500/20 rounded-[45px] shadow-2xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-6 opacity-20">
+                                    <span className="material-symbols-outlined text-green-500 text-7xl font-light">verified</span>
                                 </div>
-                                <div className="flex gap-10">
-                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-ios-cyan flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
-                                        <span className="text-black font-black text-lg">02</span>
+                                <div className="text-left relative z-10">
+                                    <p className="text-sm font-black text-green-500 tracking-[0.4em] mb-4 uppercase">PROTOCOL RECOVERY TARGET</p>
+                                    <div className="flex items-baseline gap-4">
+                                        <p className="text-7xl font-black text-green-400 tracking-tight">₹{formatIndian(recoverablePotential)}</p>
+                                        <p className="text-2xl text-green-500/40 font-bold uppercase tracking-widest">Yearly Gain</p>
                                     </div>
-                                    <div className="pt-1">
-                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{t.dashboard.auditSummary.report.protocol02Title}</h4>
-                                        <p className="text-lg text-white/40 leading-relaxed font-medium">{t.dashboard.auditSummary.report.protocol02Desc}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-10">
-                                    <div className="w-12 h-12 rounded-full bg-white border-2 border-purple-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                                        <span className="text-black font-black text-lg">03</span>
-                                    </div>
-                                    <div className="pt-1">
-                                        <h4 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{t.dashboard.auditSummary.report.protocol03Title}</h4>
-                                        <p className="text-lg text-white/40 leading-relaxed font-medium">{t.dashboard.auditSummary.report.protocol03Desc}</p>
-                                    </div>
+                                    <p className="mt-6 text-2xl text-green-400/70 font-medium leading-relaxed max-w-2xl">
+                                        {ts.recoverableLegend || 'A 50% efficiency recovery is immediately possible through Autonomous Orchestration.'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Section 5: Detailed Audit Telemetry */}
-                    {computedData && (
-                        <div className="w-full pb-10">
-                            <div className="flex items-center gap-4 mb-10 w-full border-b border-white/10 pb-6">
-                                <span className="w-2.5 h-10 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)]"></span>
-                                <h3 className="text-3xl font-black text-white uppercase tracking-widest">Raw System Diagnostics</h3>
+                    {/* Section 3: The 4 Leakages (Simplified & Professional) */}
+                    <div className="w-full pt-16">
+                        <div className="flex items-center justify-between mb-16 border-l-4 border-ios-cyan pl-8">
+                            <div>
+                                <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.telemetryTitle || 'Vulnerability Mapping'}</h3>
+                                <p className="text-white/40 text-xl mt-2 font-medium tracking-wide italic">Comprehensive Telemetry Analysis // V2.1</p>
+                            </div>
+                            <div className="text-right">
+                                <span className="text-ios-cyan font-black text-sm tracking-[0.5em] uppercase">Status: Critical</span>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-12">
+                            {/* Leakage 1 */}
+                            <div className="p-12 bg-white/[0.02] border border-white/10 rounded-[50px] relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-2 h-full bg-ios-blue opacity-50"></div>
+                                <h4 className="text-xs font-black text-ios-blue tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
+                                    <span className="w-8 h-[1px] bg-ios-blue/30"></span>
+                                    01 // {ts.opsFriction || 'Operational Waste'}
+                                </h4>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">₹{formatIndian(annualOpsWaste)}</p>
+                                <p className="text-xl text-white/50 leading-relaxed font-medium">
+                                    {ts.staffWaste || 'Capital lost to repetitive manual work and human coordination drag.'}
+                                </p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-8">
-                                {/* Module 1 Breakdown */}
-                                <div className="p-8 bg-[#111115] border border-white/10 rounded-2xl">
-                                    <h4 className="text-xs font-black text-white/50 uppercase tracking-widest mb-6">{t.dashboard.auditSummary.report.mod01Title}</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.staffPayroll}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(staffWaste)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.marketingBleed}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(marketingWaste)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.rawOps}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(lossAuditData.ops_overheads || 0)} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
-                                        </div>
-                                        <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-amber-500/80">{t.dashboard.auditSummary.report.coordinationDragApplied}</span>
-                                            <span className="text-lg font-bold text-amber-400 tracking-tight">{lossAuditData.coordination_drag || 0}x</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            {/* Leakage 2 */}
+                            <div className="p-12 bg-white/[0.02] border border-white/10 rounded-[50px] relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-2 h-full bg-purple-500 opacity-50"></div>
+                                <h4 className="text-xs font-black text-purple-400 tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
+                                    <span className="w-8 h-[1px] bg-purple-500/30"></span>
+                                    02 // {ts.afterHoursBleed || 'Night Loss Decay'}
+                                </h4>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">₹{formatIndian(annualNightLoss)}</p>
+                                <p className="text-xl text-white/50 leading-relaxed font-medium">
+                                    {ts.nightLossDesc || 'Revenue lost due to zero responsiveness during after-market hours.'}
+                                </p>
+                            </div>
 
-                                {/* Module 2 Breakdown */}
-                                <div className="p-8 bg-[#111115] border border-purple-500/20 rounded-2xl">
-                                    <h4 className="text-xs font-black text-purple-400/50 uppercase tracking-widest mb-6">{t.dashboard.auditSummary.report.mod02Title}</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.missedWeeklyInquiries}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{nightLossData.inquiries || 0}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.avgTxnVelocity}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{formatIndian(nightLossData.avg_transaction_value || 0)}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.estConversion}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{nightLossData.response_time === 'b2b' ? 20 : nightLossData.response_time === 'b2c' ? 25 : 23}%</span>
-                                        </div>
-                                        <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-purple-400/80">{t.dashboard.auditSummary.report.monthlyHemorrhage}</span>
-                                            <span className="text-lg font-bold text-purple-400 tracking-tight">{formatIndian(nightLossRevenue)}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            {/* Leakage 3 */}
+                            <div className="p-12 bg-white/[0.02] border border-white/10 rounded-[50px] relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-2 h-full bg-ios-cyan opacity-50"></div>
+                                <h4 className="text-xs font-black text-ios-cyan tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
+                                    <span className="w-8 h-[1px] bg-ios-cyan/30"></span>
+                                    03 // {ts.digitalInvisibility || 'Visibility Void'}
+                                </h4>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">₹{formatIndian(annualVisibilityLoss)}</p>
+                                <p className="text-xl text-white/50 leading-relaxed font-medium">
+                                    {ts.visibilityDesc || 'Market share lost to competitors with superior digital signal density.'}
+                                </p>
+                            </div>
 
-                                {/* Module 3 Breakdown */}
-                                <div className="p-8 bg-[#111115] border border-ios-cyan/20 rounded-2xl">
-                                    <h4 className="text-xs font-black text-ios-cyan/50 uppercase tracking-widest mb-6">{t.dashboard.auditSummary.report.mod03Title}</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.lostLocalSearches}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{visibilityData.missed_searches ? visibilityData.missed_searches.toLocaleString('en-IN') : 0} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.missedHighIntent}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{missedCustomers} <span className="text-[10px] text-white/30 tracking-widest">/mo</span></span>
-                                        </div>
-                                        <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-ios-cyan/80">{t.dashboard.auditSummary.report.visibilityScore}</span>
-                                            <span className="text-lg font-bold text-ios-cyan tracking-tight">{100 - (visibilityData.percent || 0)}%</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            {/* Leakage 4 */}
+                            <div className="p-12 bg-white/[0.02] border border-white/10 rounded-[50px] relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-2 h-full bg-red-500 opacity-50"></div>
+                                <h4 className="text-xs font-black text-red-500 tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
+                                    <span className="w-8 h-[1px] bg-red-500/30"></span>
+                                    04 // {ts.aiThreatHorizon || 'Extinction Horizon'}
+                                </h4>
+                                <p className="text-6xl font-black text-white mb-6 tracking-tighter">{extinctionHorizon} <span className="text-2xl text-white/30 font-medium">Months</span></p>
+                                <p className="text-xl text-white/50 leading-relaxed font-medium">
+                                    {ts.aiLossDesc || 'Estimated time remaining before current systems become legacy liabilities.'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                                {/* Module 4 Breakdown */}
-                                <div className="p-8 bg-[#111115] border border-red-500/20 rounded-2xl">
-                                    <h4 className="text-xs font-black text-red-500/50 uppercase tracking-widest mb-6">{t.dashboard.auditSummary.report.mod04Title}</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.threatThreshold}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight uppercase">{aiThreatData.threat_level || 'UNKNOWN'}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.survivalComplexity}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.score || 0}%</span>
-                                        </div>
-                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                                            <span className="text-sm font-medium text-white/60">{t.dashboard.auditSummary.report.calculatedTTL}</span>
-                                            <span className="text-lg font-bold text-white tracking-tight">{aiThreatData.final_horizon || (aiThreatData.years_left ? Math.round(aiThreatData.years_left * 12) : 0)} <span className="text-[10px] text-white/30 tracking-widest">{t.dashboard.auditSummary.report.months || 'MONTHS'}</span></span>
-                                        </div>
-                                        <div className="flex justify-between items-center pt-2">
-                                            <span className="text-sm font-medium text-red-400/80">{t.dashboard.auditSummary.report.extinctionDeadline}</span>
-                                            <span className="text-[11px] font-black tracking-[0.2em] text-red-500 uppercase">{aiThreatData.score > 70 ? (t.dashboard.auditSummary.report.criticalEvasion || 'CRITICAL EVASION REQ.') : (t.dashboard.auditSummary.report.monitoring || 'MONITORING')}</span>
-                                        </div>
-                                    </div>
+                    {/* Section 4: The Survival Protocol Roadmap (New) */}
+                    <div className="w-full pt-16">
+                        <div className="flex items-center gap-6 mb-16">
+                            <div className="w-16 h-16 rounded-2xl bg-ios-cyan flex items-center justify-center">
+                                <span className="material-symbols-outlined text-black text-3xl font-black">architecture</span>
+                            </div>
+                            <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.protocolTitle || 'Survival Protocol Roadmap'}</h3>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="flex gap-10">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-10 h-10 rounded-full bg-ios-cyan text-black flex items-center justify-center font-black text-lg">1</div>
+                                    <div className="w-[2px] h-full bg-white/10 mt-4"></div>
+                                </div>
+                                <div className="pb-12">
+                                    <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-wide">{ts.protocol01Title || 'Consolidation & Infrastructure'}</h4>
+                                    <p className="text-xl text-white/40 leading-relaxed max-w-4xl font-medium">
+                                        {ts.protocol01Desc || 'Map current fragmented data silos and deploy a singular technical hub to eliminate coordination drag.'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-10">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-10 h-10 rounded-full border-2 border-ios-cyan text-ios-cyan flex items-center justify-center font-black text-lg">2</div>
+                                    <div className="w-[2px] h-full bg-white/10 mt-4"></div>
+                                </div>
+                                <div className="pb-12">
+                                    <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-wide">{ts.protocol02Title || 'Autonomous Deployment'}</h4>
+                                    <p className="text-xl text-white/40 leading-relaxed max-w-4xl font-medium">
+                                        {ts.protocol02Desc || 'Automate high-friction tasks (Customer Support, Leads, Ops) using dedicated AI agents to reclaim capital.'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-10">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-10 h-10 rounded-full border-2 border-white/20 text-white/40 flex items-center justify-center font-black text-lg">3</div>
+                                </div>
+                                <div>
+                                    <h4 className="text-2xl font-black text-white/40 mb-3 uppercase tracking-wide">{ts.protocol03Title || 'Scale & Market Dominance'}</h4>
+                                    <p className="text-xl text-white/20 leading-relaxed max-w-4xl font-medium">
+                                        {ts.protocol03Desc || 'Ramp-up visibility signals and dominate local search volume through programmatic SEO and 24/7 responsiveness.'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
+
+                    {/* Section 5: Call to Action (The Hook) */}
+                    <div className="w-full bg-gradient-to-br from-[#007AFF] to-[#5856D6] p-24 rounded-[70px] text-center space-y-10 mt-16 shadow-[0_40px_100px_-20px_rgba(0,122,255,0.4)] relative overflow-hidden border border-white/20">
+                        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+                        <h2 className="text-7xl font-black text-white tracking-widest uppercase leading-[1.1] relative z-10">
+                            {ts.cta?.title || 'STOP THE BLEED'}
+                        </h2>
+                        <p className="text-3xl text-white/80 font-medium max-w-4xl mx-auto leading-relaxed relative z-10">
+                            {ts.cta?.sub || 'Don\'t deal with these losses alone. Map your custom transformation path today.'}
+                        </p>
+                        <div className="pt-12 flex flex-col items-center gap-8 relative z-10">
+                            <a 
+                                href={waLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-20 py-8 bg-white text-black rounded-[30px] text-3xl font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-transform inline-block"
+                            >
+                                {ts.cta?.btn || 'Book Review'}
+                            </a>
+                            <p className="text-white/60 text-lg tracking-[0.4em] font-black uppercase">{ts.cta?.footer || 'CONFIRM YOUR SLOT AT MASTERKEYLABS.AI'}</p>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="w-full flex justify-between items-center text-white/20 text-[10px] font-black tracking-widest uppercase pt-10">
+                        <span>MasterKey intelligence protocol v2.0</span>
+                        <span>CONFIDENTIAL - FOR AUTHORIZED USE ONLY</span>
+                    </div>
                 </div>
             </div>
 
