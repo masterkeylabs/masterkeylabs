@@ -213,7 +213,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                             <span className="material-symbols-outlined text-4xl text-ios-blue animate-pulse">lock_open</span>
                         </div>
                         <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-[0.3em] font-sans">
-                            Checkup <span className="text-ios-cyan">Complete</span>
+                            Complete <span className="text-ios-cyan">Checkup</span>
                         </h2>
                         <p className="text-white/40 text-sm mb-8 leading-relaxed">
                             {t.dashboard.auditSummary.lockedSub}

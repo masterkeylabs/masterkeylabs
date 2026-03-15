@@ -132,7 +132,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                     </span>
                     <div className="space-y-1">
                         <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-[0.3em] font-sans">
-                            Checkup <span className="text-ios-cyan">Complete</span>
+                            Complete <span className="text-ios-cyan">Checkup</span>
                         </h2>
                         <div className="w-32 h-1 bg-white/10 mx-auto rounded-full overflow-hidden">
                             <div className="h-full bg-ios-cyan animate-shimmer scale-x-150"></div>
