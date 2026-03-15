@@ -1776,7 +1776,7 @@ export const translations = {
             priorityAction: "🚨 IMMEDIATE ACTION REQUIRED",
             optimizationAction: "💡 OPTIMIZATION REQUIRED",
             searchSteps: [
-                "INITIALIZING NEURAL ENGINE...",
+                "NASSCOM displacement data sync ho raha hai...",
                 "SCANNING DISPLACEMENT DATABASES...",
                 "MATCHING GOLDMAN SACHS (2023) PROJECTIONS...",
                 "CALCULATING AUTOMATION HORIZON...",
