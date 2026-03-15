@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 
 import AdminBusinessDetailsModal from '@/components/admin/AdminBusinessDetailsModal';
+import AdminEmailModal from '@/components/admin/AdminEmailModal';
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -23,6 +24,11 @@ export default function AdminDashboard() {
     const [mounted, setMounted] = useState(false);
     const [selectedBusiness, setSelectedBusiness] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    // User management state
+    const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
     const COLORS = ['#00e5ff', '#ff3d00', '#ffd600', '#00e676', '#d500f9', '#3d5afe', '#ff9100'];
 
@@ -100,11 +106,73 @@ export default function AdminDashboard() {
                 });
                 setBookings(enrichedBookings);
             }
+
+            // Fetch users from our new API
+            const userRes = await fetch('/api/admin/users');
+            const userData = await userRes.json();
+            if (userData.success) {
+                setUsers(userData.users);
+            }
+
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleToggleStatus = async (userId, currentStatus) => {
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, updates: { status: newStatus } })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setBusinesses(prev => prev.map(b => b.id === userId ? { ...b, status: newStatus } : b));
+                setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+            }
+        } catch (error) {
+            console.error('Status Toggle Error:', error);
+        }
+    };
+
+    const handleBlockUser = async (userId) => {
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, updates: { status: 'blocked' } })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setBusinesses(prev => prev.map(b => b.id === userId ? { ...b, status: 'blocked' } : b));
+                setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: 'blocked' } : u));
+            }
+        } catch (error) {
+            console.error('Block User Error:', error);
+        }
+    };
+
+    const handleDeleteUser = async (userId) => {
+        if (!confirm('Are you sure you want to PERMANENTLY delete this user? This cannot be undone.')) return;
+        try {
+            const res = await fetch(`/api/admin/users?userId=${userId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                setBusinesses(prev => prev.filter(b => b.id !== userId));
+                setUsers(prev => prev.filter(u => u.id !== userId));
+            }
+        } catch (error) {
+            console.error('Delete User Error:', error);
+        }
+    };
+
+    const handleOpenEmailModal = (user) => {
+        setSelectedUser(user);
+        setIsEmailModalOpen(true);
     };
 
     // --- Analytics Transformations ---
@@ -162,6 +230,11 @@ export default function AdminDashboard() {
         b.business_email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const filteredUsers = (activeTab === 'users' ? users : businesses).filter(u =>
+        u.entity_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="min-h-screen bg-[#020617] text-white flex font-sans selection:bg-primary/30">
             {/* Sidebar */}
@@ -192,6 +265,13 @@ export default function AdminDashboard() {
                     >
                         <span className="material-symbols-outlined text-sm">calendar_month</span>
                         <span className="text-sm font-bold tracking-tight">Architecture Bookings</span>
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('users')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'users' ? 'bg-primary/10 text-primary border border-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <span className="material-symbols-outlined text-sm">group</span>
+                        <span className="text-sm font-bold tracking-tight">Personnel registry</span>
                     </button>
                     
                     <div className="pt-4 pb-2 px-4">
@@ -224,12 +304,14 @@ export default function AdminDashboard() {
                         <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">
                             {activeTab === 'overview' ? 'Intelligence Hub' : 
                              activeTab === 'businesses' ? 'Business Registry' : 
-                             'Review Operations'}
+                             activeTab === 'bookings' ? 'Review Operations' :
+                             'Personnel Command'}
                         </h1>
                         <p className="text-white/40 font-medium tracking-wide">
                             {activeTab === 'overview' ? 'Real-time tracking of all business diagnostics & market threats.' : 
                              activeTab === 'businesses' ? 'Full operational over-ride of registered entities.' : 
-                             'Monitoring and optimizing architectural sessions.'}
+                             activeTab === 'bookings' ? 'Monitoring and optimizing architectural sessions.' :
+                             'Direct control and communication with system operators.'}
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -361,14 +443,16 @@ export default function AdminDashboard() {
                     </>
                 )}
 
-                {(activeTab === 'businesses' || activeTab === 'bookings') && (
+                {(activeTab === 'businesses' || activeTab === 'bookings' || activeTab === 'users') && (
                     <div className="glass rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
                         <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                             <h3 className="text-xl font-bold tracking-tight flex items-center gap-3">
                                 <span className="material-symbols-outlined text-primary">
-                                    {activeTab === 'businesses' ? 'storage' : 'event_note'}
+                                    {activeTab === 'businesses' ? 'storage' : 
+                                     activeTab === 'bookings' ? 'event_note' : 'group'}
                                 </span>
-                                {activeTab === 'businesses' ? 'Entity Registry' : 'Session Requests'}
+                                {activeTab === 'businesses' ? 'Entity Registry' : 
+                                 activeTab === 'bookings' ? 'Session Requests' : 'Operator Database'}
                             </h3>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-white/20 text-sm">search</span>
@@ -384,16 +468,16 @@ export default function AdminDashboard() {
 
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
-                                {activeTab === 'businesses' ? (
+                                {activeTab === 'businesses' || activeTab === 'users' ? (
                                     <>
                                         <thead>
                                             <tr className="text-[10px] uppercase font-black tracking-widest text-white/30 border-b border-white/5">
                                                 <th className="px-8 py-6">Target Entity</th>
                                                 <th className="px-8 py-6">Data Channel</th>
-                                                <th className="px-8 py-6">Classification</th>
-                                                <th className="px-8 py-6">Threat Status</th>
-                                                <th className="px-8 py-6">Operational Drain</th>
-                                                <th className="px-8 py-6 text-right">Actions</th>
+                                                <th className="px-8 py-6">{activeTab === 'users' ? 'Status' : 'Classification'}</th>
+                                                <th className="px-8 py-6">{activeTab === 'users' ? 'Registration' : 'Threat Status'}</th>
+                                                <th className="px-8 py-6">{activeTab === 'users' ? 'Actions' : 'Operational Drain'}</th>
+                                                <th className="px-8 py-6 text-right">Commands</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/[0.03]">
@@ -403,51 +487,104 @@ export default function AdminDashboard() {
                                                         Accessing Registry...
                                                     </td>
                                                 </tr>
-                                            ) : filteredBusinesses.length === 0 ? (
+                                            ) : filteredUsers.length === 0 ? (
                                                 <tr>
                                                     <td colSpan="6" className="px-8 py-20 text-center text-white/20 uppercase tracking-widest text-xs font-bold">
                                                         No active signals detected.
                                                     </td>
                                                 </tr>
-                                            ) : filteredBusinesses.map((biz) => {
-                                                const threat = biz.ai_threat_results?.[0];
-                                                const loss = biz.loss_audit_results?.[0];
+                                            ) : filteredUsers.map((user) => {
+                                                const threat = user.ai_threat_results?.[0];
+                                                const loss = user.loss_audit_results?.[0];
                                                 return (
-                                                    <tr key={biz.id} className="hover:bg-white/[0.02] transition-colors group">
+                                                    <tr key={user.id} className="hover:bg-white/[0.02] transition-colors group">
                                                         <td className="px-8 py-6">
-                                                            <div className="font-bold text-white group-hover:text-primary transition-colors">{biz.entity_name}</div>
-                                                            <div className="text-[10px] text-white/30 font-medium uppercase tracking-tighter mt-1">{biz.location || 'Unknown Node'}</div>
+                                                            <div className="font-bold text-white group-hover:text-primary transition-colors">{user.entity_name}</div>
+                                                            <div className="text-[10px] text-white/30 font-medium uppercase tracking-tighter mt-1">{user.location || 'Unknown Node'}</div>
                                                         </td>
                                                         <td className="px-8 py-6">
-                                                            <div className="text-sm font-medium text-white/70">{biz.email || '—'}</div>
-                                                            <div className="text-xs text-white/30">{biz.phone || '—'}</div>
+                                                            <div className="text-sm font-medium text-white/70">{user.email || '—'}</div>
+                                                            <div className="text-xs text-white/30">{user.phone || '—'}</div>
                                                         </td>
                                                         <td className="px-8 py-6">
-                                                            <span className="text-[10px] font-black text-white/40 bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest border border-white/5">
-                                                                {biz.classification?.replace('_', ' ')}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-8 py-6">
-                                                            <div className={`text-xs font-black uppercase tracking-widest ${threat?.threat_level === 'KHATRA' ? 'text-alert-red' :
-                                                                threat?.threat_level === 'SAVDHAN' ? 'text-alert-orange' : 'text-primary'
+                                                            {activeTab === 'users' ? (
+                                                                <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border ${
+                                                                    user.status === 'active' ? 'bg-primary/20 text-primary border-primary/20' :
+                                                                    user.status === 'blocked' ? 'bg-alert-red/20 text-alert-red border-alert-red/20' :
+                                                                    'bg-white/5 text-white/40 border-white/10'
                                                                 }`}>
-                                                                {threat?.threat_level || 'PENDING'}
-                                                            </div>
-                                                            <div className="text-[10px] text-white/20 mt-1 font-bold tracking-widest uppercase">Score: {threat?.score || '0'}</div>
+                                                                    {user.status || 'active'}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[10px] font-black text-white/40 bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest border border-white/5">
+                                                                    {user.classification?.replace('_', ' ')}
+                                                                </span>
+                                                            )}
                                                         </td>
                                                         <td className="px-8 py-6">
-                                                            <div className="text-sm font-bold text-white">{formatCurrency(loss?.total_burn)}/mo</div>
-                                                            <div className="w-16 h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
-                                                                <div className="h-full bg-primary" style={{ width: loss ? `${Math.min(100, (loss.total_burn / 500000) * 100)}%` : '0%' }}></div>
-                                                            </div>
+                                                            {activeTab === 'users' ? (
+                                                                <div className="text-xs font-mono text-white/40">{formatToIST(user.created_at, { dateStyle: 'medium' })}</div>
+                                                            ) : (
+                                                                <>
+                                                                    <div className={`text-xs font-black uppercase tracking-widest ${threat?.threat_level === 'KHATRA' ? 'text-alert-red' :
+                                                                        threat?.threat_level === 'SAVDHAN' ? 'text-alert-orange' : 'text-primary'
+                                                                        }`}>
+                                                                        {threat?.threat_level || 'PENDING'}
+                                                                    </div>
+                                                                    <div className="text-[10px] text-white/20 mt-1 font-bold tracking-widest uppercase">Score: {threat?.score || '0'}</div>
+                                                                </>
+                                                            )}
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            {activeTab === 'users' ? (
+                                                                <div className="flex items-center gap-2">
+                                                                    <button 
+                                                                        onClick={() => handleToggleStatus(user.id, user.status)}
+                                                                        className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/40 hover:text-white"
+                                                                        title={user.status === 'active' ? 'Deactivate' : 'Activate'}
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-sm">{user.status === 'active' ? 'pause' : 'play_arrow'}</span>
+                                                                    </button>
+                                                                    <button 
+                                                                        onClick={() => handleBlockUser(user.id)}
+                                                                        className="p-2 hover:bg-alert-red/10 rounded-lg transition-colors text-white/40 hover:text-alert-red"
+                                                                        title="Block User"
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-sm">block</span>
+                                                                    </button>
+                                                                    <button 
+                                                                        onClick={() => handleDeleteUser(user.id)}
+                                                                        className="p-2 hover:bg-alert-red/10 rounded-lg transition-colors text-white/40 hover:text-alert-red"
+                                                                        title="Delete User"
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-sm">delete</span>
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <div className="text-sm font-bold text-white">{formatCurrency(loss?.total_burn)}/mo</div>
+                                                                    <div className="w-16 h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
+                                                                        <div className="h-full bg-primary" style={{ width: loss ? `${Math.min(100, (loss.total_burn / 500000) * 100)}%` : '0%' }}></div>
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                         </td>
                                                         <td className="px-8 py-6 text-right">
-                                                            <button 
-                                                                onClick={() => handleViewBusiness(biz)}
-                                                                className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all"
-                                                            >
-                                                                View Report
-                                                            </button>
+                                                            <div className="flex items-center justify-end gap-2">
+                                                                <button 
+                                                                    onClick={() => handleOpenEmailModal(user)}
+                                                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-white/40 hover:text-white transition-all"
+                                                                    title="Send Email"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-sm">mail</span>
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => handleViewBusiness(user)}
+                                                                    className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+                                                                >
+                                                                    Intelligence
+                                                                </button>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 );
@@ -514,6 +651,12 @@ export default function AdminDashboard() {
                     business={selectedBusiness}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                />
+
+                <AdminEmailModal 
+                    user={selectedUser}
+                    isOpen={isEmailModalOpen}
+                    onClose={() => setIsEmailModalOpen(false)}
                 />
             </main>
         </div>
