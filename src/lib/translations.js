@@ -621,6 +621,12 @@ export const translations = {
                 sub: "Submit your business details on the landing page to see your AI threat assessment."
             },
             auditSummary: {
+                header: {
+                    log: "Profit Leak Log",
+                    overview: "AI Survival Report",
+                    exportBtn: "Export Intelligence Report",
+                    exporting: "Analyzing Systems..."
+                },
                 lockedTitle: "Aggregate Intelligence Locked",
                 lockedSub: "Initialize and complete all four diagnostic protocols to unlock your consolidated survival score.",
                 bleedCard: {

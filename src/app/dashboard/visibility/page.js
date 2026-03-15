@@ -176,7 +176,7 @@ function VisibilityContent() {
                 <div className="bg-carbon border border-white/10 rounded-xl p-5 md:p-8">
                     <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
                         <span className="material-symbols-outlined text-primary">checklist</span>
-                        {t.dashboard.auditSummary.header.log}
+                        {t?.dashboard?.auditSummary?.header?.log || 'DASHBOARD LOG'}
                     </h3>
                     <p className="text-white/40 text-xs mb-6">{t.visibility.formHeader}</p>
 
