@@ -29,7 +29,7 @@ export default function FloatingWhatsApp() {
     if (!isVisible) return null;
 
     // Use actual phone number and encode the text properly
-    const whatsappUrl = `https://wa.me/919920808365?text=${encodeURIComponent('Hi! I am on the MasterKey Labs website and would like to discuss my business growth.')}`;
+    const whatsappUrl = `https://wa.me/919179009007?text=${encodeURIComponent('Hi! I am on the MasterKey Labs website and would like to discuss my business growth.')}`;
 
     return (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] animate-fade-in-up md:left-auto md:right-8 md:translate-x-0">

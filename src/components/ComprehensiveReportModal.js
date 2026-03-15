@@ -136,7 +136,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
     const ts = t?.dashboard?.auditSummary?.report || {};
 
     const waMessage = `Hi Masterkey Labs, I just generated my Comprehensive Audit Report. My Total Annual Bleed is ${formatIndian(totalAnnualBleed)}. I need to deploy the Survival Protocol and fix my operations.`;
-    const waLink = `https://wa.me/919920808365?text=${encodeURIComponent(waMessage)}`;
+    const waLink = `https://wa.me/919179009007?text=${encodeURIComponent(waMessage)}`;
 
     const replacePlaceholders = (str, data = {}) => {
         if (!str) return '';
