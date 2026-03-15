@@ -172,7 +172,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                     <div className="absolute bottom-0 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-ios-orange/5 blur-[120px] rounded-full opacity-40"></div>
                 </div>
 
-                <div className={`max-w-7xl mx-auto relative z-10 transition-all duration-700 ${(profileIncomplete || auditsIncomplete) ? 'blur-sm grayscale pointer-events-none opacity-50' : ''}`}>
+                <div className={`max-w-7xl mx-auto relative z-10 transition-all duration-700 ${profileIncomplete ? 'blur-sm grayscale pointer-events-none opacity-50' : ''}`}>
                     <DashboardHeader
                         companyName={business?.entity_name || t.header.command}
                         lang={lang}
@@ -227,8 +227,8 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                 </div>
             </main>
 
-            {/* Profile Wizard shows if profile incomplete. Audit Wizard shows if explicitly triggered or audits are incomplete (but profile IS complete) */}
-            {(profileIncomplete || auditsIncomplete || showAuditWizard) && (
+            {/* Profile Wizard shows if profile incomplete. Audit Wizard shows if explicitly triggered. */}
+            {(profileIncomplete || showAuditWizard) && (
                 <DashboardIntakeWizard
                     business={business}
                     existingData={computedData}
