@@ -159,7 +159,7 @@ export default function SignupPage() {
         setError(null);
         try {
             const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: `${window.location.origin}/auth/reset-password`,
+                redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
             });
             if (resetErr) throw resetErr;
             setError(
