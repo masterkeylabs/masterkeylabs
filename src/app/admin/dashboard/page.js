@@ -580,7 +580,7 @@ export default function AdminDashboard() {
                                                                 </button>
                                                                 <button 
                                                                     onClick={() => handleViewBusiness(user)}
-                                                                    className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+                                                                    className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
                                                                 >
                                                                     Intelligence
                                                                 </button>
