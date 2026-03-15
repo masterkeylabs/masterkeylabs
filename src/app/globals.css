@@ -57,90 +57,67 @@ body {
 
 /* Text color overrides for light mode */
 [data-theme="light"] .text-white {
-  color: #0D1117 !important;
+  color: #111827 !important; /* Dark text for primary text */
 }
 
-[data-theme="light"] .text-white\/40 {
-  color: rgba(13, 17, 23, 0.5) !important;
-}
-
-[data-theme="light"] .text-white\/30 {
-  color: rgba(13, 17, 23, 0.4) !important;
-}
-
-[data-theme="light"] .text-white\/20 {
-  color: rgba(13, 17, 23, 0.3) !important;
-}
-
-[data-theme="light"] .text-white\/60 {
-  color: rgba(13, 17, 23, 0.7) !important;
-}
-
-[data-theme="light"] .text-white\/90 {
-  color: rgba(13, 17, 23, 0.9) !important;
-}
-
-[data-theme="light"] .text-white\/10 {
-  color: rgba(13, 17, 23, 0.2) !important;
+[data-theme="light"] [class*="text-white/"] {
+  color: #6b7280 !important; /* Slightly dark gray that works well and stays visible */
 }
 
 [data-theme="light"] .text-slate-100 {
-  color: #0D1117 !important;
+  color: #111827 !important;
 }
 
 [data-theme="light"] .text-slate-300 {
-  color: #334155 !important;
+  color: #374151 !important;
 }
 
 /* Border overrides */
 [data-theme="light"] .border-white\/5,
 [data-theme="light"] .border-white\/10,
-[data-theme="light"] .border-white\/\[0\.08\] {
+[data-theme="light"] .border-white\/\[0\.08\],
+[data-theme="light"] [class*="border-white/"] {
   border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Glass / Surface card overrides */
 [data-theme="light"] .glass {
-  background: rgba(255, 255, 255, 0.75) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 [data-theme="light"] .glass-premium {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 244, 248, 0.8) 100%) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 244, 248, 0.9) 100%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
 [data-theme="light"] .system-card {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
 }
 
-/* white/5 bg panels */
-[data-theme="light"] .bg-white\/\[0\.02\],
-[data-theme="light"] .bg-white\/\[0\.03\],
-[data-theme="light"] .bg-white\/\[0\.04\],
-[data-theme="light"] .bg-white\/5,
-[data-theme="light"] .bg-white\/10 {
-  background-color: rgba(255, 255, 255, 0.7) !important;
+/* Base surface background overrides */
+[data-theme="light"] [class*="bg-white/"] {
+  background-color: rgba(0, 0, 0, 0.04) !important; /* Slightly dark panels that contrast against white */
 }
 
 /* Input overrides */
 [data-theme="light"] .ios-input {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(0, 0, 0, 0.03) !important;
   border: 1px solid rgba(0, 0, 0, 0.15) !important;
-  color: #0D1117 !important;
+  color: #111827 !important;
 }
 
 [data-theme="light"] .ios-input::placeholder {
-  color: rgba(13, 17, 23, 0.4) !important;
+  color: #6b7280 !important;
 }
 
 /* Sidebar */
 [data-theme="light"] aside,
 [data-theme="light"] .sidebar-dark {
-  background: #FFFFFF !important;
+  background: #F8FAFC !important;
   border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
