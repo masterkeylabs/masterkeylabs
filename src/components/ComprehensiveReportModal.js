@@ -366,7 +366,10 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                     <div className="w-full pt-16">
                         <div className="flex items-center gap-6 mb-16">
                             <div className="w-16 h-16 rounded-2xl bg-ios-cyan flex items-center justify-center">
-                                <span className="material-symbols-outlined text-black text-3xl font-black">architecture</span>
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 3L4 9V21H20V9L12 3ZM12 7.7L18.1 12.3V19.1H5.9V12.3L12 7.7Z" fill="black"/>
+                                    <path d="M9 14.5H15V16H9V14.5Z" fill="black"/>
+                                </svg>
                             </div>
                             <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.protocolTitle || 'Survival Protocol Roadmap'}</h3>
                         </div>
