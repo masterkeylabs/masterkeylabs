@@ -89,12 +89,33 @@ export default function SignupPage() {
             });
             if (loginError) {
                 setError(
-                    <div className="space-y-2">
-                        <p className="font-bold">System Access Conflict</p>
-                        <p className="text-xs opacity-60">This email is recognized by the system but the password doesn't match, or the account is locked.</p>
-                        <div className="flex flex-col gap-2 mt-4">
-                            <Link href="/login" className="text-ios-blue underline font-bold uppercase text-[10px]">1. Go to Login Terminal</Link>
-                            <Link href="/login" className="text-ios-orange underline font-bold uppercase text-[10px]">2. Reset Forgotten Password</Link>
+                    <div className="space-y-4 text-left">
+                        <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-xl">
+                            <p className="font-black text-ios-orange uppercase tracking-tighter text-sm mb-1">Authorization Conflict</p>
+                            <p className="text-[10px] leading-relaxed opacity-80">
+                                Email <span className="text-white font-bold">{email.trim()}</span> is already in our authentication system, but we couldn't log you in automatically.
+                            </p>
+                        </div>
+                        
+                        <div className="space-y-3">
+                            <p className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Recommended Actions:</p>
+                            <div className="flex flex-col gap-3">
+                                <Link href="/login" className="ios-button-primary bg-ios-blue/20 text-ios-blue text-[10px] py-3 flex items-center justify-center border border-ios-blue/30">
+                                    1. Try Manual Login
+                                </Link>
+                                <button 
+                                    onClick={() => handleForgotPassword()}
+                                    className="ios-button-primary bg-ios-orange/20 text-ios-orange text-[10px] py-3 flex items-center justify-center border border-ios-orange/30"
+                                >
+                                    2. Reset Forgotten Password
+                                </button>
+                                <button 
+                                    onClick={() => window.location.reload()}
+                                    className="text-[9px] text-white/30 uppercase font-black underline underline-offset-4 hover:text-white transition-all py-2"
+                                >
+                                    3. Refresh System Terminal
+                                </button>
+                            </div>
                         </div>
                     </div>
                 );
@@ -126,6 +147,32 @@ export default function SignupPage() {
         } catch (err) {
             setError(err.message);
             setLoading(false);
+        }
+    };
+
+    const handleForgotPassword = async () => {
+        if (!email) {
+            setError(<span className="text-ios-orange">Please ensure the email field is filled to reset authorization.</span>);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const { error: resetErr } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                redirectTo: `${window.location.origin}/auth/reset-password`,
+            });
+            if (resetErr) throw resetErr;
+            setError(
+                <div className="bg-ios-blue/10 border border-ios-blue/20 p-4 rounded-xl text-ios-blue">
+                    <p className="font-bold uppercase text-[10px]">Recovery Protocol Initiated</p>
+                    <p className="text-[9px]">Check your inbox for the access reset link.</p>
+                </div>
+            );
+        } catch (err) {
+            setError(`Recovery Fault: ${err.message}`);
+        } finally {
+            setLoading(false);
+            setIsSubmitting(false);
         }
     };
 

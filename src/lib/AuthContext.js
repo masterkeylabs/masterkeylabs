@@ -195,8 +195,40 @@ export const AuthProvider = ({ children }) => {
                     localStorage.setItem('masterkey_business_id', profile.id);
                 }
             } else {
-                console.log('--- AuthProvider: Result - No business profile exists for this session. ---');
-                setBusiness(null);
+                console.warn('--- AuthProvider: GHOST USER DETECTED ---', userObj.email);
+                console.log('--- AuthProvider: Launching AUTO-REPAIR sequence ---');
+                
+                // --- AUTO-REPAIR: Create hollow business profile if Auth exists but DB doesn't ---
+                const repairPayload = {
+                    entity_name: 'Initialize System',
+                    owner_name: userObj.user_metadata?.full_name || userObj.email.split('@')[0],
+                    email: userObj.email,
+                    user_id: userObj.id,
+                    classification: 'auto_repair_recovery_v2',
+                    vertical: 'retail',
+                    annual_revenue: 0,
+                    employee_count: 0
+                };
+
+                const { data: repairedBiz, error: repairError } = await supabase.rpc('initialize_business_profile', {
+                    p_payload: repairPayload,
+                    p_active_id: null
+                });
+
+                if (repairError) {
+                    console.error('--- AuthProvider: Auto-Repair Failed ---', repairError);
+                    setBusiness(null);
+                } else {
+                    console.log('--- AuthProvider: Auto-Repair SUCCESS ---', repairedBiz);
+                    // The RPC returns the ID or the object. Let's fetch it one last time to be sure we have the full row.
+                    const { data: finalRecord } = await supabase
+                        .from('businesses')
+                        .select('*')
+                        .eq('id', repairedBiz?.id || repairedBiz)
+                        .single();
+                    
+                    if (finalRecord) setBusiness(finalRecord);
+                }
             }
         } catch (err) {
             console.error('--- AuthProvider: UNHANDLED LOOKUP EXCEPTION ---', err);
