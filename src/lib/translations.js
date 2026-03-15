@@ -697,8 +697,8 @@ export const translations = {
                     },
                     cta: {
                         title: "WANT TO STOP THE BLEED?",
-                        sub: "Don't fight this alone. Your problems are unique, and your solution should be too. Book a free architecture review with our team.",
-                        btn: "Book Your Free Review",
+                        sub: "Don't fight this alone. Your problems are unique, and your solution should be too. Book an architecture review with our team.",
+                        btn: "Book Your Review",
                         footer: "Go to masterkeylabs.ai to secure your slot"
                     }
                 },
@@ -1499,8 +1499,8 @@ export const translations = {
                     },
                     cta: {
                         title: "नुकसान रोकना चाहते हैं?",
-                        sub: "इसे अकेले न झेलें। आपकी समस्या का समाधान भी खास होना चाहिए। हमारी टीम के साथ एक फ्री रिव्यु बुक करें।",
-                        btn: "फ्री रिव्यु बुक करें",
+                        sub: "इसे अकेले न झेलें। आपकी समस्या का समाधान भी खास होना चाहिए। हमारी टीम के साथ एक रिव्यु बुक करें।",
+                        btn: "रिव्यु बुक करें",
                         footer: "स्लॉट बुक करने के लिए masterkeylabs.ai पर जाएं"
                     }
                 },
@@ -2038,8 +2038,8 @@ export const translations = {
                     },
                     cta: {
                         title: "WANT TO STOP THE BLEED?",
-                        sub: "Don't fight this alone. Aapki problems architectural hain, aur solution bhi technical intervention se hi milega. Book a free architecture review.",
-                        btn: "Book Your Free Review",
+                        sub: "Don't fight this alone. Aapki problems architectural hain, aur solution bhi technical intervention se hi milega. Book an architecture review.",
+                        btn: "Book Your Review",
                         footer: "Visit masterkeylabs.ai to secure your slot"
                     }
                 }
