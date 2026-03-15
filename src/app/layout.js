@@ -7,7 +7,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  title: "Masterkey.OS | Command Center",
+  title: "MasterKey Labs.ai Command Center",
   description: "AI-Powered Diagnostic Terminal for Business Intelligence",
   icons: {
     icon: "/icon.png",
