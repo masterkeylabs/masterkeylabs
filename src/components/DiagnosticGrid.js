@@ -64,7 +64,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                 <div className="flex items-center gap-2">
                     <span className="w-1 h-4 bg-ios-blue rounded-full"></span>
                     <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/30">
-                        {t.dashboard.risksTitle || 'SYSTEM DIAGNOSTICS'}
+                        {t.dashboard.risksTitle || 'BUSINESS CHECKUP'}
                     </h3>
                 </div>
             </div>
@@ -113,7 +113,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                             <div className="text-white/20 group-hover:text-purple-400 transition-colors mb-2">
                                 <span className="material-symbols-outlined text-[20px]">open_in_new</span>
                             </div>
-                            <p className="text-[10px] font-bold text-white/20 uppercase">{ts.module02.decay || 'LEAKAGE / MO'}</p>
+                            <p className="text-[10px] font-bold text-white/20 uppercase">{ts.module02.decay || 'MONEY LOST / MONTH'}</p>
                             <p className="text-2xl font-black text-white">₹{(nightLoss?.monthly_loss || 0).toLocaleString()}</p>
                         </div>
                     </div>
@@ -147,7 +147,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                             <div className="text-white/20 group-hover:text-cyan-400 transition-colors mb-2">
                                 <span className="material-symbols-outlined text-[20px]">open_in_new</span>
                             </div>
-                            <p className="text-[10px] font-bold text-white/20 uppercase">{ts.module03.opp || 'MISSED CUSTOMERS'}</p>
+                            <p className="text-[10px] font-bold text-white/20 uppercase">{ts.module03.opp || 'CUSTOMERS LOST'}</p>
                             <p className="text-2xl font-black text-white">{Math.round(missedCustomers?.missed_customers || 0).toLocaleString()}+</p>
                         </div>
                     </div>
@@ -204,9 +204,9 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
                         <div className="w-20 h-20 bg-ios-blue/10 border border-ios-blue/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
                             <span className="material-symbols-outlined text-4xl text-ios-blue animate-pulse">lock_open</span>
                         </div>
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-3">
-                            {t.dashboard.auditSummary.lockedTitle}
-                        </h3>
+                        <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-[0.3em] font-sans">
+                            Checkup <span className="text-ios-cyan">Complete</span>
+                        </h2>
                         <p className="text-white/40 text-sm mb-8 leading-relaxed">
                             {t.dashboard.auditSummary.lockedSub}
                         </p>

@@ -209,16 +209,16 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                     {/* Header: Confidential Watermark & Branding */}
                     <div className="w-full flex justify-between items-start border-b border-white/10 pb-12 mb-12 relative">
                         <div className="absolute top-[-40px] left-0 text-[10px] font-black tracking-[0.5em] text-white/10 uppercase">
-                            CONFIDENTIAL BUSINESS INTELLIGENCE Report // ST-0422 // {new Date().getFullYear()}
+                            CONFIDENTIAL BUSINESS REPORT // ST-0422 // {new Date().getFullYear()}
                         </div>
                         <div className="flex flex-col gap-4">
                             <img src="/logo.png" alt="MasterKey Labs" className="h-40 w-auto filter brightness-0 invert object-contain" style={{ WebkitFilter: 'brightness(0) invert(1)' }} />
                             <div className="px-4 py-1 bg-ios-cyan text-[10px] font-black uppercase tracking-widest text-black inline-block w-fit rounded-full">
-                                Verified Audit
+                                Verified Report
                             </div>
                         </div>
                         <div className="text-right flex-1">
-                            <h4 className="text-ios-cyan font-black tracking-[0.3em] uppercase text-[10px] mb-2">Diagnostic Dispatch</h4>
+                             <h4 className="text-ios-cyan font-black tracking-[0.3em] uppercase text-[10px] mb-2">Audit Details</h4>
                             <p className="text-4xl font-black text-white tracking-tighter uppercase">{businessName || 'Your Business'}</p>
                             <p className="text-white/40 text-sm mt-1">{new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</p>
                         </div>
@@ -230,7 +230,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                         
                         <div className="flex items-center gap-4 mb-10">
                             <span className="w-10 h-[2px] bg-ios-cyan"></span>
-                            <h3 className="text-ios-cyan font-black tracking-[0.4em] text-sm uppercase">{ts.architectNote?.title || 'Note from the System Architect'}</h3>
+                            <h3 className="text-ios-cyan font-black tracking-[0.4em] text-sm uppercase">{ts.architectNote?.title || 'Note from MasterKey Labs'}</h3>
                         </div>
 
                         <div className="space-y-10 text-2xl leading-relaxed text-white/70 font-medium">
@@ -261,7 +261,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                         
                         <div className="inline-flex items-center gap-2 px-8 py-3 bg-red-500/10 border border-red-500/30 rounded-full mb-4">
                             <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.8)]"></span>
-                            <span className="text-sm font-black tracking-[0.4em] text-red-500 uppercase">{ts.criticalBadge || 'CRITICAL SYSTEM LEAK'}</span>
+                            <span className="text-sm font-black tracking-[0.4em] text-red-500 uppercase">{ts.criticalBadge || 'HIGH COST WARNING'}</span>
                         </div>
                         
                         <h2 className="text-4xl font-black text-white/40 tracking-[0.3em] uppercase">{ts.annualBleed || 'TOTAL ANNUAL BLEED'}</h2>
@@ -279,13 +279,13 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <span className="material-symbols-outlined text-green-500 text-6xl font-light">verified</span>
                                 </div>
                                 <div className="text-left relative z-10">
-                                    <p className="text-[10px] font-black text-green-500 tracking-[0.4em] mb-3 uppercase">PROTOCOL RECOVERY TARGET</p>
+                                    <p className="text-[10px] font-black text-green-500 tracking-[0.4em] mb-3 uppercase">ESTIMATED SAVINGS</p>
                                     <div className="flex items-baseline gap-3">
                                         <p className="text-6xl font-black text-green-400 tracking-tight">{formatIndian(recoverablePotential)}</p>
                                         <p className="text-xl text-green-500/40 font-bold uppercase tracking-widest">Yearly Gain</p>
                                     </div>
                                     <p className="mt-4 text-xl text-green-400/70 font-medium leading-relaxed">
-                                        {ts.recoverableLegend || 'A 50% efficiency recovery is immediately possible through Autonomous Orchestration.'}
+                                        {ts.recoverableLegend || 'A 50% efficiency recovery is immediately possible through simple automation.'}
                                     </p>
                                 </div>
                             </div>
@@ -296,8 +296,8 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                     <div className="w-full pt-16">
                         <div className="flex items-center justify-between mb-16 border-l-4 border-ios-cyan pl-8">
                             <div>
-                                <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.telemetryTitle || 'Vulnerability Mapping'}</h3>
-                                <p className="text-white/40 text-xl mt-2 font-medium tracking-wide italic">Comprehensive Telemetry Analysis // V2.1</p>
+                                <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.telemetryTitle || 'Business Evaluation'}</h3>
+                                <p className="text-white/40 text-xl mt-2 font-medium tracking-wide italic">Full Business Analysis // V2.1</p>
                             </div>
                             <div className="text-right">
                                 <span className="text-ios-cyan font-black text-sm tracking-[0.5em] uppercase">Status: Critical</span>
@@ -310,7 +310,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="absolute top-0 left-0 w-2 h-full bg-ios-blue opacity-50"></div>
                                 <h4 className="text-xs font-black text-ios-blue tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
                                     <span className="w-8 h-[1px] bg-ios-blue/30"></span>
-                                    01 // {ts.opsFriction || 'Operational Waste'}
+                                    01 // {ts.opsFriction || 'Unnecessary Costs'}
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualOpsWaste)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
@@ -323,7 +323,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="absolute top-0 left-0 w-2 h-full bg-purple-500 opacity-50"></div>
                                 <h4 className="text-xs font-black text-purple-400 tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
                                     <span className="w-8 h-[1px] bg-purple-500/30"></span>
-                                    02 // {ts.afterHoursBleed || '24/7 Missed Income'}
+                                    02 // {ts.afterHoursBleed || 'Nightly Losses'}
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{formatIndian(annualNightLoss)}</p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
@@ -352,7 +352,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                 <div className="absolute top-0 left-0 w-2 h-full bg-red-500 opacity-50"></div>
                                 <h4 className="text-xs font-black text-red-500 tracking-[0.4em] mb-8 uppercase flex items-center gap-3">
                                     <span className="w-8 h-[1px] bg-red-500/30"></span>
-                                    04 // {ts.aiThreatHorizon || 'AI Survival Time'}
+                                    04 // {ts.aiThreatHorizon || 'AI Risk Time'}
                                 </h4>
                                 <p className="text-6xl font-black text-white mb-6 tracking-tighter">{extinctionHorizon} <span className="text-2xl text-white/30 font-medium">Months</span></p>
                                 <p className="text-xl text-white/50 leading-relaxed font-medium">
@@ -371,7 +371,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <path d="M9 14.5H15V16H9V14.5Z" fill="black"/>
                                 </svg>
                             </div>
-                            <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.protocolTitle || 'Survival Protocol Roadmap'}</h3>
+                            <h3 className="text-5xl font-black text-white uppercase tracking-tighter">{ts.protocolTitle || 'Growth Roadmap'}</h3>
                         </div>
 
                         <div className="space-y-8">
@@ -381,9 +381,9 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <div className="w-[2px] h-full bg-white/10 mt-4"></div>
                                 </div>
                                 <div className="pb-12">
-                                    <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-wide">{ts.protocol01Title || 'Consolidation & Infrastructure'}</h4>
+                                    <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-wide">{ts.protocol01Title || 'Better Setup'}</h4>
                                     <p className="text-xl text-white/40 leading-relaxed max-w-4xl font-medium">
-                                        {ts.protocol01Desc || 'Map current fragmented data silos and deploy a singular technical hub to eliminate coordination drag.'}
+                                        {ts.protocol01Desc || 'Map current unorganized data and deploy a singular technical hub to eliminate coordination drag.'}
                                     </p>
                                 </div>
                             </div>
@@ -394,7 +394,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
                                     <div className="w-[2px] h-full bg-white/10 mt-4"></div>
                                 </div>
                                 <div className="pb-12">
-                                    <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-wide">{ts.protocol02Title || 'Autonomous Deployment'}</h4>
+                                    <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-wide">{ts.protocol02Title || 'Starting Automation'}</h4>
                                     <p className="text-xl text-white/40 leading-relaxed max-w-4xl font-medium">
                                         {ts.protocol02Desc || 'Automate high-friction tasks (Customer Support, Leads, Ops) using dedicated AI agents to reclaim capital.'}
                                     </p>

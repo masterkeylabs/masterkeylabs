@@ -61,7 +61,7 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
                         onClick={handleStatus}
                     >
                         <span className="material-symbols-outlined text-lg">dashboard_customize</span>
-                        <span className="text-[13px] font-semibold tracking-tight">{t?.sidebar?.status || 'System Status'}</span>
+                        <span className="text-[13px] font-semibold tracking-tight">{t?.sidebar?.status || 'Dashboard'}</span>
                     </a>
 
                     {/* Deep Analytics */}
@@ -70,11 +70,11 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
                         onClick={handleAnalytics}
                     >
                         <span className="material-symbols-outlined text-lg">analytics</span>
-                        <span className="text-[13px] font-medium tracking-tight">{t?.sidebar?.analytics || 'Deep Analytics'}</span>
+                        <span className="text-[13px] font-medium tracking-tight">{t?.sidebar?.analytics || 'Report'}</span>
                     </a>
 
                     <div className="pt-4 pb-2 px-4">
-                        <span className="text-[10px] font-bold text-white/10 uppercase tracking-[0.2em]">{t?.sidebar?.protocols || 'Protocols'}</span>
+                        <span className="text-[10px] font-bold text-white/10 uppercase tracking-[0.2em]">{t?.sidebar?.protocols || 'Modules'}</span>
                     </div>
 
                     <a className="flex items-center justify-between px-4 py-2.5 rounded-xl text-white/10 cursor-not-allowed group" href="#">
@@ -104,7 +104,7 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
                     </button>
                     <div className="system-card p-4 flex items-center gap-3 bg-white/[0.02]">
                         <div className="w-2 h-2 bg-ios-cyan rounded-full animate-pulse shadow-[0_0_8px_rgba(0,229,255,0.4)]"></div>
-                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">{t?.sidebar?.active || 'NODE ACTIVE'}</p>
+                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">{t?.sidebar?.active || 'APP ACTIVE'}</p>
                     </div>
                 </div>
             </aside>

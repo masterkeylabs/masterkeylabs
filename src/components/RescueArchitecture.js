@@ -28,21 +28,21 @@ export default function RescueArchitecture({ businessId, t }) {
     }, []);
 
     const rescueT = t?.dashboard?.rescue || {
-        badge: "Protocol Override Available",
+        badge: "Expert Help Available",
         title1: "Stop bleeding capital.",
         title2: "Claim your unfair advantage.",
-        sub: "Your algorithmic diagnostic is complete. Book a secure session with a MasterKey System Architect to decipher your custom growth infrastructure.",
+        sub: "Your checkup is complete. Book a call with our expert to understand your growth plan.",
         founders: "Join 150+ Founders",
         deploying: "Deploying systems today",
         booking: {
-            title: "Schedule Architecture Review",
+            title: "Schedule a Call",
             slot: "45 Min Slot",
             times: {
                 today: "Today",
                 tmrw: "Tmrw"
             },
             btn: {
-                idle: "Book System Architect",
+                idle: "Book a Call",
                 loading: "Securing Slot...",
                 success: "Slot Confirmed",
                 error: "System Error"
@@ -64,7 +64,7 @@ export default function RescueArchitecture({ businessId, t }) {
                     startTime: selectedSlot.start,
                     endTime: selectedSlot.end,
                     summary: `Architecture Review - Business ID: ${businessId || 'N/A'}`,
-                    description: `Automated booking from MasterKey Diagnostic Terminal.`,
+                    description: `Automated booking from MasterKey App.`,
                 }),
             });
 
@@ -111,7 +111,7 @@ export default function RescueArchitecture({ businessId, t }) {
                     <div className="space-y-6">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ios-blue/10 border border-ios-blue/20">
                             <span className="w-2 h-2 rounded-full bg-ios-blue animate-pulse shadow-[0_0_10px_#00E5FF]"></span>
-                            <span className="text-[10px] font-bold text-ios-blue uppercase tracking-widest">{rescueT.badge}</span>
+                            <span className="text-[10px] font-bold text-white/10 uppercase tracking-[0.2em]">{t?.sidebar?.protocols || 'Modules'}</span>
                         </div>
 
                         <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1] text-balance">
@@ -219,7 +219,7 @@ export default function RescueArchitecture({ businessId, t }) {
 
                             <p className="text-[9px] text-center text-white/30 mt-4 leading-relaxed tracking-wider uppercase">
                                 No sales pitch. No strings attached.<br />
-                                Just a technical blueprint for your survival.
+                                Just a clear plan for your growth.
                             </p>
                         </div>
                     </div>

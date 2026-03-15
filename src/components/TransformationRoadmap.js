@@ -5,30 +5,30 @@ export default function TransformationRoadmap({ t }) {
     // Fallback steps if t is missing
     const defaultSteps = [
         {
-            title: "Cloud Infrastructure Migration",
-            description: "Transition legacy operations to secure, high-availability architecture.",
+            title: "Better Setup",
+            description: "Move your business operations to a modern, organized system.",
             icon: "cloud_sync",
             timeframe: "Week 1-2"
         },
         {
-            title: "AI Workflow Automation",
-            description: "Deploy autonomous systems to manage post-6PM inquiries and operational bleed.",
+            title: "AI Automation",
+            description: "Use AI to handle customer inquiries 24/7 and stop losing sales.",
             icon: "memory",
             timeframe: "Week 3-4"
         },
         {
-            title: "Performance & Visibility Scaling",
-            description: "Inject data-driven marketing protocols to capture missed customer volumes.",
+            title: "Growth & Marketing",
+            description: "Use smart marketing to reach more customers and grow your sales.",
             icon: "rocket_launch",
             timeframe: "Week 5-6"
         }
     ];
 
     const roadmapT = t?.dashboard?.roadmap || {
-        title: "Protocol Transformation",
+        title: "Growth Plan",
         subTitle: "Step-By-Step",
         roi: "Estimated ROI",
-        cure: "Systemic Cure",
+        cure: "Solution",
         steps: defaultSteps
     };
 

@@ -596,9 +596,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">{t.wizard.step0.title || 'Identity Profiling'}</h3>
+                                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">{t.wizard.step0.title || 'Business Details'}</h3>
                                     <p className="text-white/40 text-sm leading-relaxed max-w-sm mx-auto">
-                                        {t.wizard.step0.sub || 'Initialize your enterprise protocol. Provide the core entity details to unlock deep-level diagnostics.'}
+                                        {t.wizard.step0.sub || 'Start your business checkup to find hidden savings.'}
                                     </p>
                                 </div>
                             </div>
@@ -664,10 +664,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                    {isSaving ? (t.wizard.step4.running || 'Synchronizing...') : (t.wizard.step0.btn || 'Synchronize & Initialize')}
+                                    {isSaving ? (t.wizard.step4.running || 'Checking...') : (t.wizard.step0.btn || 'Start Checkup')}
                                     </span>
                                 </button>
-                                <p className="text-center text-[9px] text-white/20 uppercase tracking-[0.2em] mt-4">{t.wizard.step0.secureActive || 'Secure Initialization Protocol Active'}</p>
+                                <p className="text-center text-[9px] text-white/20 uppercase tracking-[0.2em] mt-4">{t.wizard.step0.secureActive || 'Secure Checkup Active'}</p>
                             </div>
                         </form>
                     )}
@@ -677,7 +677,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM1Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    {t.lossAudit.subTitle || 'Input your estimated monthly overheads to calculate operational inefficiency friction.'}
+                                    {t.lossAudit.subTitle || 'Enter your monthly costs to see where you can save money.'}
                                 </p>
                             </div>
 
@@ -697,7 +697,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                             <option key={v.value} value={v.value} className="bg-neutral-900">{t.common.industries[v.value] || v.label}</option>
                                         ))}
                                     </select>
-                                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">{t.wizard.step1.industryBenchmark || 'Critical for waste benchmark calibration.'}</p>
+                                    <p className="text-[9px] text-white/20 uppercase tracking-widest mt-2">{t.wizard.step1.industryBenchmark || 'Helps us compare your business with others.'}</p>
                                 </div>
 
                                 <RangeSelector
@@ -779,7 +779,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                 >
                                     <span className="absolute inset-0 bg-ios-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                                     <span className="relative z-10 group-hover:text-white transition-colors duration-500">
-                                        {isSaving ? (t.common?.calculating || 'Calculating...') : (t.common?.next || 'Next Protocol')}
+                                        {isSaving ? (t.common?.calculating || 'Calculating...') : (t.common?.next || 'Next Step')}
                                     </span>
                                 </button>
                             </div>
@@ -791,7 +791,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                         <form onSubmit={handleM2Submit} className="space-y-10 animate-fade-in max-w-2xl mx-auto py-6">
                             <div className="space-y-2">
                                 <p className="text-white/40 text-sm leading-relaxed">
-                                    {t.nightLoss.subTitle || 'Determine revenue hemorrhage caused by after-hours unresponsiveness.'}
+                                    {t.nightLoss.subTitle || 'See how much money you lose by not responding to customers at night.'}
                                 </p>
                             </div>
 

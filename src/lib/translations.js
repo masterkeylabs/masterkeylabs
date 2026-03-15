@@ -1,7 +1,7 @@
 export const translations = {
     en: {
-        tagline: "Adaptive Intelligence for Modern Systems",
-        badge: "System Analysis Active",
+        tagline: "Smart Solutions for Modern Businesses",
+        badge: "Business Checkup Active",
         hero: {
             title1: "The Future belongs to the",
             title2: "AI-First Business",
@@ -43,10 +43,10 @@ export const translations = {
             }
         },
         scanningSuite: {
-            badge: "System Architecture",
-            title1: "Our Core Scanning &",
-            title2: "Diagnostic Suite",
-            sub: "Our AI-driven system performs a deep-layer scan of your business ecosystem to identify and resolve hidden inefficiencies:",
+            badge: "Business Architecture",
+            title1: "Our Main Checking &",
+            title2: "Diagnosis Tools",
+            sub: "Our system scans your business to find where you are losing money:",
             waste: {
                 module: "Module 01",
                 title: "See where your money is leaking",
@@ -70,20 +70,20 @@ export const translations = {
         },
         diagnostic: {
             readyTitle: "Ready for Analysis",
-            readySub: "Initialize the protocol to map your Profit Leaks and AI Threat level.",
+            readySub: "Start your checkup to see your Money Leaks and AI Risk level.",
             reports: "Reports",
             atRisk: "At Risk",
             process: "Process",
-            scanning: "Mapping System Vulnerabilities",
+            scanning: "Finding where you're losing money",
             scanSteps: [
-                'Scanning Market Infrastructure...',
-                'Detecting Profit Leaks...',
+                'Checking Market Setup...',
+                'Finding Money Leaks...',
                 'Analyzing AI Competition...',
-                'Calculating System Extinction...',
-                'Generating Protocol Report...'
+                'Calculating AI Risk Time...',
+                'Generating Your Report...'
             ],
             results: {
-                vulnerable: "Critical Vulnerability Detected",
+                vulnerable: "High Risk Detected",
                 minimal: "System Optimized",
                 index: "Profit Leak Index",
                 yearsLeft: "Years Left",
@@ -99,7 +99,7 @@ export const translations = {
             classification: "Vertical",
             scale: "Team Scale",
             infrastructure: "Digital Pulse",
-            continue: "Continue Protocol",
+            continue: "Continue Checkup",
             back: "Previous Step",
             submit: "Start AI Scan",
             submitting: "Analyzing...",
@@ -115,10 +115,10 @@ export const translations = {
         },
         wizard: {
             step0: {
-                badge: "System Protocol v2.1",
-                title: "Scan your business for profit leakage.",
-                sub: "Initialize your enterprise protocol. Provide the core entity details to unlock deep-level diagnostics.",
-                btn: "Start System Audit",
+                badge: "Audit Tool v2.1",
+                title: "Check your business for money leakage.",
+                sub: "Start your business checkup. Enter your details to see where you're losing money.",
+                btn: "Start Business Checkup",
                 survival: "Traditional business is dying.",
                 survivalSub: "Let's calculate your survival rate and find your real losses.",
                 goDashboard: "GO TO DASHBOARD",
@@ -206,11 +206,11 @@ export const translations = {
                 alreadyAccount: "Already have an account? Log In"
             },
             stepTitles: [
-                "System Initialization [V2.1-RPC]",
-                "Module 01: Operational Waste",
-                "Module 02: Night Loss Leakage",
-                "Module 03: Digital Invisibility",
-                "Module 04: Extinction Horizon"
+                "Audit Startup [V2.1]",
+                "Module 01: Unnecessary Costs",
+                "Module 02: Nightly Losses",
+                "Module 03: Low Online Reach",
+                "Module 04: AI Risk Time"
             ]
         },
         nav: {
@@ -220,8 +220,8 @@ export const translations = {
             home: "Home"
         },
         lossAudit: {
-            title: "Loss Audit",
-            subTitle: "Find out how much capital your business is silently burning every month.",
+            title: "Money Leak Audit",
+            subTitle: "Find out how much money your business is losing silently every month.",
             formHeader: "Enter Your Monthly Costs",
             industryLabel: "Industry Sector",
             staffSalaryLabel: "Staff Salary (Monthly)",
@@ -241,11 +241,11 @@ export const translations = {
             burnHeadline: "You Are Burning",
             perMonth: "/month",
             annualBurnLine: "That is {amount} every year",
-            breakdownTitle: "Waste Breakdown",
-            payrollWaste: "Payroll Waste",
+            breakdownTitle: "Breakdown of Waste",
+            payrollWaste: "Staffing Waste",
             overheadWaste: "Overhead Waste",
             marketingWaste: "Marketing Waste",
-            coordinationDrag: "Coordination Drag",
+            coordinationDrag: "Wasted Communication Time",
             recoverableTitle: "Recoverable Savings",
             inactionTitle: "5-Year Cost of Inaction",
             source: "SOURCE: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
@@ -306,8 +306,8 @@ export const translations = {
             }
         },
         visibility: {
-            title: "Market Invisibility Audit",
-            subTitle: "How many high-intent customers are you losing to competitors right now?",
+            title: "Hard to Find on Google? Check Your Reach",
+            subTitle: "How many customers are you losing to competitors right now?",
             formHeader: "Search & Visibility Metrics",
             cityLabel: "Primary Market (City)",
             searchTermLabel: "Primary Search Term",
@@ -351,8 +351,8 @@ export const translations = {
             ]
         },
         aiThreat: {
-            title: "Extinction Horizon (AI Threat)",
-            subTitle: "Calculate your business's survival timeline in the era of Generative AI.",
+            title: "AI Risk Time (AI Threat)",
+            subTitle: "Check how long your business can stay relevant in the AI era.",
             formHeader: "Survival Protocol Inputs",
             physicalPresenceLabel: "Physical Presence",
             physicalPresenceCheck: "I have a physical store / office space",
@@ -426,7 +426,7 @@ export const translations = {
         header: {
             home: "Home",
             command: "Command Center",
-            sync: "Cloud Sync Active — v2.1.0-secure"
+            sync: "Cloud Sync Active"
         },
         sidebar: {
             status: "System Status",
@@ -493,8 +493,8 @@ export const translations = {
                 MODERATE: "MODERATE RISK",
                 RESILIENT: "RESILIENT"
             },
-            marketTTL: "Market Relevance TTL",
-            extinctionSub: "Projected time until business extinction if unoptimized.",
+            marketTTL: "Time to Adapt",
+            extinctionSub: "Estimated time to adapt before AI competitors take over.",
             days: "Days",
             deploy: "Deploy Protocol"
         },
@@ -517,15 +517,15 @@ export const translations = {
                     sub: "Recoverable monthly savings"
                 },
                 night: {
-                    title: "Missed After-Hours Revenue",
-                    sub: "Value of unserviced leads"
+                    title: "Missing Nightly Revenue",
+                    sub: "Value of leads missed after hours"
                 },
                 visibility: {
                     title: "Missed Local Customers",
                     sub: "Based on search volume gap"
                 },
                 threat: {
-                    title: "Extinction Horizon",
+                    title: "AI Risk Time",
                     labels: {
                         khatra: "CRITICAL",
                         savdhan: "CAUTION",
@@ -534,10 +534,10 @@ export const translations = {
                 }
             },
             roadmap: {
-                title: "Protocol Transformation",
+                title: "Your Growth Plan",
                 subTitle: "Step-By-Step",
                 roi: "Estimated ROI",
-                cure: "Systemic Cure",
+                cure: "Your Custom Solution",
                 steps: [
                     {
                         title: "Cloud Infrastructure Migration",
@@ -546,7 +546,7 @@ export const translations = {
                     },
                     {
                         title: "AI Workflow Automation",
-                        description: "Deploy autonomous systems to manage post-6PM inquiries and operational bleed.",
+                        description: "Set up smart systems to handle late-night inquiries and stop money leaks.",
                         timeframe: "Week 3-4"
                     },
                     {
@@ -560,7 +560,7 @@ export const translations = {
                 badge: "Protocol Override Available",
                 title1: "Stop bleeding capital.",
                 title2: "Claim your unfair advantage.",
-                sub: "Your diagnostic is complete. Book a session with a System Architect to decipher your custom growth infrastructure.",
+                sub: "Your checkup is complete. Book a call with our expert to discuss your custom growth plan.",
                 founders: "Join 150+ Founders",
                 deploying: "Deploying systems today",
                 booking: {
@@ -571,7 +571,7 @@ export const translations = {
                         tmrw: "Tmrw"
                     },
                     btn: {
-                        idle: "Book System Architect",
+                        idle: "Book a Free Call",
                         loading: "Securing Slot...",
                         success: "Slot Confirmed",
                         error: "System Error"
@@ -597,8 +597,8 @@ export const translations = {
             diagnosticLog: {
                 systemLog: "System Log v2.0",
                 stream: "Diagnostic Stream",
-                fetching: "_ EXEC_DATA_FETCHING...",
-                await: "AWAIT_ANOMALY"
+                fetching: "_ FETCHING DATA...",
+                await: "WAITING FOR DATA"
             },
             fab: {
                 waMessage: "Hi MasterKey Labs! I just ran the business diagnostic for \"{name}\". I'd like to discuss my results."
@@ -627,8 +627,8 @@ export const translations = {
                     exportBtn: "Export Intelligence Report",
                     exporting: "Analyzing Systems..."
                 },
-                lockedTitle: "Aggregate Intelligence Locked",
-                lockedSub: "Initialize and complete all four diagnostic protocols to unlock your consolidated survival score.",
+                lockedTitle: "Overall Score Locked",
+                lockedSub: "Complete all four checkups to see your final score.",
                 bleedCard: {
                     liveBurn: "Live Burn Detected",
                     annualBleed: "Total Annual<br />Capital Bleed",
@@ -641,24 +641,24 @@ export const translations = {
                     generatorTitle: "Audit Report Generator",
                     lockedSubtitle: "Complete the Operational Audit Sequence to generate your board-ready transformation roadmap.",
                     unlockedSubtitle: "Compile all critical leakages and transformation roadmaps into a singular, board-ready audit document.",
-                    btnLocked: "Locked by Protocol",
-                    btnProcessing: "Processing Payload...",
-                    btnGenerate: "Generate & Download Report",
+                    btnLocked: "Locked",
+                    btnProcessing: "Processing Data...",
+                    btnGenerate: "Download Report",
                     pdfHeader: "Diagnostic Audit Payload",
-                    criticalBadge: "CRITICAL SYSTEM DISRUPTION DETECTED",
+                    criticalBadge: "HIGH COST WARNING",
                     recoverableLegend: "We can reclaim 50% of this burn by deploying autonomous operational protocols.",
-                    telemetryTitle: "Business Analysis",
-                    opsFriction: "Operational Waste",
-                    staffWaste: "Includes {amount} in payroll inefficiency.",
+                    telemetryTitle: "Business Growth Check",
+                    opsFriction: "Unnecessary Costs",
+                    staffWaste: "Includes {amount} in high staffing costs.",
                     afterHoursBleed: "24/7 Missed Income",
                     nightLossDesc: "While systems sleep, you hemorrhage {amount} annually due to lack of 24/7 AI lead response.",
                     digitalInvisibility: "Low Online Presence",
                     visibilityDesc: "An estimated {amount} ({count} missed customers) is captured by local competitors.",
-                    aiThreatHorizon: "AI Survival Time",
+                    aiThreatHorizon: "Time to Adapt to AI",
                     aiLossDesc: "Window of survival: {amount} months remaining before AI-native firms render your model obsolete.",
-                    coordinationDragTitle: "Operational Drag",
-                    coordinationDragDesc: "Fixing inefficiencies at this scale is technically complex. Every day of delay compounds the capital loss. Immediate intervention is required.",
-                    protocolTitle: "Your Survival Roadmap",
+                    coordinationDragTitle: "Wasted Communication Time",
+                    coordinationDragDesc: "Fixing these leaks is complex but important. Every day of delay means more money lost. It's time to act.",
+                    protocolTitle: "Your Growth Roadmap",
                     protocol01Title: "1. Connect Your Digital Tools",
                     protocol01Desc: "Establish a unified data backbone by integrating your CRM, ERP, and communication channels. This eliminates information silos, reduces manual data entry by up to 40%, and ensures a single source of truth for your entire operation.",
                     protocol02Title: "2. Automate Daily Tasks",
@@ -688,7 +688,7 @@ export const translations = {
                     criticalEvasion: "CRITICAL EVASION REQ.",
                     monitoring: "MONITORING",
                     architectNote: {
-                        title: "MESSAGE FROM THE SYSTEM ARCHITECT",
+                        title: "MESSAGE FROM MASTERKEY LABS",
                         p1: "Your current systems aren't broken—they're just expensive. They were built for a world that no longer exists, where manual labor was the only way to scale.",
                         p2: "Every month you delay autonomous integration, you're not just losing money; you're handing market share to competitors who are already building their digital factories. This report isn't just data; it's a blueprint for your survival.",
                         p3: "Use this intelligence to stop the bleed and reclaim your dominance.",
@@ -736,7 +736,7 @@ export const translations = {
                 },
                 module04: {
                     tag: "Module 04: Survival Deadline",
-                    title: "Extinction Horizon",
+                    title: "AI Risk Time",
                     ttl: "Market Relevance TTL",
                     months: "Months",
                     complexity: "Survival Complexity",
@@ -805,8 +805,8 @@ export const translations = {
         },
     },
     hi: {
-        tagline: "आधुनिक प्रणालियों के लिए एडेप्टिव इंटेलिजेंस",
-        badge: "सिस्टम स्कोर सक्रिय",
+        tagline: "आधुनिक बिजनेस के लिए स्मार्ट सॉल्यूशंस",
+        badge: "बिजनेस चेकअप सक्रिय",
         common: {
             market_context: "आपका बाजार",
             revenueLabel: "अनुमानित वार्षिक राजस्व",
@@ -848,10 +848,10 @@ export const translations = {
             sub: "हर बीतता दिन आपके कॉम्पिटिशन को आगे बढ़ा रहा है। अपने बिजनेस को पुराना सिस्टम न बनने दें।"
         },
         scanningSuite: {
-            badge: "सिस्टम आर्किटेक्चर",
-            title1: "हमारा कोर स्कैनिंग और",
-            title2: "डायग्नोस्टिक सूट",
-            sub: "हमारा AI-आधारित सिस्टम छिपी हुई अक्षमताओं को पहचानने और हल करने के लिए आपके बिजनेस इकोसिस्टम का गहरा स्कैन करता है:",
+            badge: "बिजनेस स्ट्रक्चर",
+            title1: "हमारी मुख्य चेकिंग और",
+            title2: "डायग्नोस्टिक टूल्स",
+            sub: "हमारा सिस्टम आपके बिजनेस में पैसे की बर्बादी और छिपे हुए नुकसान को पहचानता है:",
             waste: {
                 module: "मॉड्यूल 01",
                 title: "पैसे कहाँ लीक हो रहे हैं",
@@ -875,21 +875,21 @@ export const translations = {
         },
         diagnostic: {
             readyTitle: "विश्लेषण के लिए तैयार",
-            readySub: "प्रोटोकॉल शुरू करें और अपने बिजनेस के प्रॉफिट लीक और AI थ्रेट लेवल को मैप करें।",
+            readySub: "अपना चेकअप शुरू करें और जानें कि पैसा कहाँ लीक हो रहा है और AI से कितना खतरा है।",
             reports: "रिपोर्ट्स",
             atRisk: "खतरे में",
             process: "प्रोसेस",
-            scanning: "सिस्टम की खामियों को मैप करना",
+            scanning: "पैसे कहाँ लीक हो रहे हैं, यह पता लगाना",
             scanSteps: [
-                'मार्केट इंफ्रास्ट्रक्चर स्कैन हो रहा है...',
-                'प्रॉफिट लीकेज का पता लग रहा है...',
+                'बाजार की स्थिति चेक हो रही है...',
+                'पैसे के नुकसान का पता लग रहा है...',
                 'AI कॉम्पिटिशन का विश्लेषण...',
-                'सिस्टम के खत्म होने की गणना...',
-                'प्रोटोकॉल रिपोर्ट तैयार हो रही है...'
+                'AI रिस्क टाइम की गणना...',
+                'बिजनेस रिपोर्ट तैयार हो रही है...'
             ],
             results: {
-                vulnerable: "गंभीर खतरा पाया गया",
-                minimal: "सिस्टम अनुकूलित (Optimized)",
+                vulnerable: "बड़ा खतरा पाया गया",
+                minimal: "बिजनेस सही स्थिति में है",
                 index: "प्रॉफिट लीक इंडेक्स",
                 yearsLeft: "शेष वर्ष",
                 vertical: "क्षेत्र"
@@ -904,7 +904,7 @@ export const translations = {
             classification: "क्षेत्र (Vertical)",
             scale: "टीम का पैमाना",
             infrastructure: "डिजिटल स्थिति",
-            continue: "प्रोटोकॉल जारी रखें",
+            continue: "चेकअप जारी रखें",
             back: "पिछला कदम",
             submit: "AI स्कैन शुरू करें",
             submitting: "विश्लेषण हो रहा है...",
@@ -920,16 +920,16 @@ export const translations = {
         },
         wizard: {
             step0: {
-                badge: "सिस्टम प्रोटोकॉल v2.1",
-                title: "प्रॉफिट लीकेज के लिए अपने बिजनेस को स्कैन करें।",
-                sub: "अपने एंटरप्राइज प्रोटोकॉल को इनिशियलाइज करें। गहन डायग्नोस्टिक्स अनलॉक करने के लिए मुख्य विवरण प्रदान करें।",
-                btn: "सिस्टम ऑडिट शुरू करें",
+                badge: "ऑडिट टूल v2.1",
+                title: "पैसे के नुकसान के लिए अपने बिजनेस को चेक करें।",
+                sub: "अपना बिजनेस चेकअप शुरू करें। अपनी रिपोर्ट देखने के लिए मुख्य जानकारी दर्ज करें।",
+                btn: "बिजनेस चेकअप शुरू करें",
                 survival: "पारंपरिक धंधा खत्म हो रहा है।",
                 survivalSub: "आइए आपकी उत्तरजीविता दर (Survival Rate) की गणना करें और आपके वास्तविक घाटे का पता लगाएं।",
                 goDashboard: "डैशबोर्ड पर जाएं",
-                identityTitle: "पहचान प्रोफाइलिंग",
+                identityTitle: "प्रोफाइलिंग",
                 identityBadge: "बिजनेस पहचान",
-                secureActive: "सुरक्षित इनिशियलाइजेशन प्रोटोकॉल सक्रिय"
+                secureActive: "सुरक्षित चेकअप शुरू हो गया है"
             },
             step1: {
                 title: "पहचान (Identity)",
@@ -949,7 +949,7 @@ export const translations = {
                 ops: "मासिक ऑपरेशनल ओवरहेड्स (₹)",
                 prev: "पीछे",
                 next: "अगला कदम",
-                closingTimeSeq: "समापन समय अनुक्रम (Closing Time)",
+                closingTimeSeq: "काम बंद होने का समय",
                 avgTxnValue: "औसत लेनदेन / टिकट वैल्यू",
                 conversionProfile: "कन्वर्जन प्रोफाइल",
                 b2b: "B2B/मैन्युफैक्चरिंग",
@@ -979,7 +979,7 @@ export const translations = {
                 }
             },
             step4: {
-                title: "प्रोटोकॉल डिकोड किया गया",
+                title: "रिपोर्ट तैयार है",
                 sub: "{name} के लिए जोखिम प्रोफाइल और प्रॉफिट-लीक रिपोर्ट तैयार है।",
                 physicalPresence: "भौतिक उपस्थिति",
                 physicalPresenceCheck: "मेरा एक भौतिक स्टोर / ऑफिस स्पेस है",
@@ -1002,33 +1002,33 @@ export const translations = {
                     medium: "कार्यों के लिए भारी मानवीय प्रयास की आवश्यकता",
                     high: "कार्य जटिल सॉफ्टवेयर पर चलते हैं"
                 },
-                runningText: "अंतिम रूप दिया जा रहा है...",
-                btnText: "डायग्नोस्टिक्स सबमिट करें"
+                runningText: "रिपोर्ट तैयार हो रही है...",
+                btnText: "डिटेल्स सबमिट करें"
             },
             step5: {
-                leaks: "गंभीर लीकेज पाया गया",
-                decryption: "आपकी विस्तृत रिपोर्ट और बचत लक्ष्य तैयार हैं। डैशबोर्ड को डिक्रिप्ट करने के लिए अपना विवरण दर्ज करें।",
-                decryptBtn: "डैशबोर्ड डिक्रिप्ट करें",
+                leaks: "बड़ा नुकसान पाया गया",
+                decryption: "आपकी विस्तृत रिपोर्ट और बचत का लक्ष्य तैयार है। डैशबोर्ड देखने के लिए अपना विवरण दर्ज करें।",
+                decryptBtn: "डैशबोर्ड देखें",
                 alreadyAccount: "क्या आपके पास पहले से खाता है? लॉगिन करें"
             },
             stepTitles: [
-                "सिस्टम इनिशियलाइजेशन [V2.1-RPC]",
-                "मॉड्यूल 01: ऑपरेशनल वेस्ट",
-                "मॉड्यूल 02: नाइट लॉस लीकेज",
-                "मॉड्यूल 03: डिजिटल इनविजिबिलिटी",
-                "मॉड्यूल 04: एक्स्तिंक्शन होराइजन"
+                "ऑडिट शुरू [V2.1]",
+                "मॉड्यूल 01: गैर-जरूरी खर्च",
+                "मॉड्यूल 02: रात का नुकसान",
+                "मॉड्यूल 03: कम ऑनलाइन पहुंच",
+                "मॉड्यूल 04: AI रिस्क टाइम"
             ]
         },
         lossAudit: {
-            title: "लॉस ऑडिट (Loss Audit)",
-            subTitle: "पता लगाएं कि आपका व्यवसाय हर महीने कितनी पूंजी चुपचाप गंवा रहा है।",
+            title: "मनी लीक ऑडिट",
+            subTitle: "पता लगाएं कि आपका बिजनेस हर महीने कितना पैसा चुपचाप गंवा रहा है।",
             formHeader: "अपनी मासिक लागत दर्ज करें",
             industryLabel: "बिजनेस सेक्टर (Industry)",
             staffSalaryLabel: "स्टाफ का वेतन (मासिक)",
             marketingBudgetLabel: "मार्केटिंग बजट",
             opsOverheadLabel: "ऑपरेशन्स और ओवरहेड्स",
             revenueLabel: "अनुमानित वार्षिक राजस्व",
-            revenueSub: "कोआर्डिनेशन ड्रैग गणना के लिए उपयोग किया जाता है। यदि रेंज है तो मध्य बिंदु का उपयोग करें (जैसे ₹25L–₹1Cr → ₹62.5L)।",
+            revenueSub: "बातचीत में बर्बाद समय की गणना के लिए उपयोग किया जाता है।",
             advancedHeader: "उन्नत डायग्नोस्टिक मेट्रिक्स",
             manualHoursLabel: "दैनिक मैन्युअल काम के घंटे (प्रति कर्मचारी)",
             manualHoursSub: "स्प्रेडशीट, मैन्युअल डेटा एंट्री और बार-बार किए जाने वाले फॉलो-अप पर खर्च किए गए घंटे।",
@@ -1038,14 +1038,14 @@ export const translations = {
             erpSub: "ऑटोमेटेड ऑपरेशन्स",
             btnText: "लॉस ऑडिट कैलिब्रेट करें",
             syncingText: "सिंक्रोनाइज़ हो रहा है...",
-            burnHeadline: "आपका नुकसान हो रहा है",
+            burnHeadline: "आपका पैसा डूब रहा है",
             perMonth: "/माह",
             annualBurnLine: "यानी हर साल {amount} का नुकसान",
             breakdownTitle: "नुकसान का विवरण",
-            payrollWaste: "पेरोल वेस्ट",
-            overheadWaste: "ओवरहेड वेस्ट",
-            marketingWaste: "मार्केटिंग वेस्ट",
-            coordinationDrag: "कोआर्डिनेशन ड्रैग",
+            payrollWaste: "स्टाफ का नुकसान",
+            overheadWaste: "ओवरहेड खर्च",
+            marketingWaste: "मार्केटिंग खर्च",
+            coordinationDrag: "बातचीत में बर्बाद समय",
             recoverableTitle: "बचाने योग्य बचत",
             inactionTitle: "5-साल का निष्क्रियता मूल्य",
             source: "स्रोत: McKinsey Global Institute \"The Future of Work\" (2022) | NASSCOM SMB Operations Index (2023) | Gartner ERP Value Report (2023)",
@@ -1106,8 +1106,8 @@ export const translations = {
             }
         },
         visibility: {
-            title: "मार्केट इनविजिबिलिटी ऑडिट",
-            subTitle: "अभी आप कितने हाई-इंटेंट ग्राहकों को कॉम्पिटिटर्स से खो रहे हैं?",
+            title: "गूगल पर नहीं मिल रहे? अपनी पहुंच चेक करें",
+            subTitle: "अभी आप कितने ग्राहकों को कॉम्पिटिटर्स के लिए खो रहे हैं?",
             formHeader: "सर्च और विजिबिलिटी मेट्रिक्स",
             cityLabel: "प्राथमिक बाजार (शहर)",
             searchTermLabel: "प्राथमिक सर्च टर्म",
@@ -1152,8 +1152,8 @@ export const translations = {
 
         },
         aiThreat: {
-            title: "एक्स्तिंक्शन होराइजन (AI थ्रेट)",
-            subTitle: "जेनरेटिव AI के युग में अपने बिजनेस के सर्वाइवल टाइमलाइन की गणना करें।",
+            title: "AI रिस्क टाइम (AI खतरा)",
+            subTitle: "चेक करें कि AI के दौर में आपका बिजनेस कितने समय तक टिक पाएगा।",
             formHeader: "सर्वाइवल प्रोटोकॉल इनपुट्स",
             physicalPresenceLabel: "भौतिक उपस्थिति (Physical Presence)",
             physicalPresenceCheck: "मेरा एक भौतिक स्टोर / ऑफिस स्पेस है",
@@ -1219,7 +1219,7 @@ export const translations = {
         },
         header: {
             command: "कमांड सेंटर",
-            sync: "Cloud Sync Active — v2.1.0-secure",
+            sync: "सिस्टम सुरक्षित है",
             home: "होम"
         },
         sidebar: {
@@ -1290,7 +1290,7 @@ export const translations = {
                 RESILIENT: "सुरक्षित (Resilient)"
             },
             marketTTL: "मार्केट प्रासंगिकता TTL",
-            extinctionSub: "ग्रोथ प्रोटोकॉल अनऑप्टिमाइज्ड रहने पर बिजनेस खत्म होने का अनुमानित समय।",
+            extinctionSub: "अगर बिजनेस को नहीं बदला गया, तो कॉम्पिटिटर्स द्वारा मार्केट कैप्चर करने का अनुमानित समय।",
             days: "दिन",
             deploy: "प्रोटोकॉल लागू करें"
         },
@@ -1328,7 +1328,7 @@ export const translations = {
                     sub: "खोज मात्रा अंतर के आधार पर"
                 },
                 threat: {
-                    title: "एक्स्तिंक्शन होराइजन",
+                    title: "AI रिस्क टाइम",
                     labels: {
                         khatra: "गंभीर खतरा",
                         savdhan: "सावधान",
@@ -1337,10 +1337,10 @@ export const translations = {
                 }
             },
             roadmap: {
-                title: "प्रोटोकॉल परिवर्तन",
+                title: "आपका ग्रोथ प्लान",
                 subTitle: "चरण-दर-चरण",
                 roi: "अनुमानित ROI",
-                cure: "प्रणालीगत सुधार",
+                cure: "आपका समाधान",
                 steps: [
                     {
                         title: "क्लाउड इंफ्रास्ट्रक्चर माइग्रेशन",
@@ -1363,7 +1363,7 @@ export const translations = {
                 badge: "प्रोटोकॉल ओवरराइड उपलब्ध",
                 title1: "पूंजी का नुकसान रोकें।",
                 title2: "अपना अनुचित लाभ प्राप्त करें।",
-                sub: "आपका डायग्नोस्टिक पूरा हुआ। अपने कस्टम ग्रोथ इंफ्रास्ट्रक्चर को समझने के लिए सिस्टम आर्किटेक्ट के साथ सेशन बुक करें।",
+                sub: "आपका चेकअप पूरा हुआ। अपने बिजनेस के लिए खास ग्रोथ प्लान समझने के लिए हमारे एक्सपर्ट के साथ कॉल बुक करें।",
                 founders: "150+ संस्थापकों से जुड़ें",
                 deploying: "आज ही सिस्टम तैनात कर रहे हैं",
                 booking: {
@@ -1374,7 +1374,7 @@ export const translations = {
                         tmrw: "कल"
                     },
                     btn: {
-                        idle: "सिस्टम आर्किटेक्ट बुक करें",
+                        idle: "फ्री कॉल बुक करें",
                         loading: "स्लॉट सुरक्षित हो रहा है...",
                         success: "स्लॉट की पुष्टि हुई",
                         error: "सिस्टम त्रुटि"
@@ -1401,7 +1401,7 @@ export const translations = {
                 systemLog: "सिस्टम लॉग v2.0",
                 stream: "डायग्नोस्टिक स्ट्रीम",
                 fetching: "_ डेटा प्राप्त हो रहा है...",
-                await: "विसंगति की प्रतीक्षा (AWAIT_ANOMALY)"
+                await: "डेटा का इंतज़ार"
             },
             fab: {
                 waMessage: "नमस्ते MasterKey Labs! मैंने अभी \"{name}\" के लिए बिजनेस डायग्नोस्टिक चलाया है। मैं चर्चा करना चाहता हूं।"
@@ -1429,8 +1429,8 @@ export const translations = {
                     overview: "AI सर्वाइवल रिपोर्ट",
                     exportBtn: "इंटेलिजेंस रिपोर्ट निर्यात करें"
                 },
-                lockedTitle: "एग्रीगेट इंटेलिजेंस लॉक्ड",
-                lockedSub: "अपना सर्वाइवल स्कोर अनलॉक करने के लिए चारों डायग्नोस्टिक प्रोटोकॉल पूरे करें।",
+                lockedTitle: "कुल स्कोर लॉक है",
+                lockedSub: "अपना स्कोर देखने के लिए चारों चेकअप पूरे करें।",
                 bleedCard: {
                     liveBurn: "लाइव बर्न मिला",
                     annualBleed: "कुल वार्षिक<br />पूंजी का नुकसान (Bleed)",
@@ -1443,24 +1443,24 @@ export const translations = {
                     generatorTitle: "ऑडिट रिपोर्ट जनरेटर",
                     lockedSubtitle: "अपना बोर्ड-रेडी ट्रांसफॉर्मेशन रोडमैप जनरेट करने के लिए ऑपरेशनल ऑडिट सीक्वेंस पूरा करें।",
                     unlockedSubtitle: "सभी महत्वपूर्ण लीकेज और ट्रांसफॉर्मेशन रोडमैप को एक ही, बोर्ड-रेडी ऑडिट दस्तावेज़ में संकलित करें।",
-                    btnLocked: "प्रोटोकॉल द्वारा लॉक",
-                    btnProcessing: "पेलोड प्रोसेस हो रहा है...",
-                    btnGenerate: "रिपोर्ट जनरेट और डाउनलोड करें",
+                    btnLocked: "लॉक है",
+                    btnProcessing: "डेटा प्रोसेस हो रहा है...",
+                    btnGenerate: "रिपोर्ट डाउनलोड करें",
                     pdfHeader: "डायग्नोस्टिक ऑडिट पेलोड",
-                    criticalBadge: "गंभीर सिस्टम व्यवधान (Disruption) मिला",
+                    criticalBadge: "भारी नुकसान की चेतावनी",
                     recoverableLegend: "स्वायत्त ऑपरेशनल प्रोटोकॉल तैनात करके हम इस खर्च का 50% वापस पा सकते हैं।",
-                    telemetryTitle: "बिजनेस विश्लेषण (Analysis)",
-                    opsFriction: "ऑपरेशनल वेस्ट",
-                    staffWaste: "इसमें पेरोल अक्षमता में {amount} शामिल है।",
+                    telemetryTitle: "बिजनेस ग्रोथ चेक",
+                    opsFriction: "गैर-जरूरी खर्च",
+                    staffWaste: "इसमें स्टाफ की वजह से होने वाला {amount} का नुकसान शामिल है।",
                     afterHoursBleed: "24/7 छूटी हुई आमदनी",
                     nightLossDesc: "जब सिस्टम सोता है, तो 24/7 AI लीड रिस्पांस की कमी के कारण आप सालाना {amount} खो देते हैं।",
                     digitalInvisibility: "कम ऑनलाइन उपस्थिति",
                     visibilityDesc: "अनुमानित {amount} ({count} छूटे हुए ग्राहक) स्थानीय कॉम्पिटिटर्स द्वारा कब्जा कर लिया जाता है।",
-                    aiThreatHorizon: "AI सर्वाइवल समय",
+                    aiThreatHorizon: "AI के हिसाब से बदलने का समय",
                     aiLossDesc: "सर्वाइवल की विंडो: AI-native फर्मों द्वारा आपके मॉडल को पुराना बनाने से पहले {amount} महीने शेष हैं।",
-                    coordinationDragTitle: "ऑपरेशनल ड्रैग",
-                    coordinationDragDesc: "इस स्तर पर अक्षमताओं को ठीक करना तकनीकी रूप से जटिल है। देरी का हर दिन नुकसान को बढ़ाता है। तत्काल हस्तक्षेप अनिवार्य है।",
-                    protocolTitle: "सर्वाइवल प्रोटोकॉल",
+                    coordinationDragTitle: "बातचीत में बर्बाद समय",
+                    coordinationDragDesc: "इन नुकसानों को रोकना थोड़ा मुश्किल है लेकिन बहुत जरूरी है। हर दिन की देरी यानी और ज्यादा पैसा डूबना। तुरंत एक्शन लें।",
+                    protocolTitle: "आपका ग्रोथ रोडमैप",
                      protocol01Title: "1. डिजिटल टूल्स को इंटीग्रेट करें (Connect)",
                      protocol01Desc: "अपने CRM, ERP और कम्युनिकेशन चैनल्स को एक 'यूनिफाइड डेटा बैकबोन' से जोड़ें। इससे डेटा का बिखराव (Silos) खत्म होगा, मैन्युअल डेटा एंट्री 40% तक कम होगी और आपके पूरे ऑपरेशन के लिए एक सटीक 'सिंगल सोर्स ऑफ़ ट्रुथ' बनेगा।",
                      protocol02Title: "2. दैनिक कार्यों को ऑटोमेट करें (Automate)",
@@ -1490,7 +1490,7 @@ export const translations = {
                     criticalEvasion: "गंभीर बचाव आवश्यक",
                     monitoring: "निगरानी (Monitoring)",
                     architectNote: {
-                        title: "सिस्टम आर्किटेक्ट का संदेश",
+                        title: "मास्टरकी लैब्स का संदेश",
                         p1: "आपके वर्तमान सिस्टम काम तो कर रहे हैं, लेकिन वे काफी महंगे हैं।",
                         p2: "हर महीने, मैनुअल काम और समय की कमी के कारण आपका बिजनेस पैसा गँवा रहा है। यह रिपोर्ट सिर्फ नंबर नहीं है—यह उस पैसे का हिसाब है जो आप सिर्फ इसलिए छोड़ रहे हैं क्योंकि आपने अभी तक आधुनिक AI सिस्टम नहीं लगाया है।",
                         p3: "अपने मुनाफे को बचाने और भविष्य के लिए तैयार होने के लिए इस डेटा का उपयोग करें।",
@@ -1528,7 +1528,7 @@ export const translations = {
                 },
                 module04: {
                     tag: "मॉड्यूल 04: सर्वाइवल डेडलाइन",
-                    title: "क्या आपका बिजनेस AI-प्रूफ है?",
+                    title: "AI रिस्क टाइम",
                     ttl: "मार्केट प्रासंगिकता TTL",
                     months: "महीने",
                     complexity: "सर्वाइवल कॉम्प्लेक्सिटी",
@@ -1597,8 +1597,8 @@ export const translations = {
         },
     },
     hinglish: {
-        tagline: "Modern Systems ke liye Adaptive Intelligence",
-        badge: "System Score Active",
+        tagline: "Modern Business ke liye Smart Solutions",
+        badge: "Business Checkup Active",
         common: {
             market_context: "aapka market",
             industries: {
@@ -1639,10 +1639,10 @@ export const translations = {
             sub: "Jaisa 'Jugaad' se kaam chalta tha, ab waisa nahi chalega. Apne business ko 'System Mode' par laiye."
         },
         scanningSuite: {
-            badge: "System Architecture",
-            title1: "Hamara Core Scanning &",
-            title2: "Diagnostic Suite",
-            sub: "Hamara AI-driven system aapke business ecosystem ka deep-layer scan karta hai hidden inefficiencies ko identify aur resolve karne ke liye:",
+            badge: "Business Structure",
+            title1: "Hamare Main Checking aur",
+            title2: "Diagnostic Tools",
+            sub: "Hamara system aapke business mein paisa ki barbadi aur nuksan ko identify karta hai:",
             waste: {
                 module: "Module 01",
                 title: "See where your money is leaking",
@@ -1666,21 +1666,21 @@ export const translations = {
         },
         diagnostic: {
             readyTitle: "Analysis ke liye Ready",
-            readySub: "Protocol start karein aur apne Profit Leaks aur AI Threat level ko map karein.",
+            readySub: "Apna Checkup start karein aur Check karein revenue kahan leak ho raha hai aur AI se kitna khatra hai.",
             reports: "Reports",
             atRisk: "Khatre mein",
             process: "Process",
-            scanning: "System Vulnerabilities map ho rahi hain",
+            scanning: "Paisa kahan leak ho raha hai, ye check ho raha hai",
             scanSteps: [
-                'Market Infrastructure scan ho raha hai...',
-                'Profit Leaks detect ho rahe hain...',
+                'Market Setup check ho raha hai...',
+                'Money Leaks detect ho rahe hain...',
                 'AI Competition analyze ho raha hai...',
-                'System Extinction calculate ho rahi hai...',
-                'Protocol Report generate ho rahi hai...'
+                'AI Risk Time calculate ho raha hai...',
+                'Business Report ready ho rahi hai...'
             ],
             results: {
-                vulnerable: "Bada Khatra Detect hua",
-                minimal: "System Optimized hai",
+                vulnerable: "Bada Khatra mila hai",
+                minimal: "Business sahi condition mein hai",
                 index: "Profit Leak Index",
                 yearsLeft: "Saal Bache hain",
                 vertical: "Vertical"
@@ -1695,7 +1695,7 @@ export const translations = {
             classification: "Vertical (Sector)",
             scale: "Team Size",
             infrastructure: "Digital Pulse",
-            continue: "Protocol Continue Karein",
+            continue: "Checkup Continue Karein",
             back: "Piche Jayein",
             submit: "AI Scan Start Karein",
             submitting: "Analyze ho raha hai...",
@@ -1711,10 +1711,10 @@ export const translations = {
         },
         wizard: {
             step0: {
-                badge: "System Protocol v2.1",
-                title: "Apne Business ke Profit Leaks scan karein.",
-                sub: "Check karein revenue kaha leak ho raha hai aur AI se aapka dhanda kitne khatre mein hai.",
-                btn: "System Audit Start Karein",
+                badge: "Audit Tool v2.1",
+                title: "Apne Business ke Money Leaks check karein.",
+                sub: "Apna business checkup start karein. Apni report dekhne ke liye details enter karein.",
+                btn: "Business Checkup Start Karein",
                 survival: "Traditional dhanda mar raha hai.",
                 survivalSub: "Chaliye aapka survival rate calculate karte hain aur exact 'bleed' pakadte hain.",
                 goDashboard: "DASHBOARD PAR JAYEIN"
@@ -1746,15 +1746,15 @@ export const translations = {
                 btn: "Diagnostic Report Generate karein"
             },
             step4: {
-                title: "Protocol Decipher hua",
+                title: "Report ready hai",
                 sub: "{name} ke liye Risk Profile aur Profit-Leak report ready hai.",
                 btn: "Report Save karein aur Data Secure karein",
                 running: "Diagnostic Protocols chal rahe hain..."
             },
             step5: {
-                leaks: "BADA LEAKAGE MILA HAI",
-                decryption: "Aapki report aur savings target ready hain. Details bhariye dashboard decrypt karne ke liye.",
-                decryptBtn: "DASHBOARD DECRYPT KAREIN",
+                leaks: "BADA NUKSAAN MILA HAI",
+                decryption: "Aapki report aur savings target ready hain. Details bhariye dashboard dekhne ke liye.",
+                decryptBtn: "DASHBOARD DEKHO",
                 alreadyAccount: "Account hai? Log In karein"
             }
         },
@@ -1767,7 +1767,7 @@ export const translations = {
         header: {
             home: "Home",
             command: "Command Center",
-            sync: "Cloud Sync Active — v2.1.0-secure"
+            sync: "Cloud Sync Active"
         },
         sidebar: {
             status: "System Status",
@@ -1794,7 +1794,7 @@ export const translations = {
             waMessage: "Hi Masterkey Labs, mera business ({businessName}) {threatZone} zone mein hai. Mere system audit se pata chala hai ki mujhe har saal {lossText} ka nuksan ho raha hai. Mujhe Digital Factory banani hai."
         },
         extinctionTimer: {
-            analysisBadge: "AI DISPLACEMENT ANALYSIS",
+            analysisBadge: "AI RISK ANALYSIS",
             title1: "Kya AI",
             title2: "Aapko replace karega?",
             sub: "Niche apna job title ya business type enter karein. Kuch seconds mein apni AI extinction timeline check karein.",
@@ -1825,9 +1825,9 @@ export const translations = {
                 "NASSCOM displacement data sync ho raha hai...",
                 "Indian workforce sector risk ka analysis...",
                 "NITI Aayog (2025) projections ka matching...",
-                "Indian market relevance TTL ki calculation...",
+                "Indian market relevance time ki calculation...",
                 "India mein automation horizon ki mapping...",
-                "Extinction timeline decode ho rahi hai...",
+                "AI Risk timeline ready ho rahi hai...",
                 "Indian risk profile ko finalize kiya ja raha hai...",
             ],
             threatLevels: {
@@ -1836,13 +1836,13 @@ export const translations = {
                 MODERATE: "MODERATE RISK",
                 RESILIENT: "RESILIENT"
             },
-            marketTTL: "Market Relevance TTL",
-            extinctionSub: "Dhanda khatm hone ka estimated time agar optimize nahi kiya toh.",
+            marketTTL: "Time to Adapt",
+            extinctionSub: "Dhanda kitne time mein badalna hoga agar AI competitors se bachna hai.",
             days: "Din",
             deploy: "Deploy Protocol"
         },
         dashboard: {
-            risksTitle: "Immediate Capital Risks",
+            risksTitle: "Immediate Money Leak Risks",
             auditSummary: {
                 header: {
                     log: "Profit Leak Log",
@@ -1924,7 +1924,7 @@ export const translations = {
                         sub: "Naye customers jo dusro ke paas ja rahe hain"
                     },
                     threat: {
-                        title: "Extinction Horizon",
+                        title: "AI Risk Time",
                         labels: {
                             khatra: "KHATRA",
                             savdhan: "SAAVDHAN",
@@ -1933,10 +1933,10 @@ export const translations = {
                     }
                 },
                 roadmap: {
-                    title: "Protocol Transformation",
+                    title: "Aapka Growth Plan",
                     subTitle: "Step-By-Step",
                     roi: "Estimated ROI",
-                    cure: "Systemic Cure",
+                    cure: "Aapka Solution",
                     steps: [
                         {
                             title: "Cloud Infrastructure Migration",
@@ -1959,7 +1959,7 @@ export const translations = {
                     badge: "Protocol Override Available",
                     title1: "Paisa leak hona band karein.",
                     title2: "Apna Anfair Advantage claim karein.",
-                    sub: "Aapka audit complete hai. Expert Architect ke saath session book karein aur system set karein.",
+                    sub: "Aapka checkup complete hai. Expert ke saath call book karein aur growth plan samjhein.",
                     founders: "150+ Founders join kar chuke hain",
                     deploying: "Aaj hi dhanda optimize karein",
                     booking: {
@@ -1977,30 +1977,30 @@ export const translations = {
                         }
                     }
                 },
-                lockedTitle: "Aggregate Intelligence Locked",
-                lockedSub: "Charo diagnostic protocols complete karein survival score unlock karne ke liye.",
+                lockedTitle: "Overall Score Locked",
+                lockedSub: "Charo checkups complete karein apna final score dekhne ke liye.",
                 report: {
                     generatorTitle: "Audit Report Generator",
-                    lockedSubtitle: "Operational audit sequence complete karein apna board-ready transformation roadmap generate karne ke liye.",
-                    unlockedSubtitle: "Sarey critical leakages aur transformation roadmaps ko ek single, board-ready audit document mein compile karein.",
-                    btnLocked: "Protocol dwara Locked",
-                    btnProcessing: "Payload Process ho raha hai...",
-                    btnGenerate: "Report Generate & Download karein",
-                    pdfHeader: "Diagnostic Audit Payload",
-                    criticalBadge: "CRITICAL SYSTEM DISRUPTION DETECTED",
-                    recoverableLegend: "Hum is kharch ka 50% reclaim kar sakte hain autonomous operational protocols deploy karke.",
-                    telemetryTitle: "Business Analysis",
-                    opsFriction: "Operational Waste",
-                    staffWaste: "Ismein {amount} ki payroll inefficiency shamil hai.",
+                    lockedSubtitle: "Apna roadmap generate karne ke liye saare checkups complete karein.",
+                    unlockedSubtitle: "Sarey money leaks aur growth plans ko ek single report mein compile karein.",
+                    btnLocked: "Locked",
+                    btnProcessing: "Data Process ho raha hai...",
+                    btnGenerate: "Report Download karein",
+                    pdfHeader: "Detailed Audit Report",
+                    criticalBadge: "HEAVY LOSS DETECTED",
+                    recoverableLegend: "Hum is loss ka 50% wapas laa sakte hain smart AI systems set karke.",
+                    telemetryTitle: "Business Growth Check",
+                    opsFriction: "Faltu Kharcha (Waste)",
+                    staffWaste: "Ismein {amount} ka staff waste shamil hai.",
                     afterHoursBleed: "24/7 Missed Income",
-                    nightLossDesc: "Aap move {amount} annually lose kar rahe ho due to lack of 24/7 AI lead response jab system sota hai.",
+                    nightLossDesc: "System band hone ke baad AI response na hone ke karan aap har saal {amount} lose kar rahe hain.",
                     digitalInvisibility: "Low Online Presence",
                     visibilityDesc: "Estimated {amount} ({count} missed customers) local competitors capture kar rahe hain.",
                     aiThreatHorizon: "AI Survival Time",
-                    aiLossDesc: "Survival ki window: {amount} mahine bache hain before AI-native firms aapka model obsolete kar dein.",
-                    coordinationDragTitle: "Operational Drag",
-                    coordinationDragDesc: "Is scale par inefficiencies rectify karna technically complex hai. Delay ka har din loss ko compound karta hai. Immediate intervention mandatory hai.",
-                    protocolTitle: "Aapka Survival Roadmap",
+                    aiLossDesc: "Aapke paas {amount} mahine bache hain isse pehle ki AI-native competitors aapko piche chhod dein.",
+                    coordinationDragTitle: "Coordination mein Wasted Time",
+                    coordinationDragDesc: "In galtiyon ko fix karna zaroori hai. Har naya din nuksan ko aur bada karta hai. Turant action lena chaiye.",
+                    protocolTitle: "Aapka Growth Roadmap",
                      protocol01Title: "1. Digital Tools ko Connect karein",
                      protocol01Desc: "Apne CRM, ERP aur communication channels ko integrate karke ek unified data backbone banaein. Isse data silos khatam honge, manual data entry 40% tak kam hogi, aur aapke pure operation ke liye ek single source of truth milega.",
                      protocol02Title: "2. Daily Tasks ko Automate karein",
@@ -2029,10 +2029,10 @@ export const translations = {
                     extinctionDeadline: "Extinction Deadline",
                     months: "Mahine",
                     architectNote: {
-                        title: "MESSAGE FROM THE SYSTEM ARCHITECT",
-                        p1: "Aapke systems broken nahi hain—bas mehnge hain. Ye legacy platforms manually scale karne ke liye bane thay, autonomous growth ke liye nahi.",
-                        p2: "Har mahina jo aap AI integration mein delay kar rahe ho, wo sirf capital loss nahi hai—wo market share ka loss hai. Ye report aapki checklist hai un leakages ko band karne ke liye jo aapka business hollow out kar rahe hain.",
-                        p3: "Is intelligence ko use karein aur apna dominance reclaim karein.",
+                        title: "MASTERKEY LABS KI TARAF SE MESSAGE",
+                        p1: "Aapka business chal toh raha hai, par bohot mehanga pad raha hai. Purane tareeke manual kaam ke liye the, fast growth ke liye nahi.",
+                        p2: "Har mahina AI use karne mein delay karna sirf paise ka nuksan nahi hai—balki naye customers khona bhi hai. Ye report unn galtiyon ko theek karne ki checklist hai jo aapka paisa kha rahi hain.",
+                        p3: "Is data ka use karein aur market mein apni growth badhayein.",
                         sign: "MasterKey Labs Team",
                         role: "Founder, MasterKey Labs"
                     },

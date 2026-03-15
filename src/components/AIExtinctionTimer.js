@@ -15,10 +15,10 @@ RESEARCH BASE:
 - McKinsey India (2024): Up to 280M Indian workers could be exposed to automation by 2030, particularly in high-regularity roles.
 
 RISK TIERS (India-Specific Context):
-- CRITICAL (75-100): 0-3 years — BPO/Call center agents, basic bookkeepers, data entry operators, junior coders (legacy maintenance), translators, admin staff.
+- CRITICAL (75-100): 0-3 years — BPO/Call center agents, basic bookkeepers, data entry operators, junior coders (simple code), translators, admin staff.
 - HIGH (50-74): 3-6 years — Mid-level IT managers, HR recruiters, entry-level marketing analysts, junior lawyers, retail sales ops, financial analysts.
 - MODERATE (25-49): 6-12 years — Specialized engineers, teachers, complex project managers, skilled artisans, medical practitioners, senior strategic roles.
-- RESILIENT (1-24): 12+ years — Physical trades (plumbers/electricians), surgeons (complex surgery), C-suite leadership, high-context creative designers, crisis responders.
+- RESILIENT (1-24): 12+ years — Physical trades (plumbers/electricians), surgeons (complex surgery), C-suite leadership, creative designers, crisis responders.
 
 TASK: Given a job title or business type, return ONLY valid JSON (no markdown, no preamble, no explanation). Be brutally honest about the Indian survival horizon:
 {
@@ -33,13 +33,13 @@ TASK: Given a job title or business type, return ONLY valid JSON (no markdown, n
 }`;
 
 const SEARCH_STEPS = [
-    "SYNCING NASSCOM DISPLACEMENT DATA...",
-    "ANALYZING INDIAN WORKFORCE SECTOR RISK...",
-    "MATCHING NITI AAYOG (2025) PROJECTIONS...",
-    "CALCULATING INDIAN MARKET RELEVANCE TTL...",
-    "MAPPING AUTOMATION HORIZON IN INDIA...",
-    "DECRYPTING EXTINCTION TIMELINE...",
-    "FINALIZING INDIAN RISK PROFILE...",
+    "CHECKING NASSCOM DATA...",
+    "ANALYZING SECTOR RISK...",
+    "MATCHING EXPERT PROJECTIONS...",
+    "CHECKING TIME TO ADAPT...",
+    "MAPPING AUTOMATION HORIZON...",
+    "SHOWING YOUR TIMELINE...",
+    "FINALIZING YOUR PROFILE...",
 ];
 
 const THREAT_CONFIG = {

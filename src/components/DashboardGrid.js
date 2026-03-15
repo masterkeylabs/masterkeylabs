@@ -75,7 +75,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
             <div className="bg-background-dark min-h-screen flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-ios-blue border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-white/40 text-xs font-mono tracking-widest uppercase">Initializing Vault...</p>
+                    <p className="text-white/40 text-xs font-mono tracking-widest uppercase">Preparing Dashboard...</p>
                 </div>
             </div>
         );
@@ -132,7 +132,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                     </span>
                     <div className="space-y-1">
                         <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-[0.3em] font-sans">
-                            System <span className="text-ios-cyan">Unlocked</span>
+                            Checkup <span className="text-ios-cyan">Complete</span>
                         </h2>
                         <div className="w-32 h-1 bg-white/10 mx-auto rounded-full overflow-hidden">
                             <div className="h-full bg-ios-cyan animate-shimmer scale-x-150"></div>
@@ -144,10 +144,10 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
             {/* Data Stream Typography */}
             <div className="absolute bottom-20 left-0 right-0 text-center">
                 <p className="text-[10px] md:text-xs font-mono text-ios-cyan/60 uppercase tracking-[0.5em] animate-fade-in-out">
-                    Decrypting Diagnostic Parameters...
+                    Preparing Your Report...
                 </p>
                 <div className="flex justify-center gap-12 mt-6 opacity-40">
-                    {['VAULT', 'METRICS', 'SYNERGY', 'PROTOCOL'].map(word => (
+                    {['SAVINGS', 'GROWTH', 'RESULTS', 'PLAN'].map(word => (
                         <span key={word} className="text-[8px] font-black tracking-widest text-white">{word}::READY</span>
                     ))}
                 </div>
