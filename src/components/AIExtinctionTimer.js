@@ -354,11 +354,17 @@ export default function AIExtinctionTimer({ guestMode = false, onGetStarted }) {
             try {
                 const { toBlob } = await import('html-to-image');
                 
-                // Optimized configuration for html-to-image to avoid SecurityError
+                // Optimized configuration for high-quality (Full HD+) capture
                 const options = {
-                    pixelRatio: 2, // Slightly reduced for reliability
+                    pixelRatio: 4, // 4x density for ultra-sharp results
                     backgroundColor: "#000000",
                     cacheBust: true,
+                    style: {
+                        transform: 'scale(1)', // Ensure no scaling artifacts
+                    },
+                    // Manually specify dimensions to ensure Full HD+ output
+                    canvasWidth: 550 * 4, 
+                    canvasHeight: el.offsetHeight * 4,
                     // Filter to skip problematic external stylesheets that might cause CORS issues
                     filter: (node) => {
                         if (node.tagName === 'LINK' && node.rel === 'stylesheet') {

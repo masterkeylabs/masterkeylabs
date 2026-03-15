@@ -252,7 +252,7 @@ export default function AdminDashboard() {
             <aside className={`w-64 border-r border-white/5 bg-[#03081a] flex flex-col fixed h-full z-30 transition-all duration-300 transform 
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 <div className="p-8">
-                    <Image src="/logo-icon.png" alt="MasterKey Labs" width={64} height={64} className="h-16 w-auto mb-2 object-contain" />
+                    <Image src="/logo-icon.png" alt="MasterKey Labs" width={110} height={110} className="h-24 w-auto mb-2 object-contain" />
                     <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] mt-2">Command Center</p>
                 </div>
 
@@ -325,7 +325,7 @@ export default function AdminDashboard() {
                 {/* Mobile Header Nav */}
                 <div className="flex items-center justify-between lg:hidden mb-8 glass-dark p-4 rounded-2xl border border-white/5">
                     <div className="flex items-center gap-3">
-                        <Image src="/logo-icon.png" alt="Logo" width={32} height={32} className="h-8 w-auto object-contain" />
+                        <Image src="/logo-icon.png" alt="Logo" width={48} height={48} className="h-12 w-auto object-contain" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">MasterKey Ops</span>
                     </div>
                     <button 
