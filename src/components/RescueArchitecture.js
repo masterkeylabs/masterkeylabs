@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function RescueArchitecture({ businessId, t }) {
@@ -97,7 +98,7 @@ export default function RescueArchitecture({ businessId, t }) {
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -50px 0px" }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full relative flex flex-col items-center z-20 mb-8"
+            className="w-full relative flex flex-col items-center z-20"
             id="schedule-review"
         >
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#020617]/90 backdrop-blur-2xl p-1 shadow-[0_0_120px_rgba(0,122,255,0.15)] w-full">
@@ -141,7 +142,7 @@ export default function RescueArchitecture({ businessId, t }) {
                     </div>
 
                     {/* Booking Interface */}
-                    <div className="glass rounded-2xl p-6 md:p-8 border border-white/10 bg-black/40 shadow-2xl relative overflow-hidden">
+                    <div className="glass rounded-2xl px-6 pt-6 pb-2 md:px-8 md:pt-8 md:pb-4 border border-white/10 bg-black/40 shadow-2xl relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-50 pointer-events-none"></div>
 
                         <div className="relative z-10">
@@ -216,15 +217,26 @@ export default function RescueArchitecture({ businessId, t }) {
                                     </>
                                 )}
                             </button>
+ 
+                             <p className="text-[9px] text-center text-white/30 mt-4 leading-relaxed tracking-wider uppercase">
+                                 No sales pitch. No strings attached.<br />
+                                 Just a clear plan for your growth.
+                             </p>
+                         </div>
+                     </div>
+                 </div>
+             </div>
 
-                            <p className="text-[9px] text-center text-white/30 mt-4 leading-relaxed tracking-wider uppercase">
-                                No sales pitch. No strings attached.<br />
-                                Just a clear plan for your growth.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+             {/* Final Logo to end the page - outside the card */}
+             <div className="mt-4 mb-0 flex justify-center opacity-80 hover:opacity-100 transition-opacity">
+                 <Link href="/">
+                     <img 
+                         src="/logo-new.png" 
+                         alt="MasterKey Labs" 
+                         style={{ height: '250px', width: 'auto', cursor: 'pointer' }} 
+                     />
+                 </Link>
+             </div>
         </motion.div>
     );
 }
