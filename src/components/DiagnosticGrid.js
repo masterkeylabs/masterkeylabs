@@ -207,7 +207,7 @@ export default function DiagnosticGrid({ business, t, locked, onStartAudit }) {
 
             {/* Locked Overlay */}
             {locked && (
-                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pt-20">
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-start pt-14">
                     <div className="bg-black/40 backdrop-blur-md border border-white/10 p-10 rounded-[3rem] shadow-2xl text-center max-w-md mx-auto animate-bounce-in">
                         <div className="w-20 h-20 bg-ios-blue/10 border border-ios-blue/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
                             <span className="material-symbols-outlined text-4xl text-ios-blue animate-pulse">lock_open</span>

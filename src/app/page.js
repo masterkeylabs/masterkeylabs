@@ -88,7 +88,7 @@ export default function Home() {
 
                 <div className="flex flex-col items-center text-center px-6 mt-8">
                     <div className="mb-0 mt-[10px] scale-100 flex justify-center w-full">
-                        <Image src="/logo-new.png" alt="MasterKey Labs Logo" width={1200} height={300} className="h-40 sm:h-56 md:h-72 lg:h-96 w-auto object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,229,255,0.2)]" />
+                        <Image src="/logo-stacked.png" alt="MasterKey Labs Logo" width={1000} height={1000} className="h-64 sm:h-80 md:h-[400px] lg:h-[500px] w-auto object-contain opacity-90 drop-shadow-[0_0_20px_rgba(0,229,255,0.3)]" />
                     </div>
                 </div>
             </header>
@@ -199,7 +199,7 @@ export default function Home() {
                     <div className="container mx-auto px-6 flex flex-col items-center text-center">
                         <div className="mb-10 opacity-80">
                             <Link href="/">
-                                <img src="/logo-new.png" alt="MasterKey Labs" style={{ height: '80px', width: 'auto', cursor: 'pointer' }} />
+                                <img src="/logo-new.png" alt="MasterKey Labs" style={{ height: '250px', width: 'auto', cursor: 'pointer' }} />
                             </Link>
                         </div>
                         <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-12">

@@ -4,7 +4,6 @@ import Sidebar from '@/components/Sidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import DiagnosticGrid from '@/components/DiagnosticGrid';
 import TransformationRoadmap from '@/components/TransformationRoadmap';
-import FloatingFAB from '@/components/FloatingFAB';
 import RescueArchitecture from '@/components/RescueArchitecture';
 import BusinessProfile from '@/components/BusinessProfile';
 import ComprehensiveReportModal from '@/components/ComprehensiveReportModal';
@@ -239,12 +238,6 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
                 />
             )}
 
-            <FloatingFAB
-                businessName={business?.entity_name}
-                threatResult={{ threatLevel: (aiThreat?.score || 0) >= 80 ? 'KHATRA' : 'SAFE' }}
-                lossResult={lossAudit?.saving_target || 0}
-                t={t}
-            />
 
 
         </div>

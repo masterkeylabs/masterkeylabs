@@ -18,7 +18,7 @@ export const metadata = {
 import { AuthProvider } from '@/lib/AuthContext';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
-import FloatingWhatsApp from '@/components/FloatingWhatsApp';
+
 
 export default function RootLayout({ children }) {
   return (
@@ -46,7 +46,6 @@ export default function RootLayout({ children }) {
           <LanguageProvider>
             <AuthProvider>
               {children}
-              <FloatingWhatsApp />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
