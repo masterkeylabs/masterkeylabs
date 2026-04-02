@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const router = useRouter();
 
     const fetchingRef = useRef(null);
+    const safetyTimerRef = useRef(null);
 
     useEffect(() => {
         console.log('--- AuthProvider: Initializing native session check ---');
@@ -20,8 +21,8 @@ export const AuthProvider = ({ children }) => {
 
         // --- SAFETY TIMEOUT ---
         // Force-clear loading after 6s (reduced from 12s for India responsiveness)
-        const safetyTimer = setTimeout(() => {
-            if (loading && isMounted) {
+        safetyTimerRef.current = setTimeout(() => {
+            if (isMounted) {
                 console.warn('--- AuthProvider: SAFETY TIMEOUT TRIGGERED (Forced Clear) ---');
                 if (fetchingRef.current) {
                     console.warn(`--- AuthProvider: Clearing stuck fetch for ID: ${fetchingRef.current} ---`);
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }) => {
                         await fetchBusinessProfile(currentUser);
                     } else {
                         setBusiness(null);
+                        if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
                         setLoading(false);
                         // Ensure no stale biz ID lingers
                         if (typeof window !== 'undefined') {
@@ -64,6 +66,7 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (err) {
                 console.error('--- AuthProvider: Init Fatal Error ---', err);
+                if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
                 if (isMounted) setLoading(false);
             }
         };
@@ -102,13 +105,14 @@ export const AuthProvider = ({ children }) => {
 
             // If we aren't fetching a profile, we can stop loading
             if (!fetchingRef.current) {
+                if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
                 setLoading(false);
             }
         });
 
         return () => {
             isMounted = false;
-            clearTimeout(safetyTimer);
+            if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
             subscription.unsubscribe();
         };
     }, [router]);
@@ -116,6 +120,7 @@ export const AuthProvider = ({ children }) => {
     const fetchBusinessProfile = async (userObj, force = false) => {
         if (!userObj) {
             console.log('--- AuthProvider: No user object, skipping lookup ---');
+            if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
             setLoading(false);
             return;
         }
@@ -233,6 +238,7 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             console.error('--- AuthProvider: UNHANDLED LOOKUP EXCEPTION ---', err);
         } finally {
+            if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
             fetchingRef.current = null;
             setLoading(false);
             console.log('--- AuthProvider: Lookup sequence finished. Loading state cleared. ---');
