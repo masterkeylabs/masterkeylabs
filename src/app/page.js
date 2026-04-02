@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useAuth } from '@/lib/AuthContext';
 import AIExtinctionTimer from '@/components/AIExtinctionTimer';
@@ -88,7 +89,62 @@ export default function Home() {
 
                 <div className="flex flex-col items-center text-center px-6 mt-8">
                     <div className="mb-0 mt-[10px] scale-100 flex justify-center w-full">
-                        <Image src="/logo-stacked.png" alt="MasterKey Labs Logo" width={1000} height={1000} className="h-64 sm:h-80 md:h-[400px] lg:h-[500px] w-auto object-contain opacity-90 drop-shadow-[0_0_20px_rgba(0,229,255,0.3)]" />
+                        <motion.div 
+                            className="relative group cursor-pointer"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            {/* Main Logo Image (Absolute Clarity) */}
+                            <div className="relative group-hover:drop-shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all duration-500">
+                                <Image 
+                                    src="/logo-stacked.png" 
+                                    alt="MasterKey Labs Logo" 
+                                    width={1000} 
+                                    height={1000} 
+                                    className="h-64 sm:h-80 md:h-[400px] lg:h-[500px] w-auto object-contain transition-all duration-300 opacity-100 group-hover:brightness-110" 
+                                />
+
+                                {/* High-Clarity Symmetrical Neon Sparkle Swarm */}
+                                <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                                    {/* Symmetrical Pairs (Left: Blue, Right: Orange) */}
+                                    {/* Top Corners */}
+                                    <div className="sparkle sparkle-blue animate-sparkle" style={{ top: '15%', left: '15%', '--x': '-20px', '--y': '-30px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle" style={{ top: '15%', left: '85%', '--x': '20px', '--y': '-30px' }} />
+                                    
+                                    {/* Upper Diagonals */}
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.3s]" style={{ top: '30%', left: '30%', '--x': '15px', '--y': '-40px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.3s]" style={{ top: '30%', left: '70%', '--x': '-15px', '--y': '-40px' }} />
+                                    
+                                    {/* Middle Hub */}
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.6s]" style={{ top: '50%', left: '20%', '--x': '40px', '--y': '0px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.6s]" style={{ top: '50%', left: '80%', '--x': '-40px', '--y': '0px' }} />
+                                    
+                                    {/* Lower Diagonals */}
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.9s]" style={{ top: '65%', left: '35%', '--x': '-10px', '--y': '40px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.9s]" style={{ top: '65%', left: '65%', '--x': '10px', '--y': '40px' }} />
+                                    
+                                    {/* Bottom Corners */}
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:1.2s]" style={{ top: '80%', left: '15%', '--x': '-30px', '--y': '20px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:1.2s]" style={{ top: '80%', left: '85%', '--x': '30px', '--y': '20px' }} />
+
+                                    {/* Central Vertical Axis Sparkles (Alternating) */}
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:1.5s]" style={{ top: '10%', left: '50%', '--x': '0px', '--y': '-50px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:1.8s]" style={{ top: '45%', left: '50%', '--x': '0px', '--y': '20px' }} />
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:2.1s]" style={{ top: '90%', left: '50%', '--x': '0px', '--y': '40px' }} />
+                                    
+                                    {/* Secondary Symmetry Layer */}
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.5s]" style={{ top: '40%', left: '25%', '--x': '20px', '--y': '-20px' }} />
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.5s]" style={{ top: '40%', left: '75%', '--x': '-20px', '--y': '-20px' }} />
+                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:1.1s]" style={{ top: '60%', left: '20%', '--x': '30px', '--y': '30px' }} />
+                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:1.1s]" style={{ top: '60%', left: '80%', '--x': '-30px', '--y': '30px' }} />
+                                </div>
+                            </div>
+
+                            {/* Crisp Background Glow */}
+                            <div className="absolute inset-0 bg-ios-blue/5 rounded-full blur-[60px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                        </motion.div>
                     </div>
                 </div>
             </header>

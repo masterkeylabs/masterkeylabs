@@ -455,3 +455,34 @@ body {
 .orange-pulse {
   display: none !important;
 }
+/* === Hero Logo High-Clarity Neon Sparkle (Final) === */
+@keyframes sparkle-sharp {
+  0%, 100% { transform: translate(0, 0) scale(0); opacity: 0; }
+  25% { opacity: 1; transform: translate(var(--x), var(--y)) scale(1.1); }
+  50% { filter: brightness(1.8); transform: translate(var(--x), var(--y)) scale(1.5); }
+  75% { opacity: 1; transform: translate(var(--x), var(--y)) scale(1.1); }
+}
+
+.sparkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.sparkle-blue { 
+  background: #00E5FF; 
+  box-shadow: 0 0 12px #00E5FF, 0 0 24px rgba(0, 229, 255, 0.5); 
+}
+
+.sparkle-orange { 
+  background: #FF7000; 
+  box-shadow: 0 0 12px #FF7000, 0 0 24px rgba(255, 112, 0, 0.5); 
+}
+
+.animate-sparkle {
+  animation: sparkle-sharp 2.2s ease-in-out infinite;
+}
+
