@@ -20,6 +20,7 @@ export default function Home() {
     const [auditHref, setAuditHref] = useState('/signup');
 
     const [mounted, setMounted] = useState(false);
+    const [isLogoSparkling, setIsLogoSparkling] = useState(false);
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -95,19 +96,20 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1, ease: "easeOut" }}
                             whileHover={{ scale: 1.05 }}
+                            onClick={() => setIsLogoSparkling(!isLogoSparkling)}
                         >
                             {/* Main Logo Image (Absolute Clarity) */}
-                            <div className="relative group-hover:drop-shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all duration-500">
+                            <div className={`relative transition-all duration-500 group-hover:drop-shadow-[0_0_20px_rgba(0,229,255,0.15)] ${isLogoSparkling ? 'drop-shadow-[0_0_20px_rgba(0,229,255,0.15)]' : ''}`}>
                                 <Image 
                                     src="/logo-stacked.png" 
                                     alt="MasterKey Labs Logo" 
                                     width={1000} 
                                     height={1000} 
-                                    className="h-64 sm:h-80 md:h-[400px] lg:h-[500px] w-auto object-contain transition-all duration-300 opacity-100 group-hover:brightness-110" 
+                                    className={`h-64 sm:h-80 md:h-[400px] lg:h-[500px] w-auto object-contain transition-all duration-300 opacity-100 group-hover:brightness-110 ${isLogoSparkling ? 'brightness-110' : ''}`} 
                                 />
 
                                 {/* High-Clarity Symmetrical Neon Sparkle Swarm */}
-                                <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-700 group-hover:opacity-100 ${isLogoSparkling ? 'opacity-100' : 'opacity-0'}`}>
                                     {/* Symmetrical Pairs (Left: Blue, Right: Orange) */}
                                     {/* Top Corners */}
                                     <div className="sparkle sparkle-blue animate-sparkle" style={{ top: '15%', left: '15%', '--x': '-20px', '--y': '-30px' }} />
@@ -143,7 +145,7 @@ export default function Home() {
                             </div>
 
                             {/* Crisp Background Glow */}
-                            <div className="absolute inset-0 bg-ios-blue/5 rounded-full blur-[60px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                            <div className={`absolute inset-0 bg-ios-blue/5 rounded-full blur-[60px] -z-10 transition-opacity duration-700 pointer-events-none group-hover:opacity-100 ${isLogoSparkling ? 'opacity-100' : 'opacity-0'}`} />
                         </motion.div>
                     </div>
                 </div>
