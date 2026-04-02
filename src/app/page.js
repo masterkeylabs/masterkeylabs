@@ -180,12 +180,21 @@ export default function Home() {
                             {t.hero.sub}
                         </p>
 
-                        <div className="mt-8">
+                        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
                             {mounted && (
-                                <button onClick={handleStartFullAudit} className="px-10 py-5 bg-gradient-to-br from-ios-blue to-[#0099FF] text-black font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110 active:scale-95 shadow-[0_20px_50px_rgba(0,229,255,0.3)] flex items-center gap-3 group">
-                                    <span className="text-sm uppercase tracking-widest">Start Full Audit</span>
-                                    <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                </button>
+                                <>
+                                    <button onClick={handleStartFullAudit} className="px-10 py-5 w-full sm:w-auto bg-gradient-to-br from-ios-blue to-[#0099FF] text-black font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110 active:scale-95 shadow-[0_20px_50px_rgba(0,229,255,0.3)] flex justify-center items-center gap-3 group border border-transparent">
+                                        <span className="text-sm uppercase tracking-widest">Start Full Audit</span>
+                                        <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                    </button>
+                                    
+                                    {/* Academy External CTA */}
+                                    <Link href="https://academy.masterkeylabs.ai" target="_blank" rel="noopener noreferrer" className="px-10 py-5 w-full sm:w-auto bg-[#0a0a0a] border border-white/10 text-white font-black rounded-2xl transition-all hover:scale-105 hover:bg-white/5 hover:border-ios-blue/30 active:scale-95 shadow-inner flex justify-center items-center gap-3 group relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                                        <span className="text-sm uppercase tracking-widest relative z-10">MasterKey Academy</span>
+                                        <span className="material-symbols-outlined text-white/40 group-hover:text-ios-blue transition-colors relative z-10">school</span>
+                                    </Link>
+                                </>
                             )}
                         </div>
 
