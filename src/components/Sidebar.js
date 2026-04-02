@@ -41,12 +41,21 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
                 <div className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm md:hidden" onClick={() => setSidebarOpen && setSidebarOpen(false)} />
             )}
             <aside className={`w-64 border-r border-white/5 bg-background-dark flex flex-col fixed h-full z-[100] transition-transform duration-300 left-0 top-0 overflow-y-auto custom-scrollbar ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-                <div className="p-8 flex items-center justify-between">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Link href="/">
-                            <img src="/logo-new.png" alt="MasterKey Labs" style={{ height: '80px', width: 'auto', cursor: 'pointer' }} />
-                        </Link>
-                    </div>
+                <div className="px-6 pt-4 pb-0 flex items-center">
+                    <Link href="/">
+                        <img 
+                            src="/logo.png" 
+                            alt="MasterKey Labs" 
+                            style={{ 
+                                width: '200px', 
+                                height: '60px', 
+                                objectFit: 'cover',
+                                objectPosition: 'center',
+                                cursor: 'pointer',
+                                display: 'block'
+                            }} 
+                        />
+                    </Link>
                     {setSidebarOpen && (
                         <button onClick={() => setSidebarOpen(false)} className="md:hidden text-white/60 hover:text-white">
                             <span className="material-symbols-outlined">close</span>
