@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -18,6 +18,7 @@ export default function Home() {
     const { theme } = useTheme();
     const isLight = theme === 'light';
     const router = useRouter();
+    const diagnosticsScrollRef = useRef(null);
     const loading = authLoading;
     const hasSession = !!user && !!business; // Require both user and business profile for dashboard access
 
@@ -52,6 +53,18 @@ export default function Home() {
         const el = document.getElementById(id);
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    const scrollDiagnostics = () => {
+        if (diagnosticsScrollRef.current) {
+            const container = diagnosticsScrollRef.current;
+            const scrollAmount = container.clientWidth > 768 ? container.clientWidth / 2 : container.clientWidth * 0.8;
+            container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            
+            if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
+            }
         }
     };
 
@@ -176,17 +189,11 @@ export default function Home() {
                     <ServiceList />
                 </div>
 
-                <section className="container mx-auto px-6 py-4 lg:py-8 flex flex-col items-center">
-                    {/* AI Extinction Timer — now follows the services */}
-                    <div id="ai-timer" className="mb-10 w-full max-w-4xl mx-auto px-4 animate-fade-in opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                        {mounted && (
-                            <AIExtinctionTimer
-                                guestMode={!user}
-                                onGetStarted={handleStartFullAudit}
-                            />
-                        )}
-                    </div>
+                {/* ─── DIVIDER ─── */}
+                <div className="w-full max-w-5xl mx-auto px-6"><div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" /></div>
 
+                {/* ═══════════ HERO COPY & CTA ═══════════ */}
+                <section className="container mx-auto px-6 py-8 lg:py-12 flex flex-col items-center">
                     {/* Hook & Copy */}
                     <div className="flex flex-col items-center gap-4 max-w-4xl text-center mb-10">
                         <p className="text-white/40 text-[10px] sm:text-xs uppercase tracking-[0.2em] font-medium mb-2">
@@ -220,15 +227,16 @@ export default function Home() {
                                 </>
                             )}
                         </div>
-
-                        {/* CTA below the hook removed to avoid conflict with AI Timer (Fix #2) */}
                     </div>
                 </section>
 
+                {/* ─── DIVIDER ─── */}
+                <div className="w-full max-w-5xl mx-auto px-6"><div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" /></div>
+
                 {/* ═══════════ CORE SCANNING & DIAGNOSTIC SUITE ═══════════ */}
-                <section id="diagnostics" className="container mx-auto px-6 py-20 lg:py-28">
+                <section id="diagnostics" className="container mx-auto px-6 py-8 lg:py-12">
                     {/* Section Header */}
-                    <div className="text-center max-w-3xl mx-auto mb-16">
+                    <div className="text-center max-w-3xl mx-auto mb-8">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-ios-blue/10 border border-ios-blue/20 mb-6">
                             <span className="w-1.5 h-1.5 rounded-full bg-ios-blue animate-pulse"></span>
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ios-blue">{t.scanningSuite.badge}</span>
@@ -243,9 +251,12 @@ export default function Home() {
                     </div>
 
                     <div className="relative group/scroll">
-                        <div className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-6 pb-12 px-4 -mx-4 md:grid md:grid-cols-2 md:max-w-5xl md:mx-auto md:px-0 md:gap-6">
+                        <div 
+                            ref={diagnosticsScrollRef}
+                            className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-6 pt-4 pb-12 px-6 -mx-6 md:mx-0 md:px-0 scroll-smooth"
+                        >
                             {/* 1. Operational Waste */}
-                            <div className="flex-none w-[85%] md:w-auto snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
+                            <div className="flex-none w-[85%] md:w-[calc(50%-12px)] snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
                                 <div className="w-12 h-12 rounded-2xl bg-ios-blue/10 flex items-center justify-center mb-6 border border-ios-blue/20 group-hover:scale-110 transition-transform">
                                     <span className="material-symbols-outlined text-ios-blue">account_balance_wallet</span>
                                 </div>
@@ -255,7 +266,7 @@ export default function Home() {
                             </div>
 
                             {/* 2. Night Loss */}
-                            <div className="flex-none w-[85%] md:w-auto snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
+                            <div className="flex-none w-[85%] md:w-[calc(50%-12px)] snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
                                 <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 transition-transform">
                                     <span className="material-symbols-outlined text-purple-400">nights_stay</span>
                                 </div>
@@ -265,7 +276,7 @@ export default function Home() {
                             </div>
 
                             {/* 3. Visibility */}
-                            <div className="flex-none w-[85%] md:w-auto snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
+                            <div className="flex-none w-[85%] md:w-[calc(50%-12px)] snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
                                 <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:scale-110 transition-transform">
                                     <span className="material-symbols-outlined text-cyan-400">visibility</span>
                                 </div>
@@ -275,7 +286,7 @@ export default function Home() {
                             </div>
 
                             {/* 4. Extinction Horizon */}
-                            <div className="flex-none w-[85%] md:w-auto snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
+                            <div className="flex-none w-[85%] md:w-[calc(50%-12px)] snap-center group p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 relative overflow-hidden">
                                 <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6 border border-red-500/20 group-hover:scale-110 transition-transform">
                                     <span className="material-symbols-outlined text-red-400">history_toggle_off</span>
                                 </div>
@@ -285,19 +296,37 @@ export default function Home() {
                             </div>
                         </div>
 
-                        {/* Global Navigation Sign (Right Edge) — Only on Mobile/Tablet */}
-                        <div className="md:hidden absolute right-4 top-[calc(50%-1.5rem)] -translate-y-1/2 p-3 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x pointer-events-none z-20">
+                        {/* Global Navigation Sign (Right Edge) — Now Clickable */}
+                        <button 
+                            onClick={scrollDiagnostics}
+                            className="md:hidden absolute right-4 top-[calc(50%-1.5rem)] -translate-y-1/2 p-3 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x z-20 active:scale-95 transition-transform"
+                        >
                             <span className="material-symbols-outlined font-bold">arrow_forward</span>
-                        </div>
+                        </button>
                         <div className="hidden md:absolute md:flex right-0 top-0 h-[calc(100%-3rem)] w-24 items-center justify-end pr-4 bg-gradient-to-l from-background-dark via-background-dark/80 to-transparent pointer-events-none group-hover/scroll:opacity-100 opacity-60 transition-opacity">
-                             <div className="p-3 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40">
+                             <button 
+                                onClick={scrollDiagnostics}
+                                className="p-3 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40 hover:text-ios-blue hover:bg-ios-blue/10 pointer-events-auto transition-all active:scale-95"
+                            >
                                 <span className="material-symbols-outlined font-bold">arrow_forward</span>
-                            </div>
+                            </button>
                         </div>
                     </div>
+                </section>
 
+                {/* ─── DIVIDER ─── */}
+                <div className="w-full max-w-5xl mx-auto px-6"><div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" /></div>
 
-
+                {/* ═══════════ AI EXTINCTION TIMER ═══════════ */}
+                <section id="ai-timer" className="container mx-auto px-6 py-8 lg:py-12 flex flex-col items-center">
+                    <div className="w-full max-w-4xl mx-auto px-4 animate-fade-in opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                        {mounted && (
+                            <AIExtinctionTimer
+                                guestMode={!user}
+                                onGetStarted={handleStartFullAudit}
+                            />
+                        )}
+                    </div>
                 </section>
 
 

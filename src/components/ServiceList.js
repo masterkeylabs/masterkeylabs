@@ -1,4 +1,5 @@
 'use client';
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
 import Link from 'next/link';
@@ -41,18 +42,32 @@ const bgAccents = {
 
 const ServiceList = () => {
     const { t } = useLanguage();
+    const scrollRef = useRef(null);
     const services = t.services;
+
+    const scroll = () => {
+        if (scrollRef.current) {
+            const container = scrollRef.current;
+            const scrollAmount = container.clientWidth > 768 ? container.clientWidth / 3 : container.clientWidth * 0.8;
+            container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            
+            // If we are at the end, scroll back to start
+            if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
+            }
+        }
+    };
 
     if (!services) return null;
 
     const serviceKeys = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9'];
 
     return (
-        <section className="container mx-auto px-6 py-20 lg:py-32 relative">
+        <section className="container mx-auto px-6 py-8 lg:py-12 relative">
             {/* Background Ambient Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-ios-blue/5 blur-[120px] rounded-full -z-10 pointer-events-none opacity-50" />
 
-            <div className="text-center max-w-3xl mx-auto mb-20">
+            <div className="text-center max-w-3xl mx-auto mb-8">
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -84,7 +99,10 @@ const ServiceList = () => {
             </div>
 
             <div className="relative group/scroll">
-                <div className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-6 pb-12 px-6 -mx-6 md:mx-0 md:px-0">
+                <div 
+                    ref={scrollRef}
+                    className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-6 pt-4 pb-12 px-6 -mx-6 md:mx-0 md:px-0 scroll-smooth"
+                >
                     {serviceKeys.map((key, index) => (
                         <Link href={`/services/${key}`} key={key} className="flex-none w-[85%] md:w-[calc(33.333%-16px)] snap-center">
                             <motion.div
@@ -128,19 +146,22 @@ const ServiceList = () => {
                     ))}
                 </div>
 
-                {/* Global Navigation Sign (Right Edge) */}
-                <div className="absolute right-4 top-[calc(50%-1.5rem)] -translate-y-1/2 p-3 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x pointer-events-none md:hidden z-20">
+                {/* Global Navigation Sign (Right Edge) - Now Clickable */}
+                <button 
+                    onClick={scroll}
+                    className="absolute right-4 top-[calc(50%-1.5rem)] -translate-y-1/2 p-3 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x md:hidden z-20 active:scale-95 transition-transform"
+                >
                     <span className="material-symbols-outlined font-bold">arrow_forward</span>
-                </div>
+                </button>
                 <div className="hidden md:absolute md:flex right-0 top-0 h-[calc(100%-3rem)] w-24 items-center justify-end pr-4 bg-gradient-to-l from-background-dark via-background-dark/80 to-transparent pointer-events-none group-hover/scroll:opacity-100 opacity-60 transition-opacity">
-                        <div className="p-3 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40">
+                    <button 
+                        onClick={scroll}
+                        className="p-3 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40 hover:text-ios-blue hover:bg-ios-blue/10 pointer-events-auto transition-all active:scale-95"
+                    >
                         <span className="material-symbols-outlined font-bold">arrow_forward</span>
-                    </div>
+                    </button>
                 </div>
             </div>
-
-
-
         </section>
     );
 };
