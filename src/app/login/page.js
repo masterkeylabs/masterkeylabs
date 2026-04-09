@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import VideoLogo from '@/components/VideoLogo';
 
 export default function LoginPage() {
     const { user, loading: authLoading } = useAuth();
@@ -110,7 +111,7 @@ export default function LoginPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-[400px] z-10">
                 <div className="flex flex-col items-center mb-10">
                     <Link href="/">
-                        <Image src="/logo-stacked.png" alt="MasterKey Logo" width={100} height={100} className="h-20 w-auto object-contain" />
+                        <VideoLogo src="/video-logo.mp4" poster="/logo-stacked.png" style={{ height: '80px', width: 'auto' }} className="cursor-pointer" />
                     </Link>
                     <h1 className="text-2xl font-bold mt-6 tracking-tight text-center">System Access</h1>
                     <p className="text-white/40 text-sm mt-2">Enter credentials for instant decryption</p>

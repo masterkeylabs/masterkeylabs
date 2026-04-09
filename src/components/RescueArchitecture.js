@@ -228,12 +228,12 @@ export default function RescueArchitecture({ businessId, t }) {
              </div>
 
              {/* Final Logo to end the page - outside the card */}
-             <div className="mt-4 mb-0 flex justify-center opacity-80 hover:opacity-100 transition-opacity">
+             <div className="mt-4 mb-2 flex justify-center opacity-80 hover:opacity-100 transition-opacity">
                  <Link href="/">
                      <img 
                          src="/logo-new.png" 
                          alt="MasterKey Labs" 
-                         style={{ height: '250px', width: 'auto', cursor: 'pointer' }} 
+                         style={{ height: '60px', width: 'auto', cursor: 'pointer' }} 
                      />
                  </Link>
              </div>

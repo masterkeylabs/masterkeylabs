@@ -92,6 +92,13 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
+
+/* Logo card in light mode — premium dark stage so logo black background is intentional */
+[data-theme="light"] .logo-card {
+  background: #0a0a0a !important;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,229,255,0.1) !important;
+}
+
 [data-theme="light"] .system-card {
   background: rgba(255, 255, 255, 0.95) !important;
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
@@ -485,4 +492,14 @@ body {
 .animate-sparkle {
   animation: sparkle-sharp 2.2s ease-in-out infinite;
 }
+
+/* === Hide Scrollbar Utility === */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 

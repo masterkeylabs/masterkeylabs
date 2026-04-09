@@ -164,7 +164,7 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
 
             {isUnlocking && <UnlockingOverlay />}
 
-            <main className="flex-1 ml-0 md:ml-64 p-4 md:pt-10 md:px-10 md:pb-4 relative w-full max-w-full">
+            <main className="flex-1 ml-0 md:ml-64 p-4 pb-0 md:pt-10 md:px-10 md:pb-0 relative w-full max-w-full">
                 {/* Background Sophistication */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-ios-blue/5 blur-[120px] rounded-full opacity-60"></div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
+import VideoLogo from './VideoLogo';
 
 export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
     const { signOut } = useAuth();
@@ -43,14 +44,12 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
             <aside className={`w-64 border-r border-white/5 bg-background-dark flex flex-col fixed h-full z-[100] transition-transform duration-300 left-0 top-0 overflow-y-auto custom-scrollbar ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
                 <div className="px-6 pt-4 pb-0 flex items-center">
                     <Link href="/">
-                        <img 
-                            src="/logo.png" 
-                            alt="MasterKey Labs" 
+                        <VideoLogo 
+                            src="/video-logo.mp4" 
+                            poster="/logo.png" 
                             style={{ 
                                 width: '200px', 
                                 height: '60px', 
-                                objectFit: 'cover',
-                                objectPosition: 'center',
                                 cursor: 'pointer',
                                 display: 'block'
                             }} 

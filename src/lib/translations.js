@@ -8,6 +8,8 @@ export const translations = {
             sub: "Every day you hesitate is a day your competition evolves. Don't let your business become a legacy system.",
         },
         common: {
+            startAudit: "Start Full Audit",
+            academy: "MasterKey Academy",
             market_context: "your market",
             revenueLabel: "Estimated Annual Revenue",
             employeeCountLabel: "Number of Employees (Operational Scale)",
@@ -217,7 +219,10 @@ export const translations = {
             dashboard: "Dashboard",
             login: "Login",
             signup: "Sign Up",
-            home: "Home"
+            home: "Home",
+            services: "Services",
+            aiTimer: "AI Timer",
+            diagnostics: "Diagnostics"
         },
         lossAudit: {
             title: "Money Leak Audit",
@@ -767,23 +772,52 @@ export const translations = {
         services: {
             title: "Internal Systems & Growth Protocols",
             sub: "Our modular approach ensures every facet of your business is optimized for the AI era.",
+            protocolActive: "Protocol Active",
+            speakArchitect: "Speak to an Architect",
+            expansionModule: "Expansion Module",
+            notFound: "Protocol Not Found",
+            backHome: "Home",
+            backCommand: "Back to Command Center",
             p1: {
-                title: "Brand & Identity Design",
-                sub: "Visual Infrastructure, Market Strategy, Authority Assets"
+                title: "AI Automation Protocols",
+                sub: "Autonomous Agents, Voice AI, Neural Workflow Integration"
             },
             p2: {
-                title: "Systems & Automation",
-                sub: "Custom CRM Solutions, Workflow Optimization, AI Integration"
+                title: "Business Digitalization",
+                sub: "Legacy Asset Migration, Digital Factory Setup, Cloud Infrastructure"
             },
             p3: {
-                title: "Leads & Growth",
-                sub: "Precision Targeting, Automated Funnels"
+                title: "Brand & Identity Design",
+                sub: "Visual Infrastructure, Market Strategy, Authority Assets",
+                highlights: ["Market Position Optimization", "High-Authority Design Systems", "Narrative Architecture", "Brand Sentiment Analysis"]
             },
             p4: {
+                title: "Systems & Architecture",
+                sub: "Custom CRM Solutions, Workflow Optimization, ERP Calibration",
+                highlights: ["Custom ERP Development", "Complex CRM Architectures", "API Ecosystem Design", "Security Protocol Hardening"]
+            },
+            p5: {
+                title: "Leads & Growth",
+                sub: "Precision Targeting, Automated Funnels, Conversion Velocity"
+            },
+            p6: {
                 title: "Strategy & Intelligence",
-                sub: "Global Market Tactics, Resilience Protocols",
-                f1: "Scalable Technology Roadmap",
-                f2: "International Market Expansion"
+                sub: "Global Market Tactics, Resilience Protocols, Competitive Defense"
+            },
+            p7: {
+                title: "Website Development",
+                sub: "High-Conversion PWAs, Custom Headless CMS, Enterprise Portals",
+                highlights: ["Headless CMS Architecture", "High-Velocity Deployment", "SEO-Core Infrastructure", "Adaptive Multi-modal UIs"]
+            },
+            p8: {
+                title: "App Development",
+                sub: "Native iOS & Android, Cross-Platform Scalability, Cloud Architecture",
+                highlights: ["Native iOS/Android Stacks", "Cross-Platform Scalability", "Low-Latency Synchronization", "Encrypted Data Transmission"]
+            },
+            p9: {
+                title: "SaaS Products",
+                sub: "Product Strategy, MVP Development, Multi-Tenant Architecture",
+                highlights: ["Full-Stack Product Engineering", "Multi-Tenant Architecture", "Recurring Value Engineering", "Self-Healing Product Design"]
             }
         },
         auth: {
@@ -1215,7 +1249,10 @@ export const translations = {
             dashboard: "डैशबोर्ड",
             login: "लॉगिन",
             signup: "साइन अप",
-            home: "होम"
+            home: "होम",
+            services: "सेवाएँ",
+            aiTimer: "AI टाइमर",
+            diagnostics: "निदान"
         },
         header: {
             command: "कमांड सेंटर",
@@ -1557,25 +1594,43 @@ export const translations = {
             sub: "पुरानी तकनीक के युग में पीछे न छूटें।"
         },
         services: {
-            title: "आंतरिक प्रणालियाँ और विकास प्रोटोकॉल",
-            sub: "हमारा मॉड्यूल-आधारित दृष्टिकोण सुनिश्चित करता है कि आपके व्यवसाय का हर पहलू AI युग के लिए अनुकूलित है।",
+            title: "इंटरनल सिस्टम और ग्रोथ प्रोटोकॉल",
+            sub: "हमारा मॉड्यूल आधारित दृष्टिकोण यह सुनिश्चित करता है कि आपके बिजनेस का हर क्षेत्र AI युग के लिए तैयार हो।",
             p1: {
-                title: "ब्रांड और पहचान डिजाइन",
-                sub: "दृश्य बुनियादी ढांचा, बाजार रणनीति, प्राधिकरण संपत्ति"
+                title: "AI ऑटोमेशन प्रोटोकॉल",
+                sub: "ऑटोनॉमस एजेंट्स, वॉयस AI, न्यूरल वर्कफ़्लो इंटीग्रेशन"
             },
             p2: {
-                title: "सिस्टम और ऑटोमेशन",
-                sub: "कस्टम CRM समाधान, वर्कफ़्लो ऑप्टिमाइज़ेशन, AI एकीकरण"
+                title: "बिजनेस डिजिटलीकरण",
+                sub: "लीगेसी एसेट माइग्रेशन, डिजिटल फैक्ट्री सेटअप, क्लाउड इंफ्रास्ट्रक्चर"
             },
             p3: {
-                title: "लीड्स और ग्रोथ",
-                sub: "सटीक लक्ष्यीकरण, स्वचालित फ़नल"
+                title: "ब्रांड और पहचान डिजाइन",
+                sub: "विजुअल इंफ्रास्ट्रक्चर, मार्केट स्ट्रेटजी, अथॉरिटी एसेट्स"
             },
             p4: {
+                title: "सिस्टम और आर्किटेक्चर",
+                sub: "कस्टम CRM समाधान, वर्कफ़्लो अनुकूलन, ERP कैलिब्रेशन"
+            },
+            p5: {
+                title: "लीड्स और ग्रोथ",
+                sub: "सटीक लक्ष्यीकरण, ऑटोमेटेड फ़नल, कन्वर्जन वेलोसिटी"
+            },
+            p6: {
                 title: "रणनीति और इंटेलिजेंस",
-                sub: "ग्लोबल मार्केट रणनीति, सिस्टम लचीलापन",
-                f1: "स्केलेबल टेक्नोलॉजी रोडमैप",
-                f2: "अंतरराष्ट्रीय बाजार विस्तार"
+                sub: "वैश्विक बाजार रणनीति, लचीलापन प्रोटोकॉल, कॉम्पिटिटिव डिफेंस"
+            },
+            p7: {
+                title: "वेबसाइट डेवलपमेंट",
+                sub: "हाई-कन्वर्जन PWA, कस्टम हेडलेस CMS, एंटरप्राइज पोर्टल"
+            },
+            p8: {
+                title: "ऐप डेवलपमेंट",
+                sub: "नेटिव iOS और Android, क्रॉस-प्लेटफॉर्म समाधान, स्केलेबल क्लाउड ऐप्स"
+            },
+            p9: {
+                title: "SaaS प्रोडक्ट्स",
+                sub: "प्रोडक्ट स्ट्रेटजी, MVP डेवलपमेंट, मल्टी-टेनेंट आर्किटेक्चर"
             }
         },
         auth: {
@@ -1762,7 +1817,10 @@ export const translations = {
             dashboard: "Dashboard",
             login: "Login",
             signup: "Sign Up",
-            home: "Home"
+            home: "Home",
+            services: "Hamari Services",
+            aiTimer: "AI Time Check",
+            diagnostics: "Business Checkup"
         },
         header: {
             home: "Home",
@@ -2086,17 +2144,6 @@ export const translations = {
                     sub: "Landing page par details submit karein proper assessment ke liye."
                 },
                 backToDashboard: "Dashboard par wapas jayein",
-            },
-        nav: {
-            dashboard: "Dashboard",
-            login: "Login",
-            signup: "Sign Up",
-            home: "Home"
-        },
-        header: {
-            command: "Command Center",
-            sync: "System Sync Active hai",
-            home: "Home"
         },
         lossAudit: {
             title: "Loss Audit",
@@ -2324,22 +2371,40 @@ export const translations = {
             title: "Internal Systems & Growth Protocols",
             sub: "Hamara modular approach ensure karta hai ki aapka dhanda AI era ke liye ready hai.",
             p1: {
+                title: "AI Automation Protocols",
+                sub: "Autonomous Agents, Voice AI, Neural Workflow Integration"
+            },
+            p2: {
+                title: "Business Digitalization",
+                sub: "Legacy Asset Migration, Digital Factory Setup, Cloud Infrastructure"
+            },
+            p3: {
                 title: "Brand & Identity Design",
                 sub: "Market Strategy, Product Interface, Authority Assets"
             },
-            p2: {
-                title: "Systems & Automation",
-                sub: "Custom CRM Solutions, Workflow Optimization"
-            },
-            p3: {
-                title: "Leads & Growth",
-                sub: "Precision Targeting, Automated Funnels"
-            },
             p4: {
+                title: "Systems & Automation",
+                sub: "Custom CRM Solutions, Workflow Optimization, ERP Calibration"
+            },
+            p5: {
+                title: "Leads & Growth",
+                sub: "Precision Targeting, Automated Funnels, Conversion Velocity"
+            },
+            p6: {
                 title: "Strategy & Intelligence",
-                sub: "Global Market Tactics, Resilience Protocols",
-                f1: "Technology Roadmap",
-                f2: "Global Expansion"
+                sub: "Global Market Tactics, Resilience Protocols, Competitive Defense"
+            },
+            p7: {
+                title: "Website Development",
+                sub: "Fast Responsive Design, Custom Web Apps, High-Speed Performance"
+            },
+            p8: {
+                title: "App Development",
+                sub: "Native iOS/Android, Multi-Platform Apps, User-Friendly UI"
+            },
+            p9: {
+                title: "SaaS Products",
+                sub: "Scalable Software Solutions, Subscription Systems, Data-Driven Apps"
             }
         },
         auth: {
