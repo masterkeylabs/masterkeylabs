@@ -38,7 +38,7 @@ export default function Home() {
 
         const observerOptions = {
             root: null,
-            rootMargin: '-20% 0px -60% 0px',
+            rootMargin: '-10% 0px -80% 0px',
             threshold: 0
         };
 
@@ -102,12 +102,12 @@ export default function Home() {
     const [hoverSection, setHoverSection] = useState(null);
 
     return (
-        <div id="home" className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
+        <div className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
             {/* Minimal Grid Background */}
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '100px 100px' }}></div>
             <div className="fixed top-0 left-0 w-full h-screen spotlight pointer-events-none z-0"></div>
 
-            <header className="relative z-[100] pt-4 md:pt-6 pb-4 px-6 sticky top-0 flex flex-col items-center">
+            <header id="home" className="relative z-[100] pt-4 md:pt-6 pb-4 px-6 sticky top-0 flex flex-col items-center">
                 {/* Unified Glassmorphic Navigation Bar — Premium & Scroll-Reactive */}
                 <motion.div 
                     animate={{
