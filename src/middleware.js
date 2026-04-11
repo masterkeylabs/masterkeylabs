@@ -10,10 +10,11 @@ export const config = {
         /*
          * Match all request paths EXCEPT:
          * - api routes
+         * - auth routes (callback, reset-password, etc.)
          * - _next/static (static files)
          * - _next/image (image optimization)
          * - All public static assets (images, videos, fonts, icons, etc.)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ogg|mp3|wav|ico|ttf|woff|woff2|eot|otf|pdf|xml|json)$).*)',
+        '/((?!api|auth|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ogg|mp3|wav|ico|ttf|woff|woff2|eot|otf|pdf|xml|json)$).*)',
     ],
 };
