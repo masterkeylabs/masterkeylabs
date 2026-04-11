@@ -126,8 +126,8 @@ export default function Home() {
                         {[
                             { id: 'home', label: t.nav.home },
                             { id: 'services', label: t.nav.services },
-                            { id: 'ai-timer', label: t.nav.aiTimer },
-                            { id: 'diagnostics', label: t.nav.diagnostics }
+                            { id: 'diagnostics', label: t.nav.diagnostics },
+                            { id: 'ai-timer', label: t.nav.aiTimer }
                         ].map((item) => (
                             <button 
                                 key={item.id}
@@ -213,8 +213,8 @@ export default function Home() {
                                 {[
                                     { id: 'home', label: t.nav.home },
                                     { id: 'services', label: t.nav.services },
-                                    { id: 'ai-timer', label: t.nav.aiTimer },
-                                    { id: 'diagnostics', label: t.nav.diagnostics }
+                                    { id: 'diagnostics', label: t.nav.diagnostics },
+                                    { id: 'ai-timer', label: t.nav.aiTimer }
                                 ].map((item) => (
                                     <button
                                         key={item.id}
