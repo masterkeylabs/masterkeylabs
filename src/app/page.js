@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import VideoLogo from '@/components/VideoLogo';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useAuth } from '@/lib/AuthContext';
@@ -14,6 +14,7 @@ import ServiceList from '@/components/ServiceList';
 
 export default function Home() {
     const { lang, setLang, t } = useLanguage();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user, business, loading: authLoading } = useAuth();
     const { theme } = useTheme();
     const isLight = theme === 'light';
@@ -26,9 +27,39 @@ export default function Home() {
     const [auditHref, setAuditHref] = useState('/signup');
 
     const [mounted, setMounted] = useState(false);
-    const [isLogoSparkling, setIsLogoSparkling] = useState(false);
+    const [scrollY, setScrollY] = useState(0);
+    const [activeSection, setActiveSection] = useState('home');
+
     useEffect(() => {
         setMounted(true);
+        
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveSection(entry.target.id);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        ['home', 'services', 'ai-timer', 'diagnostics'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            observer.disconnect();
+        };
     }, []);
 
     useEffect(() => {
@@ -68,58 +99,201 @@ export default function Home() {
         }
     };
 
+    const [hoverSection, setHoverSection] = useState(null);
+
     return (
         <div id="home" className="bg-background-dark font-sans text-slate-100 min-h-screen selection:bg-ios-blue/30 selection:text-ios-blue overflow-x-hidden">
             {/* Minimal Grid Background */}
             <div className="fixed inset-0 pointer-events-none z-[-1] opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '100px 100px' }}></div>
             <div className="fixed top-0 left-0 w-full h-screen spotlight pointer-events-none z-0"></div>
 
-            <header className="relative z-50 pt-6 pb-4 px-6 sticky top-0 flex flex-col items-center gap-6">
-                {/* Unified Glassmorphic Navigation Bar — Compact & Centered */}
-                <div className="flex items-center gap-1.5 glass-premium p-1.5 rounded-full shadow-2xl transition-all hover:border-white/30">
+            <header className="relative z-[100] pt-4 md:pt-6 pb-4 px-6 sticky top-0 flex flex-col items-center">
+                {/* Unified Glassmorphic Navigation Bar — Premium & Scroll-Reactive */}
+                <motion.div 
+                    animate={{
+                        paddingTop: scrollY > 50 ? '4px' : '6px',
+                        paddingBottom: scrollY > 50 ? '4px' : '6px',
+                        scale: scrollY > 50 ? 0.98 : 1
+                    }}
+                    className={`flex items-center gap-1.5 glass-premium p-1.5 rounded-full shadow-2xl transition-all max-w-full ${scrollY > 50 ? 'bg-black/80 backdrop-blur-3xl border-white/20' : ''}`}
+                >
                     
                     {/* Navigation Links (Desktop) */}
-                    <div className="hidden md:flex items-center gap-0.5 mr-1 border-r border-white/10 pr-1.5">
-                        <button onClick={() => handleScroll('home')} className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-all hover:bg-white/5 rounded-full">{t.nav.home}</button>
-                        <button onClick={() => handleScroll('services')} className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-all hover:bg-white/5 rounded-full">{t.nav.services}</button>
-                        <button onClick={() => handleScroll('ai-timer')} className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-all hover:bg-white/5 rounded-full">{t.nav.aiTimer}</button>
-                        <button onClick={() => handleScroll('diagnostics')} className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-all hover:bg-white/5 rounded-full">{t.nav.diagnostics}</button>
+                    <div 
+                        className="hidden md:flex items-center gap-0.5 mr-1 border-r border-white/10 pr-1.5 relative h-full"
+                        onMouseLeave={() => setHoverSection(null)}
+                    >
+                        {[
+                            { id: 'home', label: t.nav.home },
+                            { id: 'services', label: t.nav.services },
+                            { id: 'ai-timer', label: t.nav.aiTimer },
+                            { id: 'diagnostics', label: t.nav.diagnostics }
+                        ].map((item) => (
+                            <button 
+                                key={item.id}
+                                onClick={() => handleScroll(item.id)} 
+                                onMouseEnter={() => setHoverSection(item.id)}
+                                className={`relative px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-full z-10 ${activeSection === item.id ? 'text-white' : 'text-white/40 hover:text-white/80'}`}
+                            >
+                                {(hoverSection === item.id || activeSection === item.id) && (
+                                    <motion.div
+                                        layoutId="nav-pill"
+                                        className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-full -z-10"
+                                        initial={false}
+                                        transition={{
+                                            type: "spring",
+                                            stiffness: 400,
+                                            damping: 30
+                                        }}
+                                    />
+                                )}
+                                {item.label}
+                            </button>
+                        ))}
                     </div>
 
-                    {/* Language Toggles */}
-                    <div className="flex bg-white/5 rounded-full p-0.5 sm:mr-1">
-                        <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>EN</button>
-                        <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HI</button>
-                        <button onClick={() => setLang('hinglish')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HG</button>
+                    {/* Desktop-only Controls */}
+                    <div className="hidden sm:flex items-center gap-1">
+                        {/* Language Toggles */}
+                        <div className="flex bg-white/5 rounded-full p-0.5 mr-1">
+                            <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>EN</button>
+                            <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HI</button>
+                            <button onClick={() => setLang('hinglish')} className={`px-2.5 py-1 rounded-full text-[9px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/30 hover:text-white/50'}`}>HG</button>
+                        </div>
+
+                        <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
+
+                        {/* Day / Night Toggle */}
+                        <ThemeToggle className="mx-1 scale-90" />
+
+                        <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
                     </div>
 
-                    <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-
-                    {/* Day / Night Toggle */}
-                    <ThemeToggle className="mx-1 scale-90" />
-
-                    <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-
-                    {/* Auth & Dashboard */}
+                    {/* Auth & Dashboard (Adaptive) */}
                     {!mounted || loading ? (
                         <div className="w-16 h-6 bg-white/5 animate-pulse rounded-full mx-2"></div>
                     ) : hasSession ? (
-                        <Link href="/dashboard" className="px-4 py-1.5 text-[9px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
+                        <Link href="/dashboard" className="px-4 py-2 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
                             <span className="material-symbols-outlined text-[14px]">dashboard</span>
-                            {t.nav.dashboard.toUpperCase()}
+                            <span className="hidden xs:inline">{t.nav.dashboard.toUpperCase()}</span>
                         </Link>
                     ) : (
                         <div className="flex items-center gap-1">
-                            <Link href="/login" className="px-3 py-1.5 text-[9px] font-black text-white/60 hover:text-white transition-all uppercase tracking-widest">
+                            <Link href="/login" className="px-3 py-2 text-[10px] font-black text-white/60 hover:text-white transition-all uppercase tracking-widest hidden xs:block">
                                 {t.nav.login.toUpperCase()}
                             </Link>
 
-                            <Link href="/signup" className="px-4 py-1.5 text-[9px] font-black bg-white/10 hover:bg-white/20 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-inner">
+                            <Link href="/signup" className="px-3.5 py-2 text-[10px] font-black bg-white/10 hover:bg-white/20 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-inner">
                                 {t.nav.signup.toUpperCase()}
                             </Link>
                         </div>
                     )}
-                </div>
+
+                    {/* Mobile Menu Toggle */}
+                    <button 
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="flex md:hidden flex-col gap-1.5 p-2 px-3 hover:bg-white/5 rounded-full transition-all"
+                    >
+                        <div className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></div>
+                        <div className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></div>
+                        <div className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></div>
+                    </button>
+                </motion.div>
+
+                {/* Mobile Menu Overlay */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="fixed inset-0 top-0 left-0 w-full h-full mobile-menu-overlay flex flex-col p-8 pt-24 pb-20 z-[99] overflow-y-auto custom-scrollbar"
+                        >
+                            <nav className="flex flex-col gap-2 mb-12">
+                                {[
+                                    { id: 'home', label: t.nav.home },
+                                    { id: 'services', label: t.nav.services },
+                                    { id: 'ai-timer', label: t.nav.aiTimer },
+                                    { id: 'diagnostics', label: t.nav.diagnostics }
+                                ].map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => {
+                                            handleScroll(item.id);
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className={`mobile-menu-item ${activeSection === item.id ? 'active' : ''}`}
+                                    >
+                                        {item.label}
+                                        <span className="material-symbols-outlined text-white/20">chevron_right</span>
+                                    </button>
+                                ))}
+                            </nav>
+
+                            <div className="mt-8 space-y-8">
+                                {/* Mobile Language Selection */}
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Select Language</p>
+                                    <div className="flex gap-2">
+                                        {['en', 'hi', 'hinglish'].map((l) => (
+                                            <button
+                                                key={l}
+                                                onClick={() => setLang(l)}
+                                                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${lang === l ? 'bg-ios-blue border-ios-blue text-white' : 'bg-white/5 border-white/10 text-white/40'}`}
+                                            >
+                                                {l.toUpperCase()}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Mobile Theme Toggle */}
+                                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10">
+                                    <span className="text-xs font-bold uppercase tracking-widest text-white/60">Interface Mode</span>
+                                    <ThemeToggle />
+                                </div>
+
+                                {/* Mobile Auth & Dashboard */}
+                                {!mounted || loading ? (
+                                    <div className="w-full h-12 bg-white/5 animate-pulse rounded-2xl"></div>
+                                ) : hasSession ? (
+                                    <Link 
+                                        href="/dashboard" 
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="w-full px-6 py-4 rounded-2xl bg-ios-blue text-black text-center text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">dashboard</span>
+                                        {t.nav.dashboard}
+                                    </Link>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Link 
+                                            href="/login" 
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-center text-xs font-black uppercase tracking-widest"
+                                        >
+                                            {t.nav.login}
+                                        </Link>
+                                        <Link 
+                                            href="/signup" 
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="px-6 py-4 rounded-2xl bg-ios-blue text-black text-center text-xs font-black uppercase tracking-widest"
+                                        >
+                                            {t.nav.signup}
+                                        </Link>
+                                    </div>
+                                )}
+
+                                <button 
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="w-full py-4 text-white/20 hover:text-white transition-colors text-[10px] font-black uppercase tracking-[0.5em]"
+                                >
+                                    Close Terminal
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Hero Logo — Now correctly placed below the nav bar and centered */}
                 <div className="flex flex-col items-center text-center px-6 mt-4">
@@ -129,55 +303,15 @@ export default function Home() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 1, ease: "easeOut" }}
-                            onClick={() => setIsLogoSparkling(!isLogoSparkling)}
                         >
                             {/* Main Logo Image — background adapts to theme */}
-                            <div className={`logo-card relative transition-all duration-700 overflow-hidden rounded-3xl ${isLight ? '' : 'bg-transparent'} ${isLogoSparkling ? 'drop-shadow-[0_0_20px_rgba(0,229,255,0.25)]' : ''}`}>
+                            <div className={`logo-card relative transition-all duration-700 overflow-hidden rounded-3xl ${isLight ? '' : 'bg-transparent'}`}>
                                 <VideoLogo 
                                     src="/video-logo.mp4"
                                     poster="/logo-stacked.png"
                                     className="h-40 sm:h-52 md:h-64 lg:h-72 w-auto transition-all duration-300 opacity-100"
-                                    style={isLogoSparkling ? { filter: 'brightness(1.1)' } : {}}
                                 />
-
-                                {/* High-Clarity Symmetrical Neon Sparkle Swarm */}
-                                <div className={`absolute inset-0 pointer-events-none transition-opacity duration-700 group-hover:opacity-100 ${isLogoSparkling ? 'opacity-100' : 'opacity-0'}`}>
-                                    {/* Symmetrical Pairs (Left: Blue, Right: Orange) */}
-                                    {/* Top Corners */}
-                                    <div className="sparkle sparkle-blue animate-sparkle" style={{ top: '15%', left: '15%', '--x': '-20px', '--y': '-30px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle" style={{ top: '15%', left: '85%', '--x': '20px', '--y': '-30px' }} />
-                                    
-                                    {/* Upper Diagonals */}
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.3s]" style={{ top: '30%', left: '30%', '--x': '15px', '--y': '-40px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.3s]" style={{ top: '30%', left: '70%', '--x': '-15px', '--y': '-40px' }} />
-                                    
-                                    {/* Middle Hub */}
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.6s]" style={{ top: '50%', left: '20%', '--x': '40px', '--y': '0px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.6s]" style={{ top: '50%', left: '80%', '--x': '-40px', '--y': '0px' }} />
-                                    
-                                    {/* Lower Diagonals */}
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.9s]" style={{ top: '65%', left: '35%', '--x': '-10px', '--y': '40px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.9s]" style={{ top: '65%', left: '65%', '--x': '10px', '--y': '40px' }} />
-                                    
-                                    {/* Bottom Corners */}
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:1.2s]" style={{ top: '80%', left: '15%', '--x': '-30px', '--y': '20px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:1.2s]" style={{ top: '80%', left: '85%', '--x': '30px', '--y': '20px' }} />
-
-                                    {/* Central Vertical Axis Sparkles (Alternating) */}
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:1.5s]" style={{ top: '10%', left: '50%', '--x': '0px', '--y': '-50px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:1.8s]" style={{ top: '45%', left: '50%', '--x': '0px', '--y': '20px' }} />
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:2.1s]" style={{ top: '90%', left: '50%', '--x': '0px', '--y': '40px' }} />
-                                    
-                                    {/* Secondary Symmetry Layer */}
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:0.5s]" style={{ top: '40%', left: '25%', '--x': '20px', '--y': '-20px' }} />
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:0.5s]" style={{ top: '40%', left: '75%', '--x': '-20px', '--y': '-20px' }} />
-                                    <div className="sparkle sparkle-orange animate-sparkle [animation-delay:1.1s]" style={{ top: '60%', left: '20%', '--x': '30px', '--y': '30px' }} />
-                                    <div className="sparkle sparkle-blue animate-sparkle [animation-delay:1.1s]" style={{ top: '60%', left: '80%', '--x': '-30px', '--y': '30px' }} />
-                                </div>
                             </div>
-
-                            {/* Crisp Background Glow */}
-                            <div className={`absolute inset-0 bg-ios-blue/5 rounded-full blur-[60px] -z-10 transition-opacity duration-700 pointer-events-none ${isLogoSparkling ? 'opacity-100' : 'opacity-0'}`} />
                         </motion.div>
                     </div>
                 </div>
@@ -299,14 +433,14 @@ export default function Home() {
                         {/* Global Navigation Sign (Right Edge) — Now Clickable */}
                         <button 
                             onClick={scrollDiagnostics}
-                            className="md:hidden absolute right-4 top-[calc(50%-1.5rem)] -translate-y-1/2 p-3 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x z-20 active:scale-95 transition-transform"
+                            className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x z-20 active:scale-95 transition-transform"
                         >
                             <span className="material-symbols-outlined font-bold">arrow_forward</span>
                         </button>
                         <div className="hidden md:absolute md:flex right-0 top-0 h-[calc(100%-3rem)] w-24 items-center justify-end pr-4 bg-gradient-to-l from-background-dark via-background-dark/80 to-transparent pointer-events-none group-hover/scroll:opacity-100 opacity-60 transition-opacity">
                              <button 
                                 onClick={scrollDiagnostics}
-                                className="p-3 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40 hover:text-ios-blue hover:bg-ios-blue/10 pointer-events-auto transition-all active:scale-95"
+                                className="p-2 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40 hover:text-ios-blue hover:bg-ios-blue/10 pointer-events-auto transition-all active:scale-95"
                             >
                                 <span className="material-symbols-outlined font-bold">arrow_forward</span>
                             </button>
@@ -334,7 +468,12 @@ export default function Home() {
                     <div className="container mx-auto px-6 flex flex-col items-center text-center">
                         <div className="mb-10 opacity-80 mix-blend-screen">
                             <Link href="/">
-                                <VideoLogo src="/video-logo.mp4" poster="/logo-new.png" className="cursor-pointer" style={{ height: '250px', width: 'auto' }} />
+                                <VideoLogo 
+                                    src="/video-logo.mp4" 
+                                    poster="/logo-new.png" 
+                                    className="cursor-pointer opacity-50 hover:opacity-100 transition-opacity" 
+                                    style={{ height: '120px', width: 'auto' }} 
+                                />
                             </Link>
                         </div>
                         <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-12">

@@ -502,4 +502,34 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
+/* === Mobile Menu Styles === */
+.mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  z-index: 100;
+}
 
+.mobile-menu-item {
+  @apply text-xl font-black uppercase tracking-[0.2em] text-white/40 hover:text-white transition-all py-3 flex items-center justify-between border-b border-white/5;
+}
+
+.mobile-menu-item.active {
+  @apply text-ios-blue border-b-ios-blue/50 bg-white/5;
+}
+
+.hamburger-line {
+  @apply w-6 h-0.5 bg-white transition-all duration-300;
+}
+
+.hamburger-line.open:nth-child(1) {
+  transform: translateY(8.5px) rotate(45deg);
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg);
+}

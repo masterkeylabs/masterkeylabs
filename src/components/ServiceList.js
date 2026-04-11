@@ -149,14 +149,14 @@ const ServiceList = () => {
                 {/* Global Navigation Sign (Right Edge) - Now Clickable */}
                 <button 
                     onClick={scroll}
-                    className="absolute right-4 top-[calc(50%-1.5rem)] -translate-y-1/2 p-3 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x md:hidden z-20 active:scale-95 transition-transform"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-ios-blue/10 border border-ios-blue/20 backdrop-blur-md text-ios-blue animate-bounce-x md:hidden z-20 active:scale-95 transition-transform"
                 >
                     <span className="material-symbols-outlined font-bold">arrow_forward</span>
                 </button>
                 <div className="hidden md:absolute md:flex right-0 top-0 h-[calc(100%-3rem)] w-24 items-center justify-end pr-4 bg-gradient-to-l from-background-dark via-background-dark/80 to-transparent pointer-events-none group-hover/scroll:opacity-100 opacity-60 transition-opacity">
                     <button 
                         onClick={scroll}
-                        className="p-3 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40 hover:text-ios-blue hover:bg-ios-blue/10 pointer-events-auto transition-all active:scale-95"
+                        className="p-2 rounded-full bg-ios-blue/5 border border-ios-blue/20 backdrop-blur-sm text-ios-blue/40 hover:text-ios-blue hover:bg-ios-blue/10 pointer-events-auto transition-all active:scale-95"
                     >
                         <span className="material-symbols-outlined font-bold">arrow_forward</span>
                     </button>

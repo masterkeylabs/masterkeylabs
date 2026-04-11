@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 
 export async function middleware(req) {
-    // Security Overhaul Disabled for stability (Bug-Free Priority)
+    // Pass all requests through — security logic disabled for stability
     return NextResponse.next();
 }
 
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        /*
+         * Match all request paths EXCEPT:
+         * - api routes
+         * - _next/static (static files)
+         * - _next/image (image optimization)
+         * - All public static assets (images, videos, fonts, icons, etc.)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|ogg|mp3|wav|ico|ttf|woff|woff2|eot|otf|pdf|xml|json)$).*)',
     ],
 };
