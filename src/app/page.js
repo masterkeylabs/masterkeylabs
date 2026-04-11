@@ -175,7 +175,7 @@ export default function Home() {
                     ) : hasSession ? (
                         <Link href="/dashboard" className="px-4 py-2 text-[10px] font-black bg-ios-blue hover:bg-ios-blue/80 text-white rounded-full transition-all uppercase tracking-widest border border-white/5 shadow-lg flex items-center gap-1.5">
                             <span className="material-symbols-outlined text-[14px]">dashboard</span>
-                            <span className="hidden xs:inline">{t.nav.dashboard.toUpperCase()}</span>
+                            <span>{t.nav.dashboard.toUpperCase()}</span>
                         </Link>
                     ) : (
                         <div className="flex items-center gap-1">
