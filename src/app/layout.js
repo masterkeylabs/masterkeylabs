@@ -54,7 +54,7 @@ export default function RootLayout({ children }) {
                     "@type": "ImageObject",
                     "url": "https://www.masterkeylabs.ai/logo-stacked.png"
                   },
-                  "description": "MasterKey Labs is an AI implementation and business consulting agency based in Indore, India, that helps small and mid-sized businesses in real estate, logistics, manufacturing, and export-import automate operations, build digital infrastructure, and grow in an AI-driven economy.",
+                  "description": "MasterKey Labs is an AI implementation and business consulting agency based in Indore, India, that helps businesses worldwide automate operations, build digital infrastructure, and grow in an AI-driven economy.",
                   "foundingLocation": {
                     "@type": "Place",
                     "name": "Indore, Madhya Pradesh, India"
@@ -65,16 +65,10 @@ export default function RootLayout({ children }) {
                     "addressRegion": "Madhya Pradesh",
                     "addressCountry": "IN"
                   },
-                  "areaServed": [
-                    {
-                      "@type": "Country",
-                      "name": "India"
-                    },
-                    {
-                      "@type": "City",
-                      "name": "Dubai"
-                    }
-                  ],
+                  "areaServed": {
+                    "@type": "Place",
+                    "name": "Worldwide"
+                  },
                   "knowsAbout": [
                     "AI Automation",
                     "Business Consulting",
@@ -98,7 +92,12 @@ export default function RootLayout({ children }) {
                       { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Strategy & Market Intelligence" } }
                     ]
                   },
-                  "sameAs": []
+                  "sameAs": [
+                    "https://www.linkedin.com/company/findmasterkey-labs",
+                    "https://www.instagram.com/masterkeylabs.ai",
+                    "https://www.facebook.com/findmasterkeylabs",
+                    "https://share.google/4q09rKDlWLQyhxfVh"
+                  ]
                 },
                 {
                   "@type": "WebSite",
