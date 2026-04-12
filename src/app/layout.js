@@ -37,6 +37,82 @@ export default function RootLayout({ children }) {
             } catch(e){}
           })();
         `}} />
+        {/* Structured Data (JSON-LD) for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": ["Organization", "ProfessionalService"],
+                  "@id": "https://www.masterkeylabs.ai/#organization",
+                  "name": "MasterKey Labs",
+                  "alternateName": "MasterKey Labs AI",
+                  "url": "https://www.masterkeylabs.ai",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.masterkeylabs.ai/logo-stacked.png"
+                  },
+                  "description": "MasterKey Labs is an AI implementation and business consulting agency based in Indore, India, that helps small and mid-sized businesses in real estate, logistics, manufacturing, and export-import automate operations, build digital infrastructure, and grow in an AI-driven economy.",
+                  "foundingLocation": {
+                    "@type": "Place",
+                    "name": "Indore, Madhya Pradesh, India"
+                  },
+                  "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Indore",
+                    "addressRegion": "Madhya Pradesh",
+                    "addressCountry": "IN"
+                  },
+                  "areaServed": [
+                    {
+                      "@type": "Country",
+                      "name": "India"
+                    },
+                    {
+                      "@type": "City",
+                      "name": "Dubai"
+                    }
+                  ],
+                  "knowsAbout": [
+                    "AI Automation",
+                    "Business Consulting",
+                    "Brand Identity Design",
+                    "Website Development",
+                    "App Development",
+                    "Performance Marketing",
+                    "CRM Systems",
+                    "SaaS Products",
+                    "Business Digitalization"
+                  ],
+                  "hasOfferCatalog": {
+                    "@type": "OfferCatalog",
+                    "name": "MasterKey Labs Services",
+                    "itemListElement": [
+                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Automation & Autonomous Agents" } },
+                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business Digitalization" } },
+                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Brand & Identity Design" } },
+                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website & App Development" } },
+                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Leads & Growth Marketing" } },
+                      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Strategy & Market Intelligence" } }
+                    ]
+                  },
+                  "sameAs": []
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://www.masterkeylabs.ai/#website",
+                  "url": "https://www.masterkeylabs.ai",
+                  "name": "MasterKey Labs",
+                  "publisher": {
+                    "@id": "https://www.masterkeylabs.ai/#organization"
+                  }
+                }
+              ]
+            })
+          }}
+        />
       </head>
       <body
         className={`${spaceGrotesk.variable} font-sans antialiased bg-background-dark text-white selection:bg-primary/30 min-h-screen overflow-x-hidden`}
