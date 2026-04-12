@@ -31,12 +31,13 @@ export default function FeatureLayout({ children, title, subtitle, backHref }) {
                     >
                         <span className="material-symbols-outlined">menu</span>
                     </button>
-                    <Image src="/logo-new.png" alt="Logo" width={120} height={32} style={{ width: 'auto' }} className="h-8 w-auto object-contain" />
+                    <Image src="/logo-new.png" alt="Logo" width={360} height={96} style={{ width: 'auto' }} className="h-24 w-auto object-contain" />
 
                     {/* Small Lang Toggle for Mobile */}
                     <div className="flex bg-white/5 rounded-full p-0.5 border border-white/10">
-                        <button onClick={() => setLang('en')} className={`px-2 py-0.5 rounded-full text-[8px] font-bold ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/40'}`}>EN</button>
-                        <button onClick={() => setLang('hinglish')} className={`px-2 py-0.5 rounded-full text-[8px] font-bold ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/40'}`}>HG</button>
+                        <button onClick={() => setLang('en')} className={`px-2 py-0.5 rounded-full text-[8px] font-bold transition-all ${lang === 'en' ? 'bg-ios-blue text-white' : 'text-white/40'}`}>EN</button>
+                        <button onClick={() => setLang('hi')} className={`px-2 py-0.5 rounded-full text-[8px] font-bold transition-all ${lang === 'hi' ? 'bg-ios-blue text-white' : 'text-white/40'}`}>HI</button>
+                        <button onClick={() => setLang('hinglish')} className={`px-2 py-0.5 rounded-full text-[8px] font-bold transition-all ${lang === 'hinglish' ? 'bg-ios-blue text-white' : 'text-white/40'}`}>HG</button>
                     </div>
                 </div>
 
