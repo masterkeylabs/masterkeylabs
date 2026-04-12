@@ -233,7 +233,7 @@ export default function RescueArchitecture({ businessId, t }) {
                      <img 
                          src="/logo-new.png" 
                          alt="MasterKey Labs" 
-                         style={{ height: '60px', width: 'auto', cursor: 'pointer' }} 
+                         style={{ height: '120px', width: 'auto', cursor: 'pointer' }} 
                      />
                  </Link>
              </div>
