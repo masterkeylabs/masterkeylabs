@@ -222,7 +222,8 @@ export const translations = {
             home: "Home",
             services: "Services",
             aiTimer: "AI Timer",
-            diagnostics: "Diagnostics"
+            diagnostics: "Diagnostics",
+            about: "About"
         },
         lossAudit: {
             title: "Money Leak Audit",
@@ -1252,7 +1253,8 @@ export const translations = {
             home: "होम",
             services: "सेवाएँ",
             aiTimer: "AI टाइमर",
-            diagnostics: "निदान"
+            diagnostics: "निदान",
+            about: "हमारे बारे में"
         },
         header: {
             command: "कमांड सेंटर",
@@ -1820,7 +1822,8 @@ export const translations = {
             home: "Home",
             services: "Hamari Services",
             aiTimer: "AI Time Check",
-            diagnostics: "Business Checkup"
+            diagnostics: "Business Checkup",
+            about: "Hamare Bare Mein"
         },
         header: {
             home: "Home",

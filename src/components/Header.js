@@ -41,11 +41,18 @@ export default function Header({ scrollY, activeSection, handleScroll }) {
                         { id: 'home', label: t.nav.home },
                         { id: 'services', label: t.nav.services },
                         { id: 'diagnostics', label: t.nav.diagnostics },
-                        { id: 'ai-timer', label: t.nav.aiTimer }
+                        { id: 'ai-timer', label: t.nav.aiTimer },
+                        { id: 'about', label: t.nav.about, isPage: true }
                     ].map((item) => (
                         <button 
                             key={item.id}
-                            onClick={() => handleScroll ? handleScroll(item.id) : (window.location.href = `/#${item.id}`)} 
+                            onClick={() => {
+                                if (item.isPage) {
+                                    window.location.href = `/${item.id}`;
+                                } else {
+                                    handleScroll ? handleScroll(item.id) : (window.location.href = `/#${item.id}`);
+                                }
+                            }} 
                             onMouseEnter={() => setHoverSection(item.id)}
                             className={`relative px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-full z-10 ${activeSection === item.id ? 'text-white' : 'text-white/40 hover:text-white/80'}`}
                         >
@@ -128,12 +135,15 @@ export default function Header({ scrollY, activeSection, handleScroll }) {
                                 { id: 'home', label: t.nav.home },
                                 { id: 'services', label: t.nav.services },
                                 { id: 'diagnostics', label: t.nav.diagnostics },
-                                { id: 'ai-timer', label: t.nav.aiTimer }
+                                { id: 'ai-timer', label: t.nav.aiTimer },
+                                { id: 'about', label: t.nav.about, isPage: true }
                             ].map((item) => (
                                 <button
                                     key={item.id}
                                     onClick={() => {
-                                        if (handleScroll) {
+                                        if (item.isPage) {
+                                            window.location.href = `/${item.id}`;
+                                        } else if (handleScroll) {
                                             handleScroll(item.id);
                                         } else {
                                             window.location.href = `/#${item.id}`;

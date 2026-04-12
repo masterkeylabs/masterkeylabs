@@ -28,6 +28,7 @@ export default function Footer() {
 
                 {/* Legal and Contact */}
                 <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-12 text-[10px] font-bold uppercase tracking-[0.1em]">
+                    <Link href="/about" className="text-white/40 hover:text-ios-blue transition-colors">About</Link>
                     <Link href="/privacy" className="text-white/40 hover:text-ios-blue transition-colors">{t.footer.privacy}</Link>
                     <Link href="/terms" className="text-white/40 hover:text-ios-blue transition-colors">{t.footer.terms}</Link>
                 </div>

@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactCompiler: true,
+  // Disabled experimental reactCompiler as it causes massive dev slowdowns
+  reactCompiler: false,
   outputFileTracingRoot: process.cwd(),
 
   // Ensure proper headers for static assets across all devices and CDN edges

@@ -200,7 +200,7 @@ export default function ComprehensiveReportInline({ businessName, locked, t }) {
             </div>
 
             {/* Hidden Off-Screen Layer for PDF Generation (Target width: 1200px) */}
-            <div style={{ position: 'absolute', left: '-10000px', top: '0', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', left: '-15000px', top: '-15000px', pointerEvents: 'none' }}>
                 <div
                     ref={reportRef}
                     className="w-[800px] bg-[#0a0a0d] p-12 space-y-16 flex flex-col items-center"
