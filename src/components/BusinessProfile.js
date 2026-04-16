@@ -3,7 +3,7 @@ import { useDiagnosticStore } from '@/store/diagnosticStore';
 
 export default function BusinessProfile({ business, t, lang }) {
     // Access the raw data state injected from the Loss Audit component
-    const { opsWasteRaw } = useDiagnosticStore();
+    const { lossAudit } = useDiagnosticStore();
 
     if (!business) return null;
 
@@ -21,16 +21,16 @@ export default function BusinessProfile({ business, t, lang }) {
     let revenueBracket = 'Not specified';
 
     // Override classification with real live data from Operational Waste if available
-    if (opsWasteRaw?.industry) {
-        verticalCode = opsWasteRaw.industry;
+    if (lossAudit?.industry) {
+        verticalCode = lossAudit.industry;
     }
 
     // Revenue mapping logic
-    if (opsWasteRaw?.revenue_bracket) {
-        revenueBracket = opsWasteRaw.revenue_bracket;
+    if (lossAudit?.annual_revenue) {
+        revenueBracket = `₹${(lossAudit.annual_revenue / 100000).toFixed(1)}L+`;
     } else if (business.classification && business.classification.includes('::')) {
         const parts = business.classification.split('::');
-        verticalCode = opsWasteRaw?.industry || parts[0];
+        verticalCode = lossAudit?.industry || parts[0];
         revenueBracket = parts[1];
     } else if (business.classification && business.classification.includes(' (')) {
         const match = business.classification.match(/(.*) \((.*)\)/);

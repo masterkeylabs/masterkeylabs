@@ -150,9 +150,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             setFormM1(prev => ({
                 ...prev,
                 vertical: prev.vertical || business?.vertical || parsedTemp?.vertical || 'retail',
+                staffSalary: prev.staffSalary || existingData?.lossAudit?.staff_salary || '',
                 marketingBudget: prev.marketingBudget || existingData?.lossAudit?.marketing_budget || parsedTemp?.marketingSpend || '',
                 opsOverheads: prev.opsOverheads || existingData?.lossAudit?.ops_overheads || parsedTemp?.opsSpend || '',
                 annualRevenue: prev.annualRevenue || business?.annual_revenue || (parsedTemp?.revenueBracket ? parseFloat(parsedTemp.revenueBracket.replace(/[^0-9.]/g, '')) * 100000 : '') || '',
+                manualHours: prev.manualHours || existingData?.lossAudit?.manual_hours || 3,
                 employeeCount: prev.employeeCount || business?.employee_count || parsedTemp?.employees || '',
                 hasCRM: prev.hasCRM || business?.has_crm || false,
                 hasERP: prev.hasERP || business?.has_erp || false
@@ -299,7 +301,22 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             const staff = parseNumericalRange(formM1.staffSalary);
             const ops = parseNumericalRange(formM1.opsOverheads);
             const marketing = parseNumericalRange(formM1.marketingBudget);
-            const revenue = parseFloat(formM1.annualRevenue) || 0;
+            let revenue = parseFloat(formM1.annualRevenue) || 0;
+
+            // Strict Validation Logic
+            if (revenue > 0 && revenue < 300000) {
+                setError("Estimated Annual Revenue cannot be less than 300,000");
+                setIsSaving(false);
+                return;
+            }
+
+            const totalAnnualExpenses = (staff + ops + marketing) * 12;
+            if (revenue > 0 && revenue < totalAnnualExpenses) {
+                setError(`Estimated Annual Revenue (₹${revenue.toLocaleString()}) cannot be less than your total annual operating expenses (₹${totalAnnualExpenses.toLocaleString()}). Please check your inputs.`);
+                setIsSaving(false);
+                return;
+            }
+            
             const hours = parseHoursRange(formM1.manualHours);
 
             console.log('--- Wizard Step 1: Calculating results ---');
@@ -740,6 +757,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                                                 options={REVENUE_OPTIONS}
                                                 value={formM1.annualRevenue}
                                                 onChange={val => setFormM1({ ...formM1, annualRevenue: val })}
+                                                min={300000}
                                             />
                                         )}
 

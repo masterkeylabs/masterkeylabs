@@ -41,6 +41,7 @@ function LossAuditContent() {
     const [saving, setSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [searchIndex, setSearchIndex] = useState(0);
+    const [error, setError] = useState(null);
 
     // Load existing results
     useEffect(() => {
@@ -109,10 +110,23 @@ function LossAuditContent() {
 
     const handleCalculate = async (e) => {
         e.preventDefault();
+        setError(null);
         const staff = parseNumericalRange(form.staffSalary);
         const ops = parseNumericalRange(form.opsOverheads);
         const marketing = parseNumericalRange(form.marketingBudget);
         const hours = parseHoursRange(form.manualHours);
+        let revenue = parseFloat(form.annualRevenue) || 0;
+        
+        if (revenue > 0 && revenue < 300000) {
+            setError("Estimated Annual Revenue cannot be less than 300,000");
+            return;
+        }
+
+        const totalAnnualExpenses = (staff + ops + marketing) * 12;
+        if (revenue > 0 && revenue < totalAnnualExpenses) {
+            setError(`Estimated Annual Revenue (₹${revenue.toLocaleString()}) cannot be less than your total annual operating expenses (₹${totalAnnualExpenses.toLocaleString()}). Please check your inputs.`);
+            return;
+        }
 
         const calc = calculateLossAudit(staff, ops, marketing, {
             manualHoursPerDay: hours,
@@ -155,7 +169,7 @@ function LossAuditContent() {
 
                 if (saveErr) {
                     console.error('Save Error:', saveErr);
-                    alert(`Sync Failed: ${saveErr.message}`);
+                    setError(`Sync Failed: ${saveErr.message}`);
                 } else {
                     console.log('--- Loss Audit: Sync Success ---');
                     // Sync with global store
@@ -166,7 +180,7 @@ function LossAuditContent() {
                 }
             } catch (err) {
                 console.error('Unexpected Audit Error:', err);
-                alert('An unexpected error occurred while saving. Please try again.');
+                setError('An unexpected error occurred while saving. Please try again.');
             } finally {
                 setSaving(false);
             }
@@ -188,6 +202,13 @@ function LossAuditContent() {
                         <span className="material-symbols-outlined text-alert-red">trending_down</span>
                         {t.lossAudit.formHeader}
                     </h3>
+                    
+                    {error && (
+                        <div className="mb-6 bg-red-500/10 border border-red-500/20 px-6 py-3 rounded-xl text-red-500 text-[10px] font-black uppercase tracking-[0.2em] text-center animate-bounce-in">
+                            {error}
+                        </div>
+                    )}
+
                     <form onSubmit={handleCalculate} className="space-y-6">
                         <div>
                             <label className="text-[10px] text-primary/60 uppercase tracking-widest block mb-2">{t.lossAudit.industryLabel}</label>
@@ -228,6 +249,7 @@ function LossAuditContent() {
                             options={REVENUE_OPTIONS}
                             value={form.annualRevenue}
                             onChange={val => setForm({ ...form, annualRevenue: val })}
+                            min={300000}
                         />
 
                         <div className="pt-4 border-t border-white/5">

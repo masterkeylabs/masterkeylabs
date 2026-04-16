@@ -4,12 +4,15 @@ import React from 'react';
  * RangeSelector Component
  * A premium grid of selectable range buttons for discrete metric input.
  */
-export const RangeSelector = ({ label, value, onChange, options, colorClass = 'ios-cyan' }) => {
+export const RangeSelector = ({ label, value, onChange, options, colorClass = 'ios-cyan', min = 0 }) => {
     // Determine the glow and active colors based on the colorClass (e.g., ios-cyan, alert-orange, ios-blue)
     const activeBg = `bg-${colorClass}/20`;
     const activeBorder = `border-${colorClass}`;
     const activeText = `text-${colorClass}`;
     const glowShadow = `shadow-[0_0_15px_rgba(0,210,255,0.2)]`; // Defaulting shadow for now, could be dynamic
+
+    // Check if current value is custom (not in options list)
+    const isCustomValue = value !== '' && value !== undefined && !options.some(opt => opt.value === value);
 
     return (
         <div className="space-y-3 bg-white/[0.03] border border-white/5 p-6 rounded-2xl group hover:border-white/20 transition-all duration-500">
@@ -19,7 +22,37 @@ export const RangeSelector = ({ label, value, onChange, options, colorClass = 'i
                     {label}
                 </label>
             )}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 items-stretch">
+                <div className={`relative flex items-center justify-center rounded-xl border transition-all duration-300 overflow-hidden ${
+                    isCustomValue
+                        ? `${activeBg} ${activeBorder} ${activeText} ${glowShadow} scale-[1.05]`
+                        : 'bg-black/30 border-white/10 text-white/40 hover:border-white/20 hover:text-white/60'
+                }`}>
+                    <input
+                        type="number"
+                        placeholder="CUSTOM"
+                        min={min}
+                        value={isCustomValue ? value : ''}
+                        onKeyDown={(e) => {
+                            if (e.key === '-' || e.key === 'e') {
+                                e.preventDefault();
+                            }
+                        }}
+                        onBlur={(e) => {
+                            if (e.target.value !== '') {
+                                const numVal = Number(e.target.value);
+                                if (numVal < min) {
+                                    onChange(min);
+                                }
+                            }
+                        }}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            onChange(val === '' ? '' : Number(val));
+                        }}
+                        className="w-full h-full bg-transparent text-[10px] font-black uppercase tracking-wider text-center outline-none py-3 px-2 placeholder:text-white/30 text-inherit"
+                    />
+                </div>
                 {options.map((opt) => (
                     <button
                         key={opt.label}

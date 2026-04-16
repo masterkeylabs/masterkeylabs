@@ -42,9 +42,16 @@ export const AuthProvider = ({ children }) => {
                 if (error) {
                     if (error.name === 'AuthSessionMissingError') {
                          console.log('--- AuthProvider: No active session ---');
+                    } else if (error.message?.includes('Refresh Token Not Found') || error.message?.includes('Invalid Refresh Token')) {
+                        console.error('--- AuthProvider: STALE SESSION DETECTED (Invalid Refresh Token) ---');
+                        console.log('--- AuthProvider: Performing Emergency Cleanup ---');
+                        clearAuthData();
+                        setUser(null);
+                        setBusiness(null);
+                        setLoading(false);
+                        return; // Halt initialization
                     } else {
                         console.warn('--- AuthProvider: getUser error ---', error.message);
-                        // If it's a real error (like network), don't wipe, just wait
                     }
                 }
 
