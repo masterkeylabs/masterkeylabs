@@ -12,9 +12,6 @@ export default function Sidebar({ t, sidebarOpen, setSidebarOpen }) {
     const [dashboardHref, setDashboardHref] = useState('/dashboard');
     const [activeNav, setActiveNav] = useState('status');
 
-    useEffect(() => {
-        setDashboardHref(`/dashboard`);
-    }, []);
 
     const handleStatus = () => {
         setActiveNav('status');

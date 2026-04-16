@@ -15,8 +15,8 @@ export default function Header({ scrollY, activeSection, handleScroll }) {
     const [hoverSection, setHoverSection] = useState(null);
 
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        if (!mounted) setMounted(true);
+    }, [mounted]);
 
     const hasSession = !!user && !!business;
 

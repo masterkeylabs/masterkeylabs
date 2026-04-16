@@ -7,9 +7,11 @@ export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState('dark');
 
     useEffect(() => {
-        const saved = localStorage.getItem('mkos_theme') || 'dark';
-        setTheme(saved);
-        document.documentElement.setAttribute('data-theme', saved);
+        const saved = localStorage.getItem('mkos_theme');
+        if (saved && saved !== theme) {
+            setTheme(saved);
+        }
+        document.documentElement.setAttribute('data-theme', saved || 'dark');
     }, []);
 
     const toggleTheme = () => {

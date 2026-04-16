@@ -25,8 +25,9 @@ export default function HomeClient() {
     const loading = authLoading;
     const hasSession = !!user && !!business; // Require both user and business profile for dashboard access
 
-    const effectiveId = business?.id || null;
-    const [auditHref, setAuditHref] = useState('/signup');
+    const auditHref = user 
+        ? (business?.id ? `/dashboard?id=${business.id}` : '/dashboard')
+        : '/signup';
 
     const [mounted, setMounted] = useState(false);
     const [scrollY, setScrollY] = useState(0);
@@ -64,15 +65,6 @@ export default function HomeClient() {
         };
     }, []);
 
-    useEffect(() => {
-        if (loading || !mounted) return;
-
-        if (user) {
-            setAuditHref(business?.id ? `/dashboard?id=${business.id}` : '/dashboard');
-        } else {
-            setAuditHref('/signup');
-        }
-    }, [user, business, loading, mounted]);
 
     const handleStartFullAudit = () => {
         if (user) {

@@ -10,7 +10,7 @@ export function LanguageProvider({ children }) {
     useEffect(() => {
         // Load preference from localStorage
         const savedLang = localStorage.getItem('masterkey_lang');
-        if (savedLang && (savedLang === 'en' || savedLang === 'hi' || savedLang === 'hinglish')) {
+        if (savedLang && savedLang !== lang && (savedLang === 'en' || savedLang === 'hi' || savedLang === 'hinglish')) {
             setLang(savedLang);
         }
     }, []);

@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server';
 export async function POST(req) {
     try {
         const { prompt, systemPrompt } = await req.json();
+        
+        if (!prompt || !systemPrompt) {
+            return NextResponse.json({ error: 'Missing required fields: prompt and systemPrompt are required.' }, { status: 400 });
+        }
 
         // Use DEEPSEEK_API_KEY as requested
         const apiKey = process.env.DEEPSEEK_API_KEY;
