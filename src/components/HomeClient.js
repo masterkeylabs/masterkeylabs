@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import ServiceList from '@/components/ServiceList';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function HomeClient() {
     const { lang, setLang, t } = useLanguage();
@@ -71,6 +72,24 @@ export default function HomeClient() {
             router.push(auditHref);
         } else {
             router.push('/signup');
+        }
+    };
+
+    const handleGoToFutureProof = async () => {
+        // 1. Get the current active session in MasterKey Labs
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.access_token && session?.refresh_token) {
+            // 2. Build the secure hash URL (tokens are hidden from server logs)
+            // If testing locally, change this to http://localhost:3000/auth/sso#...
+            const targetUrl = 'https://futureproof-school.com'; 
+            const ssoUrl = `${targetUrl}/auth/sso#access_token=${session.access_token}&refresh_token=${session.refresh_token}`;
+            
+            // 3. Redirect instantly
+            window.location.href = ssoUrl;
+        } else {
+            // Fallback if somehow they click it without an active session
+            window.location.href = 'https://futureproof-school.com';
         }
     };
 
@@ -164,11 +183,11 @@ export default function HomeClient() {
                                     </button>
                                     
                                     {/* Academy External CTA */}
-                                    <Link href="https://futureproof-school.com" target="_blank" rel="noopener noreferrer" className="px-10 py-5 w-full sm:w-auto bg-[#0a0a0a] border border-white/10 text-white font-black rounded-2xl transition-all hover:scale-105 hover:bg-white/5 hover:border-ios-blue/30 active:scale-95 shadow-inner flex justify-center items-center gap-3 group relative overflow-hidden">
+                                    <button onClick={handleGoToFutureProof} className="px-10 py-5 w-full sm:w-auto bg-[#0a0a0a] border border-white/10 text-white font-black rounded-2xl transition-all hover:scale-105 hover:bg-white/5 hover:border-ios-blue/30 active:scale-95 shadow-inner flex justify-center items-center gap-3 group relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                                         <span className="text-sm uppercase tracking-widest relative z-10">MasterKey Academy</span>
                                         <span className="material-symbols-outlined text-white/40 group-hover:text-ios-blue transition-colors relative z-10">school</span>
-                                    </Link>
+                                    </button>
                                 </>
                             )}
                         </div>
