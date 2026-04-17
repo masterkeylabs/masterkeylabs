@@ -42,14 +42,14 @@ export default function SSOReceiver() {
                     throw sessionError;
                 }
 
-                setStatus('Access Granted. Redirecting to Dashboard...');
+                setStatus('Access Granted. Redirecting to Homepage...');
 
                 // 4. Clear the hash from the URL
                 window.history.replaceState(null, '', window.location.pathname);
 
                 // 5. Redirect
                 setTimeout(() => {
-                    router.push('/dashboard');
+                    router.push('/');
                 }, 1000);
 
             } catch (err) {
