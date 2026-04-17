@@ -33,7 +33,7 @@ export default function VideoLogo({
     }, [autoPlay]);
 
     return (
-        <div className={`relative overflow-hidden ${className}`} style={style}>
+        <div className={`relative overflow-hidden notranslate ${className}`} style={style} translate="no">
             <video
                 ref={videoRef}
                 src={src}
@@ -42,7 +42,11 @@ export default function VideoLogo({
                 loop={loop}
                 muted={muted}
                 playsInline={playsInline}
-                className="w-full h-full object-contain"
+                webkit-playsinline="true"
+                disablePictureInPicture
+                controlsList="nopictureinpicture"
+                translate="no"
+                className="w-full h-full object-contain pointer-events-none notranslate"
                 onContextMenu={(e) => e.preventDefault()}
             >
                 {/* Fallback for very old browsers */}
