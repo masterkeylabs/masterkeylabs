@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
                     } else if (error.message?.includes('Refresh Token Not Found') || error.message?.includes('Invalid Refresh Token')) {
                         console.error('--- AuthProvider: STALE SESSION DETECTED (Invalid Refresh Token) ---');
                         console.log('--- AuthProvider: Performing Emergency Cleanup ---');
-                        clearAuthData();
+                        // clearAuthData(); // Removed local call that caused reference error
                         setUser(null);
                         setBusiness(null);
                         setLoading(false);
@@ -213,10 +213,11 @@ export const AuthProvider = ({ children }) => {
                 // --- AUTO-REPAIR: Create hollow business profile if Auth exists but DB doesn't ---
                 const repairPayload = {
                     entity_name: 'Initialize System',
-                    owner_name: userObj.user_metadata?.full_name || userObj.email.split('@')[0],
+                    owner_name: userObj.user_metadata?.full_name || userObj.user_metadata?.name || userObj.email.split('@')[0],
                     email: userObj.email,
+                    phone: userObj.phone || userObj.user_metadata?.phone || userObj.user_metadata?.whatsapp || null,
                     user_id: userObj.id,
-                    classification: 'auto_repair_recovery_v2',
+                    classification: 'auto_repair_recovery_v3',
                     vertical: 'retail',
                     annual_revenue: 0,
                     employee_count: 0

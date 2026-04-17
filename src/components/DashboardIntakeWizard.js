@@ -58,8 +58,8 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
 
     // Initial state setup based on mode
     useEffect(() => {
-        if (mode === 'profile') {
-            setStep(0);
+        if (mode === 'profile' && step === 0) {
+            // Keep at 0
         } else if (mode === 'audit' && step === 0) {
             setStep(1); // Start at audit step
         }
@@ -261,7 +261,9 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 console.log('--- Wizard: Forcing AuthContext profile refresh ---');
                 await fetchBusinessProfile(user, true); // Use the new 'force' flag
             }
-            router.replace(`/dashboard`, { scroll: false });
+
+            // DO NOT call router.replace here as it can cause a re-mount loop on the dashboard
+            // router.replace(`/dashboard`, { scroll: false });
 
             if (onComplete) onComplete();
 

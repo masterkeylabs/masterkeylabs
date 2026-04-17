@@ -103,13 +103,14 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
             console.log('--- Wizard: Full system completion detected! ---');
             setIsUnlocking(true);
             
-            // Premium transition: show animation, then redirect to the explicit ID path to lock it in and ensure 
-            // all server-side reports (PDFs, etc) are generated and synced flawlessly avoiding SSR auth drops.
             setTimeout(() => {
                 window.location.href = `/dashboard?id=${finalBizId}`;
             }, 3000); 
+        } else if (profileDone && !auditsDone) {
+            console.log('--- Wizard: Profile sync complete, advancing to audit sequence ---');
+            setShowAuditWizard(true);
         } else {
-            console.log('--- Wizard: Partial completion or profile-only sync, staying in dashboard view ---');
+            console.log('--- Wizard: Partial completion, staying in current view ---');
         }
     };
 
