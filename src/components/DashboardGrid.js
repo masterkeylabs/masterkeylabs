@@ -99,14 +99,16 @@ export default function DashboardGrid({ business: serverBusiness, computedData: 
         const localBizId = typeof window !== 'undefined' ? localStorage.getItem('masterkey_business_id') : null;
         const finalBizId = business?.id || localBizId;
         
-        if (auditsDone && profileDone) {
-            console.log('--- Wizard: Full system completion detected! ---');
+        console.log('--- Wizard Status Check ---', { auditsDone, profileDone, bizId: finalBizId });
+
+        if (auditsDone) {
+            console.log('--- Wizard: Audit completion detected, unlocking dashboard! ---');
             setIsUnlocking(true);
             
             setTimeout(() => {
                 window.location.href = `/dashboard?id=${finalBizId}`;
             }, 3000); 
-        } else if (profileDone && !auditsDone) {
+        } else if (profileDone) {
             console.log('--- Wizard: Profile sync complete, advancing to audit sequence ---');
             setShowAuditWizard(true);
         } else {

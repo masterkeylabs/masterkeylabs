@@ -363,15 +363,20 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             };
 
             console.log('--- Wizard Step 1: Starting Upsert ---');
-            const { error: syncError } = await supabase
+            const { data: syncedRecord, error: syncError } = await supabase
                 .from('loss_audit_results')
-                .upsert(payload, { onConflict: 'business_id' });
+                .upsert(payload, { onConflict: 'business_id' })
+                .select()
+                .maybeSingle();
 
             if (syncError) {
                 console.error('--- Wizard Step 1: Upsert Error ---', syncError);
                 throw syncError;
             }
             console.log('--- Wizard Step 1: Upsert Success ---');
+
+            // --- SYNC TO STORE (with the ID from DB) ---
+            useDiagnosticStore.getState().updateLossAudit(syncedRecord || payload);
 
             console.log('--- Wizard Step 1: Starting Business Update ---');
             const { error: bizError } = await supabase
@@ -391,8 +396,7 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
             }
             console.log('--- Wizard Step 1: Business Update Success ---');
 
-            // --- SYNC TO STORE ---
-            useDiagnosticStore.getState().updateLossAudit(payload);
+
 
             console.log('--- Wizard Step 1: Moving to Step 2 ---');
             setStep(2);
@@ -433,14 +437,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            const { error: syncError } = await supabase
+            const { data: syncedRecord, error: syncError } = await supabase
                 .from('night_loss_results')
-                .upsert(payload, { onConflict: 'business_id' });
+                .upsert(payload, { onConflict: 'business_id' })
+                .select()
+                .maybeSingle();
 
             if (syncError) throw syncError;
 
-            // --- SYNC TO STORE ---
-            useDiagnosticStore.getState().updateNightLoss(payload);
+            // --- SYNC TO STORE (with the ID from DB) ---
+            useDiagnosticStore.getState().updateNightLoss(syncedRecord || payload);
 
             setStep(3);
         } catch (err) {
@@ -479,14 +485,16 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            const { error: syncError } = await supabase
+            const { data: syncedRecord, error: syncError } = await supabase
                 .from('visibility_results')
-                .upsert(payload, { onConflict: 'business_id' });
+                .upsert(payload, { onConflict: 'business_id' })
+                .select()
+                .maybeSingle();
 
             if (syncError) throw syncError;
 
-            // --- SYNC TO STORE ---
-            useDiagnosticStore.getState().updateMissedCustomers(payload);
+            // --- SYNC TO STORE (with the ID from DB) ---
+            useDiagnosticStore.getState().updateMissedCustomers(syncedRecord || payload);
             useDiagnosticStore.getState().updateCity(payload.city);
 
             setStep(4);
@@ -529,9 +537,11 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 created_at: new Date().toISOString()
             };
 
-            const { error: syncError } = await supabase
+            const { data: syncedRecord, error: syncError } = await supabase
                 .from('ai_threat_results')
-                .upsert(payload, { onConflict: 'business_id' });
+                .upsert(payload, { onConflict: 'business_id' })
+                .select()
+                .maybeSingle();
 
             if (syncError) throw syncError;
 
@@ -543,9 +553,10 @@ export default function DashboardIntakeWizard({ business, existingData, t, onCom
                 })
                 .eq('id', activeId);
 
-            // --- SYNC TO STORE ---
-            useDiagnosticStore.getState().updateAIThreat(payload);
+            // --- SYNC TO STORE (with the ID from DB) ---
+            useDiagnosticStore.getState().updateAIThreat(syncedRecord || payload);
 
+            console.log('--- Wizard Step 4: Final complete, triggering onComplete ---');
             if (onComplete) onComplete();
         } catch (err) {
             setError(err.message);
