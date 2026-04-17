@@ -83,7 +83,7 @@ export default function HomeClient() {
             // 2. Build the secure hash URL (tokens are hidden from server logs)
             // If testing locally, change this to http://localhost:3000/auth/sso#...
             const targetUrl = 'https://futureproof-school.com'; 
-            const ssoUrl = `${targetUrl}/auth/sso#access_token=${session.access_token}&refresh_token=${session.refresh_token}`;
+            const ssoUrl = `${targetUrl}/auth/sso#access_token=${session.access_token}&refresh_token=${session.refresh_token}&redirect_to=/`;
             
             // 3. Redirect instantly
             window.location.href = ssoUrl;
