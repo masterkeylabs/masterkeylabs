@@ -18,9 +18,24 @@ const icons = {
 };
 
 const serviceHighlights = {
-    p1: ["Autonomous Neural Workflows", "Voice AI Implementation", "Custom LLM Integration", "Predictive Analytics Engine"],
-    p2: ["Legacy System Migration", "Cloud-Native Infrastructure", "Digital Continuity Audits", "Scalable Data Backbones"],
-    p3: ["Market Position Optimization", "High-Authority Design Systems", "Narrative Architecture", "Brand Sentiment Analysis"],
+    p1: [
+        { title: "Autonomous Neural Workflows", desc: "A basic tool to think plan and complete all the tasks - a guide to every step, without human aid" },
+        { title: "Voice AI Implementation", desc: "A system that understands and responds to your business in spoken language, anytime day or night with ease" },
+        { title: "Custom LLM Integration", desc: "Providing a tailored AI engine directly into your software’s architecture conditioned to your business" },
+        { title: "Predictive Analytics Engine", desc: "Forecast your business profit and loss with an easy step by using AI for your business health" }
+    ],
+    p2: [
+        { title: "Legacy System Migration", desc: "Empower your business with technology-driven change. Digital shift thrives when people adopt new ways of working – not when systems are merely delivered" },
+        { title: "Cloud-Native Infrastructure", desc: "We help your business become cloud-native—so your apps run smoothly, adapt quickly, and grow without limits. From design to deployment, we make your systems faster, flexible, and ready for the future." },
+        { title: "Digital Continuity Audits", desc: "We develop an idea that your business stays up and running during the day and night or even in unforeseen events." },
+        { title: "Scalable Data Backbones", desc: "A real-time data pipeline is a system that continuously ingests, processes, and delivers data as it’s generated" }
+    ],
+    p3: [
+        { title: "Market Position Optimsation", desc: "We align your visuals and messaging to claim a distinct space in your customer’s mind—helping you stand out, stay relevant, and grow faster." },
+        { title: "High-Authority Design Systems", desc: "Designing your business systems that lock in consistency, sharpen recognition, and make your brand impossible to ignore." },
+        { title: "Narrative Architecture", desc: "We convert your values, story, and personality into immersive visual and physical experiences that customers can see, feel, and remember." },
+        { title: "Brand Sentiment Analysis", desc: "Sentiment critique allows businesses to get into the minds of their customers." }
+    ],
     p4: ["Custom ERP Development", "Complex CRM Architectures", "API Ecosystem Design", "Security Protocol Hardening"],
     p5: ["Multi-Channel Growth Loops", "Automated Funnel Optimization", "LTV-Driven Scaling", "Precision Lead Scoring"],
     p6: ["Global Intelligence Scanning", "Competitive Defense Shields", "Risk Mitigation Protocols", "Adaptive Strategy Engines"],
@@ -85,18 +100,29 @@ export default function ServicePage() {
                             </p>
 
                             <div className="space-y-4 mb-12">
-                                {(serviceHighlights[id] || []).map((highlight, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.4 + (index * 0.1) }}
-                                        className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05] group hover:bg-white/[0.06] transition-all"
-                                    >
-                                        <span className="material-symbols-outlined text-ios-blue text-[20px] group-hover:scale-110 transition-transform">star</span>
-                                        <span className="text-sm font-medium text-white/60 group-hover:text-white transition-colors">{highlight}</span>
-                                    </motion.div>
-                                ))}
+                                {(serviceHighlights[id] || []).map((highlight, index) => {
+                                    const isObject = typeof highlight === 'object';
+                                    const title = isObject ? highlight.title : highlight;
+                                    const desc = isObject ? highlight.desc : null;
+
+                                    return (
+                                        <motion.div
+                                            key={index}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.4 + (index * 0.1) }}
+                                            className="flex items-start gap-4 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.05] group hover:bg-white/[0.06] transition-all"
+                                        >
+                                            <div className="w-10 h-10 rounded-xl bg-ios-blue/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                <span className="material-symbols-outlined text-ios-blue text-[20px]">star</span>
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-sm font-bold text-white group-hover:text-ios-blue transition-colors">{title}</span>
+                                                {desc && <span className="text-xs text-white/40 leading-relaxed">{desc}</span>}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
 
                             <button className="px-10 py-5 bg-gradient-to-br from-ios-blue to-[#0099FF] text-black font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110 active:scale-95 shadow-[0_20px_50px_rgba(0,229,255,0.3)] flex justify-center items-center gap-3 group w-fit">
@@ -113,26 +139,41 @@ export default function ServicePage() {
                         transition={{ duration: 1, delay: 0.2 }}
                         className="sticky top-32"
                     >
-                        <div className="relative aspect-square rounded-[40px] bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 flex items-center justify-center overflow-hidden p-12 group">
-                            {/* Decorative Elements */}
-                            <div className="absolute inset-0 bg-ios-blue/5 blur-[80px] -z-10 group-hover:bg-ios-blue/10 transition-colors duration-1000" />
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[40px] -translate-y-1/2 translate-x-1/2 rounded-full" />
-                            
-                            <div className="relative z-10 flex flex-col items-center">
-                                <div className="w-24 h-24 rounded-3xl bg-ios-blue/10 border border-ios-blue/20 flex items-center justify-center mb-8 shadow-2xl group-hover:scale-110 transition-transform duration-700">
-                                    <span className="material-symbols-outlined text-5xl font-light text-ios-blue">
-                                        {icons[id] || 'rocket_launch'}
-                                    </span>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Expansion Module</div>
-                                    <div className="text-2xl font-bold text-white tracking-widest">{id?.toUpperCase()}</div>
-                                </div>
-                            </div>
+                        <div className="relative aspect-square rounded-[40px] bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 flex items-center justify-center overflow-hidden group shadow-2xl">
+                            {/* Service Image */}
+                            <img 
+                                src={`/images/services/${id}.png`} 
+                                alt={service.title}
+                                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-[3000ms] ease-out"
+                                style={{ display: ['p1', 'p2'].includes(id) ? 'block' : 'none' }}
+                            />
 
-                            {/* Circular Tech rings */}
-                            <div className="absolute inset-0 border-[1px] border-white/5 rounded-full scale-[0.6] opacity-50 animate-spin-slow" />
-                            <div className="absolute inset-0 border-[1px] border-white/[0.02] rounded-full scale-[0.8] animate-reverse-spin" />
+                            {/* Fallback visual if no image */}
+                            {!['p1', 'p2'].includes(id) && (
+                                <>
+                                    <div className="absolute inset-0 bg-ios-blue/5 blur-[80px] -z-10 group-hover:bg-ios-blue/10 transition-colors duration-1000" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-[40px] -translate-y-1/2 translate-x-1/2 rounded-full" />
+                                    
+                                    <div className="relative z-10 flex flex-col items-center">
+                                        <div className="w-24 h-24 rounded-3xl bg-ios-blue/10 border border-ios-blue/20 flex items-center justify-center mb-8 shadow-2xl group-hover:scale-110 transition-transform duration-700">
+                                            <span className="material-symbols-outlined text-5xl font-light text-ios-blue">
+                                                {icons[id] || 'rocket_launch'}
+                                            </span>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mb-2">Expansion Module</div>
+                                            <div className="text-2xl font-bold text-white tracking-widest">{id?.toUpperCase()}</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Circular Tech rings */}
+                                    <div className="absolute inset-0 border-[1px] border-white/5 rounded-full scale-[0.6] opacity-50 animate-spin-slow" />
+                                    <div className="absolute inset-0 border-[1px] border-white/[0.02] rounded-full scale-[0.8] animate-reverse-spin" />
+                                </>
+                            )}
+
+                            {/* Vignette Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent opacity-80" />
                         </div>
                     </motion.div>
                 </div>

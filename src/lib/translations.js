@@ -781,11 +781,11 @@ export const translations = {
             backCommand: "Back to Command Center",
             p1: {
                 title: "AI Automation Protocols",
-                sub: "Autonomous Agents, Voice AI, Neural Workflow Integration"
+                sub: "For creating a standardised way to exchange data and initiate actions"
             },
             p2: {
                 title: "Business Digitalization",
-                sub: "Legacy Asset Migration, Digital Factory Setup, Cloud Infrastructure"
+                sub: "Want to help your business grow or create new business opportunities and save time then just digitalise."
             },
             p3: {
                 title: "Brand & Identity Design",
